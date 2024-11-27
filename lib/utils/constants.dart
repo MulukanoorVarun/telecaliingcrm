@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:telecaliingcrm/utils/ColorConstants.dart';
 
 const defaultPadding = 10.0;
 const defaultMargin = 10.0;
@@ -160,7 +161,7 @@ Text text(
   int? maxLines,
   Color? decorationcolor,
   TextDecoration? textdecoration,
-  FontWeight fontWeight = FontWeight.w600,
+  FontWeight fontWeight = FontWeight.w500,
   TextAlign textAlign = TextAlign.center,
 }) {
   if (color == null) {
@@ -181,7 +182,7 @@ Text text(
       decorationColor: decorationcolor,
       overflow: overflow,
       fontFamily:
-          fontfamily ?? "Inter", // Ensure the font is added in pubspec.yaml
+          fontfamily ?? "Poppins", // Ensure the font is added in pubspec.yaml
     ),
     textAlign: textAlign,
   );
@@ -216,44 +217,39 @@ Color color25 = Color(0xff262422);
 Color color26 = Color(0xffABABAB);
 Color color27 = Color(0xffEFF4F8);
 Color color28 = Color(0xff7165E3);
-Color color29 = Color(0xff646363);
-Color color30 = Color(0xffF3EBFC);
-Color color31 = Color(0xffFADBD8);
-Color color32 = Color(0xffE2F9F2);
-Color color33 = Color(0xffFFF4E0);
 
 final spinkits=Spinkits1();
 
-Widget containertext(BuildContext context, String buttonText,
-    {Function()? onTap,Color? color, double? width, height, bool isLoading = false}) {
-  var h = MediaQuery.of(context).size.height;
-  var w = MediaQuery.of(context).size.width;
 
-  return InkResponse(
-      onTap: onTap,
-      child: Container(
-        height: 50,
-        width: width ?? MediaQuery.of(context).size.width,
-        decoration: BoxDecoration(
-        color: color?? color28 ,
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child:
-        Center(
-          child: Text(
-                  buttonText,
-                  style: TextStyle(
-                    color: Color(0xFFFFFFFF),
-                    fontWeight: FontWeight.w700,
-                    fontSize: 16,
-                    height: 21.78 / 16,
-                    letterSpacing: 1,
-                    fontFamily: "Inter",
-                  ),
-                ),
-        ),
-      ));
+Widget containertext(BuildContext context, String buttonText,double vertical,double horizontal,
+    {Function()? onTap, bool isLoading = false}) {
+  return ElevatedButton(
+    onPressed: onTap,
+    style: ElevatedButton.styleFrom(
+      // Remove fixed width and height, only use padding for dynamic sizing
+      backgroundColor: primaryColor, // Set background color
+      shadowColor: Colors.transparent, // Remove default shadow
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8), // Border radius for rounded corners
+      ),
+      padding: EdgeInsets.symmetric(vertical: vertical, horizontal: horizontal), // Set padding for dynamic size
+    ),
+    child: isLoading
+        ? CircularProgressIndicator(color: Colors.white) // Show loading indicator when isLoading is true
+        : Text(
+      buttonText,
+      style: TextStyle(
+        color: Colors.white, // Text color
+        fontWeight: FontWeight.w700, // Font weight
+        fontSize: 18, // Font size
+        height: 21.78 / 18, // Line height
+        letterSpacing: 1, // Letter spacing
+        fontFamily: "Inter", // Font family
+      ),
+    ),
+  );
 }
+
 
  Container container(BuildContext context,
     {required Widget child,
@@ -267,15 +263,16 @@ Widget containertext(BuildContext context, String buttonText,
   return Container(
     width: w,
     height: h,
-    padding: padding ?? EdgeInsets.all(16),
-    margin: margin,
+    padding: padding ?? EdgeInsets.all(12),
+    margin: margin ?? EdgeInsets.all(12),
     decoration: BoxDecoration(
-        color: colors,
-        borderRadius: borderRadius ?? BorderRadius.circular(8),
+        color: colors?? Colors.white,
+        borderRadius: borderRadius ?? BorderRadius.circular(10),
         border: border),
     child: child,
   );
 }
+
 
 
 
@@ -289,10 +286,10 @@ Widget Label({
   return Text(text,
       textAlign: textalign,
       style: TextStyle(
-          color: color4,
+          color: Color(0xff110B0F),
           fontFamily: 'RozhaOne',
-          fontSize: 16,
-          height: 21.3/ 16,
+          fontSize: 15,
+          height: 21.3/ 15,
           fontWeight: FontWeight.w400)
   );
 }
@@ -304,7 +301,6 @@ class DateTimeFormatter {
     if (isoDate.isEmpty) {
       return "";
     }
-
     try {
       // Remove AM/PM if present to avoid parsing issues
       String cleanedDate = isoDate.replaceAll(RegExp(r'(AM|PM)'), '').trim();
@@ -339,45 +335,6 @@ class DateTimeFormatter {
     }
 
     return "";
-  }
-}
-
-
-class RatingWidget extends StatefulWidget {
-  final double initialRating;
-
-  RatingWidget({
-    Key? key,
-    this.initialRating = 0.0,
-  }) : super(key: key);
-
-  @override
-  _RatingWidgetState createState() => _RatingWidgetState();
-}
-
-class _RatingWidgetState extends State<RatingWidget> {
-  late double _currentRating;
-
-  @override
-  void initState() {
-    super.initState();
-    _currentRating = widget.initialRating;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: List.generate(5, (index) {
-        return Icon(
-          _currentRating > index
-              ? Icons.star
-              : Icons.star_border, // Filled star or empty star
-          color: Color(0xffEA7204),
-          size: 18,
-        );
-      }),
-    );
   }
 }
 
