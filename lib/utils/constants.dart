@@ -217,39 +217,45 @@ Color color25 = Color(0xff262422);
 Color color26 = Color(0xffABABAB);
 Color color27 = Color(0xffEFF4F8);
 Color color28 = Color(0xff7165E3);
+Color color29 = Color(0xff646363);
+Color color30 = Color(0xffF3EBFC);
+Color color31 = Color(0xffFADBD8);
+Color color32 = Color(0xffE2F9F2);
+Color color33 = Color(0xffFFF4E0);
 
 final spinkits=Spinkits1();
 
 
-Widget containertext(BuildContext context, String buttonText,double vertical,double horizontal,
-    {Function()? onTap, bool isLoading = false}) {
-  return ElevatedButton(
-    onPressed: onTap,
-    style: ElevatedButton.styleFrom(
-      // Remove fixed width and height, only use padding for dynamic sizing
-      backgroundColor: primaryColor, // Set background color
-      shadowColor: Colors.transparent, // Remove default shadow
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8), // Border radius for rounded corners
-      ),
-      padding: EdgeInsets.symmetric(vertical: vertical, horizontal: horizontal), // Set padding for dynamic size
-    ),
-    child: isLoading
-        ? CircularProgressIndicator(color: Colors.white) // Show loading indicator when isLoading is true
-        : Text(
-      buttonText,
-      style: TextStyle(
-        color: Colors.white, // Text color
-        fontWeight: FontWeight.w700, // Font weight
-        fontSize: 18, // Font size
-        height: 21.78 / 18, // Line height
-        letterSpacing: 1, // Letter spacing
-        fontFamily: "Inter", // Font family
-      ),
-    ),
-  );
-}
+Widget containertext(BuildContext context, String buttonText,
+    {Function()? onTap,Color? color, double? width, height, bool isLoading = false}) {
+  var h = MediaQuery.of(context).size.height;
+  var w = MediaQuery.of(context).size.width;
 
+  return InkResponse(
+      onTap: onTap,
+      child: Container(
+        height: 45,
+        width: width ?? MediaQuery.of(context).size.width,
+        decoration: BoxDecoration(
+          color: color?? color28 ,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child:
+        Center(
+          child: Text(
+            buttonText,
+            style: TextStyle(
+              color: Color(0xFFFFFFFF),
+              fontWeight: FontWeight.w700,
+              fontSize: 16,
+              height: 21.78 / 16,
+              letterSpacing: 1,
+              fontFamily: "Inter",
+            ),
+          ),
+        ),
+      ));
+}
 
  Container container(BuildContext context,
     {required Widget child,
