@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'SpalshScreen.dart';
+import 'screens/SpalshScreen.dart';
 
 void main() async {
   runApp(const MyApp());
@@ -44,6 +44,7 @@ class MyApp extends StatelessWidget {
               color: Colors.white, shadowColor: Colors.white),
           appBarTheme: const AppBarTheme(
             surfaceTintColor: Colors.white,
+            shadowColor: Colors.transparent,
           ),
           cardTheme: const CardTheme(
             shadowColor: Colors.white,

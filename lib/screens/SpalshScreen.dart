@@ -1,10 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:telecaliingcrm/screens/OnBoardingScreen.dart';
+import 'package:telecaliingcrm/screens/LeadInformation.dart';
+import 'package:telecaliingcrm/screens/LeadsScreen.dart';
 import 'package:telecaliingcrm/utils/preferences.dart';
 
-import 'utils/ColorConstants.dart';
+import '../utils/ColorConstants.dart';
 
 
 class Splash extends StatefulWidget {
@@ -35,19 +36,12 @@ class _SplashState extends State<Splash> with SingleTickerProviderStateMixin {
 
     // Navigate to the next screen after the animation
     SchedulerBinding.instance.addPostFrameCallback((_) {
-      Future.delayed(const Duration(seconds: 3), () {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) {
-            return  OnBoardindScreen();
-              //
-              // (onboard_status == "")
-              //   ? OnBoardindScreen()
-              //   : (token != "")
-              //   ? (permissions_granted ? Dashbord() : MyPermission())
-              //   : (permissions_granted ? SignIn() : MyPermission());
-          }),
-        );
+      Future.delayed(Duration(seconds: 3), () async {
+        if(token!=""){
+
+        }else{
+          Navigator.push(context, MaterialPageRoute(builder: (context) => LeadInformation()));
+        }
       });
     });
     Fetchdetails();
@@ -72,20 +66,13 @@ class _SplashState extends State<Splash> with SingleTickerProviderStateMixin {
     return Scaffold(
       backgroundColor: primaryColor,
       body: Container(
-        decoration: BoxDecoration(
-          // gradient: LinearGradient(
-          // colors: [Color(0xFF4BA8FE), Color(0xFF0573DA)],
-          //   begin: Alignment.topCenter,
-          //   end: Alignment.bottomCenter,
-          // ),
-        ),
         child: Center(
           child: FadeTransition(
             opacity: _animation,
             child: Image.asset(
               "assets/telecalling_splash.png",
-              width: 200,
-              height: 150,
+              width: 240,
+              height: 200,
             ),
           ),
         ),
