@@ -250,6 +250,28 @@ Widget containertext(BuildContext context, String buttonText,
       ));
 }
 
+ Container container(BuildContext context,
+    {required Widget child,
+      BorderRadius? borderRadius,
+      double? w,
+      h,
+      Border? border,
+      Color? colors,
+      EdgeInsets? padding,
+      EdgeInsets? margin}) {
+  return Container(
+    width: w,
+    height: h,
+    padding: padding ?? EdgeInsets.all(16),
+    margin: margin,
+    decoration: BoxDecoration(
+        color: colors,
+        borderRadius: borderRadius ?? BorderRadius.circular(8),
+        border: border),
+    child: child,
+  );
+}
+
 
 
 

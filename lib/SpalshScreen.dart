@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:telecaliingcrm/screens/OnBoardingScreen.dart';
 import 'package:telecaliingcrm/utils/preferences.dart';
 
 import 'utils/ColorConstants.dart';
@@ -34,12 +35,19 @@ class _SplashState extends State<Splash> with SingleTickerProviderStateMixin {
 
     // Navigate to the next screen after the animation
     SchedulerBinding.instance.addPostFrameCallback((_) {
-      Future.delayed(Duration(seconds: 3), () async {
-        if(token!=""){
-
-        }else{
-
-        }
+      Future.delayed(const Duration(seconds: 3), () {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) {
+            return  OnBoardindScreen();
+              //
+              // (onboard_status == "")
+              //   ? OnBoardindScreen()
+              //   : (token != "")
+              //   ? (permissions_granted ? Dashbord() : MyPermission())
+              //   : (permissions_granted ? SignIn() : MyPermission());
+          }),
+        );
       });
     });
     Fetchdetails();
