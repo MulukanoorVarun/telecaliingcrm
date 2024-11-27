@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:telecaliingcrm/utils/preferences.dart';
 
+import 'utils/ColorConstants.dart';
+
 
 class Splash extends StatefulWidget {
   const Splash({super.key});
@@ -60,6 +62,7 @@ class _SplashState extends State<Splash> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: primaryColor,
       body: Container(
         decoration: BoxDecoration(
           // gradient: LinearGradient(
@@ -72,7 +75,7 @@ class _SplashState extends State<Splash> with SingleTickerProviderStateMixin {
           child: FadeTransition(
             opacity: _animation,
             child: Image.asset(
-              "assets/medchoiceLogo.png",
+              "assets/telecalling_splash.png",
               width: 200,
               height: 150,
             ),
