@@ -216,11 +216,16 @@ Color color25 = Color(0xff262422);
 Color color26 = Color(0xffABABAB);
 Color color27 = Color(0xffEFF4F8);
 Color color28 = Color(0xff7165E3);
+Color color29 = Color(0xff646363);
+Color color30 = Color(0xffF3EBFC);
+Color color31 = Color(0xffFADBD8);
+Color color32 = Color(0xffE2F9F2);
+Color color33 = Color(0xffFFF4E0);
 
 final spinkits=Spinkits1();
 
 Widget containertext(BuildContext context, String buttonText,
-    {Function()? onTap, double? width, height, bool isLoading = false}) {
+    {Function()? onTap,Color? color, double? width, height, bool isLoading = false}) {
   var h = MediaQuery.of(context).size.height;
   var w = MediaQuery.of(context).size.width;
 
@@ -230,23 +235,23 @@ Widget containertext(BuildContext context, String buttonText,
         height: 50,
         width: width ?? MediaQuery.of(context).size.width,
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFF22C6BF), Color(0xFF04B4AC)],
-          ),
+        color: color?? color28 ,
           borderRadius: BorderRadius.circular(8),
         ),
         child:
-        Text(
-                buttonText,
-                style: TextStyle(
-                  color: Color(0xFFFFFFFF),
-                  fontWeight: FontWeight.w700,
-                  fontSize: 18,
-                  height: 21.78 / 18,
-                  letterSpacing: 1,
-                  fontFamily: "Inter",
+        Center(
+          child: Text(
+                  buttonText,
+                  style: TextStyle(
+                    color: Color(0xFFFFFFFF),
+                    fontWeight: FontWeight.w700,
+                    fontSize: 16,
+                    height: 21.78 / 16,
+                    letterSpacing: 1,
+                    fontFamily: "Inter",
+                  ),
                 ),
-              ),
+        ),
       ));
 }
 
@@ -284,10 +289,10 @@ Widget Label({
   return Text(text,
       textAlign: textalign,
       style: TextStyle(
-          color: Color(0xff110B0F),
+          color: color4,
           fontFamily: 'RozhaOne',
-          fontSize: 15,
-          height: 21.3/ 15,
+          fontSize: 16,
+          height: 21.3/ 16,
           fontWeight: FontWeight.w400)
   );
 }
