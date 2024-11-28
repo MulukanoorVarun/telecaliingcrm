@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:telecaliingcrm/screens/HomeScreen.dart';
 import 'package:telecaliingcrm/screens/LeadInformation.dart';
 import 'package:telecaliingcrm/screens/LeadsScreen.dart';
 import 'package:telecaliingcrm/utils/preferences.dart';
@@ -40,7 +41,7 @@ class _SplashState extends State<Splash> with SingleTickerProviderStateMixin {
         if(token!=""){
 
         }else{
-          Navigator.push(context, MaterialPageRoute(builder: (context) => LeadInformation()));
+          Navigator.push(context, MaterialPageRoute(builder: (context) => Homescreen()));
         }
       });
     });

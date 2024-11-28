@@ -222,6 +222,8 @@ Color color30 = Color(0xffF3EBFC);
 Color color31 = Color(0xffFADBD8);
 Color color32 = Color(0xffE2F9F2);
 Color color33 = Color(0xffFFF4E0);
+Color color34 = Color(0xff9DE4E4);
+Color color35 = Color(0xff7165E3).withOpacity(0.6);
 
 final spinkits=Spinkits1();
 
