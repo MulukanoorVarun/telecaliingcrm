@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:telecaliingcrm/screens/FollowupsScreen.dart';
+import 'package:telecaliingcrm/screens/LeadsScreen.dart';
 import 'package:telecaliingcrm/utils/constants.dart';
 
 class Homescreen extends StatefulWidget {
@@ -156,38 +158,48 @@ class _HomescreenState extends State<Homescreen> {
                     height: h * 0.02,
                   ),
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      container(
-                        w: w * 0.44,
-                        margin: EdgeInsets.symmetric(horizontal: 0,vertical: 0),
-                        context,
-                        colors: color33,
-                        child: Column(
-                          children: [
-                            text(context, '302', 46,
-                                fontfamily: 'Poppins',
-                                fontWeight: FontWeight.w500),
-                            text(context, 'Leads', 14,
-                                fontfamily: 'Inter',
-                                fontWeight: FontWeight.w500),
-                          ],
+                      InkResponse(
+                        onTap:(){
+                         Navigator.push(context, MaterialPageRoute(builder: (context) => LeadScreen(),)) ;
+                       },
+                        child: container(
+                          w: w * 0.44,
+                          margin: EdgeInsets.symmetric(horizontal: 0,vertical: 0),
+                          context,
+                          colors: color33,
+                          child: Column(
+                            children: [
+                              text(context, '302', 46,
+                                  fontfamily: 'Poppins',
+                                  fontWeight: FontWeight.w500),
+                              text(context, 'Leads', 14,
+                                  fontfamily: 'Inter',
+                                  fontWeight: FontWeight.w500),
+                            ],
+                          ),
                         ),
                       ),
-                      Spacer(),
-                      container(
-                        w: w * 0.44,
-                        margin: EdgeInsets.symmetric(horizontal: 0,vertical: 0),
-                        context,
-                        colors: color30,
-                        child: Column(
-                          children: [
-                            text(context, '300', 46,
-                                fontfamily: 'Poppins',
-                                fontWeight: FontWeight.w500),
-                            text(context, 'Follow Ups', 14,
-                                fontfamily: 'Inter',
-                                fontWeight: FontWeight.w500),
-                          ],
+                     InkResponse(
+                        onTap:(){
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => FollowupsScreen(),)) ;
+                        },
+                       child: container(
+                          w: w * 0.44,
+                          margin: EdgeInsets.symmetric(horizontal: 0,vertical: 0),
+                          context,
+                          colors: color30,
+                          child: Column(
+                            children: [
+                              text(context, '300', 46,
+                                  fontfamily: 'Poppins',
+                                  fontWeight: FontWeight.w500),
+                              text(context, 'Follow Ups', 14,
+                                  fontfamily: 'Inter',
+                                  fontWeight: FontWeight.w500),
+                            ],
+                          ),
                         ),
                       ),
                     ],

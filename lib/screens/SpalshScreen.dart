@@ -9,6 +9,7 @@ import '../utils/ColorConstants.dart';
 import 'AddLeadsScreen.dart';
 import 'HomeScreen.dart';
 import 'LeaderBoardScreen.dart';
+import 'OnBoardingScreen.dart';
 import 'UpdatePasswordScreen.dart';
 
 
@@ -44,7 +45,7 @@ class _SplashState extends State<Splash> with SingleTickerProviderStateMixin {
         if(token!=""){
 
         }else{
-          Navigator.push(context, MaterialPageRoute(builder: (context) => Updatepasswordscreen()));
+          Navigator.push(context, MaterialPageRoute(builder: (context) => OnBoardindScreen()));
         }
       });
     });
