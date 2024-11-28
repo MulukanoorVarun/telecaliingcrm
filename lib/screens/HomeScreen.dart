@@ -245,12 +245,12 @@ class _HomescreenState extends State<Homescreen> {
         ),
       ),
       endDrawer: Drawer(
+
         child: ListView(
           children: <Widget>[
-            DrawerHeader(
-              padding: EdgeInsets.all(0),
-              child: SizedBox(
-                height: h * 0.1,
+            SizedBox(height: h*0.14,
+              child: DrawerHeader(
+                padding: EdgeInsets.all(0),
                 child: container(
                   context,
                   colors: color28,
@@ -264,7 +264,7 @@ class _HomescreenState extends State<Homescreen> {
                             Row(
                               children: [
                                 CircleAvatar(
-                                  radius: 35,
+                                  radius: 22,
                                   backgroundColor: Colors.grey,
                                   // backgroundImage:_image != null
                                   //     ? FileImage(_image!) as ImageProvider<Object>:
@@ -272,8 +272,6 @@ class _HomescreenState extends State<Homescreen> {
                                   //     ? NetworkImage(profile_image) as ImageProvider<Object>
                                   //     : AssetImage('assets/personProfile.png') as ImageProvider<Object>, // Fallback if no image is available
                                 ),
-
-
                               ],
                             ),
                             Positioned(
@@ -282,12 +280,12 @@ class _HomescreenState extends State<Homescreen> {
                               child: InkWell(
                                 onTap: _pickImage,
                                 child: const CircleAvatar(
-                                  radius: 12,
+                                  radius: 8,
                                   backgroundColor: Colors.white,
                                   child: Icon(
                                     Icons.camera_alt,
                                     color: Color(0xFFCAA16C1A),
-                                    size: 20, // Size of the camera icon
+                                    size: 12, // Size of the camera icon
                                   ),
                                 ),
                               ),
@@ -298,40 +296,248 @@ class _HomescreenState extends State<Homescreen> {
                       SizedBox(
                         width: w * 0.02,
                       ),
-
-                      Column(mainAxisAlignment: MainAxisAlignment.start,
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           text(context, 'name', 18,
-                              fontWeight: FontWeight.w500,
+                              fontWeight: FontWeight.w500,color: color4,
                               fontfamily: 'Poppins'),
                           SizedBox(
                             height: h * 0.02,
                           ),
                           text(context, '123456789', 18,
-                              fontWeight: FontWeight.w500,
+                              fontWeight: FontWeight.w500,color: color4,
                               fontfamily: 'Poppins'),
                         ],
                       )
                     ]),
                   ),
-
                 ),
               ),
             ),
-            ListTile(
-              title: Text('Option 1'),
+            InkWell(
               onTap: () {
-                // Handle option 1
-                Navigator.pop(context);
+                // Your onTap action here
               },
+              child: Container(
+                padding: EdgeInsets.symmetric(
+                    vertical: 10, horizontal: 16), // Adjust padding as needed
+                child: Row(
+                  mainAxisAlignment:
+                      MainAxisAlignment.start, // Space between the children
+                  children: [
+                    // Leading Image
+                    Image.asset(
+                      'assets/phone-call.png',
+                      width: w * 0.05,
+                      height: h * 0.05,
+                    ),
+                    SizedBox(
+                      width: w * 0.05,
+                    ),
+                    text(
+                        context,
+                        'My Calls',
+                        fontWeight: FontWeight.w500,
+                        fontfamily: 'Poppins',
+                        16),
+                    Spacer(),
+                    Icon(Icons.keyboard_arrow_down_rounded),
+                  ],
+                ),
+              ),
             ),
-            ListTile(
-              title: Text('Option 2'),
+            InkWell(
               onTap: () {
-                // Handle option 2
-                Navigator.pop(context);
+                // Your onTap action here
               },
+              child: Container(
+                padding: EdgeInsets.symmetric(
+                    vertical: 10, horizontal: 16), // Adjust padding as needed
+                child: Row(
+                  mainAxisAlignment:
+                      MainAxisAlignment.start, // Space between the children
+                  children: [
+                    // Leading Image
+                    Image.asset(
+                      'assets/at-sign.png',
+                      width: w * 0.05,
+                      height: h * 0.05,
+                    ),
+                    SizedBox(
+                      width: w * 0.05,
+                    ),
+                    text(
+                        context,
+                        'Campaigns',
+                        fontWeight: FontWeight.w500,
+                        fontfamily: 'Poppins',
+                        16),
+                    Spacer(),
+                    Icon(Icons.keyboard_arrow_down_rounded),
+                  ],
+                ),
+              ),
+            ),
+            InkWell(
+              onTap: () {
+                // Your onTap action here
+              },
+              child: Container(
+                padding: EdgeInsets.symmetric(
+                    vertical: 10, horizontal: 16), // Adjust padding as needed
+                child: Row(
+                  mainAxisAlignment:
+                      MainAxisAlignment.start, // Space between the children
+                  children: [
+                    // Leading Image
+                    Image.asset(
+                      'assets/add.png',
+                      width: w * 0.05,
+                      height: h * 0.05,
+                    ),
+                    SizedBox(
+                      width: w * 0.05,
+                    ),
+                    text(
+                        context,
+                        'Leads/Filters',
+                        fontWeight: FontWeight.w500,
+                        fontfamily: 'Poppins',
+                        16),
+                    Spacer(),
+                    Icon(Icons.keyboard_arrow_down_rounded),
+                  ],
+                ),
+              ),
+            ),
+            InkWell(
+              onTap: () {
+                // Your onTap action here
+              },
+              child: Container(
+                padding: EdgeInsets.symmetric(
+                    vertical: 10, horizontal: 16), // Adjust padding as needed
+                child: Row(
+                  mainAxisAlignment:
+                      MainAxisAlignment.start, // Space between the children
+                  children: [
+                    // Leading Image
+                    Image.asset(
+                      'assets/call.png',
+                      width: w * 0.05,
+                      height: h * 0.05,
+                    ),
+                    SizedBox(
+                      width: w * 0.05,
+                    ),
+                    text(
+                        context,
+                        'Call Trackings',
+                        fontWeight: FontWeight.w500,
+                        fontfamily: 'Poppins',
+                        16),
+                    Spacer(),
+                    Icon(Icons.keyboard_arrow_down_rounded),
+                  ],
+                ),
+              ),
+            ),
+            InkWell(
+              onTap: () {
+                // Your onTap action here
+              },
+              child: Container(
+                padding: EdgeInsets.symmetric(
+                    vertical: 10, horizontal: 16), // Adjust padding as needed
+                child: Row(
+                  mainAxisAlignment:
+                      MainAxisAlignment.start, // Space between the children
+                  children: [
+                    // Leading Image
+                    Image.asset(
+                      'assets/message-square.png',
+                      width: w * 0.05,
+                      height: h * 0.05,
+                    ),
+                    SizedBox(
+                      width: w * 0.05,
+                    ),
+                    text(
+                        context,
+                        'Message Templates',
+                        fontWeight: FontWeight.w500,
+                        fontfamily: 'Poppins',
+                        16),
+                    Spacer(),
+                    Icon(Icons.keyboard_arrow_down_rounded),
+                  ],
+                ),
+              ),
+            ),
+            InkWell(
+              onTap: () {
+                // Your onTap action here
+              },
+              child: Container(
+                padding: EdgeInsets.symmetric(
+                    vertical: 10, horizontal: 16), // Adjust padding as needed
+                child: Row(
+                  mainAxisAlignment:
+                  MainAxisAlignment.start, // Space between the children
+                  children: [
+                    // Leading Image
+                    Image.asset(
+                      'assets/tag.png',
+                      width: w * 0.05,
+                      height: h * 0.05,
+                    ),
+                    SizedBox(
+                      width: w * 0.05,
+                    ),
+                    text(
+                        context,
+                        'Labels',
+                        fontWeight: FontWeight.w500,
+                        fontfamily: 'Poppins',
+                        16),
+                    Spacer(),
+                    Icon(Icons.keyboard_arrow_down_rounded),
+                  ],
+                ),
+              ),
+            ),InkWell(
+              onTap: () {
+                // Your onTap action here
+              },
+              child: Container(
+                padding: EdgeInsets.symmetric(
+                    vertical: 10, horizontal: 16), // Adjust padding as needed
+                child: Row(
+                  mainAxisAlignment:
+                  MainAxisAlignment.start, // Space between the children
+                  children: [
+                    // Leading Image
+                    Image.asset(
+                      'assets/settings.png',
+                      width: w * 0.05,
+                      height: h * 0.05,
+                    ),
+                    SizedBox(
+                      width: w * 0.05,
+                    ),
+                    text(
+                        context,
+                        'Settings',
+                        fontWeight: FontWeight.w500,
+                        fontfamily: 'Poppins',
+                        16),
+                    Spacer(),
+                    Icon(Icons.keyboard_arrow_down_rounded),
+                  ],
+                ),
+              ),
             ),
           ],
         ),
