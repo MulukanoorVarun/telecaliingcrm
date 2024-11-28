@@ -12,6 +12,8 @@ class LeadInformation extends StatefulWidget {
 class _LeadInformationState extends State<LeadInformation> {
   @override
   Widget build(BuildContext context) {
+    var w= MediaQuery.of(context).size.width;
+    var h= MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: scaffoldbgColor,
       appBar: AppBar(
@@ -85,14 +87,15 @@ class _LeadInformationState extends State<LeadInformation> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               text(context, "Remarks", 16,
-                                  fontWeight: FontWeight.w500,color: Colors.black),
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.black),
                               container(context,
                                   colors: coldbgColor,
-                                  borderRadius: BorderRadius.all(
-                                      Radius.circular(5)),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(5)),
                                   padding: EdgeInsets.symmetric(
                                       vertical: 2, horizontal: 10),
-                                  margin: EdgeInsets.only(bottom: 10,left: 0),
+                                  margin: EdgeInsets.only(bottom: 10, left: 0),
                                   child: text(context, "cold", 14,
                                       color: color11)),
                             ],
@@ -118,6 +121,41 @@ class _LeadInformationState extends State<LeadInformation> {
           SizedBox(
             height: 10,
           ),
+          container(context,
+              w: w,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  text(context, "Quick Connect", 18,fontWeight: FontWeight.w500),
+                  SizedBox(height: 10,),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          children: [
+                            Image(image: AssetImage("assets/call.png"),color: primaryColor,width: 25,height: 25,),
+                            text(context, "Call", 14)
+                          ],
+                        ),
+                        Column(
+                          children: [
+                            Image(image: AssetImage("assets/sms.png"),color: primaryColor,width: 25,height: 25,),
+                            text(context, "SMS", 14)
+                          ],
+                        ),
+                        Column(
+                          children: [
+                            Image(image: AssetImage("assets/whatsapp.png"),color: primaryColor,width: 25,height: 25,),
+                            text(context, "Whatsapp", 14)
+                          ],
+                        ),
+                      ],
+                    ),
+                  )
+                ],
+              ))
         ],
       ),
     );

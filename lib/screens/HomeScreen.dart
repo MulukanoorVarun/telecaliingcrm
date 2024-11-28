@@ -47,7 +47,6 @@ class _HomescreenState extends State<Homescreen> {
         preferredSize: Size.fromHeight(80), // Set the desired height of the AppBar
         child: AppBar(
           automaticallyImplyLeading: false,
-
           backgroundColor: Colors.transparent, // Make the AppBar background transparent
           elevation: 0, // Remove the default shadow of the AppBar
           flexibleSpace: Container(
@@ -58,8 +57,8 @@ class _HomescreenState extends State<Homescreen> {
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.2),
-                  offset: Offset(0, 4),
-                  blurRadius: 4,
+                  offset: Offset(0, 1),
+                  blurRadius: 1,
                   spreadRadius: 0,
                 ),
               ],
@@ -109,17 +108,19 @@ class _HomescreenState extends State<Homescreen> {
       ),
 
       body: SingleChildScrollView(
+        physics: NeverScrollableScrollPhysics(),
         child: Column(
           children: [
-
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 0),
               child: Column(
                 children: [
                   Row(
+                    mainAxisAlignment:MainAxisAlignment.spaceBetween,
                     children: [
                       container(
-                        w: w * 0.4,
+                        margin: EdgeInsets.symmetric(horizontal: 0,vertical: 0),
+                        w: w * 0.44,
                         context,
                         colors: color31,
                         child: Column(
@@ -133,9 +134,9 @@ class _HomescreenState extends State<Homescreen> {
                           ],
                         ),
                       ),
-                      Spacer(),
                       container(
-                        w: w * 0.4,
+                        margin: EdgeInsets.symmetric(horizontal: 0,vertical: 0),
+                        w: w * 0.44,
                         context,
                         colors: color32,
                         child: Column(
@@ -157,7 +158,8 @@ class _HomescreenState extends State<Homescreen> {
                   Row(
                     children: [
                       container(
-                        w: w * 0.4,
+                        w: w * 0.44,
+                        margin: EdgeInsets.symmetric(horizontal: 0,vertical: 0),
                         context,
                         colors: color33,
                         child: Column(
@@ -173,7 +175,8 @@ class _HomescreenState extends State<Homescreen> {
                       ),
                       Spacer(),
                       container(
-                        w: w * 0.4,
+                        w: w * 0.44,
+                        margin: EdgeInsets.symmetric(horizontal: 0,vertical: 0),
                         context,
                         colors: color30,
                         child: Column(
@@ -189,25 +192,21 @@ class _HomescreenState extends State<Homescreen> {
                       ),
                     ],
                   ),
-                  SizedBox(height: h * 0.06),
+                  SizedBox(height: w * 0.07),
                   containertext(
                       context,
                       color: color28,
                       width: w * 0.4,
                       'START NOW',
                       height: h * 0.1),
-                  SizedBox(
-                    height: h * 0.04,
-                  ),
-                  text(context, 'CALLS IN QUEUE', 24,
+                  SizedBox(height: w * 0.05),
+                  text(context, 'CALLS IN QUEUE', 22,
                       fontWeight: FontWeight.w500,
                       fontfamily: 'Poppins',
                       color: color11,
                       textdecoration: TextDecoration.underline,
                       decorationcolor: color34),
-                  SizedBox(
-                    height: h * 0.02,
-                  ),
+                  SizedBox(height: w * 0.05),
                   // Use a simple container for wrapping ListView
                   Container(
                     height: h * 0.3, // Ensure a fixed height for ListView
@@ -217,6 +216,8 @@ class _HomescreenState extends State<Homescreen> {
                         return container(
                           context,
                           border: Border.all(color: color35, width: 1),
+                          margin: EdgeInsets.only(bottom: 10),
+                          padding: EdgeInsets.all(5),
                           borderRadius: BorderRadius.circular(15),
                           child: Row(
                             children: [
@@ -242,7 +243,7 @@ class _HomescreenState extends State<Homescreen> {
                                       fontWeight: FontWeight.w500,
                                       color: color11),
                                   SizedBox(
-                                    height: h * 0.01,
+                                    height:5,
                                   ),
                                   text(context, '1234567890', 18,
                                       fontfamily: 'Poppins',
