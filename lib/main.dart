@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:telecaliingcrm/screens/HomeScreen.dart';
+import 'package:telecaliingcrm/screens/MyAccount.dart';
 
 import 'screens/SpalshScreen.dart';
 
@@ -62,7 +64,7 @@ class MyApp extends StatelessWidget {
           colorScheme: const ColorScheme.light(background: Colors.white)
               .copyWith(background: Colors.white),
         ),
-        home:Splash()
+        home:MyAccount()
     );
   }
 }
