@@ -43,57 +43,75 @@ class _HomescreenState extends State<Homescreen> {
     var h = MediaQuery.of(context).size.height;
     return Scaffold(
       key: _scaffoldKey,
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Container(
-              padding: EdgeInsets.all(16),
-              margin: EdgeInsets.symmetric(vertical: 8),
-              decoration: BoxDecoration(
-                color: Color(0xffffffff), // White color for the container
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.2),
-                    offset: Offset(0, 4),
-                    blurRadius: 4,
-                    spreadRadius: 0,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(80), // Set the desired height of the AppBar
+        child: AppBar(
+          automaticallyImplyLeading: false,
+
+          backgroundColor: Colors.transparent, // Make the AppBar background transparent
+          elevation: 0, // Remove the default shadow of the AppBar
+          flexibleSpace: Container(
+            padding: EdgeInsets.all(16),
+            margin: EdgeInsets.symmetric(vertical: 8),
+            decoration: BoxDecoration(
+              color: Color(0xffffffff), // White color for the container
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.2),
+                  offset: Offset(0, 4),
+                  blurRadius: 4,
+                  spreadRadius: 0,
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                // App icon
+                Image.asset(
+                  'assets/telecalling_appicon.webp',
+                  fit: BoxFit.contain,
+                  width: w * 0.14,
+                ),
+                Spacer(),
+                // Greeting message
+                Container(
+                  padding: EdgeInsets.all(8),
+                  color: color30,
+                  child: Text(
+                    'HI! Ramakrishnamurthy',
+                    style: TextStyle(fontSize: 16),
                   ),
-                ],
-              ),
-              child: Row(
-                children: [
-                  Image.asset(
-                    'assets/telecalling_appicon.webp',
-                    fit: BoxFit.contain,
-                    width: w * 0.14,
-                  ),
-                  Spacer(),
-                  container(context,
-                      padding: EdgeInsets.all(8),
-                      colors: color30,
-                      child: text(context, 'HI! Ramakrishnamurthy', 16)),
-                  Spacer(),
-                  Icon(
-                    Icons.power_settings_new,
+                ),
+                Spacer(),
+                // Power icon
+                Icon(
+                  Icons.power_settings_new,
+                  size: 26,
+                  color: color11,
+                ),
+                SizedBox(width: 18),
+                // Menu icon
+                InkResponse(
+                  onTap: () {
+                    _scaffoldKey.currentState?.openEndDrawer();
+                  },
+                  child: Icon(
+                    Icons.menu,
                     size: 26,
                     color: color11,
                   ),
-                  SizedBox(
-                    width: 18,
-                  ),
-                  InkResponse(
-                    onTap: () {
-                      _scaffoldKey.currentState?.openEndDrawer();
-                    },
-                    child: Icon(
-                      Icons.menu,
-                      size: 26,
-                      color: color11,
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
+          ),
+          actions: [Container()],
+        ),
+      ),
+
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
               child: Column(
