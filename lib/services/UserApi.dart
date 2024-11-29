@@ -77,31 +77,33 @@ class Userapi {
     }
   }
 
-
-  static Future<UserDetailsModel?> UserDetailsApi() async {
+  static Future<UserDetailsModel?> getUserDetails() async {
     try {
-      final url = Uri.parse("${host}/api/dashboard");
-      final headers = await getheader1(); // Await the result here
+      final url = Uri.parse("${host}/api/profile");
+      final headers = await getheader1(); // Await the resolved headers
       final response = await http.post(
         url,
         headers: headers,
       );
+
       if (response.statusCode == 200) {
         final jsonResponse = jsonDecode(response.body);
-        print("UserDetailsApi response: ${response.body}");
-        // Parse the JSON response into a model
+        print("getUserDetails response: ${response.body}");
+
+        // Parse JSON into the model
         return UserDetailsModel.fromJson(jsonResponse);
       } else {
-        // Handle non-200 responses (e.g., 401, 404, etc.)
+        // Handle non-200 responses
         print("Request failed with status: ${response.statusCode}");
         return null;
       }
     } catch (e) {
-      // Catch and log any errors
-      print("Error occurred: $e");
+      // Log any errors
+      print("Error occurred in getUserDetails: $e");
       return null;
     }
   }
+
 
 
 

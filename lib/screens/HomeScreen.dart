@@ -45,7 +45,7 @@ class _HomescreenState extends State<Homescreen> {
   @override
   void initState() {
     GetDashBoardDetails();
-    Provider.of<ConnectivityProviders>(context,listen: false);
+    Provider.of<ConnectivityProviders>(context,listen: false).initConnectivity();
     super.initState();
   }
 
@@ -72,7 +72,6 @@ class _HomescreenState extends State<Homescreen> {
     return (connectiVityStatus.isDeviceConnected == "ConnectivityResult.wifi" ||
         connectiVityStatus.isDeviceConnected == "ConnectivityResult.mobile")
         ?
-
      Scaffold(
       key: _scaffoldKey,
       appBar: PreferredSize(
