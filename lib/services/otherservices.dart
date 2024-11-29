@@ -12,7 +12,7 @@ Future<Map<String, String>> getheader() async {
   String Token = "Bearer ${sessionid}";
   Map<String, String> headers = {
     'Authorization': Token,
-    'Content-Type': 'application/json',
+    'Content-Type': 'multipart/form-data'
   };
   return headers;
 }

@@ -108,6 +108,52 @@ class Userapi {
   }
 
 
+  static Future<Map<String, dynamic>?> UpdateCallStatusApi(String id, String call_status, String call_duration) async {
+    try {
+      // Prepare the request data
+      Map<String, String> data = {
+        "id": id,
+        "call_status": call_status,
+        "call_duration": call_duration
+      };
+
+      print("UpdateCallStatusApi data: $data");
+
+      final url = Uri.parse("${host}/api/update_call_status_api");
+      final headers = await getheader1(); // Ensure this function returns the correct headers
+
+      final response = await http.post(
+        url,
+        headers: headers,
+        body: data,
+      );
+
+      // Check if the status code is 200
+      if (response.statusCode == 200) {
+        try {
+          // Try decoding the response body to JSON
+          final jsonResponse = jsonDecode(response.body);
+          print("Request successful: $jsonResponse");
+          return jsonResponse;
+        } catch (e) {
+          // Handle the case where the response is not valid JSON
+          print("Error: Failed to decode response body. Response: ${response.body}");
+          return null;
+        }
+      } else {
+        // Log the response status code and body if it's not 200
+        print("Request failed with status: ${response.statusCode}, body: ${response.body}");
+        return null;
+      }
+    } catch (e) {
+      // Catch and log any errors during the request
+      print("Error occurred: $e");
+      return null;
+    }
+  }
+
+
+
 
 
 
