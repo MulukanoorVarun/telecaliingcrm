@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:telecaliingcrm/screens/HomeScreen.dart';
+import 'package:telecaliingcrm/screens/dashboard.dart';
 import '../providers/ConnectivityProviders.dart';
 import '../services/UserApi.dart';
 import '../services/otherservices.dart';
@@ -61,7 +62,7 @@ class _SignInScreenState extends State<SignInScreen> {
           PreferenceService().saveString('token', data['access_token']);
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => Homescreen()),
+            MaterialPageRoute(builder: (context) => Dashboard()),
           );
         } else if (data['error'] != null) {
           // Authentication error

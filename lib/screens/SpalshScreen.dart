@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:telecaliingcrm/screens/LeadInformation.dart';
 import 'package:telecaliingcrm/screens/LeadsScreen.dart';
+import 'package:telecaliingcrm/screens/dashboard.dart';
 import 'package:telecaliingcrm/utils/preferences.dart';
 
 import '../utils/ColorConstants.dart';
@@ -43,7 +44,7 @@ class _SplashState extends State<Splash> with SingleTickerProviderStateMixin {
     SchedulerBinding.instance.addPostFrameCallback((_) {
       Future.delayed(Duration(seconds: 3), () async {
         if(token!=""){
-          Navigator.push(context, MaterialPageRoute(builder: (context) => Homescreen()));
+          Navigator.push(context, MaterialPageRoute(builder: (context) => Dashboard()));
         }else{
           Navigator.push(context, MaterialPageRoute(builder: (context) => OnBoardindScreen()));
         }

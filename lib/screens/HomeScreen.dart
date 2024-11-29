@@ -30,7 +30,7 @@ class Homescreen extends StatefulWidget {
 }
 
 class _HomescreenState extends State<Homescreen> {
-  int _page = 0;
+  // int _page = 0;
   File? _image; // To store the selected image
   bool isLoading = false; // Loading state
   XFile? _pickedFile;
@@ -58,11 +58,10 @@ class _HomescreenState extends State<Homescreen> {
   bool isCalling = false;
   late Timer callDurationTimer;
   int callDuration = 0; // Track call duration in seconds
-  String mobile_nnumber = ""; // Track call duration in seconds
+  String mobile_nnumber = "";
   bool isPaused = false;
   bool isCallOngoing = false;
   late StreamSubscription<PhoneState> _phoneStateSubscription;
-
 
   @override
   void initState() {
@@ -1013,20 +1012,7 @@ class _HomescreenState extends State<Homescreen> {
                 ],
               ),
             ),
-            bottomNavigationBar: CurvedNavigationBar(
-              key: _bottomNavigationKey,
-              backgroundColor: color4,
-              color: color11.withOpacity(0.1),
-              buttonBackgroundColor: color3,
-              items: <Widget>[
-                Icon(Icons.home, size: 30),
-                Icon(Icons.call, size: 30),
-                Icon(Icons.leaderboard, size: 30),
-              ],
-              onTap: (index) {
-                //Handle button tap
-              },
-            ),
+
           )
         : NoInternetWidget();
   }
