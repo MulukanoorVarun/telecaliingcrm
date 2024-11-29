@@ -4,6 +4,8 @@ import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:telecaliingcrm/Authentication/SignInScreen.dart';
 import 'package:telecaliingcrm/providers/DashBoardProvider.dart';
 import 'package:telecaliingcrm/providers/UserDetailsProvider.dart';
 import 'package:telecaliingcrm/screens/FollowupsScreen.dart';
@@ -117,10 +119,20 @@ class _HomescreenState extends State<Homescreen> {
                 ),
                 Spacer(),
                 // Power icon
-                Icon(
-                  Icons.power_settings_new,
-                  size: 26,
-                  color: color11,
+                InkResponse(onTap: () async {
+                  SharedPreferences sharedPreferences =
+                      await SharedPreferences.getInstance();
+                  sharedPreferences.remove('token');
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => SignInScreen()),
+                  );
+                },
+                  child: Icon(
+                    Icons.power_settings_new,
+                    size: 26,
+                    color: color11,
+                  ),
                 ),
                 SizedBox(width: 18),
                 // Menu icon

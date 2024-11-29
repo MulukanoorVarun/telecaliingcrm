@@ -126,7 +126,7 @@ class _SignInScreenState extends State<SignInScreen> {
               SizedBox(
                 height: h * 0.1,
               ),
-              Label(text: 'Mobile Number'),
+              Label(text: 'Email'),
               SizedBox(height: 10),
               Container(
                 height: MediaQuery.of(context).size.height * 0.06,
@@ -151,7 +151,7 @@ class _SignInScreenState extends State<SignInScreen> {
                   decoration: InputDecoration(
                     contentPadding:
                         EdgeInsets.symmetric(vertical: 0, horizontal: 10),
-                    hintText: "Enter Mobile Number",
+                    hintText: "Enter Email",
                     hintStyle: TextStyle(
                       fontSize: 14,
                       letterSpacing: 0,
