@@ -13,7 +13,7 @@ class UserDetailsProvider with ChangeNotifier {
       // Fetch the user details from the API
       var response = await Userapi.getUserDetails();
       if (response != null) {
-        _userDetails = response; // Use appropriate field from response
+        _userDetails = response;
         notifyListeners();
       }
     } catch (e) {

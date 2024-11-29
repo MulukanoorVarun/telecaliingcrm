@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:telecaliingcrm/providers/DashBoardProvider.dart';
+import 'package:telecaliingcrm/providers/UserDetailsProvider.dart';
 import 'package:telecaliingcrm/screens/FollowupsScreen.dart';
 import 'package:telecaliingcrm/screens/LeadsScreen.dart';
 import 'package:telecaliingcrm/utils/constants.dart';
@@ -42,10 +43,12 @@ class _HomescreenState extends State<Homescreen> {
     }
   }
 
+
   @override
   void initState() {
     GetDashBoardDetails();
     Provider.of<ConnectivityProviders>(context,listen: false).initConnectivity();
+
     super.initState();
   }
 
@@ -138,7 +141,8 @@ class _HomescreenState extends State<Homescreen> {
         ),
       ),
 
-      body: Consumer<DashboardProvider>(
+      body:
+      Consumer<DashboardProvider>(
         builder: (context, dashboardProvider, child) {
           final PhoneNumbers = dashboardProvider.phoneNumbers;
          return SingleChildScrollView(
@@ -321,72 +325,61 @@ class _HomescreenState extends State<Homescreen> {
         child: ListView(
           children: <Widget>[
             SizedBox(height: h*0.14,
-              child: DrawerHeader(
-                padding: EdgeInsets.all(0),
-                child: container(
-                  context,
-                  colors: color28,
-                  margin: EdgeInsets.all(0),
-                  borderRadius: BorderRadius.circular(0),
-                  child: Center(
-                    child: Row(children: [
-                      Center(
-                        child: Stack(
+              child:
+              Consumer<UserDetailsProvider>(
+                builder: (context, userDetailsProvider, child) {
+                  return DrawerHeader(
+                    padding: EdgeInsets.zero,
+                    child: Container(
+                      // Adjust your container widget here
+                      decoration: BoxDecoration(
+                        color: color28,
+                        borderRadius: BorderRadius.circular(0),
+                      ),
+                      child: Center(
+                        child: Row(
                           children: [
-                            Row(
+                            // CircleAvatar with Profile Image
+                            CircleAvatar(
+                              radius: 22,
+                              backgroundColor: Colors.grey,
+                              backgroundImage: userDetailsProvider.userDetails?.photo != null
+                                  ? NetworkImage(userDetailsProvider.userDetails!.photo!)
+                                  : AssetImage('assets/personProfile.png') as ImageProvider,
+                            ),
+                            SizedBox(width: MediaQuery.of(context).size.width * 0.02),
+                            // User Details Column
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                CircleAvatar(
-                                  radius: 22,
-                                  backgroundColor: Colors.grey,
-                                  // backgroundImage:_image != null
-                                  //     ? FileImage(_image!) as ImageProvider<Object>:
-                                  // profile_image != null && profile_image.isNotEmpty
-                                  //     ? NetworkImage(profile_image) as ImageProvider<Object>
-                                  //     : AssetImage('assets/personProfile.png') as ImageProvider<Object>, // Fallback if no image is available
+                                text(
+                                  context,
+                                  userDetailsProvider.userDetails?.username ?? "Guest User",
+                                  18,
+                                  fontWeight: FontWeight.w500,
+                                  color: color4,
+                                  fontfamily: 'Poppins',
+                                ),
+                                SizedBox(height: MediaQuery.of(context).size.height * 0.01),
+                                text(
+                                  context,
+                                  userDetailsProvider.userDetails?.email ?? "example@domain.com",
+                                  18,
+                                  fontWeight: FontWeight.w500,
+                                  color: color4,
+                                  fontfamily: 'Poppins',
                                 ),
                               ],
-                            ),
-                            Positioned(
-                              bottom: 0,
-                              right: 0,
-                              child: InkWell(
-                                onTap: _pickImage,
-                                child: const CircleAvatar(
-                                  radius: 8,
-                                  backgroundColor: Colors.white,
-                                  child: Icon(
-                                    Icons.camera_alt,
-                                    color: Color(0xFFCAA16C1A),
-                                    size: 12, // Size of the camera icon
-                                  ),
-                                ),
-                              ),
                             ),
                           ],
                         ),
                       ),
-                      SizedBox(
-                        width: w * 0.02,
-                      ),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          text(context, 'name', 18,
-                              fontWeight: FontWeight.w500,color: color4,
-                              fontfamily: 'Poppins'),
-                          SizedBox(
-                            height: h * 0.02,
-                          ),
-                          text(context, '123456789', 18,
-                              fontWeight: FontWeight.w500,color: color4,
-                              fontfamily: 'Poppins'),
-                        ],
-                      )
-                    ]),
-                  ),
-                ),
+                    ),
+                  );
+                },
               ),
+
             ),
             InkWell(
               onTap: () {

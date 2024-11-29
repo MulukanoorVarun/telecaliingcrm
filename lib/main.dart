@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:telecaliingcrm/providers/ConnectivityProviders.dart';
 import 'package:telecaliingcrm/providers/DashBoardProvider.dart';
+import 'package:telecaliingcrm/providers/UserDetailsProvider.dart';
 
 
 import 'screens/SpalshScreen.dart';
@@ -15,6 +16,9 @@ void main() async {
         ChangeNotifierProvider(create: (context)=>ConnectivityProviders()),
         ChangeNotifierProvider(
           create: (_) => DashboardProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => UserDetailsProvider(),
         ),
       ],
       child: MyApp(),

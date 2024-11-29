@@ -78,9 +78,14 @@ class Userapi {
   }
 
   static Future<UserDetailsModel?> getUserDetails() async {
+    final Map<String,String> body ={
+      'email': 'bharath@pixl.in',
+      'password': 'Vaishu@987#',
+    };
+
     try {
       final url = Uri.parse("${host}/api/profile");
-      final headers = await getheader1(); // Await the resolved headers
+      final headers = await getheader1();
       final response = await http.post(
         url,
         headers: headers,
@@ -90,10 +95,8 @@ class Userapi {
         final jsonResponse = jsonDecode(response.body);
         print("getUserDetails response: ${response.body}");
 
-        // Parse JSON into the model
         return UserDetailsModel.fromJson(jsonResponse);
       } else {
-        // Handle non-200 responses
         print("Request failed with status: ${response.statusCode}");
         return null;
       }
