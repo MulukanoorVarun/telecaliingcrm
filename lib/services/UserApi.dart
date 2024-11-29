@@ -78,7 +78,7 @@ class Userapi {
   }
 
 
-  static Future<UserDetailsModel?> DahsBoardApi() async {
+  static Future<UserDetailsModel?> UserDetailsApi() async {
     try {
       final url = Uri.parse("${host}/api/dashboard");
       final headers = await getheader1(); // Await the result here
@@ -88,10 +88,9 @@ class Userapi {
       );
       if (response.statusCode == 200) {
         final jsonResponse = jsonDecode(response.body);
-        print("DahsBoardApi response: ${response.body}");
-
+        print("UserDetailsApi response: ${response.body}");
         // Parse the JSON response into a model
-        return DashBoardModel.fromJson(jsonResponse);
+        return UserDetailsModel.fromJson(jsonResponse);
       } else {
         // Handle non-200 responses (e.g., 401, 404, etc.)
         print("Request failed with status: ${response.statusCode}");
