@@ -14,15 +14,26 @@ Future<Map<String, String>> getheader() async {
   return headers;
 }
 
+// Future<Map<String, String>> getheader1() async {
+//   final sessionid = await PreferenceService().getString("token");
+//   print(sessionid);
+//   String Token = "Bearer ${sessionid}";
+//   Map<String, String> headers = {
+//     'Authorization': Token,
+//   };
+//   return headers;
+// }
+
 Future<Map<String, String>> getheader1() async {
   final sessionid = await PreferenceService().getString("token");
   print(sessionid);
-  String Token = "Bearer ${sessionid}";
+  String Token = "Bearer $sessionid";
   Map<String, String> headers = {
     'Authorization': Token,
   };
   return headers;
 }
+
 Future<Map<String, String>> getheader2() async {
   final sessionid = await PreferenceService().getString("token");
   print(sessionid);

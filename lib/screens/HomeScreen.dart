@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
+import 'package:telecaliingcrm/providers/DashBoardProvider.dart';
 import 'package:telecaliingcrm/screens/FollowupsScreen.dart';
 import 'package:telecaliingcrm/screens/LeadsScreen.dart';
 import 'package:telecaliingcrm/utils/constants.dart';
@@ -35,6 +37,18 @@ class _HomescreenState extends State<Homescreen> {
     } else {
       print("No image selected.");
     }
+  }
+
+  @override
+  void initState() {
+    GetDashBoardDetails();
+    super.initState();
+  }
+
+  Future<void> GetDashBoardDetails() async {
+    final categories_list_provider =
+    Provider.of<DashboardProvider>(context, listen: false);
+    categories_list_provider.fetchDashBoardDetails();
   }
 
   GlobalKey<CurvedNavigationBarState> _bottomNavigationKey = GlobalKey();
@@ -109,172 +123,184 @@ class _HomescreenState extends State<Homescreen> {
         ),
       ),
 
-      body: SingleChildScrollView(
-        physics: NeverScrollableScrollPhysics(),
-        child: Column(
-          children: [
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 0),
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment:MainAxisAlignment.spaceBetween,
+      body: Consumer<DashboardProvider>(
+        builder: (context, dashboardProvider, child) {
+          final PhoneNumbers = dashboardProvider.phoneNumbers;
+         return SingleChildScrollView(
+            physics: NeverScrollableScrollPhysics(),
+            child: Column(
+              children: [
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+                  child: Column(
                     children: [
-                      container(
-                        margin: EdgeInsets.symmetric(horizontal: 0,vertical: 0),
-                        w: w * 0.44,
-                        context,
-                        colors: color31,
-                        child: Column(
-                          children: [
-                            text(context, '302', 46,
-                                fontfamily: 'Poppins',
-                                fontWeight: FontWeight.w500),
-                            text(context, 'Todays Calls', 14,
-                                fontfamily: 'Inter',
-                                fontWeight: FontWeight.w500),
-                          ],
-                        ),
-                      ),
-                      container(
-                        margin: EdgeInsets.symmetric(horizontal: 0,vertical: 0),
-                        w: w * 0.44,
-                        context,
-                        colors: color32,
-                        child: Column(
-                          children: [
-                            text(context, '300', 46,
-                                fontfamily: 'Poppins',
-                                fontWeight: FontWeight.w500),
-                            text(context, 'Pending Calls', 14,
-                                fontfamily: 'Inter',
-                                fontWeight: FontWeight.w500),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: h * 0.02,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      InkResponse(
-                        onTap:(){
-                         Navigator.push(context, MaterialPageRoute(builder: (context) => LeadScreen(),)) ;
-                       },
-                        child: container(
-                          w: w * 0.44,
-                          margin: EdgeInsets.symmetric(horizontal: 0,vertical: 0),
-                          context,
-                          colors: color33,
-                          child: Column(
-                            children: [
-                              text(context, '302', 46,
-                                  fontfamily: 'Poppins',
-                                  fontWeight: FontWeight.w500),
-                              text(context, 'Leads', 14,
-                                  fontfamily: 'Inter',
-                                  fontWeight: FontWeight.w500),
-                            ],
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          container(
+                            margin: EdgeInsets.symmetric(
+                                horizontal: 0, vertical: 0),
+                            w: w * 0.44,
+                            context,
+                            colors: color31,
+                            child: Column(
+                              children: [
+                                text(context, dashboardProvider.todayCalls.toString(), 46,
+                                    fontfamily: 'Poppins',
+                                    fontWeight: FontWeight.w500),
+                                text(context, 'Todays Calls', 14,
+                                    fontfamily: 'Inter',
+                                    fontWeight: FontWeight.w500),
+                              ],
+                            ),
                           ),
-                        ),
-                      ),
-                     InkResponse(
-                        onTap:(){
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => FollowupsScreen(),)) ;
-                        },
-                       child: container(
-                          w: w * 0.44,
-                          margin: EdgeInsets.symmetric(horizontal: 0,vertical: 0),
-                          context,
-                          colors: color30,
-                          child: Column(
-                            children: [
-                              text(context, '300', 46,
-                                  fontfamily: 'Poppins',
-                                  fontWeight: FontWeight.w500),
-                              text(context, 'Follow Ups', 14,
-                                  fontfamily: 'Inter',
-                                  fontWeight: FontWeight.w500),
-                            ],
+                          container(
+                            margin: EdgeInsets.symmetric(
+                                horizontal: 0, vertical: 0),
+                            w: w * 0.44,
+                            context,
+                            colors: color32,
+                            child: Column(
+                              children: [
+                                text(context,dashboardProvider.pendingCalls.toString(), 46,
+                                    fontfamily: 'Poppins',
+                                    fontWeight: FontWeight.w500),
+                                text(context, 'Pending Calls', 14,
+                                    fontfamily: 'Inter',
+                                    fontWeight: FontWeight.w500),
+                              ],
+                            ),
                           ),
-                        ),
+                        ],
                       ),
-                    ],
-                  ),
-                  SizedBox(height: w * 0.07),
-                  containertext(
-                      context,
-                      color: color28,
-                      width: w * 0.4,
-                      'START NOW',
-                      height: h * 0.1),
-                  SizedBox(height: w * 0.05),
-                  text(context, 'CALLS IN QUEUE', 22,
-                      fontWeight: FontWeight.w500,
-                      fontfamily: 'Poppins',
-                      color: color11,
-                      textdecoration: TextDecoration.underline,
-                      decorationcolor: color34),
-                  SizedBox(height: w * 0.05),
-                  // Use a simple container for wrapping ListView
-                  Container(
-                    height: h * 0.3, // Ensure a fixed height for ListView
-                    child: ListView.builder(
-                      itemCount: 5,
-                      itemBuilder: (context, index) {
-                        return container(
-                          context,
-                          border: Border.all(color: color35, width: 1),
-                          margin: EdgeInsets.only(bottom: 10),
-                          padding: EdgeInsets.all(5),
-                          borderRadius: BorderRadius.circular(15),
-                          child: Row(
-                            children: [
-                              container(
-                                context,
-                                borderRadius: BorderRadius.circular(100),
-                                colors: color3,
-                                child: Icon(
-                                  Icons.call,
-                                  size: 18,
-                                  color: color11,
-                                ),
-                              ),
-                              SizedBox(
-                                width: w * 0.02,
-                              ),
-                              Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                      SizedBox(
+                        height: h * 0.02,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          InkResponse(
+                            onTap: () {
+                              Navigator.push(context, MaterialPageRoute(
+                                builder: (context) => LeadScreen(),));
+                            },
+                            child: container(
+                              w: w * 0.44,
+                              margin: EdgeInsets.symmetric(
+                                  horizontal: 0, vertical: 0),
+                              context,
+                              colors: color33,
+                              child: Column(
                                 children: [
-                                  text(context, 'name', 18,
+                                  text(context,dashboardProvider.leadCount.toString(), 46,
                                       fontfamily: 'Poppins',
-                                      fontWeight: FontWeight.w500,
-                                      color: color11),
-                                  SizedBox(
-                                    height:5,
-                                  ),
-                                  text(context, '1234567890', 18,
-                                      fontfamily: 'Poppins',
-                                      fontWeight: FontWeight.w500,
-                                      color: color11),
+                                      fontWeight: FontWeight.w500),
+                                  text(context, 'Leads', 14,
+                                      fontfamily: 'Inter',
+                                      fontWeight: FontWeight.w500),
                                 ],
-                              )
-                            ],
+                              ),
+                            ),
                           ),
-                        );
-                      },
-                    ),
-                  )
-                ],
-              ),
-            )
-          ],
-        ),
-      ),
+                          InkResponse(
+                            onTap: () {
+                              Navigator.push(context, MaterialPageRoute(
+                                builder: (context) => FollowupsScreen(),));
+                            },
+                            child: container(
+                              w: w * 0.44,
+                              margin: EdgeInsets.symmetric(
+                                  horizontal: 0, vertical: 0),
+                              context,
+                              colors: color30,
+                              child: Column(
+                                children: [
+                                  text(context,dashboardProvider.followup_count.toString(), 46,
+                                      fontfamily: 'Poppins',
+                                      fontWeight: FontWeight.w500),
+                                  text(context, 'Follow Ups', 14,
+                                      fontfamily: 'Inter',
+                                      fontWeight: FontWeight.w500),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: w * 0.07),
+                      containertext(
+                          context,
+                          color: color28,
+                          width: w * 0.4,
+                          'START NOW',
+                          height: h * 0.1),
+                      SizedBox(height: w * 0.05),
+                      text(context, 'CALLS IN QUEUE', 22,
+                          fontWeight: FontWeight.w500,
+                          fontfamily: 'Poppins',
+                          color: color11,
+                          textdecoration: TextDecoration.underline,
+                          decorationcolor: color34),
+                      SizedBox(height: w * 0.05),
+                      // Use a simple container for wrapping ListView
+                      Container(
+                        height: h * 0.3, // Ensure a fixed height for ListView
+                        child: ListView.builder(
+                          itemCount: PhoneNumbers?.length,
+                          itemBuilder: (context, index) {
+                            final data= PhoneNumbers?[index];
+                            return container(
+                              context,
+                              border: Border.all(color: color35, width: 1),
+                              margin: EdgeInsets.only(bottom: 10),
+                              padding: EdgeInsets.all(5),
+                              borderRadius: BorderRadius.circular(15),
+                              child: Row(
+                                children: [
+                                  container(
+                                    context,
+                                    borderRadius: BorderRadius.circular(100),
+                                    colors: color3,
+                                    child: Icon(
+                                      Icons.call,
+                                      size: 18,
+                                      color: color11,
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: w * 0.02,
+                                  ),
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment
+                                        .start,
+                                    children: [
+                                      text(context,(data?.name!="")? data?.name??"Unknown" :"Unknown", 18,
+                                          fontfamily: 'Poppins',
+                                          fontWeight: FontWeight.w500,
+                                          color: color11),
+                                      SizedBox(
+                                        height: 5,
+                                      ),
+                                      text(context, data?.number??"", 18,
+                                          fontfamily: 'Poppins',
+                                          fontWeight: FontWeight.w500,
+                                          color: color11),
+                                    ],
+                                  )
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                      )
+                    ],
+                  ),
+                )
+              ],
+            ),
+          );
+        }),
       endDrawer: Drawer(
 
         child: ListView(

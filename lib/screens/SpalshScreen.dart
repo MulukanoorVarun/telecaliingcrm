@@ -43,7 +43,7 @@ class _SplashState extends State<Splash> with SingleTickerProviderStateMixin {
     SchedulerBinding.instance.addPostFrameCallback((_) {
       Future.delayed(Duration(seconds: 3), () async {
         if(token!=""){
-
+          Navigator.push(context, MaterialPageRoute(builder: (context) => Homescreen()));
         }else{
           Navigator.push(context, MaterialPageRoute(builder: (context) => OnBoardindScreen()));
         }

@@ -31,7 +31,6 @@ class _SignInScreenState extends State<SignInScreen> {
           _validateEmail = !RegExp(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$").hasMatch(_emailController.text)
           ? "Please enter a valid email address (e.g. user@domain.com)"
           : "";
-
       _validatePwd =
           _pwdController.text.isEmpty ? "Please enter a password" : "";
 
@@ -45,21 +44,48 @@ class _SignInScreenState extends State<SignInScreen> {
 
 
   Future<void> SignIn() async {
-    await Userapi.PostSignIn(_emailController.text, _pwdController.text).then((data) => {
+    setState(() {
+      _loading = true;
+    });
+
+    await Userapi.PostSignIn(_emailController.text, _pwdController.text).then((data) {
+      setState(() {
+        _loading = false;
+      });
+
       if (data != null) {
-        setState(() {
-          if (data.s) {
-            _loading=false;
-            PreferenceService().saveString('token',data.accessToken??"");
-            Navigator.push(context, MaterialPageRoute(builder: (context) => Homescreen()));
-          }else{
-            _loading=false;
-            CustomSnackBar.show(context, "${data.settings?.message??""}");
-          }
-        })
+        if (data['access_token'] != null) {
+          // Successful login
+          PreferenceService().saveString('token', data['access_token']);
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => Homescreen()),
+          );
+        } else if (data['error'] != null) {
+          // Authentication error
+          CustomSnackBar.show(context, data['error']);
+        } else if (data['email'] != null || data['password'] != null) {
+          // Validation error
+          String emailError = (data['email'] != null) ? data['email'].join(", ") : "";
+          String passwordError = (data['password'] != null) ? data['password'].join(", ") : "";
+          CustomSnackBar.show(context, "$emailError $passwordError".trim());
+        } else {
+          // Unexpected response
+          CustomSnackBar.show(context, "An unexpected error occurred.");
+        }
+      } else {
+        // Null response
+        CustomSnackBar.show(context, "Failed to sign in. Please try again.");
       }
+    }).catchError((error) {
+      setState(() {
+        _loading = false;
+      });
+      // Handle exceptions
+      CustomSnackBar.show(context, "Error: $error");
     });
   }
+
 
 
   @override
