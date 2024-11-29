@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:telecaliingcrm/screens/HomeScreen.dart';
 
+import '../services/UserApi.dart';
 import '../utils/ShakeWidget.dart';
 import '../utils/constants.dart';
+import '../utils/preferences.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -13,11 +15,11 @@ class SignInScreen extends StatefulWidget {
 }
 
 class _SignInScreenState extends State<SignInScreen> {
-  final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
   final TextEditingController _pwdController = TextEditingController();
-  final FocusNode _focusNodePhone = FocusNode();
+  final FocusNode _focusNodeEmail = FocusNode();
   final FocusNode _focusNodePassword = FocusNode();
-  String _validatePhone = "";
+  String _validateEmail = "";
   String _validatePwd = "";
   bool _loading = false;
   bool _obscureText = true;
@@ -26,20 +28,39 @@ class _SignInScreenState extends State<SignInScreen> {
     setState(() {
       _loading = true;
 
-      _validatePhone =
-          _phoneController.text.isEmpty || _phoneController.text.length < 10
-              ? "Please enter a valid phonenumber"
-              : "";
+          _validateEmail = !RegExp(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$").hasMatch(_emailController.text)
+          ? "Please enter a valid email address (e.g. user@domain.com)"
+          : "";
+
       _validatePwd =
           _pwdController.text.isEmpty ? "Please enter a password" : "";
 
-      if (_validatePhone.isEmpty && _validatePwd.isEmpty) {
-        Navigator.push(context, MaterialPageRoute(builder: (context)=>Homescreen()));
+      if (_validateEmail.isEmpty && _validatePwd.isEmpty) {
+        SignIn();
       } else {
         _loading = false;
       }
     });
   }
+
+
+  Future<void> SignIn() async {
+    await Userapi.PostSignIn(_emailController.text, _pwdController.text).then((data) => {
+      if (data != null) {
+        setState(() {
+          if (data.s) {
+            _loading=false;
+            PreferenceService().saveString('token',data.accessToken??"");
+            Navigator.push(context, MaterialPageRoute(builder: (context) => Homescreen()));
+          }else{
+            _loading=false;
+            CustomSnackBar.show(context, "${data.settings?.message??""}");
+          }
+        })
+      }
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -68,22 +89,21 @@ class _SignInScreenState extends State<SignInScreen> {
             Container(
               height: MediaQuery.of(context).size.height * 0.06,
               child: TextFormField(
-                controller: _phoneController,
-                focusNode: _focusNodePhone,
-                keyboardType: TextInputType.phone,
+                controller: _emailController,
+                focusNode: _focusNodeEmail,
+                keyboardType: TextInputType.text,
                 inputFormatters: [
-                  FilteringTextInputFormatter.digitsOnly, // Only allow digits
-                  LengthLimitingTextInputFormatter(10),
+                  FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z0-9@._-]")),
                 ],
                 cursorColor: color28,
                 onTap: () {
                   setState(() {
-                    _validatePhone = "";
+                    _validateEmail = "";
                   });
                 },
                 onChanged: (v) {
                   setState(() {
-                    _validatePhone = "";
+                    _validateEmail = "";
                   });
                 },
                 decoration: InputDecoration(
@@ -125,7 +145,7 @@ class _SignInScreenState extends State<SignInScreen> {
                 textAlignVertical: TextAlignVertical.center,
               ),
             ),
-            if (_validatePhone.isNotEmpty) ...[
+            if (_validateEmail.isNotEmpty) ...[
               Container(
                 alignment: Alignment.topLeft,
                 margin: EdgeInsets.only(left: 8, bottom: 10, top: 5),
@@ -134,7 +154,7 @@ class _SignInScreenState extends State<SignInScreen> {
                   key: Key("value"),
                   duration: Duration(milliseconds: 700),
                   child: Text(
-                    _validatePhone,
+                    _validateEmail,
                     style: TextStyle(
                       fontFamily: "Poppins",
                       fontSize: 12,
