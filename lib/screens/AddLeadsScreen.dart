@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:telecaliingcrm/utils/constants.dart';
 
+import '../providers/ConnectivityProviders.dart';
+import '../services/otherservices.dart';
 import '../utils/ColorConstants.dart';
 import '../utils/ShakeWidget.dart';
 
@@ -40,10 +43,27 @@ class _AddleadsscreenState extends State<Addleadsscreen> {
   }
 
   @override
+  void initState() {
+    Provider.of<ConnectivityProviders>(context,listen: false);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    Provider.of<ConnectivityProviders>(context, listen: false).dispose();
+    super.dispose();
+  }
+
+
+  @override
   Widget build(BuildContext context) {
     var w = MediaQuery.of(context).size.width;
     var h = MediaQuery.of(context).size.height;
-    return Scaffold(
+    var connectiVityStatus =Provider.of<ConnectivityProviders>(context);
+    return (connectiVityStatus.isDeviceConnected == "ConnectivityResult.wifi" ||
+        connectiVityStatus.isDeviceConnected == "ConnectivityResult.mobile")
+        ?
+     Scaffold(
         backgroundColor: scaffoldbgColor,
         appBar: AppBar(
           title: Text(
@@ -294,6 +314,6 @@ class _AddleadsscreenState extends State<Addleadsscreen> {
         ),
       ),
 
-    );
+    ): NoInternetWidget();
   }
 }

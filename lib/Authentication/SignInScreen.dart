@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:telecaliingcrm/screens/HomeScreen.dart';
-
+import '../providers/ConnectivityProviders.dart';
 import '../services/UserApi.dart';
+import '../services/otherservices.dart';
 import '../utils/ShakeWidget.dart';
 import '../utils/constants.dart';
 import '../utils/preferences.dart';
@@ -85,15 +87,27 @@ class _SignInScreenState extends State<SignInScreen> {
       CustomSnackBar.show(context, "Error: $error");
     });
   }
-
-
+  @override
+  void initState() {
+    Provider.of<ConnectivityProviders>(context,listen: false);
+    super.initState();
+  }
 
   @override
-  Widget build(BuildContext context) {
+  void dispose() {
+    Provider.of<ConnectivityProviders>(context, listen: false).dispose();
+    super.dispose();
+  }
+
+    Widget build(BuildContext context) {
     var w = MediaQuery.of(context).size.width;
     var h = MediaQuery.of(context).size.height;
+    var connectiVityStatus =Provider.of<ConnectivityProviders>(context);
+    return (connectiVityStatus.isDeviceConnected == "ConnectivityResult.wifi" ||
+        connectiVityStatus.isDeviceConnected == "ConnectivityResult.mobile")
+      ?
 
-    return Scaffold(
+    Scaffold(
       backgroundColor: color28,
       body: Padding(
         padding: EdgeInsets.only(top: h * 0.16, left: 16, right: 16),
@@ -300,6 +314,9 @@ class _SignInScreenState extends State<SignInScreen> {
           ],
         ),
       ),
-    );
+    ): NoInternetWidget();
+
   }
 }
+
+

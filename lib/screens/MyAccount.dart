@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:telecaliingcrm/utils/CustomAppBar.dart';
 import 'package:telecaliingcrm/utils/constants.dart';
+
+import '../providers/ConnectivityProviders.dart';
+import '../services/otherservices.dart';
 
 class MyAccount extends StatefulWidget {
   const MyAccount({super.key});
@@ -11,11 +15,25 @@ class MyAccount extends StatefulWidget {
 
 class _MyAccountState extends State<MyAccount> {
   @override
+  void initState() {
+    Provider.of<ConnectivityProviders>(context,listen: false);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    Provider.of<ConnectivityProviders>(context, listen: false).dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     var w = MediaQuery.of(context).size.width;
     var h = MediaQuery.of(context).size.height;
-
-    return Scaffold(
+    var connectiVityStatus =Provider.of<ConnectivityProviders>(context);
+    return (connectiVityStatus.isDeviceConnected == "ConnectivityResult.wifi" ||
+        connectiVityStatus.isDeviceConnected == "ConnectivityResult.mobile")
+        ? Scaffold(
       backgroundColor: color36,
       appBar: CustomAppBar2(title: 'MyAccount', w: w),
       body: Column(
@@ -170,6 +188,6 @@ class _MyAccountState extends State<MyAccount> {
           )
         ],
       ),
-    );
+    ): NoInternetWidget();
   }
 }

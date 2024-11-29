@@ -9,6 +9,9 @@ import 'package:telecaliingcrm/screens/FollowupsScreen.dart';
 import 'package:telecaliingcrm/screens/LeadsScreen.dart';
 import 'package:telecaliingcrm/utils/constants.dart';
 
+import '../providers/ConnectivityProviders.dart';
+import '../services/otherservices.dart';
+
 class Homescreen extends StatefulWidget {
   const Homescreen({super.key});
 
@@ -42,7 +45,14 @@ class _HomescreenState extends State<Homescreen> {
   @override
   void initState() {
     GetDashBoardDetails();
+    Provider.of<ConnectivityProviders>(context,listen: false);
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    Provider.of<ConnectivityProviders>(context, listen: false).dispose();
+    super.dispose();
   }
 
   Future<void> GetDashBoardDetails() async {
@@ -51,13 +61,19 @@ class _HomescreenState extends State<Homescreen> {
     categories_list_provider.fetchDashBoardDetails();
   }
 
+
   GlobalKey<CurvedNavigationBarState> _bottomNavigationKey = GlobalKey();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
     var w = MediaQuery.of(context).size.width;
     var h = MediaQuery.of(context).size.height;
-    return Scaffold(
+    var connectiVityStatus =Provider.of<ConnectivityProviders>(context);
+    return (connectiVityStatus.isDeviceConnected == "ConnectivityResult.wifi" ||
+        connectiVityStatus.isDeviceConnected == "ConnectivityResult.mobile")
+        ?
+
+     Scaffold(
       key: _scaffoldKey,
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(80), // Set the desired height of the AppBar
@@ -613,6 +629,6 @@ class _HomescreenState extends State<Homescreen> {
           //Handle button tap
         },
       ),
-    );
+    ): NoInternetWidget();
   }
 }

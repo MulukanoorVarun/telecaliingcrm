@@ -1,8 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../providers/ConnectivityProviders.dart';
+import '../services/otherservices.dart';
 import '../utils/ColorConstants.dart';
 
-class LeaderboardScreen extends StatelessWidget {
+class LeaderboardScreen extends StatefulWidget {
+  @override
+  State<LeaderboardScreen> createState() => _LeaderboardScreenState();
+}
+
+class _LeaderboardScreenState extends State<LeaderboardScreen> {
   // Sample leaderboard data
   final List<Map<String, dynamic>> leaderboardData = [
     {"leaderNo": 1, "imageUrl": "https://via.placeholder.com/50", "name": "Alice", "score": 1200},
@@ -11,10 +19,25 @@ class LeaderboardScreen extends StatelessWidget {
     {"leaderNo": 4, "imageUrl": "https://via.placeholder.com/50", "name": "David", "score": 1050},
     {"leaderNo": 5, "imageUrl": "https://via.placeholder.com/50", "name": "Eve", "score": 1000},
   ];
+  @override
+  void initState() {
+    Provider.of<ConnectivityProviders>(context,listen: false);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    Provider.of<ConnectivityProviders>(context, listen: false).dispose();
+    super.dispose();
+  }
+
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    var connectiVityStatus =Provider.of<ConnectivityProviders>(context);
+    return (connectiVityStatus.isDeviceConnected == "ConnectivityResult.wifi" ||
+        connectiVityStatus.isDeviceConnected == "ConnectivityResult.mobile")
+        ? Scaffold(
       appBar: AppBar(
         title: Text(
           'Leaderboard',
@@ -57,7 +80,7 @@ class LeaderboardScreen extends StatelessWidget {
                       style: const TextStyle(color: primaryColor, fontSize: 22,fontWeight: FontWeight.bold,fontFamily: "Poppins"),
                     ),
                     const SizedBox(width: 16.0),
-              
+
                     // Rectangular Image
                     ClipRRect(
                       borderRadius: BorderRadius.circular(8.0),
@@ -69,7 +92,7 @@ class LeaderboardScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 16.0),
-              
+
                     // Name and Score
                     Text(
                       entry["name"],
@@ -95,7 +118,7 @@ class LeaderboardScreen extends StatelessWidget {
           },
         ),
       ),
-    );
+    ): NoInternetWidget();
   }
 }
 

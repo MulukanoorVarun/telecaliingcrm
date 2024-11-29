@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:telecaliingcrm/utils/ColorConstants.dart';
 import 'package:telecaliingcrm/utils/constants.dart';
+
+import '../providers/ConnectivityProviders.dart';
+import '../services/otherservices.dart';
 
 class LeadScreen extends StatefulWidget {
   const LeadScreen({super.key});
@@ -11,8 +15,24 @@ class LeadScreen extends StatefulWidget {
 
 class _LeadsScreenState extends State<LeadScreen> {
   @override
+  void initState() {
+    Provider.of<ConnectivityProviders>(context,listen: false);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    Provider.of<ConnectivityProviders>(context, listen: false).dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    var connectiVityStatus =Provider.of<ConnectivityProviders>(context);
+    return (connectiVityStatus.isDeviceConnected == "ConnectivityResult.wifi" ||
+        connectiVityStatus.isDeviceConnected == "ConnectivityResult.mobile")
+        ?
+    Scaffold(
       backgroundColor: scaffoldbgColor,
       appBar: AppBar(
         title: Text(
@@ -121,6 +141,6 @@ class _LeadsScreenState extends State<LeadScreen> {
           ),
         ],
       ),
-    );
+    ): NoInternetWidget();
   }
 }
