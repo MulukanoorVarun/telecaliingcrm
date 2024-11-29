@@ -13,19 +13,10 @@ class LeaderboardScreen extends StatefulWidget {
 }
 
 class _LeaderboardScreenState extends State<LeaderboardScreen> {
-  // Sample leaderboard data
-  // final List<Map<String, dynamic>> leaderboardData = [
-  //   {"leaderNo": 1, "imageUrl": "https://via.placeholder.com/50", "name": "Alice", "score": 1200},
-  //   {"leaderNo": 2, "imageUrl": "https://via.placeholder.com/50", "name": "Bob", "score": 1150},
-  //   {"leaderNo": 3, "imageUrl": "https://via.placeholder.com/50", "name": "Charlie", "score": 1100},
-  //   {"leaderNo": 4, "imageUrl": "https://via.placeholder.com/50", "name": "David", "score": 1050},
-  //   {"leaderNo": 5, "imageUrl": "https://via.placeholder.com/50", "name": "Eve", "score": 1000},
-  // ];
-
-
+  bool isloading=true;
   @override
   void initState() {
-    Leaderboardlist();
+    fetchLeaderboardData();
     Provider.of<ConnectivityProviders>(context,listen: false).initConnectivity();
     super.initState();
   }
@@ -36,20 +27,21 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
     super.dispose();
   }
 
-
   List<LeaderBoardModel> leaderboardData = [];
-
-  Future<void> Leaderboardlist() async {
+  Future<void> fetchLeaderboardData() async {
     var res = await Userapi.getLeaderboard();
-
-    if (res != null && res.is) {
-      setState(() {
-        leaderboardData = res;
-      });
+    setState(() {// Now it returns List<LeaderBoardModel>?
+    if (res != null) {
+        leaderboardData = res as List<LeaderBoardModel>;
+        isloading=false;// Assign the list of LeaderBoardModel objects
     } else {
+      isloading=false;
       print("No leaderboard data found.");
     }
+    });
   }
+
+
 
 
 

@@ -82,9 +82,10 @@ class _HomescreenState extends State<Homescreen> {
 
   List<PhoneNumbers>? phoneNumbers;
   Future<void> GetDashBoardDetails() async {
-    final dashboard_provider =
-        Provider.of<DashboardProvider>(context, listen: false);
+    final dashboard_provider = Provider.of<DashboardProvider>(context, listen: false);
+    final user_details_provider = Provider.of<UserDetailsProvider>(context, listen: false);
     dashboard_provider.fetchDashBoardDetails();
+    user_details_provider.fetchUserDetails();
   }
 
   Future<void> _initializeNotifications() async {
@@ -423,67 +424,69 @@ class _HomescreenState extends State<Homescreen> {
             appBar: PreferredSize(
               preferredSize:
                   Size.fromHeight(80), // Set the desired height of the AppBar
-              child: AppBar(
-                automaticallyImplyLeading: false,
-                backgroundColor: Colors
-                    .transparent, // Make the AppBar background transparent
-                elevation: 0, // Remove the default shadow of the AppBar
-                flexibleSpace: Container(
-                  padding: EdgeInsets.all(16),
-                  margin: EdgeInsets.symmetric(vertical: 8),
-                  decoration: BoxDecoration(
-                    color: Color(0xffffffff), // White color for the container
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.2),
-                        offset: Offset(0, 1),
-                        blurRadius: 1,
-                        spreadRadius: 0,
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    children: [
-                      // App icon
-                      Image.asset(
-                        'assets/telecalling_appicon.webp',
-                        fit: BoxFit.contain,
-                        width: w * 0.14,
-                      ),
-                      Spacer(),
-                      // Greeting message
-                      Container(
-                        padding: EdgeInsets.all(8),
-                        color: color30,
-                        child: Text(
-                          'HI! Ramakrishnamurthy',
-                          style: TextStyle(fontSize: 16),
-                        ),
-                      ),
-                      Spacer(),
-                      // Power icon
-                      Icon(
-                        Icons.power_settings_new,
-                        size: 26,
-                        color: color11,
-                      ),
-                      SizedBox(width: 18),
-                      // Menu icon
-                      InkResponse(
-                        onTap: () {
-                          _scaffoldKey.currentState?.openEndDrawer();
-                        },
-                        child: Icon(
-                          Icons.menu,
-                          size: 26,
-                          color: color11,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                actions: [Container()],
+              child: Consumer<UserDetailsProvider>(
+    builder: (context, userDetailsProvider, child) {
+     return AppBar(
+        automaticallyImplyLeading: false,
+        backgroundColor: Colors.transparent,
+        // Make the AppBar background transparent
+        elevation: 0,
+        // Remove the default shadow of the AppBar
+        flexibleSpace: Container(
+          padding: EdgeInsets.all(16),
+          margin: EdgeInsets.symmetric(vertical: 8),
+          decoration: BoxDecoration(
+            color: Color(0xffffffff), // White color for the container
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.2),
+                offset: Offset(0, 1),
+                blurRadius: 1,
+                spreadRadius: 0,
               ),
+            ],
+          ),
+          child: Row(
+            children: [
+              // App icon
+              Image.asset(
+                'assets/telecalling_appicon.webp',
+                fit: BoxFit.contain,
+                width: w * 0.14,
+              ),
+              SizedBox(width: 10,),
+              Text(
+                userDetailsProvider.userDetails?.username?.isNotEmpty ?? false
+                    ? userDetailsProvider.userDetails!.username![0].toUpperCase() +
+                    userDetailsProvider.userDetails!.username!.substring(1)
+                    : "",
+                style: TextStyle(fontSize: 20,fontFamily: "Poppins",fontWeight: FontWeight.w500),
+              ),
+              Spacer(),
+              // Power icon
+              Icon(
+                Icons.power_settings_new,
+                size: 26,
+                color: color11,
+              ),
+              SizedBox(width: 18),
+              // Menu icon
+              InkResponse(
+                onTap: () {
+                  _scaffoldKey.currentState?.openEndDrawer();
+                },
+                child: Icon(
+                  Icons.menu,
+                  size: 26,
+                  color: color11,
+                ),
+              ),
+            ],
+          ),
+        ),
+        actions: [Container()],
+      );
+    }),
             ),
             body: Consumer<DashboardProvider>(
                 builder: (context, dashboardProvider, child) {
@@ -716,23 +719,40 @@ class _HomescreenState extends State<Homescreen> {
                           child: Container(
                             // Adjust your container widget here
                             decoration: BoxDecoration(
-                              color: color28,
+                              color: primaryColor,
                               borderRadius: BorderRadius.circular(0),
                             ),
                             child: Center(
                               child: Row(
                                 children: [
-                                  // CircleAvatar with Profile Image
+                                  SizedBox(width: 10,),
                                   CircleAvatar(
-                                    radius: 22,
+                                    radius: 30,
                                     backgroundColor: Colors.grey,
-                                    backgroundImage: userDetailsProvider
-                                                .userDetails?.photo !=
-                                            null
-                                        ? NetworkImage(userDetailsProvider
-                                            .userDetails!.photo!)
-                                        : AssetImage('assets/personProfile.png')
-                                            as ImageProvider,
+                                    child: userDetailsProvider.userDetails?.photo != null ?
+                                    Image.network(
+                                          userDetailsProvider.userDetails!.photo!,
+                                          fit: BoxFit.cover,
+                                          width: 60, // Ensure it's sized to fit the CircleAvatar
+                                          height: 60, // Ensure it's sized to fit the CircleAvatar
+                                        )
+                                        : userDetailsProvider.userDetails?.username != null
+                                        ? // Show the first character of the user's name if no photo
+                                    Text(
+                                      userDetailsProvider.userDetails!.username![0].toUpperCase(),
+                                      style: TextStyle(
+                                        fontSize: 30,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    )
+                                        : // If there's no photo or name, show a fallback image
+                                    Image.asset(
+                                      'assets/personProfile.png',
+                                      fit: BoxFit.cover,
+                                      width: 60, // Ensure it's sized to fit the CircleAvatar
+                                      height: 60, // Ensure it's sized to fit the CircleAvatar
+                                    ),
                                   ),
                                   SizedBox(
                                       width: MediaQuery.of(context).size.width *
@@ -743,16 +763,13 @@ class _HomescreenState extends State<Homescreen> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      text(
-                                        context,
-                                        userDetailsProvider
-                                                .userDetails?.username ??
-                                            "Guest User",
-                                        18,
-                                        fontWeight: FontWeight.w500,
-                                        color: color4,
-                                        fontfamily: 'Poppins',
-                                      ),
+                                        Text(
+                                          userDetailsProvider.userDetails?.username?.isNotEmpty ?? false
+                                              ? userDetailsProvider.userDetails!.username![0].toUpperCase() +
+                                              userDetailsProvider.userDetails!.username!.substring(1)
+                                              : "",
+                                          style: TextStyle(fontSize: 20,fontFamily: "Poppins",fontWeight: FontWeight.w500,color: Colors.white),
+                                        ),
                                       SizedBox(
                                           height: MediaQuery.of(context)
                                                   .size

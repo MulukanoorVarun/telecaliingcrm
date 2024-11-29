@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:telecaliingcrm/screens/AddLeadsScreen.dart';
 import 'package:telecaliingcrm/utils/ColorConstants.dart';
 import 'package:telecaliingcrm/utils/constants.dart';
 
@@ -75,11 +76,41 @@ class _LeadInformationState extends State<LeadInformation> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          text(context, "ABCD ENTERPRISES", 17,
-                              fontWeight: FontWeight.w600),
-                          text(context, "9988776650", 20,
-                              fontWeight: FontWeight.w500,
-                              color: Color(0xff949494)),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Column(
+                                children: [
+                                  text(context, "ABCD ENTERPRISES", 17,
+                                      fontWeight: FontWeight.w600),
+                                  text(context, "9988776650", 20,
+                                      fontWeight: FontWeight.w500,
+                                      color: Color(0xff949494)),
+                                ],
+                              ),
+
+                              Container(
+                                padding: EdgeInsets.all(0.0),
+                                decoration: BoxDecoration(
+                                  color: Colors.blueAccent, // background color of the container
+                                  borderRadius: BorderRadius.circular(10), // rounded corners
+                                ),
+                                child: IconButton(
+                                  icon: Icon(
+                                    Icons.edit,
+                                    color: Colors.white, // Icon color
+                                  ),
+                                  onPressed: () {
+                                    // Action when the edit button is pressed
+                                    Navigator.push(context, MaterialPageRoute(builder: (context) => Addleadsscreen(),));
+                                    print('Edit button pressed');
+                                  },
+                                  tooltip: 'Edit',
+                                ),
+                              ),
+
+                            ],
+                          ),
                           Divider(
                             height: 1.8,
                             thickness: 0.8,

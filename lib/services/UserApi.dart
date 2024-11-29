@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:telecaliingcrm/model/DashBoardModel.dart';
+import 'package:telecaliingcrm/model/LeadsModel.dart';
 import 'package:telecaliingcrm/model/LeadeBoardModel.dart';
 import 'package:telecaliingcrm/model/UserDetailsModel.dart';
 import 'package:telecaliingcrm/services/otherservices.dart';
@@ -79,6 +80,11 @@ class Userapi {
   }
 
   static Future<UserDetailsModel?> getUserDetails() async {
+    final Map<String,String> body ={
+      'email': 'bharath@pixl.in',
+      'password': 'Vaishu@987#',
+    };
+
     try {
       final url = Uri.parse("${host}/api/profile");
       final headers = await getheader1();
@@ -149,11 +155,10 @@ class Userapi {
   }
 
 
-
-  static Future<LeaderBoardModel?> getLeaderboard() async{
+  static Future<LeadsModel?> getLeads() async {
 
     try {
-      final url = Uri.parse("${host}/api/get_leader_board");
+      final url = Uri.parse("${host}/api/get_lead_calls");
       final headers = await getheader1();
       final response = await http.post(
         url,
@@ -161,10 +166,41 @@ class Userapi {
       );
       if (response.statusCode == 200) {
         final jsonResponse = jsonDecode(response.body);
-        print("getleaderboard response: ${response.body}");
+        print("getLeads response: ${response.body}");
+        return LeadsModel.fromJson(jsonResponse);
+      } else {
+        print("Request failed with status: ${response.statusCode}");
+        return null;
+      }
+    } catch (e) {
+      // Log any errors
+      print("Error occurred in getUserDetails: $e");
+      return null;
+    }
+  }
 
-        // Parse the JSON response into a model
-        return LeaderBoardModel.fromJson(jsonResponse);
+  static Future<List<LeaderBoardModel>?> getLeaderboard() async {
+    try {
+      final url = Uri.parse("${host}/api/get_leader_board");
+      final headers = await getheader1();  // Assuming this method provides the headers
+      final response = await http.post(
+        url,
+        headers: headers,
+      );
+
+      if (response.statusCode == 200) {
+        final jsonResponse = jsonDecode(response.body);
+        print("getLeaderboard response: ${response.body}");
+
+        // Ensure the response is a list and map it to a List<LeaderBoardModel>
+        if (jsonResponse is List) {
+          return jsonResponse
+              .map<LeaderBoardModel>((item) => LeaderBoardModel.fromJson(item))
+              .toList();
+        } else {
+          print("Expected a list but got ${jsonResponse.runtimeType}");
+          return null;
+        }
       } else {
         // Handle non-200 responses (e.g., 401, 404, etc.)
         print("Request failed with status: ${response.statusCode}");
@@ -176,6 +212,8 @@ class Userapi {
       return null;
     }
   }
+
+
 
 
 
