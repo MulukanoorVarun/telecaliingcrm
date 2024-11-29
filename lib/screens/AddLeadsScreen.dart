@@ -44,7 +44,7 @@ class _AddleadsscreenState extends State<Addleadsscreen> {
 
   @override
   void initState() {
-    Provider.of<ConnectivityProviders>(context,listen: false);
+    Provider.of<ConnectivityProviders>(context,listen: false).initConnectivity();
     super.initState();
   }
 

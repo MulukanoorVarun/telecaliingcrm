@@ -25,7 +25,7 @@ class _UpdatepasswordscreenState extends State<Updatepasswordscreen> {
   String _validateNewPassword = "";
   @override
   void initState() {
-    Provider.of<ConnectivityProviders>(context,listen: false);
+    Provider.of<ConnectivityProviders>(context,listen: false).initConnectivity();
     super.initState();
   }
 

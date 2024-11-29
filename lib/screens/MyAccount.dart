@@ -16,7 +16,7 @@ class MyAccount extends StatefulWidget {
 class _MyAccountState extends State<MyAccount> {
   @override
   void initState() {
-    Provider.of<ConnectivityProviders>(context,listen: false);
+    Provider.of<ConnectivityProviders>(context,listen: false).initConnectivity();
     super.initState();
   }
 

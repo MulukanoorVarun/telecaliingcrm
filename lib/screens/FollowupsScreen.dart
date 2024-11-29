@@ -16,7 +16,7 @@ class FollowupsScreen extends StatefulWidget {
 class _FollowupsScreenState extends State<FollowupsScreen> {
   @override
   void initState() {
-    Provider.of<ConnectivityProviders>(context,listen: false);
+    Provider.of<ConnectivityProviders>(context,listen: false).initConnectivity();
     super.initState();
   }
 

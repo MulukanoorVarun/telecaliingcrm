@@ -16,7 +16,7 @@ class LeadInformation extends StatefulWidget {
 class _LeadInformationState extends State<LeadInformation> {
   @override
   void initState() {
-    Provider.of<ConnectivityProviders>(context,listen: false);
+    Provider.of<ConnectivityProviders>(context,listen: false).initConnectivity();
     super.initState();
   }
 

@@ -16,7 +16,7 @@ class LeadScreen extends StatefulWidget {
 class _LeadsScreenState extends State<LeadScreen> {
   @override
   void initState() {
-    Provider.of<ConnectivityProviders>(context,listen: false);
+    Provider.of<ConnectivityProviders>(context,listen: false).initConnectivity();
     super.initState();
   }
 
