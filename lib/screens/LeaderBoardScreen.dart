@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:telecaliingcrm/Services/UserApi.dart';
 
+import '../model/LeadeBoardModel.dart';
 import '../providers/ConnectivityProviders.dart';
 import '../services/otherservices.dart';
 import '../utils/ColorConstants.dart';
@@ -12,15 +14,18 @@ class LeaderboardScreen extends StatefulWidget {
 
 class _LeaderboardScreenState extends State<LeaderboardScreen> {
   // Sample leaderboard data
-  final List<Map<String, dynamic>> leaderboardData = [
-    {"leaderNo": 1, "imageUrl": "https://via.placeholder.com/50", "name": "Alice", "score": 1200},
-    {"leaderNo": 2, "imageUrl": "https://via.placeholder.com/50", "name": "Bob", "score": 1150},
-    {"leaderNo": 3, "imageUrl": "https://via.placeholder.com/50", "name": "Charlie", "score": 1100},
-    {"leaderNo": 4, "imageUrl": "https://via.placeholder.com/50", "name": "David", "score": 1050},
-    {"leaderNo": 5, "imageUrl": "https://via.placeholder.com/50", "name": "Eve", "score": 1000},
-  ];
+  // final List<Map<String, dynamic>> leaderboardData = [
+  //   {"leaderNo": 1, "imageUrl": "https://via.placeholder.com/50", "name": "Alice", "score": 1200},
+  //   {"leaderNo": 2, "imageUrl": "https://via.placeholder.com/50", "name": "Bob", "score": 1150},
+  //   {"leaderNo": 3, "imageUrl": "https://via.placeholder.com/50", "name": "Charlie", "score": 1100},
+  //   {"leaderNo": 4, "imageUrl": "https://via.placeholder.com/50", "name": "David", "score": 1050},
+  //   {"leaderNo": 5, "imageUrl": "https://via.placeholder.com/50", "name": "Eve", "score": 1000},
+  // ];
+
+
   @override
   void initState() {
+    Leaderboardlist();
     Provider.of<ConnectivityProviders>(context,listen: false).initConnectivity();
     super.initState();
   }
@@ -30,6 +35,26 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
     Provider.of<ConnectivityProviders>(context, listen: false).dispose();
     super.dispose();
   }
+
+
+  List<LeaderBoardModel> leaderboardData = [];
+
+  Future<void> Leaderboardlist() async {
+    var res = await Userapi.getLeaderboard();
+
+    if (res != null && res.is) {
+      setState(() {
+        leaderboardData = res;
+      });
+    } else {
+      print("No leaderboard data found.");
+    }
+  }
+
+
+
+
+
 
 
   @override
@@ -63,7 +88,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
         child: ListView.builder(
           itemCount: leaderboardData.length,
           itemBuilder: (context, index) {
-            final entry = leaderboardData[index];
+            final leadboard = leaderboardData[index];
             return Card(
               child: Container(
                 margin: const EdgeInsets.symmetric(vertical: 8.0),
@@ -75,27 +100,27 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                 child: Row(
                   children: [
                     // Leader Number
-                    Text(
-                      entry["leaderNo"].toString(),
-                      style: const TextStyle(color: primaryColor, fontSize: 22,fontWeight: FontWeight.bold,fontFamily: "Poppins"),
-                    ),
-                    const SizedBox(width: 16.0),
+                    // Text(
+                    //   entry["leaderNo"].toString(),
+                    //   style: const TextStyle(color: primaryColor, fontSize: 22,fontWeight: FontWeight.bold,fontFamily: "Poppins"),
+                    // ),
+                    // const SizedBox(width: 16.0),
 
                     // Rectangular Image
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(8.0),
-                      child: Image.network(
-                        entry["imageUrl"],
-                        width: 50.0,
-                        height: 50.0,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
+                    // ClipRRect(
+                    //   borderRadius: BorderRadius.circular(8.0),
+                    //   child: Image.network(
+                    //     entry["imageUrl"],
+                    //     width: 50.0,
+                    //     height: 50.0,
+                    //     fit: BoxFit.cover,
+                    //   ),
+                    // ),
                     const SizedBox(width: 16.0),
 
                     // Name and Score
                     Text(
-                      entry["name"],
+                      leadboard.name??"",
                       style: const TextStyle(
                         fontSize: 16.0,
                         fontFamily: "Poppins",
@@ -104,7 +129,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                     ),
                     Spacer(),
                     Text(
-                      "${entry["score"]}",
+                      leadboard.count.toString(),
                       style: const TextStyle(
                         fontSize: 22.0,
                         fontFamily: "Poppins",

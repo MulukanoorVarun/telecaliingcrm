@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:telecaliingcrm/model/DashBoardModel.dart';
+import 'package:telecaliingcrm/model/LeadeBoardModel.dart';
 import 'package:telecaliingcrm/model/UserDetailsModel.dart';
 import 'package:telecaliingcrm/services/otherservices.dart';
 import '../model/RegisterModel.dart';
@@ -78,11 +79,6 @@ class Userapi {
   }
 
   static Future<UserDetailsModel?> getUserDetails() async {
-    final Map<String,String> body ={
-      'email': 'bharath@pixl.in',
-      'password': 'Vaishu@987#',
-    };
-
     try {
       final url = Uri.parse("${host}/api/profile");
       final headers = await getheader1();
@@ -153,6 +149,33 @@ class Userapi {
   }
 
 
+
+  static Future<LeaderBoardModel?> getLeaderboard() async{
+
+    try {
+      final url = Uri.parse("${host}/api/get_leader_board");
+      final headers = await getheader1();
+      final response = await http.post(
+        url,
+        headers: headers,
+      );
+      if (response.statusCode == 200) {
+        final jsonResponse = jsonDecode(response.body);
+        print("getleaderboard response: ${response.body}");
+
+        // Parse the JSON response into a model
+        return LeaderBoardModel.fromJson(jsonResponse);
+      } else {
+        // Handle non-200 responses (e.g., 401, 404, etc.)
+        print("Request failed with status: ${response.statusCode}");
+        return null;
+      }
+    } catch (e) {
+      // Catch and log any errors
+      print("Error occurred: $e");
+      return null;
+    }
+  }
 
 
 

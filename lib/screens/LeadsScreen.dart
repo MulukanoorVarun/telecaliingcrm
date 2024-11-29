@@ -22,9 +22,13 @@ class _LeadsScreenState extends State<LeadScreen> {
 
   @override
   void dispose() {
+
     Provider.of<ConnectivityProviders>(context, listen: false).dispose();
     super.dispose();
   }
+
+
+
 
   @override
   Widget build(BuildContext context) {
