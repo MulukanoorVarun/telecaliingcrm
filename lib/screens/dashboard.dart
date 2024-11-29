@@ -40,7 +40,7 @@ class _DashboardState extends State<Dashboard> {
         backgroundColor: color4,
         color: color11.withOpacity(0.1),
         buttonBackgroundColor: color3,
-        index: _selectedIndex,
+        index:_selectedIndex,
         items: <Widget>[
           Icon(Icons.home, size: 30),
           Icon(Icons.call, size: 30),
