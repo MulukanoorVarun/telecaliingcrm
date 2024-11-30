@@ -9,6 +9,8 @@ import 'package:telecaliingcrm/services/otherservices.dart';
 
 import '../model/ViewInfoModel.dart';
 
+import '../model/GetFollowUpModel.dart';
+
 class Userapi {
   static String host = "https://api.telecallingcrm.com";
 
@@ -224,7 +226,7 @@ class Userapi {
         "remarks": remarks,
         "lead_stage_id": lead_id,
       };
-print("postAddLeads??${data}");
+       print("postAddLeads??${data}");
       final url = Uri.parse("${host}/api/add-lead");
       final headers = await getheader1();
       final response = await http.post(
@@ -277,6 +279,29 @@ print("postAddLeads??${data}");
       }
     } catch (e) {
       print("Error occurred: $e");
+      return null;
+    }
+  }
+
+  static Future<GetFollowUpModel?> getFollowup() async {
+    try {
+      final url = Uri.parse("${host}/api/follow_up_list");
+      final headers = await getheader1();
+      final response = await http.get(
+        url,
+        headers: headers,
+      );
+      if (response.statusCode == 200) {
+        final jsonResponse = jsonDecode(response.body);
+        print("getFollowup response: ${response.body}");
+        return GetFollowUpModel.fromJson(jsonResponse);
+      } else {
+        print("Request failed with status: ${response.statusCode}");
+        return null;
+      }
+    } catch (e) {
+      // Log any errors
+      print("Error occurred in getUserDetails: $e");
       return null;
     }
   }

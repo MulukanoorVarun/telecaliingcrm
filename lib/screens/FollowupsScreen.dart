@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import 'package:telecaliingcrm/utils/ColorConstants.dart';
 import 'package:telecaliingcrm/utils/constants.dart';
 
+import '../Services/UserApi.dart';
+import '../model/GetFollowUpModel.dart';
 import '../providers/ConnectivityProviders.dart';
 import '../services/otherservices.dart';
 
@@ -16,6 +18,7 @@ class FollowupsScreen extends StatefulWidget {
 class _FollowupsScreenState extends State<FollowupsScreen> {
   @override
   void initState() {
+    getFollowUpApi();
     Provider.of<ConnectivityProviders>(context,listen: false).initConnectivity();
     super.initState();
   }
@@ -25,6 +28,28 @@ class _FollowupsScreenState extends State<FollowupsScreen> {
     Provider.of<ConnectivityProviders>(context, listen: false).dispose();
     super.dispose();
   }
+ bool is_loading =true;
+
+  List<FollowUp> data=[];
+
+  void getFollowUpApi() async {
+
+    var result = await Userapi.getFollowup();
+
+    setState(() {
+
+      if (result?.status == true) {
+        data=result?.data??[];
+        is_loading=false;
+        print("Response: $result");
+      } else {
+        is_loading=false;
+        print("Failed to update the call status.");
+      }
+    });
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -61,25 +86,26 @@ class _FollowupsScreenState extends State<FollowupsScreen> {
           ),
           Expanded(
             child: ListView.builder(
-                itemCount: 10,
+                itemCount: data.length,
                 itemBuilder: (context, index) {
+                  final followup_List=data[index];
                   return container(
                     context,
                     margin: EdgeInsets.symmetric(vertical: 5, horizontal: 16),
                     child: Column(
                       children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            text(context, "7382373824", 20),
-                            text(context, "Followup : 24-10-1988", 15),
-                          ],
-                        ),
-                        Divider(
-                          height: 1.8,
-                          thickness: 0.8,
-                          color: Colors.black.withOpacity(0.25),
-                        ),
+                        // Row(
+                        //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        //   children: [
+                        //     text(context, "7382373824", 20),
+                        //     text(context, "Followup : 24-10-1988", 15),
+                        //   ],
+                        // ),
+                        // Divider(
+                        //   height: 1.8,
+                        //   thickness: 0.8,
+                        //   color: Colors.black.withOpacity(0.25),
+                        // ),
                         SizedBox(height: 5),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -113,10 +139,10 @@ class _FollowupsScreenState extends State<FollowupsScreen> {
                                           decorationcolor: color11)
                                     ],
                                   ),
-                                  text(context, "ABCD ENTERPRISES", 18),
+                                  text(context, '${followup_List.name}', 18),
                                   text(
                                       context,
-                                      "Client told to work on the proposal and send it to me on monday",
+                                      '${followup_List.remarks}',
                                       14,
                                       maxLines: 3,
                                       textAlign: TextAlign.start),
