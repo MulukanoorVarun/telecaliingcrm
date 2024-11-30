@@ -99,13 +99,28 @@ class _AddleadsscreenState extends State<Addleadsscreen> {
   }
 
   Future<void> AddLeads() async {
-    var res = await Userapi.postAddLeads(
+    try {
+      final res = await Userapi.postAddLeads(
         _nameController.text,
         _mobileController.text,
         _selectedDate.toString(),
         _remarksController.text,
-        _leadStatus.toString());
+        _leadStatus.toString(),
+      );
+
+      if (res != null) {
+        // Handle success
+        print("Lead added successfully: $res");
+      } else {
+        // Handle null response
+        print("Failed to add lead: Response is null.");
+      }
+    } catch (e) {
+      // Handle any errors
+      print("Error occurred while adding lead: $e");
+    }
   }
+
 
   @override
   Widget build(BuildContext context) {

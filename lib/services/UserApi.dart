@@ -205,45 +205,48 @@ class Userapi {
       return null;
     }
   }
-
-  static Future<void> postAddLeads(String name, String num,
-      String followup_date, String remarks, String lead_id) async {
+  static Future<Map<String, dynamic>?> postAddLeads(
+      String name,
+      String num,
+      String followup_date,
+      String remarks,
+      String lead_id,
+      ) async {
     try {
       final Map<String, String> data = {
-        "name": name,
-        "number": num,
+        "name": "charan",
+        "number": "76749525216",
         "followup_date": followup_date,
-        "lead_stage_id": lead_id,
+        "remarks": "ntg",
+        "lead_stage_id": "10",
+
       };
-      final url = Uri.parse("${host}/api/add-leads");
+
+      final url = Uri.parse("${host}/api/add-lead");
       final headers = await getheader1();
       final response = await http.post(
         url,
-        headers:headers,
+        headers: headers,
         body: jsonEncode(data),
       );
 
-      // Check if the response body is empty
       if (response.body.isEmpty) {
         print("Empty response body.");
         return null;
       }
 
-      // Parse the response body
       final jsonResponse = jsonDecode(response.body);
 
       if (response.statusCode == 200) {
-        // Success: Return the parsed response
         print("postAddLeads successful: $jsonResponse");
         return jsonResponse;
       } else {
-        // Handle other status codes and return the response
         print(
-            "Request failed with status: ${response.statusCode}, body: $jsonResponse");
+          "Request failed with status: ${response.statusCode}, body: $jsonResponse",
+        );
         return jsonResponse;
       }
     } catch (e) {
-      // Catch and log any errors
       print("Error occurred: $e");
       return null;
     }
