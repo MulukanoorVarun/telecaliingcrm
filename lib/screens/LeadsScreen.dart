@@ -148,7 +148,7 @@ class _LeadsScreenState extends State<LeadScreen> {
                                               color: color11)),
                                       InkWell(
                                         onTap: (){
-                                          Navigator.push(context, MaterialPageRoute(builder: (context) => LeadInformation(),));
+                                          Navigator.push(context, MaterialPageRoute(builder: (context) => LeadInformation(ID:leads.id.toString() ,),));
                                         },
                                         child: Padding(
                                           padding: const EdgeInsets.only(right: 8.0),

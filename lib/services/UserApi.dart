@@ -7,6 +7,8 @@ import 'package:telecaliingcrm/model/LeadeBoardModel.dart';
 import 'package:telecaliingcrm/model/UserDetailsModel.dart';
 import 'package:telecaliingcrm/services/otherservices.dart';
 
+import '../model/ViewInfoModel.dart';
+
 class Userapi {
   static String host = "https://api.telecallingcrm.com";
 
@@ -246,6 +248,32 @@ print("postAddLeads??${data}");
           "Request failed with status: ${response.statusCode}, body: $jsonResponse",
         );
         return jsonResponse;
+      }
+    } catch (e) {
+      print("Error occurred: $e");
+      return null;
+    }
+  }
+
+
+
+  static Future<ViewInfoModel?> getViewInfo(ID) async {
+    try {
+      final url = Uri.parse("${host}/api/view-info/$ID");
+      final headers = await getheader1();
+      final response = await http.get(
+        url,
+        headers: headers,
+      );
+
+      if (response.statusCode == 200) {
+        final jsonResponse = jsonDecode(response.body);
+        print("getViewInfo response: ${response.body}");
+        return ViewInfoModel.fromJson(jsonResponse);
+
+      } else {
+        print("Request failed with status: ${response.statusCode}");
+        return null;
       }
     } catch (e) {
       print("Error occurred: $e");

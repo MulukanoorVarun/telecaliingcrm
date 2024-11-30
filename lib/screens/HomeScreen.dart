@@ -770,41 +770,34 @@ class _HomescreenState extends State<Homescreen> {
                                   CircleAvatar(
                                     radius: 30,
                                     backgroundColor: Colors.grey,
-                                    child: userDetailsProvider
-                                                .userDetails?.photo !=
-                                            null
-                                        ? Image.network(
-                                            userDetailsProvider
-                                                .userDetails!.photo!,
-                                            fit: BoxFit.cover,
-                                            width:
-                                                60, // Ensure it's sized to fit the CircleAvatar
-                                            height:
-                                                60, // Ensure it's sized to fit the CircleAvatar
-                                          )
-                                        : userDetailsProvider
-                                                    .userDetails?.username !=
-                                                null
-                                            ? // Show the first character of the user's name if no photo
-                                            Text(
-                                                userDetailsProvider
-                                                    .userDetails!.username![0]
-                                                    .toUpperCase(),
-                                                style: TextStyle(
-                                                  fontSize: 30,
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              )
-                                            : // If there's no photo or name, show a fallback image
-                                            Image.asset(
-                                                'assets/personProfile.png',
-                                                fit: BoxFit.cover,
-                                                width:
-                                                    60, // Ensure it's sized to fit the CircleAvatar
-                                                height:
-                                                    60, // Ensure it's sized to fit the CircleAvatar
-                                              ),
+                                    child: userDetailsProvider.userDetails?.photo != null
+                                        ? ClipOval(  // Ensure the image is clipped into a circle
+                                      child: Image.network(
+                                        userDetailsProvider.userDetails!.photo!,
+                                        fit: BoxFit.cover,
+                                        width: 60, // Ensure it's sized to fit the CircleAvatar
+                                        height: 60, // Ensure it's sized to fit the CircleAvatar
+                                      ),
+                                    )
+                                        : userDetailsProvider.userDetails?.username != null
+                                        ? // Show the first character of the user's name if no photo
+                                    Text(
+                                      userDetailsProvider.userDetails!.username![0].toUpperCase(),
+                                      style: TextStyle(
+                                        fontSize: 30,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    )
+                                        : // If there's no photo or name, show a fallback image
+                                    ClipOval(  // Ensure fallback image is also clipped into a circle
+                                      child: Image.asset(
+                                        'assets/personProfile.png',
+                                        fit: BoxFit.cover,
+                                        width: 60, // Ensure it's sized to fit the CircleAvatar
+                                        height: 60, // Ensure it's sized to fit the CircleAvatar
+                                      ),
+                                    ),
                                   ),
                                   SizedBox(
                                       width: MediaQuery.of(context).size.width *

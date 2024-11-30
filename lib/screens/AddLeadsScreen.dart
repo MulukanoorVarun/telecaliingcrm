@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:telecaliingcrm/Services/UserApi.dart';
 import 'package:telecaliingcrm/utils/constants.dart';
@@ -20,7 +21,8 @@ class _AddleadsscreenState extends State<Addleadsscreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _mobileController = TextEditingController();
   final TextEditingController _remarksController = TextEditingController();
-  DateTime? _selectedDate;
+
+  String formattedDate="";
   String? _leadStatus;
   bool _loading = false;
   String _validateFullName = "";
@@ -29,19 +31,6 @@ class _AddleadsscreenState extends State<Addleadsscreen> {
   String _validateRemarks = "";
   String _validateStatus = "";
 
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: _selectedDate,
-      firstDate: DateTime.now(),
-      lastDate: DateTime(2101),
-    );
-    if (picked != null && picked != _selectedDate) {
-      setState(() {
-        _selectedDate = picked;
-      });
-    }
-  }
 
   @override
   void initState() {
@@ -103,7 +92,7 @@ class _AddleadsscreenState extends State<Addleadsscreen> {
       final res = await Userapi.postAddLeads(
         _nameController.text,
         _mobileController.text,
-        _selectedDate.toString(),
+        formattedDate,
         _remarksController.text,
         _leadStatus.toString(),
       );
@@ -279,9 +268,7 @@ class _AddleadsscreenState extends State<Addleadsscreen> {
                     // Date Field
                     TextFormField(
                       controller: TextEditingController(
-                        text: _selectedDate == null
-                            ? ''
-                            : '${_selectedDate!.year}-${_selectedDate!.month.toString().padLeft(2, '0')}-${_selectedDate!.day.toString().padLeft(2, '0')}',
+                        text: formattedDate
                       ),
                       decoration: InputDecoration(
                         contentPadding: const EdgeInsets.symmetric(
@@ -323,13 +310,21 @@ class _AddleadsscreenState extends State<Addleadsscreen> {
                       onTap: () async {
                         final DateTime? picked = await showDatePicker(
                           context: context,
-                          initialDate: _selectedDate ?? DateTime.now(),
+                          initialDate: DateTime.now(),
                           firstDate: DateTime.now(),
                           lastDate: DateTime(2101),
                         );
-                        if (picked != null && picked != _selectedDate) {
+
+                        if (picked != null) {
                           setState(() {
-                            _selectedDate = picked;
+                            // Strip the time part by creating a new DateTime with only the date
+                            DateTime _selectedDate = DateTime(picked.year, picked.month, picked.day);
+
+                            // Format the date as a string (yyyy-MM-dd)
+                            formattedDate = DateFormat('yyyy-MM-dd').format(_selectedDate);
+
+                            // Print the formatted date
+                            print("Formatted Date: $formattedDate");
                           });
                         }
                       },
@@ -340,9 +335,7 @@ class _AddleadsscreenState extends State<Addleadsscreen> {
                         return null;
                       },
                     ),
-
                     const SizedBox(height: 16),
-
                     // Remarks Field
                     TextFormField(
                       controller: _remarksController,

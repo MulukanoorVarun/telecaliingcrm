@@ -7,7 +7,7 @@ class UserDetailsModel {
   int? adminId;
   String? expiryDate;
   String? status;
-  Null? photo;
+  String? photo;
   Null? whatsappapikey;
 
   UserDetailsModel(
