@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:telecaliingcrm/utils/ColorConstants.dart';
 import 'package:telecaliingcrm/utils/constants.dart';
@@ -48,6 +49,12 @@ class _FollowupsScreenState extends State<FollowupsScreen> {
       }
     });
   }
+  String formatDate(String dateTime) {
+    // Parse the string into a DateTime object
+    final DateTime parsedDate = DateTime.parse(dateTime);
+    // Format the DateTime to only display the date
+    return "${parsedDate.year}-${parsedDate.month.toString().padLeft(2, '0')}-${parsedDate.day.toString().padLeft(2, '0')}";
+  }
 
 
 
@@ -84,6 +91,7 @@ class _FollowupsScreenState extends State<FollowupsScreen> {
           SizedBox(
             height: 10,
           ),
+
           Expanded(
             child: ListView.builder(
                 itemCount: data.length,
@@ -94,18 +102,19 @@ class _FollowupsScreenState extends State<FollowupsScreen> {
                     margin: EdgeInsets.symmetric(vertical: 5, horizontal: 16),
                     child: Column(
                       children: [
-                        // Row(
-                        //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        //   children: [
-                        //     text(context, "7382373824", 20),
-                        //     text(context, "Followup : 24-10-1988", 15),
-                        //   ],
-                        // ),
-                        // Divider(
-                        //   height: 1.8,
-                        //   thickness: 0.8,
-                        //   color: Colors.black.withOpacity(0.25),
-                        // ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            text(context,'${followup_List.leadId}', 20),
+                            text(context, "Followup: ${formatDate(followup_List.followupDate??"")}", 15),
+
+                          ],
+                        ),
+                        Divider(
+                          height: 1.8,
+                          thickness: 0.8,
+                          color: Colors.black.withOpacity(0.25),
+                        ),
                         SizedBox(height: 5),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
