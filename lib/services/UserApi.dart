@@ -7,12 +7,11 @@ import 'package:telecaliingcrm/model/LeadeBoardModel.dart';
 import 'package:telecaliingcrm/model/UserDetailsModel.dart';
 import 'package:telecaliingcrm/services/otherservices.dart';
 
-
-
 class Userapi {
   static String host = "https://api.telecallingcrm.com";
 
-  static Future<Map<String, dynamic>?> PostSignIn(String email, String pwd) async {
+  static Future<Map<String, dynamic>?> PostSignIn(
+      String email, String pwd) async {
     try {
       // Prepare the request data
       Map<String, String> data = {
@@ -43,7 +42,8 @@ class Userapi {
         return jsonResponse;
       } else {
         // Handle other status codes and return the response
-        print("Request failed with status: ${response.statusCode}, body: $jsonResponse");
+        print(
+            "Request failed with status: ${response.statusCode}, body: $jsonResponse");
         return jsonResponse;
       }
     } catch (e) {
@@ -80,11 +80,6 @@ class Userapi {
   }
 
   static Future<UserDetailsModel?> getUserDetails() async {
-    final Map<String,String> body ={
-      'email': 'bharath@pixl.in',
-      'password': 'Vaishu@987#',
-    };
-
     try {
       final url = Uri.parse("${host}/api/profile");
       final headers = await getheader1();
@@ -109,8 +104,8 @@ class Userapi {
     }
   }
 
-
-  static Future<Map<String, dynamic>?> UpdateCallStatusApi(String id, String call_status, String call_duration) async {
+  static Future<Map<String, dynamic>?> UpdateCallStatusApi(
+      String id, String call_status, String call_duration) async {
     try {
       // Prepare the request data
       Map<String, String> data = {
@@ -122,7 +117,8 @@ class Userapi {
       print("UpdateCallStatusApi data: $data");
 
       final url = Uri.parse("${host}/api/update_call_status_api");
-      final headers = await getheader1(); // Ensure this function returns the correct headers
+      final headers =
+          await getheader1(); // Ensure this function returns the correct headers
 
       final response = await http.post(
         url,
@@ -139,12 +135,14 @@ class Userapi {
           return jsonResponse;
         } catch (e) {
           // Handle the case where the response is not valid JSON
-          print("Error: Failed to decode response body. Response: ${response.body}");
+          print(
+              "Error: Failed to decode response body. Response: ${response.body}");
           return null;
         }
       } else {
         // Log the response status code and body if it's not 200
-        print("Request failed with status: ${response.statusCode}, body: ${response.body}");
+        print(
+            "Request failed with status: ${response.statusCode}, body: ${response.body}");
         return null;
       }
     } catch (e) {
@@ -154,9 +152,7 @@ class Userapi {
     }
   }
 
-
   static Future<LeadsModel?> getLeads() async {
-
     try {
       final url = Uri.parse("${host}/api/get_lead_calls");
       final headers = await getheader1();
@@ -201,22 +197,56 @@ class Userapi {
           return null;
         }
       } else {
-
         print("Request failed with status: ${response.statusCode}");
         return null;
       }
     } catch (e) {
-  
       print("Error occurred: $e");
       return null;
     }
   }
 
+  static Future<void> postAddLeads(String name, String num,
+      String followup_date, String remarks, String lead_id) async {
+    try {
+      final Map<String, String> data = {
+        "name": name,
+        "number": num,
+        "followup_date": followup_date,
+        "lead_stage_id": lead_id,
+      };
+      final url = Uri.parse("${host}/api/add-leads");
+      final headers = await getheader1();
+      final response = await http.post(
+        url,
+        headers:headers,
+        body: jsonEncode(data),
+      );
 
+      // Check if the response body is empty
+      if (response.body.isEmpty) {
+        print("Empty response body.");
+        return null;
+      }
 
+      // Parse the response body
+      final jsonResponse = jsonDecode(response.body);
 
-
-
-
+      if (response.statusCode == 200) {
+        // Success: Return the parsed response
+        print("postAddLeads successful: $jsonResponse");
+        return jsonResponse;
+      } else {
+        // Handle other status codes and return the response
+        print(
+            "Request failed with status: ${response.statusCode}, body: $jsonResponse");
+        return jsonResponse;
+      }
+    } catch (e) {
+      // Catch and log any errors
+      print("Error occurred: $e");
+      return null;
+    }
+  }
 
 }

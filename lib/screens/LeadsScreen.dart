@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 import 'package:provider/provider.dart';
+import 'package:telecaliingcrm/screens/AddLeadsScreen.dart';
 import 'package:telecaliingcrm/screens/LeadInformation.dart';
 import 'package:telecaliingcrm/utils/ColorConstants.dart';
 import 'package:telecaliingcrm/utils/constants.dart';
@@ -94,6 +95,19 @@ class _LeadsScreenState extends State<LeadScreen> {
         children: [
           SizedBox(
             height: 10,
+          ),
+          Row(mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              InkResponse(onTap: (){
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>Addleadsscreen()));
+              },
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 12,vertical: 4),
+                  margin: EdgeInsets.only(right: 14,bottom: 10),
+                  decoration: BoxDecoration(color: color28,borderRadius: BorderRadius.circular(8),),
+                child: text(context, 'AddLeads', 18,fontWeight: FontWeight.w500,fontfamily: 'Inter',color: color37),),
+              ),
+            ],
           ),
           Expanded(
             child: ListView.builder(

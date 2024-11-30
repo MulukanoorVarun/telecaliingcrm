@@ -33,7 +33,7 @@ class Leads {
   String? calledStatus;
   String? name;
   Null? followUpDate;
-  Null? remarks;
+  String? remarks;
   String? dealStatus;
   Null? dealAmount;
   int? totalCalls;
@@ -43,6 +43,7 @@ class Leads {
   int? callDuration;
   int? fId;
   StageName? stageName;
+  LatestFollowupDetail? latestFollowupDetail;
 
   Leads(
       {this.id,
@@ -62,7 +63,8 @@ class Leads {
         this.dealClosureDate,
         this.callDuration,
         this.fId,
-        this.stageName});
+        this.stageName,
+        this.latestFollowupDetail});
 
   Leads.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -84,6 +86,9 @@ class Leads {
     fId = json['f_id'];
     stageName = json['stage_name'] != null
         ? new StageName.fromJson(json['stage_name'])
+        : null;
+    latestFollowupDetail = json['latest_followup_detail'] != null
+        ? new LatestFollowupDetail.fromJson(json['latest_followup_detail'])
         : null;
   }
 
@@ -108,6 +113,9 @@ class Leads {
     data['f_id'] = this.fId;
     if (this.stageName != null) {
       data['stage_name'] = this.stageName!.toJson();
+    }
+    if (this.latestFollowupDetail != null) {
+      data['latest_followup_detail'] = this.latestFollowupDetail!.toJson();
     }
     return data;
   }
@@ -134,6 +142,43 @@ class StageName {
     data['stage_name'] = this.stageName;
     data['created_at'] = this.createdAt;
     data['created_by'] = this.createdBy;
+    return data;
+  }
+}
+
+class LatestFollowupDetail {
+  int? id;
+  int? leadId;
+  String? followupDate;
+  String? name;
+  String? remarks;
+  int? status;
+
+  LatestFollowupDetail(
+      {this.id,
+        this.leadId,
+        this.followupDate,
+        this.name,
+        this.remarks,
+        this.status});
+
+  LatestFollowupDetail.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    leadId = json['lead_id'];
+    followupDate = json['followup_date'];
+    name = json['name'];
+    remarks = json['remarks'];
+    status = json['status'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['lead_id'] = this.leadId;
+    data['followup_date'] = this.followupDate;
+    data['name'] = this.name;
+    data['remarks'] = this.remarks;
+    data['status'] = this.status;
     return data;
   }
 }
