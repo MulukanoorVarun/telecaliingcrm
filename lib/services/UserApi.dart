@@ -258,6 +258,54 @@ class Userapi {
   }
 
 
+  static Future<Map<String, dynamic>?> postAddFollowUp(
+      String leadid,
+      String name,
+      String followup_date,
+      String remarks,
+      String status
+
+      ) async {
+    try {
+      final Map<String, String> data = {
+        "lead_id": leadid,
+        "name": name,
+        "followup_date": followup_date,
+        "remarks": remarks,
+        "lead_stage_id": status,
+
+      };
+      print("postAddFollowUp??${data}");
+      final url = Uri.parse("${host}/api/add-follow-up");
+      final headers = await getheader1();
+      final response = await http.post(
+        url,
+        headers: headers,
+        body: data,
+      );
+
+      if (response.body.isEmpty) {
+        print("Empty response body.");
+        return null;
+      }
+
+      final jsonResponse = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        print("postAddFollowUp successful: $jsonResponse");
+        return jsonResponse;
+      } else {
+        print(
+          "Request failed with status: ${response.statusCode}, body: $jsonResponse",
+        );
+        return jsonResponse;
+      }
+    } catch (e) {
+      print("Error occurred: $e");
+      return null;
+    }
+  }
+
 
   static Future<ViewInfoModel?> getViewInfo(ID) async {
     try {

@@ -86,7 +86,9 @@ class _FollowupsScreenState extends State<FollowupsScreen> {
           },
         ),
       ),
-      body: Column(
+      body: is_loading?Center(child: CircularProgressIndicator(color: color28,)):
+
+      Column(
         children: [
           SizedBox(
             height: 10,

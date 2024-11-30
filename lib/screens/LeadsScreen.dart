@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 import 'package:provider/provider.dart';
+import 'package:telecaliingcrm/screens/AddFollowUp.dart';
 import 'package:telecaliingcrm/screens/AddLeadsScreen.dart';
 import 'package:telecaliingcrm/screens/LeadInformation.dart';
 import 'package:telecaliingcrm/utils/ColorConstants.dart';
@@ -146,6 +147,16 @@ class _LeadsScreenState extends State<LeadScreen> {
                                           margin: EdgeInsets.only(bottom: 10,left: 0),
                                           child: text(context, leads.stageName?.stageName??"", 14,
                                               color: color11)),
+
+                                      InkResponse(onTap: (){
+                                        Navigator.push(context, MaterialPageRoute(builder: (context)=>AddFollowUp(id: leads.id.toString(),)));
+                                      },
+                                        child: Container(
+                                          padding: EdgeInsets.symmetric(horizontal: 10,vertical: 2),
+
+                                          decoration: BoxDecoration(color: color28,borderRadius: BorderRadius.circular(4),),
+                                          child: text(context, 'Add Follow-Up', 14,fontWeight: FontWeight.w500,fontfamily: 'Inter',color: color37),),
+                                      ),
                                       InkWell(
                                         onTap: (){
                                           Navigator.push(context, MaterialPageRoute(builder: (context) => LeadInformation(ID:leads.id.toString() ,),));
