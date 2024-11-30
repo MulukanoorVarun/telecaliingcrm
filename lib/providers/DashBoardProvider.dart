@@ -11,9 +11,11 @@ class DashboardProvider with ChangeNotifier {
   int? pendingCalls;
   int? leadCount;
   int? followup_count;
+  bool _isLoading = true;
 
   // Getter for userDetails that ensures null safety
   List<PhoneNumbers>? get phoneNumbers => phone_numbers;
+  bool get isLoading => _isLoading;
 
   // Method to fetch user details asynchronously
   Future<bool?> fetchDashBoardDetails() async {
@@ -27,10 +29,12 @@ class DashboardProvider with ChangeNotifier {
         followup_count = response?.followupCount;
         phone_numbers =response?.phoneNumbers;
         notifyListeners();
+        _isLoading=false;
         return response?.status;
       } else {
         phone_numbers = null;
         notifyListeners();
+        _isLoading=false;
         return response?.status;
       }
       // Notify listeners that the data has been updated

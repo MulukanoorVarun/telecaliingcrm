@@ -6,7 +6,7 @@ import 'package:telecaliingcrm/model/LeadsModel.dart';
 import 'package:telecaliingcrm/model/LeadeBoardModel.dart';
 import 'package:telecaliingcrm/model/UserDetailsModel.dart';
 import 'package:telecaliingcrm/services/otherservices.dart';
-import '../model/RegisterModel.dart';
+
 
 
 class Userapi {
@@ -182,7 +182,7 @@ class Userapi {
   static Future<List<LeaderBoardModel>?> getLeaderboard() async {
     try {
       final url = Uri.parse("${host}/api/get_leader_board");
-      final headers = await getheader1();  // Assuming this method provides the headers
+      final headers = await getheader1();
       final response = await http.post(
         url,
         headers: headers,
@@ -192,7 +192,6 @@ class Userapi {
         final jsonResponse = jsonDecode(response.body);
         print("getLeaderboard response: ${response.body}");
 
-        // Ensure the response is a list and map it to a List<LeaderBoardModel>
         if (jsonResponse is List) {
           return jsonResponse
               .map<LeaderBoardModel>((item) => LeaderBoardModel.fromJson(item))
@@ -202,12 +201,12 @@ class Userapi {
           return null;
         }
       } else {
-        // Handle non-200 responses (e.g., 401, 404, etc.)
+
         print("Request failed with status: ${response.statusCode}");
         return null;
       }
     } catch (e) {
-      // Catch and log any errors
+  
       print("Error occurred: $e");
       return null;
     }

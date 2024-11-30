@@ -37,6 +37,8 @@ class _DashboardState extends State<Dashboard> {
       ),
       bottomNavigationBar: CurvedNavigationBar(
         key: _bottomNavigationKey,
+        animationDuration: Duration(seconds: 2),
+
         backgroundColor: color4,
         color: color11.withOpacity(0.1),
         buttonBackgroundColor: color3,
