@@ -205,6 +205,8 @@ class Userapi {
       return null;
     }
   }
+
+
   static Future<Map<String, dynamic>?> postAddLeads(
       String name,
       String num,
@@ -214,20 +216,19 @@ class Userapi {
       ) async {
     try {
       final Map<String, String> data = {
-        "name": "charan",
-        "number": "76749525216",
+        "name": name,
+        "number": num,
         "followup_date": followup_date,
-        "remarks": "ntg",
-        "lead_stage_id": "10",
-
+        "remarks": remarks,
+        "lead_stage_id": lead_id,
       };
-
+print("postAddLeads??${data}");
       final url = Uri.parse("${host}/api/add-lead");
       final headers = await getheader1();
       final response = await http.post(
         url,
         headers: headers,
-        body: jsonEncode(data),
+        body: data,
       );
 
       if (response.body.isEmpty) {

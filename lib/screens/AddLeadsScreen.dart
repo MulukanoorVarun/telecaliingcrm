@@ -32,8 +32,8 @@ class _AddleadsscreenState extends State<Addleadsscreen> {
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: _selectedDate ?? DateTime.now(),
-      firstDate: DateTime(2000),
+      initialDate: _selectedDate,
+      firstDate: DateTime.now(),
       lastDate: DateTime(2101),
     );
     if (picked != null && picked != _selectedDate) {
@@ -108,11 +108,13 @@ class _AddleadsscreenState extends State<Addleadsscreen> {
         _leadStatus.toString(),
       );
 
-      if (res != null) {
-        // Handle success
+      if (res!= null) {
+
+
         print("Lead added successfully: $res");
+
       } else {
-        // Handle null response
+
         print("Failed to add lead: Response is null.");
       }
     } catch (e) {
@@ -279,7 +281,7 @@ class _AddleadsscreenState extends State<Addleadsscreen> {
                       controller: TextEditingController(
                         text: _selectedDate == null
                             ? ''
-                            : '${_selectedDate!.toLocal()}'.split(' ')[0],
+                            : '${_selectedDate!.year}-${_selectedDate!.month.toString().padLeft(2, '0')}-${_selectedDate!.day.toString().padLeft(2, '0')}',
                       ),
                       decoration: InputDecoration(
                         contentPadding: const EdgeInsets.symmetric(
@@ -301,17 +303,20 @@ class _AddleadsscreenState extends State<Addleadsscreen> {
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(7),
                           borderSide: const BorderSide(
-                              width: 1, color: Color(0xffCDE2FB)),
+                            width: 1,
+                            color: Color(0xffCDE2FB),
+                          ),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(7),
                           borderSide: const BorderSide(
-                              width: 1, color: Color(0xffCDE2FB)),
+                            width: 1,
+                            color: Color(0xffCDE2FB),
+                          ),
                         ),
                         suffixIcon: const Icon(
                           Icons.calendar_today,
-                          color: Color(
-                              0xff2196F3), // Replace with primaryColor if defined
+                          color: Color(0xff2196F3), // Replace with primaryColor if defined
                         ),
                       ),
                       readOnly: true,
@@ -319,7 +324,7 @@ class _AddleadsscreenState extends State<Addleadsscreen> {
                         final DateTime? picked = await showDatePicker(
                           context: context,
                           initialDate: _selectedDate ?? DateTime.now(),
-                          firstDate: DateTime(2000),
+                          firstDate: DateTime.now(),
                           lastDate: DateTime(2101),
                         );
                         if (picked != null && picked != _selectedDate) {
@@ -335,6 +340,7 @@ class _AddleadsscreenState extends State<Addleadsscreen> {
                         return null;
                       },
                     ),
+
                     const SizedBox(height: 16),
 
                     // Remarks Field
@@ -480,4 +486,6 @@ class _AddleadsscreenState extends State<Addleadsscreen> {
           )
         : NoInternetWidget();
   }
+
+
 }
