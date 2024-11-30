@@ -68,22 +68,19 @@ class _AddFollowUpState extends State<AddFollowUp> {
       _remarksController.text.isEmpty ? "Please add some remarks" : "";
 
       // Validate Lead Status
-      final statusError = (_leadStatus == null || _leadStatus!.isEmpty)
-          ? "Please select a status"
-          : null;
+      // final statusError = (_leadStatus == null || _leadStatus!.isEmpty)
+      //     ? "Please select a status"
+      //     : null;
 
       // Proceed only if all fields are valid
       if (_validateFullName.isEmpty &&
           // _validateMobilenumber.isEmpty &&
-          _validateRemarks.isEmpty &&
-          statusError == null) {
+          _validateRemarks.isEmpty) {
         _loading = false;
         AddFollowUp(); // Trigger the AddLeads function if validations pass
       } else {
         _loading = false;
-        if (statusError != null) {
-          print(statusError); // Optionally log or display the status error
-        }
+
       }
     });
   }
