@@ -263,7 +263,7 @@ class Userapi {
       String name,
       String followup_date,
       String remarks,
-      String status
+
 
       ) async {
     try {
@@ -272,7 +272,7 @@ class Userapi {
         "name": name,
         "followup_date": followup_date,
         "remarks": remarks,
-        "lead_stage_id": status,
+
 
       };
       print("postAddFollowUp??${data}");
