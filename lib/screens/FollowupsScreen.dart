@@ -8,6 +8,7 @@ import '../Services/UserApi.dart';
 import '../model/GetFollowUpModel.dart';
 import '../providers/ConnectivityProviders.dart';
 import '../services/otherservices.dart';
+import 'AddFollowUp.dart';
 
 class FollowupsScreen extends StatefulWidget {
   const FollowupsScreen({super.key});
@@ -31,7 +32,7 @@ class _FollowupsScreenState extends State<FollowupsScreen> {
   }
  bool is_loading =true;
 
-  List<FollowUp> data=[];
+  List<FollowUpModel> data=[];
 
   void getFollowUpApi() async {
 
@@ -107,7 +108,7 @@ class _FollowupsScreenState extends State<FollowupsScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            text(context,'${followup_List.leadId}', 20),
+                            text(context,'${followup_List.leadType?.number??""}', 20),
                             text(context, "Followup: ${formatDate(followup_List.followupDate??"")}", 15),
 
                           ],
@@ -127,9 +128,8 @@ class _FollowupsScreenState extends State<FollowupsScreen> {
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
                                   Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
                                     children: [
                                       container(context,
                                           colors: coldbgColor,
@@ -138,16 +138,25 @@ class _FollowupsScreenState extends State<FollowupsScreen> {
                                           padding: EdgeInsets.symmetric(
                                               vertical: 2, horizontal: 10),
                                           margin: EdgeInsets.only(bottom: 10,left: 0),
-                                          child: text(context, "cold", 14,
+                                          child: text(context, followup_List.leadType?.stageName?.stageName??"", 14,
                                               color: color11)),
-                                      SizedBox(
-                                        width: 35,
-                                      ),
+                                      // SizedBox(
+                                      //   width: 35,
+                                      // ),
                                       text(context, "View Info>", 14,
                                           color: color11,
                                           textdecoration:
                                               TextDecoration.underline,
-                                          decorationcolor: color11)
+                                          decorationcolor: color11),
+                                      InkResponse(onTap: (){
+                                        Navigator.push(context, MaterialPageRoute(builder: (context)=>AddFollowUp(id: followup_List.leadId.toString(),)));
+                                      },
+                                        child: Container(
+                                          padding: EdgeInsets.symmetric(horizontal: 10,vertical: 2),
+
+                                          decoration: BoxDecoration(color: color28,borderRadius: BorderRadius.circular(4),),
+                                          child: text(context, 'Add Follow-Up', 14,fontWeight: FontWeight.w500,fontfamily: 'Inter',color: color37),),
+                                      ),
                                     ],
                                   ),
                                   text(context, '${followup_List.name}', 18),

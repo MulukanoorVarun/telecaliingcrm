@@ -91,19 +91,20 @@ class _AddFollowUpState extends State<AddFollowUp> {
   Future<void> AddFollowUp() async {
     try {
       final res = await Userapi.postAddFollowUp(widget.id, _nameController.text, formattedDate, _remarksController.text);
+      print("res>>${res}");
 
       if (res!= null) {
 
 
-        print("Lead added successfully: $res");
+        print("Follow-up added successfully: $res");
 
       } else {
 
-        print("Failed to add lead: Response is null.");
+        print("Failed to add Follow-up: Response is null.");
       }
     } catch (e) {
       // Handle any errors
-      print("Error occurred while adding lead: $e");
+      print("Error occurred while adding Follow-up: $e");
     }
   }
 
