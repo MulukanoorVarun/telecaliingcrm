@@ -487,14 +487,7 @@ class _HomescreenState extends State<Homescreen> {
                         // Power icon
                         InkResponse(
                           onTap: () async {
-                            SharedPreferences sharedPreferences =
-                                await SharedPreferences.getInstance();
-                            sharedPreferences.remove('token');
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => SignInScreen()),
-                            );
+                            _showLogoutDialog(context);
                           },
                           child: Icon(
                             Icons.power_settings_new,
@@ -550,7 +543,9 @@ class _HomescreenState extends State<Homescreen> {
                                     children: [
                                       text(
                                           context,
-                                          dashboardProvider.todayCalls.toString()??"",
+                                          dashboardProvider.todayCalls
+                                                  .toString() ??
+                                              "",
                                           46,
                                           fontfamily: 'Poppins',
                                           fontWeight: FontWeight.w500),
@@ -571,7 +566,8 @@ class _HomescreenState extends State<Homescreen> {
                                       text(
                                           context,
                                           dashboardProvider.pendingCalls
-                                              .toString()??"",
+                                                  .toString() ??
+                                              "",
                                           46,
                                           fontfamily: 'Poppins',
                                           fontWeight: FontWeight.w500),
@@ -608,7 +604,8 @@ class _HomescreenState extends State<Homescreen> {
                                         text(
                                             context,
                                             dashboardProvider.leadCount
-                                                .toString()??"",
+                                                    .toString() ??
+                                                "",
                                             46,
                                             fontfamily: 'Poppins',
                                             fontWeight: FontWeight.w500),
@@ -639,7 +636,8 @@ class _HomescreenState extends State<Homescreen> {
                                         text(
                                             context,
                                             dashboardProvider.followup_count
-                                                .toString()??"",
+                                                    .toString() ??
+                                                "",
                                             46,
                                             fontfamily: 'Poppins',
                                             fontWeight: FontWeight.w500),
@@ -767,42 +765,57 @@ class _HomescreenState extends State<Homescreen> {
                                   CircleAvatar(
                                     radius: 30,
                                     backgroundColor: Colors.grey,
-                                    child: userDetailsProvider.userDetails?.photo != null
-                                        ? ClipOval(  // Ensure the image is clipped into a circle
-                                      child: Image.network(
-                                        userDetailsProvider.userDetails!.photo!,
-                                        fit: BoxFit.cover,
-                                        width: 60, // Ensure it's sized to fit the CircleAvatar
-                                        height: 60, // Ensure it's sized to fit the CircleAvatar
-                                      ),
-                                    )
-                                        : userDetailsProvider.userDetails?.username != null
-                                        ? // Show the first character of the user's name if no photo
-                                    Text(
-                                      userDetailsProvider.userDetails!.username![0].toUpperCase(),
-                                      style: TextStyle(
-                                        fontSize: 30,
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    )
-                                        : // If there's no photo or name, show a fallback image
-                                    ClipOval(  // Ensure fallback image is also clipped into a circle
-                                      child: Image.asset(
-                                        'assets/personProfile.png',
-                                        fit: BoxFit.cover,
-                                        width: 60, // Ensure it's sized to fit the CircleAvatar
-                                        height: 60, // Ensure it's sized to fit the CircleAvatar
-                                      ),
-                                    ),
+                                    child: userDetailsProvider
+                                                .userDetails?.photo !=
+                                            null
+                                        ? ClipOval(
+                                            // Ensure the image is clipped into a circle
+                                            child: Image.network(
+                                              userDetailsProvider
+                                                  .userDetails!.photo!,
+                                              fit: BoxFit.cover,
+                                              width:
+                                                  60, // Ensure it's sized to fit the CircleAvatar
+                                              height:
+                                                  60, // Ensure it's sized to fit the CircleAvatar
+                                            ),
+                                          )
+                                        : userDetailsProvider
+                                                    .userDetails?.username !=
+                                                null
+                                            ? // Show the first character of the user's name if no photo
+                                            Text(
+                                                userDetailsProvider
+                                                    .userDetails!.username![0]
+                                                    .toUpperCase(),
+                                                style: TextStyle(
+                                                  fontSize: 30,
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              )
+                                            : // If there's no photo or name, show a fallback image
+                                            ClipOval(
+                                                // Ensure fallback image is also clipped into a circle
+                                                child: Image.asset(
+                                                  'assets/personProfile.png',
+                                                  fit: BoxFit.cover,
+                                                  width:
+                                                      60, // Ensure it's sized to fit the CircleAvatar
+                                                  height:
+                                                      60, // Ensure it's sized to fit the CircleAvatar
+                                                ),
+                                              ),
                                   ),
                                   SizedBox(
                                       width: MediaQuery.of(context).size.width *
                                           0.02),
                                   // User Details Column
-                                  Container(width: w*0.45,
+                                  Container(
+                                    width: w * 0.45,
                                     child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
@@ -837,17 +850,25 @@ class _HomescreenState extends State<Homescreen> {
                                           18,
                                           fontWeight: FontWeight.w500,
                                           color: color4,
-                                          overflow:TextOverflow.ellipsis,
+                                          overflow: TextOverflow.ellipsis,
                                           fontfamily: 'Poppins',
                                         ),
                                       ],
                                     ),
                                   ),
                                   Spacer(),
-                                  InkResponse(onTap: (){
-                                    Navigator.push(context, MaterialPageRoute(builder: (context)=>EditProfileScreen()));
-                                  },
-                                      child: Icon(Icons.edit,color: color4,))
+                                  InkResponse(
+                                      onTap: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    EditProfileScreen()));
+                                      },
+                                      child: Icon(
+                                        Icons.edit,
+                                        color: color4,
+                                      ))
                                 ],
                               ),
                             ),
@@ -925,7 +946,11 @@ class _HomescreenState extends State<Homescreen> {
                   InkWell(
                     onTap: () {
                       Navigator.pop(context);
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => LeadScreen(),));
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => LeadScreen(),
+                          ));
                     },
                     child: Container(
                       padding: EdgeInsets.symmetric(
@@ -959,7 +984,11 @@ class _HomescreenState extends State<Homescreen> {
                   InkWell(
                     onTap: () {
                       Navigator.pop(context);
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => FollowupsScreen(),));
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => FollowupsScreen(),
+                          ));
                     },
                     child: Container(
                       padding: EdgeInsets.symmetric(
@@ -1124,9 +1153,60 @@ class _HomescreenState extends State<Homescreen> {
           )
         : NoInternetWidget();
   }
+
+  void _showLogoutDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Logout Confirmation'),
+          content: Text('Are you sure you want to log out?'),
+          actions: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                InkResponse(onTap: (){
+                  Navigator.pop(context);
+                },
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                    decoration: BoxDecoration(
+                        color: color28, borderRadius: BorderRadius.circular(10)),
+                    child: text(context, 'Cancel', 14,
+                        fontfamily: 'Inter', color: color4),
+                  ),
+                ),
+                InkResponse(
+                  onTap: () async {
+                    SharedPreferences sharedPreferences =
+                        await SharedPreferences.getInstance();
+                    sharedPreferences.remove('token');
+
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => SignInScreen()),
+                    );
+                  },
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                    decoration: BoxDecoration(
+                        color: color11,
+                        borderRadius: BorderRadius.circular(10)),
+                    child: text(context, 'Logout', 14,
+                        fontfamily: 'Inter', color: color4),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Widget _buildShimmerList() {
     return ListView.builder(
-      itemCount: 10, // Adjust the number of shimmer items as needed
+      itemCount: 10,
       shrinkWrap: true,
       physics: const AlwaysScrollableScrollPhysics(),
       itemBuilder: (context, index) {
@@ -1142,7 +1222,7 @@ class _HomescreenState extends State<Homescreen> {
             children: [
               Row(
                 children: [
-                  shimmerRectangle(20), // Shimmer for calendar icon
+                  shimmerRectangle(20),
                   const SizedBox(width: 8),
                   shimmerText(100, 15), // Shimmer for due date
                   const Spacer(),
