@@ -12,6 +12,7 @@ import '../providers/ConnectivityProviders.dart';
 import '../services/Shimmers.dart';
 import '../services/otherservices.dart';
 import 'AddFollowUp.dart';
+import 'LeadInformation.dart';
 
 class FollowupsScreen extends StatefulWidget {
   const FollowupsScreen({super.key});
@@ -153,13 +154,26 @@ class _FollowupsScreenState extends State<FollowupsScreen> {
                                       // SizedBox(
                                       //   width: 35,
                                       // ),
-                                      Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: text(context, "View Info>", 14,
-                                            color: color11,
-                                            textdecoration:
-                                                TextDecoration.underline,
-                                            decorationcolor: color11),
+                                      InkWell(
+                                        onTap:(){
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    LeadInformation(
+                                                      ID: followup_List.leadId
+                                                          .toString(),
+                                                    ),
+                                              ));
+                                        },
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: text(context, "View Info>", 14,
+                                              color: color11,
+                                              textdecoration:
+                                                  TextDecoration.underline,
+                                              decorationcolor: color11),
+                                        ),
                                       ),
                                     ],
                                   ),

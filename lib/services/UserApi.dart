@@ -126,19 +126,15 @@ class Userapi {
         "call_status": call_status,
         "call_duration": call_duration
       };
-
       print("UpdateCallStatusApi data: $data");
-
       final url = Uri.parse("${host}/api/update_call_status_api");
       final headers =
           await getheader1(); // Ensure this function returns the correct headers
-
       final response = await http.post(
         url,
         headers: headers,
         body: data,
       );
-
       // Check if the status code is 200
       if (response.statusCode == 200) {
         try {
@@ -148,8 +144,7 @@ class Userapi {
           return jsonResponse;
         } catch (e) {
           // Handle the case where the response is not valid JSON
-          print(
-              "Error: Failed to decode response body. Response: ${response.body}");
+          print("Error: Failed to decode response body. Response: ${response.body}");
           return null;
         }
       } else {
