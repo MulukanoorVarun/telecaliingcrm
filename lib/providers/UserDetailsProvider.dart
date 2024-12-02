@@ -24,6 +24,24 @@ class UserDetailsProvider with ChangeNotifier {
       return null; // Optionally return a specific code for errors
     }
   }
-}
 
+  Future<int?> updateUserDetails(fullname, email, pwd, _image) async{
+    try{
+      var response =await Userapi.updateProfile(fullname, email,pwd, _image);
+      if (response!= null) {
+        fetchUserDetails();
+        return response
+      } else {
+        return response?.settings?.success??0;
+      }
+    } catch (e) {
+      // If an error occurs, log or rethrow an exception
+      print('Error updating user details: $e');
+      throw Exception('Failed to updating user details: $e');
+    }
+  }
+
+
+
+}
 

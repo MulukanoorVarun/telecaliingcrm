@@ -15,6 +15,7 @@ import 'package:telecaliingcrm/Authentication/SignInScreen.dart';
 import 'package:telecaliingcrm/Services/UserApi.dart';
 import 'package:telecaliingcrm/providers/DashBoardProvider.dart';
 import 'package:telecaliingcrm/providers/UserDetailsProvider.dart';
+import 'package:telecaliingcrm/screens/Edit%20Profile%20screeen.dart';
 import 'package:telecaliingcrm/screens/FollowupsScreen.dart';
 import 'package:telecaliingcrm/screens/LeadsScreen.dart';
 import 'package:telecaliingcrm/utils/ColorConstants.dart';
@@ -803,45 +804,54 @@ class _HomescreenState extends State<Homescreen> {
                                       width: MediaQuery.of(context).size.width *
                                           0.02),
                                   // User Details Column
-                                  Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        userDetailsProvider.userDetails
-                                                    ?.username?.isNotEmpty ??
-                                                false
-                                            ? userDetailsProvider
-                                                    .userDetails!.username![0]
-                                                    .toUpperCase() +
-                                                userDetailsProvider
-                                                    .userDetails!.username!
-                                                    .substring(1)
-                                            : "",
-                                        style: TextStyle(
-                                            fontSize: 20,
-                                            fontFamily: "Poppins",
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.white),
-                                      ),
-                                      SizedBox(
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .height *
-                                              0.01),
-                                      text(
-                                        context,
-                                        userDetailsProvider
-                                                .userDetails?.email ??
-                                            "example@domain.com",
-                                        18,
-                                        fontWeight: FontWeight.w500,
-                                        color: color4,
-                                        fontfamily: 'Poppins',
-                                      ),
-                                    ],
+                                  Container(width: w*0.45,
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          userDetailsProvider.userDetails
+                                                      ?.username?.isNotEmpty ??
+                                                  false
+                                              ? userDetailsProvider
+                                                      .userDetails!.username![0]
+                                                      .toUpperCase() +
+                                                  userDetailsProvider
+                                                      .userDetails!.username!
+                                                      .substring(1)
+                                              : "",
+                                          style: TextStyle(
+                                              fontSize: 20,
+                                              fontFamily: "Poppins",
+                                              fontWeight: FontWeight.w500,
+                                              overflow: TextOverflow.ellipsis,
+                                              color: Colors.white),
+                                        ),
+                                        SizedBox(
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                0.01),
+                                        text(
+                                          context,
+                                          userDetailsProvider
+                                                  .userDetails?.email ??
+                                              "example@domain.com",
+                                          18,
+                                          fontWeight: FontWeight.w500,
+                                          color: color4,
+                                          overflow:TextOverflow.ellipsis,
+                                          fontfamily: 'Poppins',
+                                        ),
+                                      ],
+                                    ),
                                   ),
+                                  Spacer(),
+                                  InkResponse(onTap: (){
+                                    Navigator.push(context, MaterialPageRoute(builder: (context)=>EditProfileScreen()));
+                                  },
+                                      child: Icon(Icons.edit,color: color4,))
                                 ],
                               ),
                             ),

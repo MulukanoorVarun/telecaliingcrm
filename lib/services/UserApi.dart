@@ -6,7 +6,9 @@ import 'package:telecaliingcrm/model/LeadsModel.dart';
 import 'package:telecaliingcrm/model/LeadeBoardModel.dart';
 import 'package:telecaliingcrm/model/UserDetailsModel.dart';
 import 'package:telecaliingcrm/services/otherservices.dart';
-
+import 'package:http_parser/http_parser.dart';
+import 'package:mime/mime.dart';
+import '../model/RegisterModel.dart';
 import '../model/ViewInfoModel.dart';
 
 import '../model/GetFollowUpModel.dart';
@@ -397,6 +399,72 @@ class Userapi {
     } catch (e) {
       // Log any errors
       print("Error occurred in getUserDetails: $e");
+      return null;
+    }
+  }
+
+  static Future<Map<String, dynamic>?> updateProfile(
+      String fullname,
+      String email,
+      String pwd,
+      File? image,
+
+      ) async {
+    String? mimeType;
+
+    // Check if the image is a valid image file
+    if (image != null) {
+      mimeType = lookupMimeType(image.path);  // Get MIME type for the image
+      if (mimeType == null || !mimeType.startsWith('image/')) {
+        print('Selected file is not a valid image.');
+        return null;
+      }
+    }
+
+    try {
+      // Prepare the URL for the update request
+      final url = Uri.parse("${host}/api/update-profile/95");
+
+      // Create a MultipartRequest for a multipart form upload
+      final request = http.MultipartRequest('Post', url);
+
+      // Add headers (use your token and necessary headers here)
+      final headers = await getheader1(); // Assuming you have a function to get headers
+      request.headers.addAll(headers);
+
+      // Add fields (name, mobile, email)
+      request.fields['username'] = fullname;
+      request.fields['email'] = email;
+      request.fields['password'] = pwd;
+
+      // If an image is provided, add it to the request as a file
+      if (image != null) {
+        request.files.add(
+          await http.MultipartFile.fromPath(
+            'photo',  // The name of the file field in your API
+            image.path,
+            contentType: MediaType.parse(mimeType!),  // Ensure mime type is non-null
+          ),
+        );
+      }
+
+      print("Req filelds:${request.fields}");
+
+      // Send the request
+      final response = await request.send();
+
+      // Handle the response
+      if (response.statusCode == 200) {
+        final responseBody = await response.stream.bytesToString();
+        final jsonResponse = jsonDecode(responseBody);
+        print("updateProfile response: ${responseBody}");
+        return jsonResponse ;
+      } else {
+        print("Request failed with status: ${response.statusCode}");
+        return null;
+      }
+    } catch (e) {
+      print("Error occurred: $e");
       return null;
     }
   }
