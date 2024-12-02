@@ -70,11 +70,43 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
               leading: Container(),
               leadingWidth: 20,
             ),
-            body: isloading
-                ? _buildShimmerList()
-                : Padding(
+            body: Padding(
                     padding: const EdgeInsets.all(16.0),
-                    child: ListView.builder(
+                    child:isloading?
+                    ListView.builder(
+                      itemCount: 10, // Adjust the number of shimmer items as needed
+                      itemBuilder: (context, index) {
+                        return Card(
+                          child: Container(
+                            margin: const EdgeInsets.symmetric(vertical: 8.0),
+                            padding: const EdgeInsets.all(12.0),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                            child: Row(
+                              children: [
+                                shimmerText(30, 22), // Shimmer for leaderboard number
+                                const SizedBox(width: 16.0),
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                  child: Container(
+                                    width: 50.0,
+                                    height: 50.0,
+                                    color: Colors.grey[300], // Background color for the shimmer
+                                  ),
+                                ),
+                                const SizedBox(width: 16.0),
+                                shimmerText(120, 16), // Shimmer for name
+                                Spacer(),
+                                shimmerText(60, 22), // Shimmer for count
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ):
+                    ListView.builder(
                       itemCount: leaderboardData.length,
                       itemBuilder: (context, index) {
                         final leadboard = leaderboardData[index];

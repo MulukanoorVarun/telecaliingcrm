@@ -519,7 +519,7 @@ class _HomescreenState extends State<Homescreen> {
               final numbers = dashboardProvider.phoneNumbers;
               phoneNumbers = numbers;
               if (dashboardProvider.isLoading) {
-                return _buildShimmerList();
+                return SingleChildScrollView(child: _buildShimmerBody());
               } else {
                 return SingleChildScrollView(
                   physics: NeverScrollableScrollPhysics(),
@@ -543,9 +543,7 @@ class _HomescreenState extends State<Homescreen> {
                                     children: [
                                       text(
                                           context,
-                                          dashboardProvider.todayCalls
-                                                  .toString() ??
-                                              "",
+                                          dashboardProvider.todayCalls.toString()??"",
                                           46,
                                           fontfamily: 'Poppins',
                                           fontWeight: FontWeight.w500),
@@ -566,8 +564,7 @@ class _HomescreenState extends State<Homescreen> {
                                       text(
                                           context,
                                           dashboardProvider.pendingCalls
-                                                  .toString() ??
-                                              "",
+                                              .toString()??"",
                                           46,
                                           fontfamily: 'Poppins',
                                           fontWeight: FontWeight.w500),
@@ -604,8 +601,7 @@ class _HomescreenState extends State<Homescreen> {
                                         text(
                                             context,
                                             dashboardProvider.leadCount
-                                                    .toString() ??
-                                                "",
+                                                .toString()??"",
                                             46,
                                             fontfamily: 'Poppins',
                                             fontWeight: FontWeight.w500),
@@ -636,8 +632,7 @@ class _HomescreenState extends State<Homescreen> {
                                         text(
                                             context,
                                             dashboardProvider.followup_count
-                                                    .toString() ??
-                                                "",
+                                                .toString()??"",
                                             46,
                                             fontfamily: 'Poppins',
                                             fontWeight: FontWeight.w500),
@@ -811,11 +806,9 @@ class _HomescreenState extends State<Homescreen> {
                                       width: MediaQuery.of(context).size.width *
                                           0.02),
                                   // User Details Column
-                                  Container(
-                                    width: w * 0.45,
+                                  Container(width: w*0.45,
                                     child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
+                                      mainAxisAlignment: MainAxisAlignment.center,
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
@@ -850,25 +843,17 @@ class _HomescreenState extends State<Homescreen> {
                                           18,
                                           fontWeight: FontWeight.w500,
                                           color: color4,
-                                          overflow: TextOverflow.ellipsis,
+                                          overflow:TextOverflow.ellipsis,
                                           fontfamily: 'Poppins',
                                         ),
                                       ],
                                     ),
                                   ),
                                   Spacer(),
-                                  InkResponse(
-                                      onTap: () {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    EditProfileScreen()));
-                                      },
-                                      child: Icon(
-                                        Icons.edit,
-                                        color: color4,
-                                      ))
+                                  InkResponse(onTap: (){
+                                    Navigator.push(context, MaterialPageRoute(builder: (context)=>EditProfileScreen()));
+                                  },
+                                      child: Icon(Icons.edit,color: color4,))
                                 ],
                               ),
                             ),
@@ -946,11 +931,7 @@ class _HomescreenState extends State<Homescreen> {
                   InkWell(
                     onTap: () {
                       Navigator.pop(context);
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => LeadScreen(),
-                          ));
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => LeadScreen(),));
                     },
                     child: Container(
                       padding: EdgeInsets.symmetric(
@@ -984,11 +965,7 @@ class _HomescreenState extends State<Homescreen> {
                   InkWell(
                     onTap: () {
                       Navigator.pop(context);
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => FollowupsScreen(),
-                          ));
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => FollowupsScreen(),));
                     },
                     child: Container(
                       padding: EdgeInsets.symmetric(
@@ -1204,9 +1181,47 @@ class _HomescreenState extends State<Homescreen> {
     );
   }
 
+  Widget _buildShimmerBody() {
+    var w = MediaQuery.of(context).size.width;
+    var h = MediaQuery.of(context).size.height;
+    return Column(
+      children: [
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  shimmerContainer(160, 100),  // Shimmer for first container
+                  shimmerContainer(160, 100),  // Shimmer for second container
+                ],
+              ),
+              SizedBox(height: h * 0.02),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  shimmerContainer(160, 100),  // Shimmer for first container
+                  shimmerContainer(160, 100),
+                ],
+              ),
+              SizedBox(height: w * 0.07),
+              shimmerContainer(150, 50, isButton: true), // Shimmer button
+              SizedBox(height: w * 0.05),
+              shimmerText(150, 20),  // Shimmer title
+              SizedBox(height: w * 0.05),
+              _buildShimmerList(),  // Shimmer for list of phone numbers
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  // Shimmer effect for the list of phone numbers
   Widget _buildShimmerList() {
     return ListView.builder(
-      itemCount: 10,
+      itemCount: 10, // Number of shimmer items
       shrinkWrap: true,
       physics: const AlwaysScrollableScrollPhysics(),
       itemBuilder: (context, index) {
@@ -1217,30 +1232,16 @@ class _HomescreenState extends State<Homescreen> {
             color: Colors.white,
             borderRadius: BorderRadius.circular(7),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: Row(
             children: [
-              Row(
+              shimmerCircle(40),  // Shimmer for circular image
+              const SizedBox(width: 8),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  shimmerRectangle(20),
-                  const SizedBox(width: 8),
-                  shimmerText(100, 15), // Shimmer for due date
-                  const Spacer(),
-                  shimmerRectangle(20), // Shimmer for edit icon
-                ],
-              ),
-              const SizedBox(height: 20),
-              shimmerText(150, 20), // Shimmer for milestone title
-              const SizedBox(height: 4),
-              shimmerText(300, 14), // Shimmer for milestone description
-              const SizedBox(height: 10),
-              shimmerText(350, 14),
-              const SizedBox(height: 4),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  shimmerText(60, 14), // Shimmer for "Progress" label
-                  shimmerText(40, 14), // Shimmer for percentage
+                  shimmerText(100, 15),  // Shimmer for name
+                  SizedBox(height: 5),
+                  shimmerText(150, 15),  // Shimmer for phone number
                 ],
               ),
             ],

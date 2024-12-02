@@ -245,7 +245,7 @@ class _FollowupsScreenState extends State<FollowupsScreen> {
       physics: const AlwaysScrollableScrollPhysics(),
       itemBuilder: (context, index) {
         return Container(
-          margin: const EdgeInsets.symmetric(vertical: 6),
+          margin: const EdgeInsets.symmetric(vertical: 8,horizontal: 16),
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: Colors.white,
