@@ -678,7 +678,6 @@ class _HomescreenState extends State<Homescreen> {
                                 textdecoration: TextDecoration.underline,
                                 decorationcolor: color34),
                             SizedBox(height: w * 0.05),
-                            // Use a simple container for wrapping ListView
                             Container(
                               height:
                                   h * 0.3, // Ensure a fixed height for ListView

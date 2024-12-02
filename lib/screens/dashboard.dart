@@ -25,7 +25,8 @@ class _DashboardState extends State<Dashboard> {
     GlobalKey<CurvedNavigationBarState> _bottomNavigationKey = GlobalKey();
 
     return Scaffold(
-      body:  PageView(
+      backgroundColor: color4,
+      body: PageView(
         physics: NeverScrollableScrollPhysics(),
         controller: _pageController,
         onPageChanged: (index) {
@@ -38,11 +39,10 @@ class _DashboardState extends State<Dashboard> {
       bottomNavigationBar: CurvedNavigationBar(
         key: _bottomNavigationKey,
         animationDuration: Duration(milliseconds: 200),
-
-        backgroundColor: color4,
-        color: color11.withOpacity(0.1),
+        backgroundColor: Colors.transparent,
+        color: color28,
         buttonBackgroundColor: color3,
-        index:_selectedIndex,
+        index: _selectedIndex,
         items: <Widget>[
           Icon(Icons.home, size: 30),
           Icon(Icons.leaderboard, size: 30),
@@ -52,12 +52,6 @@ class _DashboardState extends State<Dashboard> {
             _selectedIndex = index;
           });
           _pageController.jumpToPage(index);
-          // _pageController.animateToPage(
-          //   index,
-          //   duration: Duration(milliseconds: 300),
-          //   curve: Curves.easeInOut,
-          // );
-          //Handle button tap
         },
       ),
     );
