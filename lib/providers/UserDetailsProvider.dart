@@ -23,6 +23,7 @@ class UserDetailsProvider with ChangeNotifier {
       notifyListeners();
       return null; // Optionally return a specific code for errors
     }
+    return null;
   }
 
   Future<String?> updateUserDetails(fullname, email, pwd, _image) async{

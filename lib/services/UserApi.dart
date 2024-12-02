@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:telecaliingcrm/model/DashBoardModel.dart';
 import 'package:telecaliingcrm/model/LeadsModel.dart';
@@ -60,28 +61,33 @@ class Userapi {
   }
 
   static Future<DashBoardModel?> DahsBoardApi() async {
-    try {
-      final url = Uri.parse("${host}/api/dashboard");
-      final headers = await getheader1(); // Await the result here
-      final response = await http.post(
-        url,
-        headers: headers,
-      );
-      if (response.statusCode == 200) {
-        final jsonResponse = jsonDecode(response.body);
-        print("DahsBoardApi response: ${response.body}");
-
-        // Parse the JSON response into a model
-        return DashBoardModel.fromJson(jsonResponse);
-      } else {
-        // Handle non-200 responses (e.g., 401, 404, etc.)
-        print("DahsBoardApi response: ${response.body}");
-        print("Request failed with status: ${response.statusCode}");
+    if (await checkHeaderValidity()) {
+      try {
+        final url = Uri.parse("${host}/api/dashboard");
+        final headers = await getheader1(); // Await the result here
+        final response = await http.post(
+          url,
+          headers: headers,
+        );
+        if (response.statusCode == 200) {
+          final jsonResponse = jsonDecode(response.body);
+          print("DahsBoardApi response: ${response.body}");
+          // Parse the JSON response into a model
+          return DashBoardModel.fromJson(jsonResponse);
+        } else {
+          // Handle non-200 responses (e.g., 401, 404, etc.)
+          print("DahsBoardApi response: ${response.body}");
+          print("Request failed with status: ${response.statusCode}");
+          return null;
+        }
+      } catch (e) {
+        // Catch and log any errors
+        print("Error occurred: $e");
         return null;
       }
-    } catch (e) {
+    }else{
       // Catch and log any errors
-      print("Error occurred: $e");
+      print("returned");
       return null;
     }
   }
@@ -473,24 +479,35 @@ class Userapi {
     }
   }
 
-  //
-  // static Future<Map<String, dynamic>?> UpdateRefreshToken(token) async {
-  //   try {
-  //     Map<String, String> data = {
-  //       'refresh_token': (token).toString(),
-  //     };
-  //     final header = await getheader();
-  //     final res = await post(data, RefreshTokenApiName, header);
-  //     if (res != null) {
-  //       return OtpVerifyModal.fromJson(jsonDecode(res.body));
-  //     } else {
-  //       print("Null Response");
-  //       return null;
-  //     }
-  //   } catch (e) {
-  //     debugPrint('hello bev=bug $e ');
-  //     return null;
-  //   }
-  // }
+
+  static Future<Map<String, dynamic>?> UpdateRefreshToken() async {
+    try {
+      final url = Uri.parse("${host}/api/refresh-token");
+      final headers = await getheader1();
+      final response = await http.post(
+        url,
+        headers: headers,
+      );
+      // Check if the response body is empty
+      if (response.body.isEmpty) {
+        print("Empty response body.");
+        return null;
+      }
+      // Parse the response body
+      final jsonResponse = jsonDecode(response.body);
+      if (response.statusCode == 200) {
+        // Success: Return the parsed response
+        print("Request successful: $jsonResponse");
+        return jsonResponse;
+      } else {
+        // Handle other status codes and return the response
+        print("Request failed with status: ${response.statusCode}, body: $jsonResponse");
+        return jsonResponse;
+      }
+    } catch (e) {
+      debugPrint('hello bev=bug $e ');
+      return null;
+    }
+  }
 
 }

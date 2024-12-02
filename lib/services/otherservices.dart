@@ -1,6 +1,7 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:telecaliingcrm/Services/UserApi.dart';
 import 'package:telecaliingcrm/utils/preferences.dart';
 
 import '../utils/constants.dart';
@@ -48,37 +49,36 @@ Future<Map<String, String>> getheader2() async {
   return headers;
 }
 
-// CheckHeaderValidity() async {
-//   String timestamp =
-//   DateTime.now().millisecondsSinceEpoch.toString().substring(0, 10);
-//   final token = await PreferenceService().getString("refresh_token");
-//   final validityTimestamp =
-//   await PreferenceService().getString("access_expiry_timestamp");
-//   var status = true;
-//   if (int.parse(validityTimestamp!) <= int.parse(timestamp)) {
-//     await UserApi.UpdateRefreshToken(token).then((data) => {
-//       if (data != null)
-//         {
-//           var response = data,
-//           PreferenceService()
-//               .saveString("access_token", response.accessToken!),
-//           PreferenceService().saveString(
-//               "access_expiry_timestamp", response.accessExpiryTimestamp!),
-//           status = true,
-//           // if(response!.error=="1"){
-//           //         return true,
-//           //       }else{
-//           //     return false,
-//           //   }
-//         }
-//       else
-//         {status = false}
-//     });
-//   } else {
-//     status = true;
-//   }
-//   return status;
-// }
+Future<bool> checkHeaderValidity() async {
+  String timestamp = DateTime.now().millisecondsSinceEpoch.toString().substring(0, 10);
+  final int? validityTimestamp = await PreferenceService().getInt("access_expiry_timestamp");
+
+  if (validityTimestamp == null || validityTimestamp <= int.parse(timestamp)) {
+    // Token has expired or no valid timestamp
+    final data = await Userapi.UpdateRefreshToken();
+
+    if (data != null) {
+      // Check if the API response indicates success
+      if (data["success"] == true) {
+        print("Successfully got the token");
+        PreferenceService().saveString('token', data['access_token']);
+        PreferenceService().saveInt('access_expiry_timestamp', data['expires_in']);
+        return true;
+      } else {
+        // If the success key is not true, return false
+        return false;
+      }
+    } else {
+      // No data returned, returning false
+      return false;
+    }
+  }
+
+  // If token is still valid
+  return true;
+}
+
+
 
 class NoInternetWidget extends StatelessWidget {
   @override

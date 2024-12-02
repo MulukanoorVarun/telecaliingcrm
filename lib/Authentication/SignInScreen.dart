@@ -62,6 +62,7 @@ class _SignInScreenState extends State<SignInScreen> {
         if (data['access_token'] != null) {
           // Successful login
           PreferenceService().saveString('token', data['access_token']);
+          PreferenceService().saveInt('access_expiry_timestamp', data['expires_in']);
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => Dashboard()),

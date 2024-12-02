@@ -7,10 +7,10 @@ import '../model/DashBoardModel.dart';
 
 class DashboardProvider with ChangeNotifier {
   List<PhoneNumbers>? phone_numbers;
-  int? todayCalls;
-  int? pendingCalls;
-  int? leadCount;
-  int? followup_count;
+  String? todayCalls;
+  String? pendingCalls;
+  String? leadCount;
+  String? followup_count;
   bool _isLoading = true;
 
   // Getter for userDetails that ensures null safety
@@ -23,10 +23,11 @@ class DashboardProvider with ChangeNotifier {
       // Fetching user details from the API
       var response = await Userapi.DahsBoardApi();
       if (response?.status==true) {
-        todayCalls=response?.todayCalls;
-        pendingCalls=response?.pendingCalls;
-        leadCount=response?.leadCount;
-        followup_count = response?.followupCount;
+        // If expecting Strings, convert integer values to Strings
+        todayCalls = response?.todayCalls?.toString(); // Convert to String
+        pendingCalls = response?.pendingCalls?.toString(); // Convert to String
+        leadCount = response?.leadCount?.toString(); // Convert to String
+        followup_count = response?.followupCount?.toString(); // Convert to String
         phone_numbers =response?.phoneNumbers;
         notifyListeners();
         _isLoading=false;

@@ -1,48 +1,33 @@
 class DashBoardModel {
-  bool? status;
-  int? todayCalls;
-  int? pendingCalls;
-  int? leadCount;
-  int? followupCount;
-  List<PhoneNumbers>? phoneNumbers;
+  final bool? status;
+  final String? todayCalls; // Expecting String type
+  final String? pendingCalls; // Expecting String type
+  final String? leadCount; // Expecting String type
+  final String? followupCount; // Expecting String type
+  final List<PhoneNumbers>? phoneNumbers;
 
-  DashBoardModel(
-      {this.status,
-        this.todayCalls,
-        this.pendingCalls,
-        this.leadCount,
-        this.followupCount,
-        this.phoneNumbers});
+  DashBoardModel({
+    this.status,
+    this.todayCalls,
+    this.pendingCalls,
+    this.leadCount,
+    this.followupCount,
+    this.phoneNumbers,
+  });
 
-  DashBoardModel.fromJson(Map<String, dynamic> json) {
-    status = json['status'];
-    todayCalls = json['today_calls'];
-    pendingCalls = json['pending_calls'];
-    leadCount = json['lead_count'];
-    followupCount = json['followup_count'];
-    if (json['phone_numbers'] != null) {
-      phoneNumbers = <PhoneNumbers>[];
-      json['phone_numbers'].forEach((v) {
-        phoneNumbers!.add(new PhoneNumbers.fromJson(v));
-      });
-    }
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['status'] = this.status;
-    data['today_calls'] = this.todayCalls;
-    data['pending_calls'] = this.pendingCalls;
-    data['lead_count'] = this.leadCount;
-    data['followup_count'] = this.followupCount;
-    if (this.phoneNumbers != null) {
-      data['phone_numbers'] =
-          this.phoneNumbers!.map((v) => v.toJson()).toList();
-    }
-    return data;
+  factory DashBoardModel.fromJson(Map<String, dynamic> json) {
+    return DashBoardModel(
+      status: json['status'],
+      todayCalls: json['today_calls']?.toString(), // Convert to String
+      pendingCalls: json['pending_calls']?.toString(), // Convert to String
+      leadCount: json['lead_count']?.toString(), // Convert to String
+      followupCount: json['followup_count']?.toString(), // Convert to String
+      phoneNumbers: (json['phone_numbers'] as List?)
+          ?.map((item) => PhoneNumbers.fromJson(item))
+          .toList(),
+    );
   }
 }
-
 class PhoneNumbers {
   int? id;
   String? number;
