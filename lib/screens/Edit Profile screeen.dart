@@ -96,6 +96,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       });
     } else {
       print("No image selected.");
+
     }
   }
 
