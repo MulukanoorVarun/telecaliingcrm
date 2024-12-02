@@ -1167,10 +1167,11 @@ class _HomescreenState extends State<Homescreen> {
                   child: Container(
                     padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                     decoration: BoxDecoration(
-                        color: color11,
-                        borderRadius: BorderRadius.circular(10)),
+                        borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: primaryColor)
+                    ),
                     child: text(context, 'Logout', 14,
-                        fontfamily: 'Inter', color: color4),
+                        fontfamily: 'Inter', color: primaryColor),
                   ),
                 ),
               ],
