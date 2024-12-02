@@ -83,7 +83,7 @@ class _FollowupsScreenState extends State<FollowupsScreen> {
             color: Colors.white,
           ),
           onPressed: () {
-            print('Menu button pressed');
+            Navigator.pop(context,true);
           },
         ),
       ),
@@ -110,7 +110,6 @@ class _FollowupsScreenState extends State<FollowupsScreen> {
                           children: [
                             text(context,'${followup_List.leadType?.number??""}', 20),
                             text(context, "Followup: ${formatDate(followup_List.followupDate??"")}", 15),
-
                           ],
                         ),
                         Divider(
@@ -148,15 +147,6 @@ class _FollowupsScreenState extends State<FollowupsScreen> {
                                           textdecoration:
                                               TextDecoration.underline,
                                           decorationcolor: color11),
-                                      InkResponse(onTap: (){
-                                        Navigator.push(context, MaterialPageRoute(builder: (context)=>AddFollowUp(id: followup_List.leadId.toString(),)));
-                                      },
-                                        child: Container(
-                                          padding: EdgeInsets.symmetric(horizontal: 10,vertical: 2),
-
-                                          decoration: BoxDecoration(color: color28,borderRadius: BorderRadius.circular(4),),
-                                          child: text(context, 'Add Follow-Up', 14,fontWeight: FontWeight.w500,fontfamily: 'Inter',color: color37),),
-                                      ),
                                     ],
                                   ),
                                   text(context, '${followup_List.name}', 18),

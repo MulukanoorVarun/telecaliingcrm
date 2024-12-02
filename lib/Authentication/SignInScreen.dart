@@ -62,14 +62,14 @@ class _SignInScreenState extends State<SignInScreen> {
         if (data['access_token'] != null) {
           // Successful login
           PreferenceService().saveString('token', data['access_token']);
-          Navigator.push(
+          Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => Dashboard()),
           );
         } else if (data['error'] != null) {
           // Authentication error
           CustomSnackBar.show(context, data['error']);
-        } else if (data['email'] != null || data['password'] != null) {
+        } else if (data['email'] != null || data['password'] != null) { 
           // Validation error
           String emailError =
               (data['email'] != null) ? data['email'].join(", ") : "";

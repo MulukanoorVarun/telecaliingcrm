@@ -76,7 +76,6 @@ class _AddFollowUpState extends State<AddFollowUp> {
       if (_validateFullName.isEmpty &&
           // _validateMobilenumber.isEmpty &&
           _validateRemarks.isEmpty) {
-        _loading = false;
         AddFollowUp(); // Trigger the AddLeads function if validations pass
       } else {
         _loading = false;
@@ -91,9 +90,12 @@ class _AddFollowUpState extends State<AddFollowUp> {
       print("res>>${res}");
 
       if (res!= null) {
-
-
-        print("Follow-up added successfully: $res");
+        if(res["status"]==true){
+          _loading = false;
+          Navigator.pop(context,true);
+        }else{
+          _loading = false;
+        }
 
       } else {
 
@@ -131,7 +133,7 @@ class _AddFollowUpState extends State<AddFollowUp> {
             color: Colors.white,
           ),
           onPressed: () {
-            print('Menu button pressed');
+            Navigator.pop(context);
           },
         ),
       ),
@@ -455,7 +457,7 @@ class _AddFollowUpState extends State<AddFollowUp> {
               SizedBox(
                 height: 50,
               ),
-              containertext(context, "Submit", onTap: () {
+              containertext(context, "Submit",isLoading: _loading, onTap: () {
                 if (_loading) {
                 } else {
                   _validateFields();

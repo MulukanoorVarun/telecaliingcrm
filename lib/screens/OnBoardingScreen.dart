@@ -43,7 +43,7 @@ class _OnBoardindScreenState extends State<OnBoardindScreen> {
           ),
           InkResponse(
               onTap: () {
-                Navigator.push(context,
+                Navigator.pushReplacement(context,
                     MaterialPageRoute(builder: (context) => SignInScreen()));
               },
               child: containertext(context, 'NEXT', width: w * 0.3)),

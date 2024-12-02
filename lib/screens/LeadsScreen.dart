@@ -148,6 +148,11 @@ class _LeadsScreenState extends State<LeadScreen> {
                                           child: text(context, leads.stageName?.stageName??"", 14,
                                               color: color11)),
 
+                                      InkResponse(onTap: (){
+                                        Navigator.push(context, MaterialPageRoute(builder: (context)=>AddFollowUp(id: leads.id.toString(),)));
+                                      },
+                                        child: text(context, 'Add Follow Up>', 13,fontWeight: FontWeight.w500,fontfamily: 'Poppins',color: Colors.black),
+                                      ),
 
                                       InkWell(
                                         onTap: (){

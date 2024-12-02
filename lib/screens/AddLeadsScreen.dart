@@ -76,13 +76,9 @@ class _AddleadsscreenState extends State<Addleadsscreen> {
           _validateMobilenumber.isEmpty &&
           _validateRemarks.isEmpty &&
           statusError == null) {
-        _loading = false;
         AddLeads(); // Trigger the AddLeads function if validations pass
       } else {
         _loading = false;
-        if (statusError != null) {
-          print(statusError); // Optionally log or display the status error
-        }
       }
     });
   }
@@ -98,10 +94,12 @@ class _AddleadsscreenState extends State<Addleadsscreen> {
       );
 
       if (res!= null) {
-
-
-        print("Lead added successfully: $res");
-
+        if(res["status"]==true){
+          _loading = false;
+          Navigator.pop(context,true);
+        }else{
+          _loading = false;
+        }
       } else {
 
         print("Failed to add lead: Response is null.");
@@ -462,7 +460,7 @@ class _AddleadsscreenState extends State<Addleadsscreen> {
                     SizedBox(
                       height: 50,
                     ),
-                    containertext(context, "Submit", onTap: () {
+                    containertext(context, "Submit",isLoading: _loading, onTap: () {
                       if (_loading) {
                       } else {
                         _validateFields();

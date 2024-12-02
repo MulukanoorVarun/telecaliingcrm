@@ -66,15 +66,8 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                     color: Colors.white),
               ),
               backgroundColor: primaryColor,
-              leading: IconButton(
-                icon: Icon(
-                  Icons.arrow_back,
-                  color: Colors.white,
-                ),
-                onPressed: () {
-                  print('Menu button pressed');
-                },
-              ),
+              leading: Container(),
+              leadingWidth: 20,
             ),
             body: isloading
                 ? Center(
@@ -109,24 +102,33 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                                   ),
                                 ),
                                 const SizedBox(width: 16.0),
-
-                                // Rectangular Image
-                                // ClipRRect(
-                                //   borderRadius: BorderRadius.circular(8.0),
-                                //   child: Image.network(
-                                //     entry["imageUrl"],
-                                //     width: 50.0,
-                                //     height: 50.0,
-                                //     fit: BoxFit.cover,
-                                //   ),
-                                // ),
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                  child: Container(
+                                    width: 50.0,
+                                    height: 50.0,
+                                    color: primaryColor, // Background color for the container (can be customized)
+                                    alignment: Alignment.center, // Center the text
+                                    child: Text(
+                                      leadboard.name?.isNotEmpty ?? false
+                                          ? leadboard.name![0].toUpperCase()
+                                          : '', // Show first character or empty if name is null/empty
+                                      style: const TextStyle(
+                                        fontSize: 24.0, // Font size for the letter
+                                        fontFamily: "Poppins",
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.white, // Text color
+                                      ),
+                                    ),
+                                  ),
+                                ),
                                 const SizedBox(width: 16.0),
                                 Text(
                                   capitalizeFirstLetter(leadboard.name ?? ""),
                                   style: const TextStyle(
                                     fontSize: 16.0,
                                     fontFamily: "Poppins",
-                                    fontWeight: FontWeight.w600,
+                                    fontWeight: FontWeight.w500,
                                   ),
                                 ),
                                 Spacer(),
@@ -135,6 +137,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                                   style: const TextStyle(
                                     fontSize: 22.0,
                                     fontFamily: "Poppins",
+                                    fontWeight: FontWeight.w600,
                                     color: Colors.black,
                                   ),
                                 ),

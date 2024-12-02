@@ -306,6 +306,53 @@ class Userapi {
     }
   }
 
+  static Future<Map<String, dynamic>?> postUpdateLeads(
+      String name,
+      String lead_id,
+      String remarks,
+      String lead_stage_id,
+      String deal_stage,
+      ) async {
+    try {
+      final Map<String, String> data = {
+        "name": name,
+        "lead_id": lead_id,
+        "remarks": remarks,
+        "lead_stage_id": lead_stage_id,
+        "deal_stage": deal_stage,
+      };
+      print("postUpdateLeads??${data}");
+      final url = Uri.parse("${host}/api/update-info");
+      final headers = await getheader1();
+      final response = await http.post(
+        url,
+        headers: headers,
+        body: data,
+      );
+
+      if (response.body.isEmpty) {
+        print("Empty response body.");
+        return null;
+      }
+
+      final jsonResponse = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        print("postUpdateLeads successful: $jsonResponse");
+        return jsonResponse;
+      } else {
+        print(
+          "Request failed with status: ${response.statusCode}, body: $jsonResponse",
+        );
+        return jsonResponse;
+      }
+    } catch (e) {
+      print("Error occurred: $e");
+      return null;
+    }
+  }
+
+
 
   static Future<ViewInfoModel?> getViewInfo(ID) async {
     try {

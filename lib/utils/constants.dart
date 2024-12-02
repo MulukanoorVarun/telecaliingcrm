@@ -246,7 +246,8 @@ Widget containertext(BuildContext context, String buttonText,
         ),
         child:
         Center(
-          child: Text(
+          child:isLoading? CircularProgressIndicator(color: Colors.white,):
+          Text(
             buttonText,
             style: TextStyle(
               color: Color(0xFFFFFFFF),

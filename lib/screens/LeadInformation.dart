@@ -11,6 +11,7 @@ import '../Services/UserApi.dart';
 import '../model/ViewInfoModel.dart';
 import '../providers/ConnectivityProviders.dart';
 import '../services/otherservices.dart';
+import 'UpDateLeadScreen.dart';
 
 class LeadInformation extends StatefulWidget {
   final String ID;
@@ -26,12 +27,12 @@ class _LeadInformationState extends State<LeadInformation> {
   void initState() {
     Provider.of<ConnectivityProviders>(context, listen: false)
         .initConnectivity();
-    getLeadsApi();
+    getLeadsInformationApi();
     super.initState();
   }
 
   List<ViewInfo> leadinfo = [];
-  void getLeadsApi() async {
+  void getLeadsInformationApi() async {
     var result = await Userapi.getViewInfo(widget.ID);
     setState(() {
       if (result?.status == true) {
@@ -78,8 +79,8 @@ class _LeadInformationState extends State<LeadInformation> {
 
   // Function to launch WhatsApp
   Future<void> launchWhatsApp(String phoneNumber, String message) async {
-    final Uri whatsappUri = Uri.parse(
-        "https://wa.me/$phoneNumber?text=${Uri.encodeFull(message)}");
+    final Uri whatsappUri =
+        Uri.parse("https://wa.me/$phoneNumber?text=${Uri.encodeFull(message)}");
     if (await canLaunch(whatsappUri.toString())) {
       await launch(whatsappUri.toString());
     } else {
@@ -112,7 +113,7 @@ class _LeadInformationState extends State<LeadInformation> {
                   color: Colors.white,
                 ),
                 onPressed: () {
-                  print('Menu button pressed');
+                  Navigator.pop(context,true);
                 },
               ),
             ),
@@ -176,15 +177,29 @@ class _LeadInformationState extends State<LeadInformation> {
                                                 color:
                                                     Colors.white, // Icon color
                                               ),
-                                              onPressed: () {
+                                              onPressed: () async {
                                                 // Action when the edit button is pressed
-                                                Navigator.push(
+                                                var res = await Navigator.push(
                                                     context,
                                                     MaterialPageRoute(
                                                       builder: (context) =>
-                                                          Addleadsscreen(),
+                                                          UpDateLeadScreen(
+                                                        ID: leadinfo[0]
+                                                                .id
+                                                                .toString() ??
+                                                            "",
+                                                        name:
+                                                            leadinfo[0].name ??
+                                                                "",
+                                                        remarks: leadinfo[0]
+                                                                .remarks ??
+                                                            "",
+                                                      ),
                                                     ));
-                                                print('Edit button pressed');
+                                                if (res == true) {
+                                                  is_loading = true;
+                                                  getLeadsInformationApi();
+                                                }
                                               },
                                               tooltip: 'Edit',
                                             ),
@@ -238,14 +253,24 @@ class _LeadInformationState extends State<LeadInformation> {
                                                   vertical: 2, horizontal: 10),
                                               margin: EdgeInsets.only(
                                                   bottom: 10, left: 0),
-                                              child: text(context, leadinfo[0].stageName?.stageName ?? "", 14,
+                                              child: text(
+                                                  context,
+                                                  leadinfo[0]
+                                                          .stageName
+                                                          ?.stageName ??
+                                                      "",
+                                                  14,
                                                   color: color11)),
                                         ],
                                       ),
                                       SizedBox(
                                         height: 2,
                                       ),
-                                      text(context, leadinfo[0].remarks!=null? leadinfo[0].remarks ?? "" : "No remarks found",
+                                      text(
+                                          context,
+                                          leadinfo[0].remarks != null
+                                              ? leadinfo[0].remarks ?? ""
+                                              : "No remarks found",
                                           16,
                                           fontWeight: FontWeight.w400,
                                           textAlign: TextAlign.start,
@@ -272,32 +297,40 @@ class _LeadInformationState extends State<LeadInformation> {
                                 height: 10,
                               ),
                               Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 20.0),
                                 child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     // Call Icon
                                     Column(
                                       children: [
                                         GestureDetector(
-                                          onTap:() async {
-                                            await FlutterPhoneDirectCaller.callNumber(leadinfo[0].number??"");
+                                          onTap: () async {
+                                            await FlutterPhoneDirectCaller
+                                                .callNumber(
+                                                    leadinfo[0].number ?? "");
                                           },
                                           child: Image(
-                                            image: AssetImage("assets/call.png"),
+                                            image:
+                                                AssetImage("assets/call.png"),
                                             color: primaryColor,
                                             width: 25,
                                             height: 25,
                                           ),
                                         ),
-                                        Text("Call", style: TextStyle(fontSize: 14))
+                                        Text("Call",
+                                            style: TextStyle(fontSize: 14))
                                       ],
                                     ),
                                     // SMS Icon
                                     Column(
                                       children: [
                                         GestureDetector(
-                                          onTap: () => launchSMS(leadinfo[0].number??""), // Replace with actual phone number
+                                          onTap: () => launchSMS(leadinfo[0]
+                                                  .number ??
+                                              ""), // Replace with actual phone number
                                           child: Image(
                                             image: AssetImage("assets/sms.png"),
                                             color: primaryColor,
@@ -305,22 +338,27 @@ class _LeadInformationState extends State<LeadInformation> {
                                             height: 25,
                                           ),
                                         ),
-                                        Text("SMS", style: TextStyle(fontSize: 14))
+                                        Text("SMS",
+                                            style: TextStyle(fontSize: 14))
                                       ],
                                     ),
                                     // WhatsApp Icon
                                     Column(
                                       children: [
                                         GestureDetector(
-                                          onTap: () => launchWhatsApp(leadinfo[0].number??"", 'Hello!'), // Replace with actual phone number and message
+                                          onTap: () => launchWhatsApp(
+                                              leadinfo[0].number ?? "",
+                                              'Hello!'), // Replace with actual phone number and message
                                           child: Image(
-                                            image: AssetImage("assets/whatsapp.png"),
+                                            image: AssetImage(
+                                                "assets/whatsapp.png"),
                                             color: primaryColor,
                                             width: 25,
                                             height: 25,
                                           ),
                                         ),
-                                        Text("Whatsapp", style: TextStyle(fontSize: 14))
+                                        Text("Whatsapp",
+                                            style: TextStyle(fontSize: 14))
                                       ],
                                     ),
                                   ],
