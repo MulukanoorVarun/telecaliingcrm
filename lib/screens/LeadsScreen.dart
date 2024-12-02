@@ -12,6 +12,7 @@ import '../Services/UserApi.dart';
 import '../model/LeadsModel.dart';
 import '../providers/ConnectivityProviders.dart';
 import '../providers/LeadsProvider.dart';
+import '../services/Shimmers.dart';
 import '../services/otherservices.dart';
 
 class LeadScreen extends StatefulWidget {
@@ -118,9 +119,7 @@ class _LeadsScreenState extends State<LeadScreen> {
               ],
             ),
             body: is_loading
-                ? Center(
-                    child: CircularProgressIndicator(),
-                  )
+                ?_buildShimmerList()
                 : Column(
                     children: [
                       SizedBox(
@@ -313,5 +312,50 @@ class _LeadsScreenState extends State<LeadScreen> {
                   ),
           )
         : NoInternetWidget();
+  }
+  Widget _buildShimmerList() {
+    return ListView.builder(
+      itemCount: 10, // Adjust the number of shimmer items as needed
+      shrinkWrap: true,
+      physics: const AlwaysScrollableScrollPhysics(),
+      itemBuilder: (context, index) {
+        return Container(
+          margin: const EdgeInsets.symmetric(vertical: 6),
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(7),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  shimmerRectangle(20), // Shimmer for calendar icon
+                  const SizedBox(width: 8),
+                  shimmerText(100, 15), // Shimmer for due date
+                  const Spacer(),
+                  shimmerRectangle(20), // Shimmer for edit icon
+                ],
+              ),
+              const SizedBox(height: 20),
+              shimmerText(150, 20), // Shimmer for milestone title
+              const SizedBox(height: 4),
+              shimmerText(300, 14), // Shimmer for milestone description
+              const SizedBox(height: 10),
+              shimmerText(350, 14),
+              const SizedBox(height: 4),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  shimmerText(60, 14), // Shimmer for "Progress" label
+                  shimmerText(40, 14), // Shimmer for percentage
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 }
