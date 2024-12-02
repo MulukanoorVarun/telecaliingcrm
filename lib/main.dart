@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:telecaliingcrm/providers/ConnectivityProviders.dart';
 import 'package:telecaliingcrm/providers/DashBoardProvider.dart';
+import 'package:telecaliingcrm/providers/LeadsProvider.dart';
 import 'package:telecaliingcrm/providers/UserDetailsProvider.dart';
 
 
@@ -19,6 +20,9 @@ void main() async {
         ),
         ChangeNotifierProvider(
           create: (_) => UserDetailsProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => LeadsProvider(),
         ),
       ],
       child: MyApp(),

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:telecaliingcrm/utils/ColorConstants.dart';
 import 'package:telecaliingcrm/utils/constants.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../Services/UserApi.dart';
 import '../model/GetFollowUpModel.dart';
@@ -55,6 +57,15 @@ class _FollowupsScreenState extends State<FollowupsScreen> {
     final DateTime parsedDate = DateTime.parse(dateTime);
     // Format the DateTime to only display the date
     return "${parsedDate.year}-${parsedDate.month.toString().padLeft(2, '0')}-${parsedDate.day.toString().padLeft(2, '0')}";
+  }
+
+  void _launchWhatsApp(number) async {
+    final url = 'https://wa.me/$number';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not open WhatsApp.';
+    }
   }
 
 
@@ -128,7 +139,6 @@ class _FollowupsScreenState extends State<FollowupsScreen> {
                                 children: [
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
                                     children: [
                                       container(context,
                                           colors: coldbgColor,
@@ -136,17 +146,20 @@ class _FollowupsScreenState extends State<FollowupsScreen> {
                                               Radius.circular(5)),
                                           padding: EdgeInsets.symmetric(
                                               vertical: 2, horizontal: 10),
-                                          margin: EdgeInsets.only(bottom: 10,left: 0),
+                                          margin: EdgeInsets.only(bottom: 0,left: 0),
                                           child: text(context, followup_List.leadType?.stageName?.stageName??"", 14,
                                               color: color11)),
                                       // SizedBox(
                                       //   width: 35,
                                       // ),
-                                      text(context, "View Info>", 14,
-                                          color: color11,
-                                          textdecoration:
-                                              TextDecoration.underline,
-                                          decorationcolor: color11),
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: text(context, "View Info>", 14,
+                                            color: color11,
+                                            textdecoration:
+                                                TextDecoration.underline,
+                                            decorationcolor: color11),
+                                      ),
                                     ],
                                   ),
                                   text(context, '${followup_List.name}', 18),
@@ -161,26 +174,39 @@ class _FollowupsScreenState extends State<FollowupsScreen> {
                             ),
                             Column(
                               children: [
-                                container(context,
-                                    colors: primaryColor,
-                                    padding: EdgeInsets.all(16),
-                                    margin: EdgeInsets.symmetric(
-                                        vertical: 3, horizontal: 3),
-                                    child: Image(
-                                      image: AssetImage("assets/call.png"),
-                                      width: 30,
-                                      height: 30,
-                                    )),
-                                container(context,
-                                    colors: primaryColor,
-                                    padding: EdgeInsets.all(16),
-                                    margin: EdgeInsets.symmetric(
-                                        vertical: 3, horizontal: 3),
-                                    child: Image(
-                                      image: AssetImage("assets/whatsapp.png"),
-                                      width: 30,
-                                      height: 30,
-                                    )),
+                                InkWell(
+                                  onTap: () async {
+                                    await FlutterPhoneDirectCaller
+                                        .callNumber(
+                                        followup_List.phone.toString() ?? "");
+                                  },
+                                  child: container(context,
+                                      colors: primaryColor,
+                                      padding: EdgeInsets.all(10),
+                                      margin: EdgeInsets.symmetric(
+                                          vertical: 3, horizontal: 3),
+                                      child: Image(
+                                        image: AssetImage("assets/call.png"),
+                                        width: 30,
+                                        height: 30,
+                                      )),
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    _launchWhatsApp(
+                                        followup_List.phone.toString()  ?? "");
+                                  },
+                                  child: container(context,
+                                      colors: primaryColor,
+                                      padding: EdgeInsets.all(10),
+                                      margin: EdgeInsets.symmetric(
+                                          vertical: 3, horizontal: 3),
+                                      child: Image(
+                                        image: AssetImage("assets/whatsapp.png"),
+                                        width: 30,
+                                        height: 30,
+                                      )),
+                                ),
                               ],
                             ),
                           ],

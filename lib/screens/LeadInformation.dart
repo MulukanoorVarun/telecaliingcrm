@@ -165,13 +165,14 @@ class _LeadInformationState extends State<LeadInformation> {
                                           Container(
                                             padding: EdgeInsets.all(0.0),
                                             decoration: BoxDecoration(
-                                              color: Colors
-                                                  .blueAccent, // background color of the container
+                                              color: primaryColor, // background color of the container
                                               borderRadius:
                                                   BorderRadius.circular(
                                                       10), // rounded corners
                                             ),
                                             child: IconButton(
+                                              visualDensity: VisualDensity.compact,
+                                              padding: EdgeInsets.all(0),
                                               icon: Icon(
                                                 Icons.edit,
                                                 color:
@@ -251,8 +252,7 @@ class _LeadInformationState extends State<LeadInformation> {
                                                   Radius.circular(5)),
                                               padding: EdgeInsets.symmetric(
                                                   vertical: 2, horizontal: 10),
-                                              margin: EdgeInsets.only(
-                                                  bottom: 10, left: 0),
+                                              margin: EdgeInsets.only(bottom: 0, left: 0),
                                               child: text(
                                                   context,
                                                   leadinfo[0]

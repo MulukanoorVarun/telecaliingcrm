@@ -5,6 +5,7 @@ import 'package:telecaliingcrm/Services/UserApi.dart';
 import 'package:telecaliingcrm/utils/constants.dart';
 
 import '../providers/ConnectivityProviders.dart';
+import '../providers/LeadsProvider.dart';
 import '../services/otherservices.dart';
 import '../utils/ColorConstants.dart';
 import '../utils/ShakeWidget.dart';
@@ -80,28 +81,44 @@ class _UpDateLeadScreenState extends State<UpDateLeadScreen> {
 
   Future<void> UpdateLeads() async {
     try {
-      final res = await Userapi.postUpdateLeads(
+      setState(() {
+        _loading = true;
+      });
+
+      // Call the UpdateleadsApi from LeadsProvider
+      final leadsProvider = Provider.of<LeadsProvider>(context, listen: false);
+
+      // Pass the parameters from your UI to the provider
+      final response = await leadsProvider.UpdateleadsApi(
         _nameController.text,
         widget.ID,
         _remarksController.text,
-        _leadStatus.toString(),
-        _leadStage.toString(),
+        _leadStatus,
+        _leadStage,
       );
 
-      if (res!= null) {
-        if(res["status"]==true){
+      if (response != null && response == true) {
+        setState(() {
           _loading = false;
-          Navigator.pop(context,true);
-        }else{
-          _loading = false;
-        }
+        });
+        CustomSnackBar.show(context, "Lead Updated Successfully!");
+        // If successful, pop the screen with a success message
+        Navigator.pop(context, true);
       } else {
-
-        print("Failed to add lead: Response is null.");
+        setState(() {
+          _loading = false;
+        });
+        CustomSnackBar.show(context, "Lead Updated Failed!");
+        // Handle error, if response status is false
+        print("Failed to update lead");
       }
     } catch (e) {
-      // Handle any errors
-      print("Error occurred while adding lead: $e");
+      setState(() {
+        _loading = false;
+      });
+
+      // Handle error in case of failure
+      print("Error occurred while updating lead: $e");
     }
   }
 

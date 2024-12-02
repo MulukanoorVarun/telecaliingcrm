@@ -396,6 +396,7 @@ class _HomescreenState extends State<Homescreen> {
     if (result != null) {
       // Process the result here (e.g., display a message to the user)
       print("Response: $result");
+      CustomSnackBar.show(context, "Call Staus Updated Successfully!");
       Future.delayed(Duration(seconds: 3), () {
         _scheduleNextCall(); // Start the next call if available
       });
@@ -523,7 +524,6 @@ class _HomescreenState extends State<Homescreen> {
                 builder: (context, dashboardProvider, child) {
               final numbers = dashboardProvider.phoneNumbers;
               phoneNumbers = numbers;
-
               if (dashboardProvider.isLoading) {
                 return Center(
                     child: CircularProgressIndicator(
@@ -552,8 +552,7 @@ class _HomescreenState extends State<Homescreen> {
                                     children: [
                                       text(
                                           context,
-                                          dashboardProvider.todayCalls
-                                              .toString(),
+                                          dashboardProvider.todayCalls.toString()??"",
                                           46,
                                           fontfamily: 'Poppins',
                                           fontWeight: FontWeight.w500),
@@ -574,7 +573,7 @@ class _HomescreenState extends State<Homescreen> {
                                       text(
                                           context,
                                           dashboardProvider.pendingCalls
-                                              .toString(),
+                                              .toString()??"",
                                           46,
                                           fontfamily: 'Poppins',
                                           fontWeight: FontWeight.w500),
@@ -611,7 +610,7 @@ class _HomescreenState extends State<Homescreen> {
                                         text(
                                             context,
                                             dashboardProvider.leadCount
-                                                .toString(),
+                                                .toString()??"",
                                             46,
                                             fontfamily: 'Poppins',
                                             fontWeight: FontWeight.w500),
@@ -642,7 +641,7 @@ class _HomescreenState extends State<Homescreen> {
                                         text(
                                             context,
                                             dashboardProvider.followup_count
-                                                .toString(),
+                                                .toString()??"",
                                             46,
                                             fontfamily: 'Poppins',
                                             fontWeight: FontWeight.w500),

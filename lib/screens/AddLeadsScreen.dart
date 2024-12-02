@@ -5,6 +5,7 @@ import 'package:telecaliingcrm/Services/UserApi.dart';
 import 'package:telecaliingcrm/utils/constants.dart';
 
 import '../providers/ConnectivityProviders.dart';
+import '../providers/LeadsProvider.dart';
 import '../services/otherservices.dart';
 import '../utils/ColorConstants.dart';
 import '../utils/ShakeWidget.dart';
@@ -85,27 +86,42 @@ class _AddleadsscreenState extends State<Addleadsscreen> {
 
   Future<void> AddLeads() async {
     try {
-      final res = await Userapi.postAddLeads(
+
+
+      // Call the AddleadsApi from LeadsProvider
+      final leadsProvider = Provider.of<LeadsProvider>(context, listen: false);
+
+      // Pass the parameters from your UI to the provider
+      final response = await leadsProvider.AddleadsApi(
         _nameController.text,
         _mobileController.text,
         formattedDate,
         _remarksController.text,
-        _leadStatus.toString(),
+        _leadStatus,
       );
 
-      if (res!= null) {
-        if(res["status"]==true){
+      if (response != null && response == true) {
+        setState(() {
           _loading = false;
-          Navigator.pop(context,true);
-        }else{
-          _loading = false;
-        }
-      } else {
+        });
 
-        print("Failed to add lead: Response is null.");
+        // If successful, pop the screen with a success message
+        Navigator.pop(context, true);
+        CustomSnackBar.show(context, "Lead Added Successfully!");
+      } else {
+        setState(() {
+          _loading = false;
+        });
+        CustomSnackBar.show(context, "Lead Added Failed!");
+        // Handle error if response status is false
+        print("Failed to add lead");
       }
     } catch (e) {
-      // Handle any errors
+      setState(() {
+        _loading = false;
+      });
+
+      // Handle error in case of failure
       print("Error occurred while adding lead: $e");
     }
   }
