@@ -14,8 +14,6 @@ import '../providers/UserDetailsProvider.dart';
 import '../utils/ShakeWidget.dart';
 import 'dart:developer' as developer;
 import 'dart:async';
-import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:flutter/services.dart';
 import '../Services/otherservices.dart';
 import '../utils/constants.dart';
 
@@ -43,13 +41,17 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   final ImagePicker _picker = ImagePicker();
 
+
+
   @override
   void initState() {
     super.initState();
     Provider.of<ConnectivityProviders>(context, listen: false)
         .initConnectivity();
-    // _fetchUserProfile();
+    _fetchUserProfile();
+
   }
+
 
   @override
   void dispose() {
@@ -77,24 +79,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   String profile_image = "";
-  // Future<void> _fetchUserProfile() async {
-  //   try {
-  //     final profile_provider =
-  //         Provider.of<UserDetailsProvider>(context, listen: false);
-  //     var res = await profile_provider.userDetails;
-  //     setState(() {
-  //       if (res != null) {
-  //         fullnameController.text = res.fullName ?? ''; // Use safe navigation
-  //         mobileController.text = res.mobile ?? '';
-  //         emailController.text = res.email ?? '';
-  //         profile_image = res.image ?? "";
-  //       }
-  //     });
-  //   } catch (e) {
-  //     // Handle error appropriately, e.g., show a toast or dialog
-  //     print('Error fetching user profile: $e');
-  //   }
-  // }
+
+
 
 
   Future<void> _pickImage() async {
@@ -113,6 +99,22 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     }
   }
 
+  Future<void> _fetchUserProfile() async {
+    try {
+      final profile_provider = Provider.of<UserDetailsProvider>(context, listen: false);
+      var res = await profile_provider.userDetails;
+      setState(() {
+        if (res != null) {
+          fullnameController.text = res.username??"";
+          emailController.text = res.email ?? '';
+          profile_image = res.photo ?? "";
+        }
+      });
+    } catch (e) {
+
+      print('Error fetching user profile: $e');
+    }
+  }
 
   Future<int?> _updateProfile() async {
     String fullname = fullnameController.text;
@@ -147,7 +149,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             body: Padding(
               padding: EdgeInsets.all(16.0),
               child: SingleChildScrollView(
-                child: Column(
+                child:
+
+                Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Center(

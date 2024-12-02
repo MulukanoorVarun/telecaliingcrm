@@ -40,8 +40,5 @@ class UserDetailsProvider with ChangeNotifier {
       throw Exception('Failed to updating user details: $e');
     }
   }
-
-
-
 }
 
