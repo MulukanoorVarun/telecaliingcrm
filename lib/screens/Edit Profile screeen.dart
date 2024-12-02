@@ -125,14 +125,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       if (response != null) {
         isLoading = false;
         Navigator.pop(context);
-
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Profile updated successfully")));
-
+        CustomSnackBar.show(context, "${response}");
       } else {
         isLoading = false;
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text("Failed to update profile")));
+        CustomSnackBar.show(context, "${response}");
       }
     });
   }

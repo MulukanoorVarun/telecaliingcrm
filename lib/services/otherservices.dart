@@ -48,6 +48,38 @@ Future<Map<String, String>> getheader2() async {
   return headers;
 }
 
+// CheckHeaderValidity() async {
+//   String timestamp =
+//   DateTime.now().millisecondsSinceEpoch.toString().substring(0, 10);
+//   final token = await PreferenceService().getString("refresh_token");
+//   final validityTimestamp =
+//   await PreferenceService().getString("access_expiry_timestamp");
+//   var status = true;
+//   if (int.parse(validityTimestamp!) <= int.parse(timestamp)) {
+//     await UserApi.UpdateRefreshToken(token).then((data) => {
+//       if (data != null)
+//         {
+//           var response = data,
+//           PreferenceService()
+//               .saveString("access_token", response.accessToken!),
+//           PreferenceService().saveString(
+//               "access_expiry_timestamp", response.accessExpiryTimestamp!),
+//           status = true,
+//           // if(response!.error=="1"){
+//           //         return true,
+//           //       }else{
+//           //     return false,
+//           //   }
+//         }
+//       else
+//         {status = false}
+//     });
+//   } else {
+//     status = true;
+//   }
+//   return status;
+// }
+
 class NoInternetWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {

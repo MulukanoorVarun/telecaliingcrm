@@ -75,6 +75,7 @@ class Userapi {
         return DashBoardModel.fromJson(jsonResponse);
       } else {
         // Handle non-200 responses (e.g., 401, 404, etc.)
+        print("DahsBoardApi response: ${response.body}");
         print("Request failed with status: ${response.statusCode}");
         return null;
       }
@@ -403,12 +404,11 @@ class Userapi {
     }
   }
 
-  static Future<Map<String, dynamic>?> updateProfile(
+  static Future<String?> updateProfile(
       String fullname,
       String email,
       String pwd,
       File? image,
-
       ) async {
     String? mimeType;
 
@@ -454,19 +454,43 @@ class Userapi {
       final response = await request.send();
 
       // Handle the response
+// Handle the response
+      final responseData = await response.stream.bytesToString();
+      final jsonResponse = json.decode(responseData);
+
       if (response.statusCode == 200) {
-        final responseBody = await response.stream.bytesToString();
-        final jsonResponse = jsonDecode(responseBody);
-        print("updateProfile response: ${responseBody}");
-        return jsonResponse ;
+        if (jsonResponse['message'] == 'User updated successfully') {
+          return 'Profile updated successfully.'; // Return success message
+        } else {
+          return 'Profile update failed: ${jsonResponse['message']}'; // Return failure message
+        }
       } else {
-        print("Request failed with status: ${response.statusCode}");
-        return null;
+        return 'Error: ${response.statusCode}'; // Return error message
       }
     } catch (e) {
       print("Error occurred: $e");
       return null;
     }
   }
+
+  //
+  // static Future<Map<String, dynamic>?> UpdateRefreshToken(token) async {
+  //   try {
+  //     Map<String, String> data = {
+  //       'refresh_token': (token).toString(),
+  //     };
+  //     final header = await getheader();
+  //     final res = await post(data, RefreshTokenApiName, header);
+  //     if (res != null) {
+  //       return OtpVerifyModal.fromJson(jsonDecode(res.body));
+  //     } else {
+  //       print("Null Response");
+  //       return null;
+  //     }
+  //   } catch (e) {
+  //     debugPrint('hello bev=bug $e ');
+  //     return null;
+  //   }
+  // }
 
 }
