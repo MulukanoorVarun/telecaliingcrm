@@ -152,7 +152,7 @@ class _AddleadsscreenState extends State<Addleadsscreen> {
                   color: Colors.white,
                 ),
                 onPressed: () {
-                  print('Menu button pressed');
+                  Navigator.pop(context);
                 },
               ),
             ),
