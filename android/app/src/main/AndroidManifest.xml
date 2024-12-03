@@ -8,7 +8,7 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
     <application
-        android:label="telecaliingcrm"
+        android:label="Telecalling CRM"
         android:name="${applicationName}"
         android:icon="@mipmap/telecalling_appicon">
         <activity

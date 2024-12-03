@@ -195,7 +195,7 @@ class _HomescreenState extends State<Homescreen> {
       ..sort((a, b) {
         int timestampA = a.timestamp ?? 0;
         int timestampB = b.timestamp ?? 0;
-        return timestampB.compareTo(timestampA); // Descending order
+        return timestampB.compareTo(timestampA);
       });
 
     for (CallLogEntry log in sortedLogs) {
