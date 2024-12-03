@@ -347,7 +347,7 @@ class _HomescreenState extends State<Homescreen> {
             );
           }),
           actions: <Widget>[
-            // Centered ElevatedButton for submit action
+
             Center(
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
@@ -435,15 +435,15 @@ class _HomescreenState extends State<Homescreen> {
             key: _scaffoldKey,
             appBar: PreferredSize(
               preferredSize:
-                  Size.fromHeight(80), // Set the desired height of the AppBar
+                  Size.fromHeight(80),
               child: Consumer<UserDetailsProvider>(
                   builder: (context, userDetailsProvider, child) {
                 return AppBar(
                   automaticallyImplyLeading: false,
                   backgroundColor: Colors.transparent,
-                  // Make the AppBar background transparent
+
                   elevation: 0,
-                  // Remove the default shadow of the AppBar
+
                   flexibleSpace: Container(
                     padding: EdgeInsets.all(16),
                     margin: EdgeInsets.symmetric(vertical: 8),
@@ -549,7 +549,7 @@ class _HomescreenState extends State<Homescreen> {
                                           46,
                                           fontfamily: 'Poppins',
                                           fontWeight: FontWeight.w500),
-                                      text(context, 'Todays Calls', 14,
+                                      text(context, 'Todays Calls', 16,
                                           fontfamily: 'Inter',
                                           fontWeight: FontWeight.w500),
                                     ],
@@ -571,7 +571,7 @@ class _HomescreenState extends State<Homescreen> {
                                           46,
                                           fontfamily: 'Poppins',
                                           fontWeight: FontWeight.w500),
-                                      text(context, 'Pending Calls', 14,
+                                      text(context, 'Pending Calls', 16,
                                           fontfamily: 'Inter',
                                           fontWeight: FontWeight.w500),
                                     ],
@@ -609,7 +609,7 @@ class _HomescreenState extends State<Homescreen> {
                                             46,
                                             fontfamily: 'Poppins',
                                             fontWeight: FontWeight.w500),
-                                        text(context, 'Leads', 14,
+                                        text(context, 'Leads', 16,
                                             fontfamily: 'Inter',
                                             fontWeight: FontWeight.w500),
                                       ],
@@ -641,7 +641,7 @@ class _HomescreenState extends State<Homescreen> {
                                             46,
                                             fontfamily: 'Poppins',
                                             fontWeight: FontWeight.w500),
-                                        text(context, 'Follow Ups', 14,
+                                        text(context, 'Follow Ups', 16,
                                             fontfamily: 'Inter',
                                             fontWeight: FontWeight.w500),
                                       ],
@@ -710,8 +710,9 @@ class _HomescreenState extends State<Homescreen> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            if(data.name== null)...[
-                                              Container(width: w*0.6,
+                                            if (data.name == null) ...[
+                                              Container(
+                                                width: w * 0.6,
                                                 child: text(
                                                     context,
                                                     (data.name != "")
@@ -721,7 +722,8 @@ class _HomescreenState extends State<Homescreen> {
                                                     fontfamily: 'Poppins',
                                                     fontWeight: FontWeight.w600,
                                                     textAlign: TextAlign.left,
-                                                    overflow: TextOverflow.ellipsis,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
                                                     color: color11),
                                               ),
                                             ],
@@ -817,8 +819,7 @@ class _HomescreenState extends State<Homescreen> {
                                 Container(
                                   width: w * 0.4,
                                   child: Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.center,
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
@@ -875,9 +876,9 @@ class _HomescreenState extends State<Homescreen> {
                                 Container(
                                   padding: EdgeInsets.all(0.0),
                                   decoration: BoxDecoration(
-                                    color: primaryColor, // background color of the container
-                                    borderRadius:
-                                    BorderRadius.circular(
+                                    color:
+                                        primaryColor, // background color of the container
+                                    borderRadius: BorderRadius.circular(
                                         10), // rounded corners
                                   ),
                                   child: IconButton(
@@ -885,22 +886,22 @@ class _HomescreenState extends State<Homescreen> {
                                     padding: EdgeInsets.all(0),
                                     icon: Icon(
                                       Icons.edit,
-                                      color:
-                                      Colors.white, // Icon color
+                                      color: Colors.white, // Icon color
                                     ),
                                     onPressed: () async {
                                       // Action when the edit button is pressed
                                       var res = await Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                            builder: (context) =>
-
-                                          EditProfileScreen()));
-                                      },
+                                              builder: (context) =>
+                                                  EditProfileScreen()));
+                                    },
                                     tooltip: 'Edit',
                                   ),
                                 ),
-                                SizedBox(width: 10,),
+                                SizedBox(
+                                  width: 10,
+                                ),
                               ],
                             ),
                           ),
@@ -908,7 +909,10 @@ class _HomescreenState extends State<Homescreen> {
                       },
                     ),
                   ),
-                  Divider(color: color11,height: 1,),
+                  Divider(
+                    color: color10,
+                    height: 0.5,
+                  ),
                   // InkWell(
                   //   onTap: () {
                   //     // Your onTap action here

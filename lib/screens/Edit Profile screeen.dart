@@ -41,17 +41,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   final ImagePicker _picker = ImagePicker();
 
-
-
   @override
   void initState() {
     super.initState();
     Provider.of<ConnectivityProviders>(context, listen: false)
         .initConnectivity();
     _fetchUserProfile();
-
   }
-
 
   @override
   void dispose() {
@@ -80,9 +76,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   String profile_image = "";
 
-
-
-
   Future<void> _pickImage() async {
     final XFile? pickedFile = await _picker.pickImage(
       source: ImageSource.gallery, // Use ImageSource.camera for camera
@@ -96,23 +89,22 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       });
     } else {
       print("No image selected.");
-
     }
   }
 
   Future<void> _fetchUserProfile() async {
     try {
-      final profile_provider = Provider.of<UserDetailsProvider>(context, listen: false);
+      final profile_provider =
+          Provider.of<UserDetailsProvider>(context, listen: false);
       var res = await profile_provider.userDetails;
       setState(() {
         if (res != null) {
-          fullnameController.text = res.username??"";
+          fullnameController.text = res.username ?? "";
           emailController.text = res.email ?? '';
           profile_image = res.photo ?? "";
         }
       });
     } catch (e) {
-
       print('Error fetching user profile: $e');
     }
   }
@@ -123,7 +115,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     String pwd = pwdController.text;
     final profile_provider =
         Provider.of<UserDetailsProvider>(context, listen: false);
-    var response = await profile_provider.updateUserDetails(fullname, email, pwd, _image);
+    var response =
+        await profile_provider.updateUserDetails(fullname, email, pwd, _image);
     setState(() {
       if (response != null) {
         isLoading = false;
@@ -136,7 +129,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     });
   }
 
-  // final spinkits=Spinkits();
 
   @override
   Widget build(BuildContext context) {
@@ -150,9 +142,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             body: Padding(
               padding: EdgeInsets.all(16.0),
               child: SingleChildScrollView(
-                child:
-
-                Column(
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Center(
@@ -169,19 +159,19 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                         as ImageProvider<Object>
                                     : AssetImage('assets/personProfile.png')
                                         as ImageProvider<
-                                            Object>, // Fallback if no image is available
+                                            Object>,
                           ),
                           Positioned(
                             bottom: 0,
                             right: 0,
                             child: InkWell(
                               onTap: _pickImage,
-                              child: const CircleAvatar(
+                              child: CircleAvatar(
                                 radius: 15,
                                 backgroundColor: Colors.white,
                                 child: Icon(
                                   Icons.camera_alt,
-                                  color: Color(0xFFCAA16C1A),
+                                  color: color28,
                                   size: 20, // Size of the camera icon
                                 ),
                               ),
