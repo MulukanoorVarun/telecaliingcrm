@@ -248,7 +248,19 @@ class _LeadInformationState extends State<LeadInformation> {
                                               fontWeight: FontWeight.w500,
                                               color: Colors.black),
                                           container(context,
-                                              colors: coldbgColor,
+                                              colors: (leadinfo[0]
+                                                  .stageName
+                                                  ?.stageName ==
+                                                  "Cold")
+                                                  ? coldbgColor
+                                                  : (leadinfo[0]
+                                                  .stageName
+                                                  ?.stageName ==
+                                                  "Hot")
+                                                  ? Color(
+                                                  0xffFFA89C)
+                                                  : Color(
+                                                  0xff95F8B6),
                                               borderRadius: BorderRadius.all(
                                                   Radius.circular(5)),
                                               padding: EdgeInsets.symmetric(
@@ -374,12 +386,12 @@ class _LeadInformationState extends State<LeadInformation> {
   }
   Widget _buildShimmerList() {
     return ListView.builder(
-      itemCount: 10, // Adjust the number of shimmer items as needed
+      itemCount: 2, // Adjust the number of shimmer items as needed
       shrinkWrap: true,
       physics: const AlwaysScrollableScrollPhysics(),
       itemBuilder: (context, index) {
         return Container(
-          margin: const EdgeInsets.symmetric(vertical: 6),
+          margin: const EdgeInsets.symmetric(vertical: 8,horizontal: 16),
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: Colors.white,

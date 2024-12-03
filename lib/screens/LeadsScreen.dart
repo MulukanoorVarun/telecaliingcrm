@@ -187,7 +187,7 @@ class _LeadsScreenState extends State<LeadScreen> {
                                                       CrossAxisAlignment.start,
                                                   children: [
                                                     container(context,
-                                                        colors: coldbgColor,
+                                                        colors:(leads.stageName?.stageName=="Cold")? coldbgColor:(leads.stageName?.stageName=="Hot")?Color(0xffFFA89C):Color(0xff95F8B6),
                                                         borderRadius:
                                                             BorderRadius.all(
                                                                 Radius.circular(

@@ -25,7 +25,8 @@ class _FollowupsScreenState extends State<FollowupsScreen> {
   @override
   void initState() {
     getFollowUpApi();
-    Provider.of<ConnectivityProviders>(context,listen: false).initConnectivity();
+    Provider.of<ConnectivityProviders>(context, listen: false)
+        .initConnectivity();
     super.initState();
   }
 
@@ -34,32 +35,33 @@ class _FollowupsScreenState extends State<FollowupsScreen> {
     Provider.of<ConnectivityProviders>(context, listen: false).dispose();
     super.dispose();
   }
- bool is_loading =true;
 
-  List<FollowUpModel> data=[];
+  bool is_loading = true;
+
+  List<FollowUpModel> data = [];
 
   void getFollowUpApi() async {
-
     var result = await Userapi.getFollowup();
 
     setState(() {
-
       if (result?.status == true) {
-        data=result?.data??[];
-        is_loading=false;
+        data = result?.data ?? [];
+        is_loading = false;
         print("Response: $result");
       } else {
-        is_loading=false;
+        is_loading = false;
         print("Failed to update the call status.");
       }
     });
   }
+
   String formatDate(String dateTime) {
     // Parse the string into a DateTime object
     final DateTime parsedDate = DateTime.parse(dateTime);
-    // Format the DateTime to only display the date
-    return "${parsedDate.year}-${parsedDate.month.toString().padLeft(2, '0')}-${parsedDate.day.toString().padLeft(2, '0')}";
+    // Format the DateTime to Indian date format (DD-MM-YYYY)
+    return "${parsedDate.day.toString().padLeft(2, '0')}-${parsedDate.month.toString().padLeft(2, '0')}-${parsedDate.year}";
   }
+
 
   void _launchWhatsApp(number) async {
     final url = 'https://wa.me/$number';
@@ -70,174 +72,232 @@ class _FollowupsScreenState extends State<FollowupsScreen> {
     }
   }
 
-
-
   @override
   Widget build(BuildContext context) {
-    var connectiVityStatus =Provider.of<ConnectivityProviders>(context);
+    var connectiVityStatus = Provider.of<ConnectivityProviders>(context);
     return (connectiVityStatus.isDeviceConnected == "ConnectivityResult.wifi" ||
-        connectiVityStatus.isDeviceConnected == "ConnectivityResult.mobile")
-        ?
-     Scaffold(
-      backgroundColor: scaffoldbgColor,
-      appBar: AppBar(
-        title: Text(
-          'Followups',
-          style: TextStyle(
-              fontSize: 22,
-              fontFamily: "Poppins",
-              fontWeight: FontWeight.w600,
-              color: Colors.white),
-        ),
-        backgroundColor: primaryColor,
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back,
-            color: Colors.white,
-          ),
-          onPressed: () {
-            Navigator.pop(context,true);
-          },
-        ),
-      ),
-      body: is_loading?_buildShimmerList():
-
-      Column(
-        children: [
-          SizedBox(
-            height: 10,
-          ),
-
-          Expanded(
-            child: ListView.builder(
-                itemCount: data.length,
-                itemBuilder: (context, index) {
-                  final followup_List=data[index];
-                  return container(
-                    context,
-                    margin: EdgeInsets.symmetric(vertical: 5, horizontal: 16),
-                    child: Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            text(context,'${followup_List.leadType?.number??""}', 20),
-                            text(context, "Followup: ${formatDate(followup_List.followupDate??"")}", 15),
-                          ],
-                        ),
-                        Divider(
-                          height: 1.8,
-                          thickness: 0.8,
-                          color: Colors.black.withOpacity(0.25),
-                        ),
-                        SizedBox(height: 5),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      container(context,
-                                          colors: coldbgColor,
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(5)),
-                                          padding: EdgeInsets.symmetric(
-                                              vertical: 2, horizontal: 10),
-                                          margin: EdgeInsets.only(bottom: 0,left: 0),
-                                          child: text(context, followup_List.leadType?.stageName?.stageName??"", 14,
-                                              color: color11)),
-                                      // SizedBox(
-                                      //   width: 35,
-                                      // ),
-                                      InkWell(
-                                        onTap:(){
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    LeadInformation(
-                                                      ID: followup_List.leadId
-                                                          .toString(),
+            connectiVityStatus.isDeviceConnected == "ConnectivityResult.mobile")
+        ? Scaffold(
+            backgroundColor: scaffoldbgColor,
+            appBar: AppBar(
+              title: Text(
+                'Followups',
+                style: TextStyle(
+                    fontSize: 22,
+                    fontFamily: "Poppins",
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white),
+              ),
+              backgroundColor: primaryColor,
+              leading: IconButton(
+                icon: Icon(
+                  Icons.arrow_back,
+                  color: Colors.white,
+                ),
+                onPressed: () {
+                  Navigator.pop(context, true);
+                },
+              ),
+            ),
+            body: is_loading
+                ? _buildShimmerList()
+                : Column(
+                    children: [
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Expanded(
+                        child: ListView.builder(
+                            itemCount: data.length,
+                            itemBuilder: (context, index) {
+                              final followup_List = data[index];
+                              return container(
+                                context,
+                                margin: EdgeInsets.symmetric(
+                                    vertical: 5, horizontal: 16),
+                                child: Column(
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        text(
+                                            context,
+                                            '${followup_List.leadType?.number ?? ""}',
+                                            20),
+                                        text(
+                                            context,
+                                            "Followup: ${formatDate(followup_List.followupDate ?? "")}",
+                                            15),
+                                      ],
+                                    ),
+                                    Divider(
+                                      height: 1.8,
+                                      thickness: 0.8,
+                                      color: Colors.black.withOpacity(0.25),
+                                    ),
+                                    SizedBox(height: 5),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            children: [
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  container(context,
+                                                      colors: (followup_List
+                                                                  .leadType
+                                                                  ?.stageName
+                                                                  ?.stageName ==
+                                                              "Cold")
+                                                          ? coldbgColor
+                                                          : (followup_List.leadType?.stageName?.stageName ==
+                                                                  "Hot")
+                                                              ? Color(
+                                                                  0xffFFA89C)
+                                                              : Color(
+                                                                  0xff95F8B6),
+                                                      borderRadius: BorderRadius.all(
+                                                          Radius.circular(5)),
+                                                      padding: EdgeInsets.symmetric(
+                                                          vertical: 2,
+                                                          horizontal: 10),
+                                                      margin: EdgeInsets.only(
+                                                          bottom: 0, left: 0),
+                                                      child: text(
+                                                          context,
+                                                          followup_List
+                                                                  .leadType
+                                                                  ?.stageName
+                                                                  ?.stageName ??
+                                                              "",
+                                                          14,
+                                                          color: color11)),
+                                                  // SizedBox(
+                                                  //   width: 35,
+                                                  // ),
+                                                  InkWell(
+                                                    onTap: () {
+                                                      Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                            builder: (context) =>
+                                                                LeadInformation(
+                                                              ID: followup_List
+                                                                  .leadId
+                                                                  .toString(),
+                                                            ),
+                                                          ));
+                                                    },
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              8.0),
+                                                      child: text(context,
+                                                          "View Info>", 14,
+                                                          color: primaryColor,
+                                                          textdecoration:
+                                                              TextDecoration
+                                                                  .underline,
+                                                          decorationcolor:
+                                                              primaryColor),
                                                     ),
-                                              ));
-                                        },
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: text(context, "View Info>", 14,
-                                              color: color11,
-                                              textdecoration:
-                                                  TextDecoration.underline,
-                                              decorationcolor: color11),
+                                                  ),
+                                                ],
+                                              ),
+                                              text(context,
+                                                  '${followup_List.name}', 18),
+                                              Text.rich(
+                                                TextSpan(
+                                                  children: [
+                                                    TextSpan(
+                                                        text: 'Remarks : ',
+                                                        style: TextStyle(fontWeight: FontWeight.bold,fontFamily: "Poppins")
+                                                    ),
+                                                    TextSpan(
+                                                        text: '${followup_List.remarks}',
+                                                        style: TextStyle(fontWeight: FontWeight.normal)
+                                                    ),
+                                                  ],
+                                                ),
+                                                maxLines: 3,
+                                                textAlign: TextAlign.start,
+                                                overflow: TextOverflow.ellipsis, // Optional, to handle text overflow
+                                              )
+
+                                            ],
+                                          ),
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                  text(context, '${followup_List.name}', 18),
-                                  text(
-                                      context,
-                                      '${followup_List.remarks}',
-                                      14,
-                                      maxLines: 3,
-                                      textAlign: TextAlign.start),
-                                ],
-                              ),
-                            ),
-                            Column(
-                              children: [
-                                InkWell(
-                                  onTap: () async {
-                                    await FlutterPhoneDirectCaller
-                                        .callNumber(
-                                        followup_List.phone.toString() ?? "");
-                                  },
-                                  child: container(context,
-                                      colors: primaryColor,
-                                      padding: EdgeInsets.all(10),
-                                      margin: EdgeInsets.symmetric(
-                                          vertical: 3, horizontal: 3),
-                                      child: Image(
-                                        image: AssetImage("assets/call.png"),
-                                        width: 30,
-                                        height: 30,
-                                      )),
+                                        Column(
+                                          children: [
+                                            InkWell(
+                                              onTap: () async {
+                                                await FlutterPhoneDirectCaller
+                                                    .callNumber(followup_List
+                                                            .phone
+                                                            .toString() ??
+                                                        "");
+                                              },
+                                              child: container(context,
+                                                  colors: primaryColor,
+                                                  padding: EdgeInsets.all(10),
+                                                  margin: EdgeInsets.symmetric(
+                                                      vertical: 3,
+                                                      horizontal: 3),
+                                                  child: Image(
+                                                    image: AssetImage(
+                                                        "assets/call.png"),
+                                                    width: 30,
+                                                    height: 30,
+                                                  )),
+                                            ),
+                                            GestureDetector(
+                                              onTap: () {
+                                                _launchWhatsApp(followup_List
+                                                        .phone
+                                                        .toString() ??
+                                                    "");
+                                              },
+                                              child: container(context,
+                                                  colors: primaryColor,
+                                                  padding: EdgeInsets.all(10),
+                                                  margin: EdgeInsets.symmetric(
+                                                      vertical: 3,
+                                                      horizontal: 3),
+                                                  child: Image(
+                                                    image: AssetImage(
+                                                        "assets/whatsapp.png"),
+                                                    width: 30,
+                                                    height: 30,
+                                                  )),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    )
+                                  ],
                                 ),
-                                GestureDetector(
-                                  onTap: () {
-                                    _launchWhatsApp(
-                                        followup_List.phone.toString()  ?? "");
-                                  },
-                                  child: container(context,
-                                      colors: primaryColor,
-                                      padding: EdgeInsets.all(10),
-                                      margin: EdgeInsets.symmetric(
-                                          vertical: 3, horizontal: 3),
-                                      child: Image(
-                                        image: AssetImage("assets/whatsapp.png"),
-                                        width: 30,
-                                        height: 30,
-                                      )),
-                                ),
-                              ],
-                            ),
-                          ],
-                        )
-                      ],
-                    ),
-                  );
-                }),
-          ),
-          SizedBox(
-            height: 10,
-          ),
-        ],
-      ),
-    ): NoInternetWidget();
+                              );
+                            }),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                    ],
+                  ),
+          )
+        : NoInternetWidget();
   }
+
   Widget _buildShimmerList() {
     return ListView.builder(
       itemCount: 10, // Adjust the number of shimmer items as needed
@@ -245,7 +305,7 @@ class _FollowupsScreenState extends State<FollowupsScreen> {
       physics: const AlwaysScrollableScrollPhysics(),
       itemBuilder: (context, index) {
         return Container(
-          margin: const EdgeInsets.symmetric(vertical: 8,horizontal: 16),
+          margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: Colors.white,
