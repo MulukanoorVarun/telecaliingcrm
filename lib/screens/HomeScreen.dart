@@ -667,7 +667,7 @@ class _HomescreenState extends State<Homescreen> {
                                     : 'START NOW',
                                 height: h * 0.1),
                             SizedBox(height: w * 0.05),
-                            text(context, 'CALLS IN QUEUE', 22,
+                            text(context, 'CALLS IN QUEUE', 20,
                                 fontWeight: FontWeight.w500,
                                 fontfamily: 'Poppins',
                                 color: color11,
@@ -710,15 +710,21 @@ class _HomescreenState extends State<Homescreen> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            text(
-                                                context,
-                                                (data.name != "")
-                                                    ? data.name ?? "Unknown"
-                                                    : "Unknown",
-                                                18,
-                                                fontfamily: 'Poppins',
-                                                fontWeight: FontWeight.w500,
-                                                color: color11),
+                                            if(data.name== null)...[
+                                              Container(width: w*0.6,
+                                                child: text(
+                                                    context,
+                                                    (data.name != "")
+                                                        ? data.name ?? "Unknown"
+                                                        : "Unknown",
+                                                    18,
+                                                    fontfamily: 'Poppins',
+                                                    fontWeight: FontWeight.w600,
+                                                    textAlign: TextAlign.left,
+                                                    overflow: TextOverflow.ellipsis,
+                                                    color: color11),
+                                              ),
+                                            ],
                                             SizedBox(
                                               height: 5,
                                             ),
@@ -749,134 +755,160 @@ class _HomescreenState extends State<Homescreen> {
                     height: h * 0.14,
                     child: Consumer<UserDetailsProvider>(
                       builder: (context, userDetailsProvider, child) {
-                        return DrawerHeader(
-                          padding: EdgeInsets.zero,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: primaryColor,
-                              borderRadius: BorderRadius.circular(0),
-                            ),
-                            child: Center(
-                              child: Row(
-                                children: [
-                                  SizedBox(
-                                    width: 10,
-                                  ),
-                                  CircleAvatar(
-                                    radius: 30,
-                                    backgroundColor: Colors.grey,
-                                    child: userDetailsProvider
-                                                .userDetails?.photo !=
-                                            null
-                                        ? ClipOval(
-                                            // Ensure the image is clipped into a circle
-                                            child: Image.network(
+                        return Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(0),
+                          ),
+                          child: Center(
+                            child: Row(
+                              children: [
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                CircleAvatar(
+                                  radius: 30,
+                                  backgroundColor: Colors.grey,
+                                  child: userDetailsProvider
+                                              .userDetails?.photo !=
+                                          null
+                                      ? ClipOval(
+                                          // Ensure the image is clipped into a circle
+                                          child: Image.network(
+                                            userDetailsProvider
+                                                .userDetails!.photo!,
+                                            fit: BoxFit.cover,
+                                            width:
+                                                60, // Ensure it's sized to fit the CircleAvatar
+                                            height:
+                                                60, // Ensure it's sized to fit the CircleAvatar
+                                          ),
+                                        )
+                                      : userDetailsProvider
+                                                  .userDetails?.username !=
+                                              null
+                                          ? // Show the first character of the user's name if no photo
+                                          Text(
                                               userDetailsProvider
-                                                  .userDetails!.photo!,
-                                              fit: BoxFit.cover,
-                                              width:
-                                                  60, // Ensure it's sized to fit the CircleAvatar
-                                              height:
-                                                  60, // Ensure it's sized to fit the CircleAvatar
-                                            ),
-                                          )
-                                        : userDetailsProvider
-                                                    .userDetails?.username !=
-                                                null
-                                            ? // Show the first character of the user's name if no photo
-                                            Text(
-                                                userDetailsProvider
-                                                    .userDetails!.username![0]
-                                                    .toUpperCase(),
-                                                style: TextStyle(
-                                                  fontSize: 30,
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              )
-                                            : // If there's no photo or name, show a fallback image
-                                            ClipOval(
-                                                // Ensure fallback image is also clipped into a circle
-                                                child: Image.asset(
-                                                  'assets/personProfile.png',
-                                                  fit: BoxFit.cover,
-                                                  width:
-                                                      60, // Ensure it's sized to fit the CircleAvatar
-                                                  height:
-                                                      60, // Ensure it's sized to fit the CircleAvatar
-                                                ),
+                                                  .userDetails!.username![0]
+                                                  .toUpperCase(),
+                                              style: TextStyle(
+                                                fontSize: 30,
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.bold,
                                               ),
+                                            )
+                                          : // If there's no photo or name, show a fallback image
+                                          ClipOval(
+                                              // Ensure fallback image is also clipped into a circle
+                                              child: Image.asset(
+                                                'assets/personProfile.png',
+                                                fit: BoxFit.cover,
+                                                width:
+                                                    60, // Ensure it's sized to fit the CircleAvatar
+                                                height:
+                                                    60, // Ensure it's sized to fit the CircleAvatar
+                                              ),
+                                            ),
+                                ),
+                                SizedBox(
+                                    width: MediaQuery.of(context).size.width *
+                                        0.02),
+                                // User Details Column
+                                Container(
+                                  width: w * 0.4,
+                                  child: Column(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        userDetailsProvider.userDetails
+                                                    ?.username?.isNotEmpty ??
+                                                false
+                                            ? userDetailsProvider
+                                                    .userDetails!.username![0]
+                                                    .toUpperCase() +
+                                                userDetailsProvider
+                                                    .userDetails!.username!
+                                                    .substring(1)
+                                            : "",
+                                        style: TextStyle(
+                                            fontSize: 20,
+                                            fontFamily: "Poppins",
+                                            fontWeight: FontWeight.w500,
+                                            overflow: TextOverflow.ellipsis,
+                                            color: Colors.black),
+                                      ),
+                                      SizedBox(
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.01),
+                                      text(
+                                        context,
+                                        userDetailsProvider
+                                                .userDetails?.email ??
+                                            "example@domain.com",
+                                        18,
+                                        fontWeight: FontWeight.w500,
+                                        color: color11,
+                                        overflow: TextOverflow.ellipsis,
+                                        fontfamily: 'Poppins',
+                                      ),
+                                    ],
                                   ),
-                                  SizedBox(
-                                      width: MediaQuery.of(context).size.width *
-                                          0.02),
-                                  // User Details Column
-                                  Container(
-                                    width: w * 0.45,
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          userDetailsProvider.userDetails
-                                                      ?.username?.isNotEmpty ??
-                                                  false
-                                              ? userDetailsProvider
-                                                      .userDetails!.username![0]
-                                                      .toUpperCase() +
-                                                  userDetailsProvider
-                                                      .userDetails!.username!
-                                                      .substring(1)
-                                              : "",
-                                          style: TextStyle(
-                                              fontSize: 20,
-                                              fontFamily: "Poppins",
-                                              fontWeight: FontWeight.w500,
-                                              overflow: TextOverflow.ellipsis,
-                                              color: Colors.white),
-                                        ),
-                                        SizedBox(
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .height *
-                                                0.01),
-                                        text(
-                                          context,
-                                          userDetailsProvider
-                                                  .userDetails?.email ??
-                                              "example@domain.com",
-                                          18,
-                                          fontWeight: FontWeight.w500,
-                                          color: color4,
-                                          overflow: TextOverflow.ellipsis,
-                                          fontfamily: 'Poppins',
-                                        ),
-                                      ],
+                                ),
+                                Spacer(),
+                                // InkResponse(
+                                //     onTap: () {
+                                //       Navigator.push(
+                                //           context,
+                                //           MaterialPageRoute(
+                                //               builder: (context) =>
+                                //                   EditProfileScreen()));
+                                //     },
+                                //     child: Icon(
+                                //       Icons.edit,
+                                //       color: color4,
+                                //     ))
+                                Container(
+                                  padding: EdgeInsets.all(0.0),
+                                  decoration: BoxDecoration(
+                                    color: primaryColor, // background color of the container
+                                    borderRadius:
+                                    BorderRadius.circular(
+                                        10), // rounded corners
+                                  ),
+                                  child: IconButton(
+                                    visualDensity: VisualDensity.compact,
+                                    padding: EdgeInsets.all(0),
+                                    icon: Icon(
+                                      Icons.edit,
+                                      color:
+                                      Colors.white, // Icon color
                                     ),
-                                  ),
-                                  Spacer(),
-                                  InkResponse(
-                                      onTap: () {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    EditProfileScreen()));
+                                    onPressed: () async {
+                                      // Action when the edit button is pressed
+                                      var res = await Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+
+                                          EditProfileScreen()));
                                       },
-                                      child: Icon(
-                                        Icons.edit,
-                                        color: color4,
-                                      ))
-                                ],
-                              ),
+                                    tooltip: 'Edit',
+                                  ),
+                                ),
+                                SizedBox(width: 10,),
+                              ],
                             ),
                           ),
                         );
                       },
                     ),
                   ),
+                  Divider(color: color11,height: 1,),
                   // InkWell(
                   //   onTap: () {
                   //     // Your onTap action here
