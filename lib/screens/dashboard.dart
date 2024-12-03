@@ -1,6 +1,9 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../Services/otherservices.dart';
+import '../providers/ConnectivityProviders.dart';
 import '../utils/constants.dart';
 import 'HomeScreen.dart';
 import 'LeaderBoardScreen.dart';
@@ -20,11 +23,26 @@ class _DashboardState extends State<Dashboard> {
     // CallScreen(),
     LeaderboardScreen(),
   ];
+
+  @override
+  void initState() {
+    Provider.of<ConnectivityProviders>(context, listen: false)
+        .initConnectivity();
+    super.initState();
+  }
+  @override
+  void dispose() {
+    Provider.of<ConnectivityProviders>(context, listen: false).dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     GlobalKey<CurvedNavigationBarState> _bottomNavigationKey = GlobalKey();
-
-    return Scaffold(
+    var connectiVityStatus = Provider.of<ConnectivityProviders>(context);
+    return (connectiVityStatus.isDeviceConnected == "ConnectivityResult.wifi" ||
+        connectiVityStatus.isDeviceConnected == "ConnectivityResult.mobile")
+        ?  Scaffold(
       backgroundColor: color4,
       body: PageView(
         physics: NeverScrollableScrollPhysics(),
@@ -36,16 +54,17 @@ class _DashboardState extends State<Dashboard> {
         },
         children: _pages,
       ),
-      bottomNavigationBar: CurvedNavigationBar(
+      bottomNavigationBar:
+      CurvedNavigationBar(
         key: _bottomNavigationKey,
-        animationDuration: Duration(milliseconds: 200),
-        backgroundColor: Colors.transparent,
+        animationDuration: const Duration(milliseconds: 200),
         color: color28,
-        buttonBackgroundColor: color3,
+        buttonBackgroundColor: Colors.transparent, 
+        backgroundColor: color4,
         index: _selectedIndex,
         items: <Widget>[
-          Icon(Icons.home, size: 30),
-          Icon(Icons.leaderboard, size: 30),
+          Icon(Icons.home, size: 30, color: _selectedIndex == 0 ? Colors.black : Colors.white),
+          Icon(Icons.leaderboard, size: 30, color: _selectedIndex == 1 ? Colors.black : Colors.white),
         ],
         onTap: (index) {
           setState(() {
@@ -54,6 +73,7 @@ class _DashboardState extends State<Dashboard> {
           _pageController.jumpToPage(index);
         },
       ),
-    );
+
+    ): NoInternetWidget();
   }
 }

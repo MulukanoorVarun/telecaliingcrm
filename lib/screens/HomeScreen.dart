@@ -543,7 +543,9 @@ class _HomescreenState extends State<Homescreen> {
                                     children: [
                                       text(
                                           context,
-                                          dashboardProvider.todayCalls.toString()??"",
+                                          dashboardProvider.todayCalls
+                                                  .toString() ??
+                                              "",
                                           46,
                                           fontfamily: 'Poppins',
                                           fontWeight: FontWeight.w500),
@@ -564,7 +566,8 @@ class _HomescreenState extends State<Homescreen> {
                                       text(
                                           context,
                                           dashboardProvider.pendingCalls
-                                              .toString()??"",
+                                                  .toString() ??
+                                              "",
                                           46,
                                           fontfamily: 'Poppins',
                                           fontWeight: FontWeight.w500),
@@ -601,7 +604,8 @@ class _HomescreenState extends State<Homescreen> {
                                         text(
                                             context,
                                             dashboardProvider.leadCount
-                                                .toString()??"",
+                                                    .toString() ??
+                                                "",
                                             46,
                                             fontfamily: 'Poppins',
                                             fontWeight: FontWeight.w500),
@@ -632,7 +636,8 @@ class _HomescreenState extends State<Homescreen> {
                                         text(
                                             context,
                                             dashboardProvider.followup_count
-                                                .toString()??"",
+                                                    .toString() ??
+                                                "",
                                             46,
                                             fontfamily: 'Poppins',
                                             fontWeight: FontWeight.w500),
@@ -806,9 +811,11 @@ class _HomescreenState extends State<Homescreen> {
                                       width: MediaQuery.of(context).size.width *
                                           0.02),
                                   // User Details Column
-                                  Container(width: w*0.45,
+                                  Container(
+                                    width: w * 0.45,
                                     child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
@@ -843,17 +850,25 @@ class _HomescreenState extends State<Homescreen> {
                                           18,
                                           fontWeight: FontWeight.w500,
                                           color: color4,
-                                          overflow:TextOverflow.ellipsis,
+                                          overflow: TextOverflow.ellipsis,
                                           fontfamily: 'Poppins',
                                         ),
                                       ],
                                     ),
                                   ),
                                   Spacer(),
-                                  InkResponse(onTap: (){
-                                    Navigator.push(context, MaterialPageRoute(builder: (context)=>EditProfileScreen()));
-                                  },
-                                      child: Icon(Icons.edit,color: color4,))
+                                  InkResponse(
+                                      onTap: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    EditProfileScreen()));
+                                      },
+                                      child: Icon(
+                                        Icons.edit,
+                                        color: color4,
+                                      ))
                                 ],
                               ),
                             ),
@@ -931,7 +946,11 @@ class _HomescreenState extends State<Homescreen> {
                   InkWell(
                     onTap: () {
                       Navigator.pop(context);
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => LeadScreen(),));
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => LeadScreen(),
+                          ));
                     },
                     child: Container(
                       padding: EdgeInsets.symmetric(
@@ -965,7 +984,11 @@ class _HomescreenState extends State<Homescreen> {
                   InkWell(
                     onTap: () {
                       Navigator.pop(context);
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => FollowupsScreen(),));
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => FollowupsScreen(),
+                          ));
                     },
                     child: Container(
                       padding: EdgeInsets.symmetric(
@@ -1142,13 +1165,15 @@ class _HomescreenState extends State<Homescreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                InkResponse(onTap: (){
-                  Navigator.pop(context);
-                },
+                InkResponse(
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
                   child: Container(
                     padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                     decoration: BoxDecoration(
-                        color: color28, borderRadius: BorderRadius.circular(10)),
+                        color: color28,
+                        borderRadius: BorderRadius.circular(10)),
                     child: text(context, 'Cancel', 14,
                         fontfamily: 'Inter', color: color4),
                   ),
@@ -1168,8 +1193,7 @@ class _HomescreenState extends State<Homescreen> {
                     padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: primaryColor)
-                    ),
+                        border: Border.all(color: primaryColor)),
                     child: text(context, 'Logout', 14,
                         fontfamily: 'Inter', color: primaryColor),
                   ),
@@ -1194,24 +1218,24 @@ class _HomescreenState extends State<Homescreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  shimmerContainer(160, 100),  // Shimmer for first container
-                  shimmerContainer(160, 100),  // Shimmer for second container
+                  shimmerContainer(160, 100), // Shimmer for first container
+                  shimmerContainer(160, 100), // Shimmer for second container
                 ],
               ),
               SizedBox(height: h * 0.02),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  shimmerContainer(160, 100),  // Shimmer for first container
+                  shimmerContainer(160, 100), // Shimmer for first container
                   shimmerContainer(160, 100),
                 ],
               ),
               SizedBox(height: w * 0.07),
               shimmerContainer(150, 50, isButton: true), // Shimmer button
               SizedBox(height: w * 0.05),
-              shimmerText(150, 20),  // Shimmer title
+              shimmerText(150, 20), // Shimmer title
               SizedBox(height: w * 0.05),
-              _buildShimmerList(),  // Shimmer for list of phone numbers
+              _buildShimmerList(), // Shimmer for list of phone numbers
             ],
           ),
         ),
@@ -1235,14 +1259,14 @@ class _HomescreenState extends State<Homescreen> {
           ),
           child: Row(
             children: [
-              shimmerCircle(40),  // Shimmer for circular image
+              shimmerCircle(40), // Shimmer for circular image
               const SizedBox(width: 8),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  shimmerText(100, 15),  // Shimmer for name
+                  shimmerText(100, 15), // Shimmer for name
                   SizedBox(height: 5),
-                  shimmerText(150, 15),  // Shimmer for phone number
+                  shimmerText(150, 15), // Shimmer for phone number
                 ],
               ),
             ],

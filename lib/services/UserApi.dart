@@ -11,7 +11,6 @@ import 'package:http_parser/http_parser.dart';
 import 'package:mime/mime.dart';
 import '../model/RegisterModel.dart';
 import '../model/ViewInfoModel.dart';
-
 import '../model/GetFollowUpModel.dart';
 
 class Userapi {
@@ -453,9 +452,6 @@ class Userapi {
 
       // Send the request
       final response = await request.send();
-
-      // Handle the response
-// Handle the response
       final responseData = await response.stream.bytesToString();
       final jsonResponse = json.decode(responseData);
 
