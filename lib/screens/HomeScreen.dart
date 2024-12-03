@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:lottie/lottie.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:phone_state/phone_state.dart';
 import 'package:provider/provider.dart';
@@ -651,6 +652,7 @@ class _HomescreenState extends State<Homescreen> {
                                 ),
                               ],
                             ),
+                            if(phoneNumbers?.length!=0)...[
                             SizedBox(height: w * 0.07),
                             containertext(context, onTap: () {
                               if (!isCalling) {
@@ -741,6 +743,18 @@ class _HomescreenState extends State<Homescreen> {
                                 },
                               ),
                             )
+                            ]else...[
+                              Column(
+                                children: [
+                                  SizedBox(height: w*0.2,),
+                                  Lottie.asset(
+                                      'assets/animations/nodata1.json', // Your Lottie animation file
+                                      width: 150, // Adjust the size as needed
+                                      height: 150,
+                                      fit: BoxFit.cover,),
+                                ],
+                              ),
+                            ]
                           ],
                         ),
                       )
@@ -803,7 +817,7 @@ class _HomescreenState extends State<Homescreen> {
                                           ClipOval(
                                               // Ensure fallback image is also clipped into a circle
                                               child: Image.asset(
-                                                'assets/personProfile.png',
+                                                'assets/person.png',
                                                 fit: BoxFit.cover,
                                                 width:
                                                     60, // Ensure it's sized to fit the CircleAvatar

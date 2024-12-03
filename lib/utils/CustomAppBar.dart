@@ -25,7 +25,7 @@ class CustomAppBar2 extends StatelessWidget implements PreferredSizeWidget {
           title,
           style: TextStyle(
             color: Color(0xffffffff),
-            fontFamily: 'RozhaOne',
+            fontFamily: 'Poppins',
             fontSize: 24,
             height: 32 / 24,
             fontWeight: FontWeight.w400,

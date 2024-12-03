@@ -11,6 +11,7 @@ import '../Services/UserApi.dart';
 import '../providers/ConnectivityProviders.dart';
 import '../providers/UserDetailsProvider.dart';
 
+import '../utils/ColorConstants.dart';
 import '../utils/ShakeWidget.dart';
 import 'dart:developer' as developer;
 import 'dart:async';
@@ -138,7 +139,26 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     return (connectiVityStatus.isDeviceConnected == "ConnectivityResult.wifi" ||
             connectiVityStatus.isDeviceConnected == "ConnectivityResult.mobile")
         ? Scaffold(
-            appBar: CustomAppBar2(title: 'Edit Profile', w: w),
+      appBar: AppBar(
+        title: Text(
+          'Edit Profile',
+          style: TextStyle(
+              fontSize: 22,
+              fontFamily: "Poppins",
+              fontWeight: FontWeight.w600,
+              color: Colors.white),
+        ),
+        backgroundColor: primaryColor,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back,
+            color: Colors.white,
+          ),
+          onPressed: () {
+            Navigator.pop(context,true);
+          },
+        ),
+      ),
             body: Padding(
               padding: EdgeInsets.all(16.0),
               child: SingleChildScrollView(
@@ -157,7 +177,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                         profile_image.isNotEmpty
                                     ? NetworkImage(profile_image)
                                         as ImageProvider<Object>
-                                    : AssetImage('assets/personProfile.png')
+                                    : AssetImage('assets/person.png')
                                         as ImageProvider<
                                             Object>,
                           ),
@@ -234,6 +254,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               fontSize: 12,
                               color: Colors.red,
                               fontWeight: FontWeight.w500,
+
                             ),
                           ),
                         ),
@@ -245,10 +266,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       controller: pwdController,
                       hint: "Enter password",
                       focusNode: _focusNodepwd,
-                      inputFormatters: [
-                        FilteringTextInputFormatter.digitsOnly,
-                        LengthLimitingTextInputFormatter(10),
-                      ],
                     ),
                     SizedBox(height: 40),
                     InkResponse(
@@ -266,11 +283,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           borderRadius: BorderRadius.circular(7),
                         ),
                         child: Center(
-                          child: Text(
+                          child:
+                          isLoading
+                       ? CircularProgressIndicator(color: Colors.white,):
+                          Text(
                             "SAVE",
                             style: TextStyle(
                               color: color4,
-                              fontFamily: "RozhaOne",
+                              fontFamily: "Poppins",
                               fontWeight: FontWeight.w400,
                               fontSize: 16,
                               height: 21 / 16,

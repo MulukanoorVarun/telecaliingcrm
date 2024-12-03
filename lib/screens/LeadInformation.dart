@@ -53,19 +53,11 @@ class _LeadInformationState extends State<LeadInformation> {
     super.dispose();
   }
 
-  String formatDate(String? dateString) {
-    // Check if the dateString is null or empty
-    if (dateString == null || dateString.isEmpty) {
-      return ''; // or return a default value like 'No Date Available'
-    }
-
-    // Parse the input string into a DateTime object
-    DateTime dateTime = DateTime.parse(dateString);
-
-    // Format the DateTime object to a string in 'yyyy-MM-dd' format
-    String formattedDate = DateFormat('yyyy-MM-dd').format(dateTime);
-
-    return formattedDate;
+  String formatDate(String dateTime) {
+    // Parse the string into a DateTime object
+    final DateTime parsedDate = DateTime.parse(dateTime);
+    // Format the DateTime to Indian date format (DD-MM-YYYY)
+    return "${parsedDate.day.toString().padLeft(2, '0')}-${parsedDate.month.toString().padLeft(2, '0')}-${parsedDate.year}";
   }
 
   // Function to send SMS

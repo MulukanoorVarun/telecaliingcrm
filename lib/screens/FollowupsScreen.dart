@@ -62,7 +62,6 @@ class _FollowupsScreenState extends State<FollowupsScreen> {
     return "${parsedDate.day.toString().padLeft(2, '0')}-${parsedDate.month.toString().padLeft(2, '0')}-${parsedDate.year}";
   }
 
-
   void _launchWhatsApp(number) async {
     final url = 'https://wa.me/$number';
     if (await canLaunch(url)) {
@@ -221,19 +220,24 @@ class _FollowupsScreenState extends State<FollowupsScreen> {
                                                   children: [
                                                     TextSpan(
                                                         text: 'Remarks : ',
-                                                        style: TextStyle(fontWeight: FontWeight.bold,fontFamily: "Poppins")
-                                                    ),
+                                                        style: TextStyle(
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            fontFamily:
+                                                                "Poppins")),
                                                     TextSpan(
-                                                        text: '${followup_List.remarks}',
-                                                        style: TextStyle(fontWeight: FontWeight.normal)
-                                                    ),
+                                                        text:followup_List.remarks!=null? '${followup_List.remarks}' :"NA",
+                                                        style: TextStyle(
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .normal)),
                                                   ],
                                                 ),
                                                 maxLines: 3,
                                                 textAlign: TextAlign.start,
-                                                overflow: TextOverflow.ellipsis, // Optional, to handle text overflow
+                                                overflow: TextOverflow
+                                                    .ellipsis, // Optional, to handle text overflow
                                               )
-
                                             ],
                                           ),
                                         ),

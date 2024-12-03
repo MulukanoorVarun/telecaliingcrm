@@ -108,7 +108,7 @@ class _UpDateLeadScreenState extends State<UpDateLeadScreen> {
         setState(() {
           _loading = false;
         });
-        CustomSnackBar.show(context, "Lead Updated Failed!");
+        // CustomSnackBar.show(context, "Lead Updated Failed!");
         // Handle error, if response status is false
         print("Failed to update lead");
       }

@@ -12,6 +12,7 @@ import 'package:mime/mime.dart';
 import '../model/RegisterModel.dart';
 import '../model/ViewInfoModel.dart';
 import '../model/GetFollowUpModel.dart';
+import '../utils/preferences.dart';
 
 class Userapi {
   static String host = "https://api.telecallingcrm.com";
@@ -63,7 +64,7 @@ class Userapi {
     if (await checkHeaderValidity()) {
       try {
         final url = Uri.parse("${host}/api/dashboard");
-        final headers = await getheader1(); // Await the result here
+        final headers = await getheader1();
         final response = await http.post(
           url,
           headers: headers,
@@ -404,72 +405,75 @@ class Userapi {
     }
   }
 
+
   static Future<String?> updateProfile(
       String fullname,
       String email,
       String pwd,
       File? image,
       ) async {
-    String? mimeType;
+    if (await checkHeaderValidity()) {
+      try {
+        final url = Uri.parse(
+            'https://api.telecallingcrm.com/api/update-profile/95');
 
-    // Check if the image is a valid image file
-    if (image != null) {
-      mimeType = lookupMimeType(image.path);  // Get MIME type for the image
-      if (mimeType == null || !mimeType.startsWith('image/')) {
-        print('Selected file is not a valid image.');
+        // Create a MultipartRequest for a multipart form upload
+        final request = http.MultipartRequest('POST', url);
+        final sessionid = await PreferenceService().getString("token");
+
+        // Add headers
+        request.headers['Authorization'] = 'Bearer $sessionid';
+
+        // Add fields (username, email, password)
+        request.fields['username'] = fullname;
+        request.fields['email'] = email;
+        request.fields['password'] = pwd;
+
+        // Add the photo file if provided
+        if (image != null) {
+          final mimeType = lookupMimeType(image.path);
+          print("Image MIME type: $mimeType");
+          if (mimeType != null && mimeType.startsWith('image/')) {
+            request.files.add(
+              await http.MultipartFile.fromPath(
+                'photo', // The name of the file field in your API
+                image.path,
+                contentType: MediaType.parse(mimeType),
+              ),
+            );
+          } else {
+            print('Invalid image file');
+            return null;
+          }
+        }
+        print("Requested fields: ${request.fields}");
+        // Send the request and capture the response
+        final response = await request.send();
+        // Read the response body
+        final responseData = await response.stream.bytesToString();
+        print("Response Body: $responseData");
+
+        // Handle successful response
+        if (response.statusCode == 200) {
+          final jsonResponse = json.decode(responseData);
+          if (jsonResponse['message'] == 'User updated successfully') {
+            return 'Profile updated successfully.';
+          } else {
+            return 'Profile update failed: ${jsonResponse['message']}';
+          }
+        } else {
+          return 'Error: ${response.statusCode}';
+        }
+      } catch (e) {
+        print('Error occurred: $e');
         return null;
       }
-    }
-
-    try {
-      // Prepare the URL for the update request
-      final url = Uri.parse("${host}/api/update-profile/95");
-
-      // Create a MultipartRequest for a multipart form upload
-      final request = http.MultipartRequest('Post', url);
-
-      // Add headers (use your token and necessary headers here)
-      final headers = await getheader1(); // Assuming you have a function to get headers
-      request.headers.addAll(headers);
-
-      // Add fields (name, mobile, email)
-      request.fields['username'] = fullname;
-      request.fields['email'] = email;
-      request.fields['password'] = pwd;
-
-      // If an image is provided, add it to the request as a file
-      if (image != null) {
-        request.files.add(
-          await http.MultipartFile.fromPath(
-            'photo',  // The name of the file field in your API
-            image.path,
-            contentType: MediaType.parse(mimeType!),  // Ensure mime type is non-null
-          ),
-        );
-      }
-
-      print("Req filelds:${request.fields}");
-
-      // Send the request
-      final response = await request.send();
-      final responseData = await response.stream.bytesToString();
-      final jsonResponse = json.decode(responseData);
-
-      if (response.statusCode == 200) {
-        if (jsonResponse['message'] == 'User updated successfully') {
-          return 'Profile updated successfully.'; // Return success message
-        } else {
-          return 'Profile update failed: ${jsonResponse['message']}'; // Return failure message
-        }
-      } else {
-        return 'Error: ${response.statusCode}'; // Return error message
-      }
-    } catch (e) {
-      print("Error occurred: $e");
-      return null;
+    }else{
+    // Catch and log any errors
+    print("returned");
+    return null;
     }
   }
-
 
   static Future<Map<String, dynamic>?> UpdateRefreshToken() async {
     try {
@@ -500,5 +504,6 @@ class Userapi {
       return null;
     }
   }
+
 
 }
