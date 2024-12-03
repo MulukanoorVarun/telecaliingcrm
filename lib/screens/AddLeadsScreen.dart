@@ -31,6 +31,7 @@ class _AddleadsscreenState extends State<Addleadsscreen> {
   String _validatedate = "";
   String _validateRemarks = "";
   String _validateStatus = "";
+  String leadstatusError = "";
 
 
   @override
@@ -68,15 +69,13 @@ class _AddleadsscreenState extends State<Addleadsscreen> {
           _remarksController.text.isEmpty ? "Please add some remarks" : "";
 
       // Validate Lead Status
-      final statusError = (_leadStatus == null || _leadStatus!.isEmpty)
-          ? "Please select a status"
-          : null;
+      leadstatusError = (_leadStatus == null) ? "Please select a lead status" : "";
 
       // Proceed only if all fields are valid
       if (_validateFullName.isEmpty &&
           _validateMobilenumber.isEmpty &&
           _validateRemarks.isEmpty &&
-          statusError == null) {
+          leadstatusError.isEmpty) {
         AddLeads(); // Trigger the AddLeads function if validations pass
       } else {
         _loading = false;
@@ -456,12 +455,12 @@ class _AddleadsscreenState extends State<Addleadsscreen> {
                         ),
                       ],
                     ),
-                    if (_leadStatus == null || _leadStatus!.isEmpty) ...[
+                    if (leadstatusError.isNotEmpty) ...[
                       Container(
                         alignment: Alignment.topLeft,
                         margin: EdgeInsets.only(left: 8, bottom: 10, top: 5),
                         child: Text(
-                          "Please select a status",
+                          leadstatusError,
                           style: TextStyle(
                             fontFamily: "Poppins",
                             fontSize: 12,

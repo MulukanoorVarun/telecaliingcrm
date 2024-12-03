@@ -1,6 +1,7 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:telecaliingcrm/utils/ColorConstants.dart';
 
 import '../Services/otherservices.dart';
 import '../providers/ConnectivityProviders.dart';
@@ -43,28 +44,52 @@ class _DashboardState extends State<Dashboard> {
     return (connectiVityStatus.isDeviceConnected == "ConnectivityResult.wifi" ||
         connectiVityStatus.isDeviceConnected == "ConnectivityResult.mobile")
         ?  Scaffold(
-      backgroundColor: color4,
-      body: PageView(
-        physics: NeverScrollableScrollPhysics(),
-        controller: _pageController,
-        onPageChanged: (index) {
-          setState(() {
-            _selectedIndex = index;
-          });
-        },
-        children: _pages,
+      body: Container(
+        color: Colors.transparent,
+        child: PageView(
+          physics: NeverScrollableScrollPhysics(),
+          controller: _pageController,
+          onPageChanged: (index) {
+            setState(() {
+              _selectedIndex = index;
+            });
+          },
+          children: _pages,
+        ),
       ),
       bottomNavigationBar:
       CurvedNavigationBar(
         key: _bottomNavigationKey,
         animationDuration: const Duration(milliseconds: 200),
         color: color28,
-        buttonBackgroundColor: Colors.transparent, 
-        backgroundColor: color4,
+        buttonBackgroundColor: Colors.transparent,
+        backgroundColor: Colors.transparent,
         index: _selectedIndex,
         items: <Widget>[
-          Icon(Icons.home, size: 30, color: _selectedIndex == 0 ? Colors.black : Colors.white),
-          Icon(Icons.leaderboard, size: 30, color: _selectedIndex == 1 ? Colors.black : Colors.white),
+          Container(
+            padding: EdgeInsets.all(5),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: _selectedIndex == 0 ? primaryColor : Colors.transparent, // Color when selected
+            ),
+            child: Icon(
+              Icons.home,
+              size: 30,
+              color: Colors.white,
+            ),
+          ),
+          Container(
+            padding: EdgeInsets.all(5),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: _selectedIndex == 1 ? primaryColor : Colors.transparent, // Color when selected
+            ),
+            child: Icon(
+              Icons.leaderboard,
+              size: 30,
+              color: Colors.white,
+            ),
+          ),
         ],
         onTap: (index) {
           setState(() {
@@ -72,7 +97,8 @@ class _DashboardState extends State<Dashboard> {
           });
           _pageController.jumpToPage(index);
         },
-      ),
+      )
+
 
     ): NoInternetWidget();
   }
