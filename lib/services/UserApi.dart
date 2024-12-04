@@ -17,8 +17,8 @@ import '../utils/preferences.dart';
 class Userapi {
   static String host = "https://api.telecallingcrm.com";
 
-  static Future<Map<String, dynamic>?> PostSignIn(
-      String email, String pwd) async {
+  static Future<Map<String, dynamic>?> PostSignIn(String email,
+      String pwd) async {
     try {
       // Prepare the request data
       Map<String, String> data = {
@@ -50,7 +50,8 @@ class Userapi {
       } else {
         // Handle other status codes and return the response
         print(
-            "Request failed with status: ${response.statusCode}, body: $jsonResponse");
+            "Request failed with status: ${response
+                .statusCode}, body: $jsonResponse");
         return jsonResponse;
       }
     } catch (e) {
@@ -85,7 +86,7 @@ class Userapi {
         print("Error occurred: $e");
         return null;
       }
-    }else{
+    } else {
       // Catch and log any errors
       print("returned");
       return null;
@@ -93,32 +94,38 @@ class Userapi {
   }
 
   static Future<UserDetailsModel?> getUserDetails() async {
-    try {
-      final url = Uri.parse("${host}/api/profile");
-      final headers = await getheader1();
-      final response = await http.post(
-        url,
-        headers: headers,
-      );
+    if (await checkHeaderValidity()) {
+      try {
+        final url = Uri.parse("${host}/api/profile");
+        final headers = await getheader1();
+        final response = await http.post(
+          url,
+          headers: headers,
+        );
 
-      if (response.statusCode == 200) {
-        final jsonResponse = jsonDecode(response.body);
-        print("getUserDetails response: ${response.body}");
+        if (response.statusCode == 200) {
+          final jsonResponse = jsonDecode(response.body);
+          print("getUserDetails response: ${response.body}");
 
-        return UserDetailsModel.fromJson(jsonResponse);
-      } else {
-        print("Request failed with status: ${response.statusCode}");
+          return UserDetailsModel.fromJson(jsonResponse);
+        } else {
+          print("Request failed with status: ${response.statusCode}");
+          return null;
+        }
+      } catch (e) {
+        // Log any errors
+        print("Error occurred in getUserDetails: $e");
         return null;
       }
-    } catch (e) {
-      // Log any errors
-      print("Error occurred in getUserDetails: $e");
+    } else {
+      // Catch and log any errors
+      print("returned");
       return null;
     }
   }
 
-  static Future<Map<String, dynamic>?> UpdateCallStatusApi(
-      String id, String call_status, String call_duration) async {
+  static Future<Map<String, dynamic>?> UpdateCallStatusApi(String id,
+      String call_status, String call_duration) async {
     try {
       // Prepare the request data
       Map<String, String> data = {
@@ -129,7 +136,7 @@ class Userapi {
       print("UpdateCallStatusApi data: $data");
       final url = Uri.parse("${host}/api/update_call_status_api");
       final headers =
-          await getheader1(); // Ensure this function returns the correct headers
+      await getheader1(); // Ensure this function returns the correct headers
       final response = await http.post(
         url,
         headers: headers,
@@ -144,13 +151,16 @@ class Userapi {
           return jsonResponse;
         } catch (e) {
           // Handle the case where the response is not valid JSON
-          print("Error: Failed to decode response body. Response: ${response.body}");
+          print(
+              "Error: Failed to decode response body. Response: ${response
+                  .body}");
           return null;
         }
       } else {
         // Log the response status code and body if it's not 200
         print(
-            "Request failed with status: ${response.statusCode}, body: ${response.body}");
+            "Request failed with status: ${response
+                .statusCode}, body: ${response.body}");
         return null;
       }
     } catch (e) {
@@ -214,14 +224,11 @@ class Userapi {
     }
   }
 
-
-  static Future<Map<String, dynamic>?> postAddLeads(
-      String name,
+  static Future<Map<String, dynamic>?> postAddLeads(String name,
       String num,
       String followup_date,
       String remarks,
-      String lead_id,
-      ) async {
+      String lead_id,) async {
     try {
       final Map<String, String> data = {
         "name": name,
@@ -230,7 +237,7 @@ class Userapi {
         "remarks": remarks,
         "lead_stage_id": lead_id,
       };
-       print("postAddLeads??${data}");
+      print("postAddLeads??${data}");
       final url = Uri.parse("${host}/api/add-lead");
       final headers = await getheader1();
       final response = await http.post(
@@ -251,7 +258,8 @@ class Userapi {
         return jsonResponse;
       } else {
         print(
-          "Request failed with status: ${response.statusCode}, body: $jsonResponse",
+          "Request failed with status: ${response
+              .statusCode}, body: $jsonResponse",
         );
         return jsonResponse;
       }
@@ -261,23 +269,16 @@ class Userapi {
     }
   }
 
-
-  static Future<Map<String, dynamic>?> postAddFollowUp(
-      String leadid,
+  static Future<Map<String, dynamic>?> postAddFollowUp(String leadid,
       String name,
       String followup_date,
-      String remarks,
-
-
-      ) async {
+      String remarks,) async {
     try {
       final Map<String, String> data = {
         "lead_id": leadid,
         "name": name,
         "followup_date": followup_date,
         "remarks": remarks,
-
-
       };
       print("postAddFollowUp??${data}");
       final url = Uri.parse("${host}/api/add-follow-up");
@@ -300,7 +301,8 @@ class Userapi {
         return jsonResponse;
       } else {
         print(
-          "Request failed with status: ${response.statusCode}, body: $jsonResponse",
+          "Request failed with status: ${response
+              .statusCode}, body: $jsonResponse",
         );
         return jsonResponse;
       }
@@ -310,13 +312,11 @@ class Userapi {
     }
   }
 
-  static Future<Map<String, dynamic>?> postUpdateLeads(
-      String name,
+  static Future<Map<String, dynamic>?> postUpdateLeads(String name,
       String lead_id,
       String remarks,
       String lead_stage_id,
-      String deal_stage,
-      ) async {
+      String deal_stage,) async {
     try {
       final Map<String, String> data = {
         "name": name,
@@ -346,7 +346,8 @@ class Userapi {
         return jsonResponse;
       } else {
         print(
-          "Request failed with status: ${response.statusCode}, body: $jsonResponse",
+          "Request failed with status: ${response
+              .statusCode}, body: $jsonResponse",
         );
         return jsonResponse;
       }
@@ -355,8 +356,6 @@ class Userapi {
       return null;
     }
   }
-
-
 
   static Future<ViewInfoModel?> getViewInfo(ID) async {
     try {
@@ -371,7 +370,6 @@ class Userapi {
         final jsonResponse = jsonDecode(response.body);
         print("getViewInfo response: ${response.body}");
         return ViewInfoModel.fromJson(jsonResponse);
-
       } else {
         print("Request failed with status: ${response.statusCode}");
         return null;
@@ -405,73 +403,63 @@ class Userapi {
     }
   }
 
-
-  static Future<String?> updateProfile(
-      String fullname,
+  static Future<String?> updateProfile(String fullname,
       String email,
       String pwd,
-      File? image,
-      ) async {
-    if (await checkHeaderValidity()) {
-      try {
-        final url = Uri.parse(
-            'https://api.telecallingcrm.com/api/update-profile/95');
+      File? image,) async {
+    try {
+      final url =
+      Uri.parse('https://api.telecallingcrm.com/api/update-profile/95');
 
-        // Create a MultipartRequest for a multipart form upload
-        final request = http.MultipartRequest('POST', url);
-        final sessionid = await PreferenceService().getString("token");
+      // Create a MultipartRequest for a multipart form upload
+      final request = http.MultipartRequest('POST', url);
+      final sessionid = await PreferenceService().getString("token");
 
-        // Add headers
-        request.headers['Authorization'] = 'Bearer $sessionid';
+      // Add headers
+      request.headers['Authorization'] = 'Bearer $sessionid';
 
-        // Add fields (username, email, password)
-        request.fields['username'] = fullname;
-        request.fields['email'] = email;
-        request.fields['password'] = pwd;
+      // Add fields (username, email, password)
+      request.fields['username'] = fullname;
+      request.fields['email'] = email;
+      request.fields['password'] = pwd;
 
-        // Add the photo file if provided
-        if (image != null) {
-          final mimeType = lookupMimeType(image.path);
-          print("Image MIME type: $mimeType");
-          if (mimeType != null && mimeType.startsWith('image/')) {
-            request.files.add(
-              await http.MultipartFile.fromPath(
-                'photo', // The name of the file field in your API
-                image.path,
-                contentType: MediaType.parse(mimeType),
-              ),
-            );
-          } else {
-            print('Invalid image file');
-            return null;
-          }
-        }
-        print("Requested fields: ${request.fields}");
-        // Send the request and capture the response
-        final response = await request.send();
-        // Read the response body
-        final responseData = await response.stream.bytesToString();
-        print("Response Body: $responseData");
-
-        // Handle successful response
-        if (response.statusCode == 200) {
-          final jsonResponse = json.decode(responseData);
-          if (jsonResponse['message'] == 'User updated successfully') {
-            return 'Profile updated successfully.';
-          } else {
-            return 'Profile update failed: ${jsonResponse['message']}';
-          }
+      // Add the photo file if provided
+      if (image != null) {
+        final mimeType = lookupMimeType(image.path);
+        print("Image MIME type: $mimeType");
+        if (mimeType != null && mimeType.startsWith('image/')) {
+          request.files.add(
+            await http.MultipartFile.fromPath(
+              'photo', // The name of the file field in your API
+              image.path,
+              contentType: MediaType.parse(mimeType),
+            ),
+          );
         } else {
-          return 'Error: ${response.statusCode}';
+          print('Invalid image file');
+          return null;
         }
-      } catch (e) {
-        print('Error occurred: $e');
-        return null;
       }
-    }else{
-    // Catch and log any errors
-    print("returned");
-    return null;
+      print("Requested fields: ${request.fields}");
+      // Send the request and capture the response
+      final response = await request.send();
+      // Read the response body
+      final responseData = await response.stream.bytesToString();
+      print("Response Body: $responseData");
+      // Handle successful response
+      if (response.statusCode == 200) {
+        final jsonResponse = json.decode(responseData);
+        if (jsonResponse['message'] == 'User updated successfully') {
+          return 'Profile updated successfully.';
+        } else {
+          return 'Profile update failed: ${jsonResponse['message']}';
+        }
+      } else {
+        return 'Error: ${response.statusCode}';
+      }
+    } catch (e) {
+      print('Error occurred: $e');
+      return null;
     }
   }
 
@@ -496,7 +484,8 @@ class Userapi {
         return jsonResponse;
       } else {
         // Handle other status codes and return the response
-        print("Request failed with status: ${response.statusCode}, body: $jsonResponse");
+        print(
+            "Request failed with status: ${response.statusCode}, body: $jsonResponse");
         return jsonResponse;
       }
     } catch (e) {
@@ -504,6 +493,4 @@ class Userapi {
       return null;
     }
   }
-
-
 }

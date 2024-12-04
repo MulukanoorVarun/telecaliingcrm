@@ -52,11 +52,12 @@ Future<Map<String, String>> getheader2() async {
 Future<bool> checkHeaderValidity() async {
   String timestamp = DateTime.now().millisecondsSinceEpoch.toString().substring(0, 10);
   final int? validityTimestamp = await PreferenceService().getInt("access_expiry_timestamp");
+  print("validityTimestamp:${validityTimestamp}");
+  print("timestamp:${timestamp}");
 
   if (validityTimestamp == null || validityTimestamp <= int.parse(timestamp)) {
     // Token has expired or no valid timestamp
     final data = await Userapi.UpdateRefreshToken();
-
     if (data != null) {
       // Check if the API response indicates success
       if (data["success"] == true) {

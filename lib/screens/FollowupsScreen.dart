@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 import 'package:intl/intl.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:telecaliingcrm/utils/ColorConstants.dart';
 import 'package:telecaliingcrm/utils/constants.dart';
@@ -74,6 +75,8 @@ class _FollowupsScreenState extends State<FollowupsScreen> {
   @override
   Widget build(BuildContext context) {
     var connectiVityStatus = Provider.of<ConnectivityProviders>(context);
+    var w = MediaQuery.of(context).size.width;
+    var h = MediaQuery.of(context).size.height;
     return (connectiVityStatus.isDeviceConnected == "ConnectivityResult.wifi" ||
             connectiVityStatus.isDeviceConnected == "ConnectivityResult.mobile")
         ? Scaffold(
@@ -100,7 +103,8 @@ class _FollowupsScreenState extends State<FollowupsScreen> {
             ),
             body: is_loading
                 ? _buildShimmerList()
-                : Column(
+                : (data.length>0)?
+            Column(
                     children: [
                       SizedBox(
                         height: 10,
@@ -297,7 +301,19 @@ class _FollowupsScreenState extends State<FollowupsScreen> {
                         height: 10,
                       ),
                     ],
-                  ),
+                  ):
+            Center(
+              child: Column(
+                children: [
+                  SizedBox(height: w*0.54,),
+                  Lottie.asset(
+                    'assets/animations/nodata1.json', // Your Lottie animation file
+                    width: 150, // Adjust the size as needed
+                    height: 150,
+                    fit: BoxFit.cover,),
+                ],
+              ),
+            ),
           )
         : NoInternetWidget();
   }

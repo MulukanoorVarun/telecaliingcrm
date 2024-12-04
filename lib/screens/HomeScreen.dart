@@ -551,7 +551,7 @@ class _HomescreenState extends State<Homescreen> {
                                           46,
                                           fontfamily: 'Poppins',
                                           fontWeight: FontWeight.w500),
-                                      text(context, 'Todays Calls', 18,
+                                      text(context, 'Today Calls', 18,
                                           fontfamily: 'Poppins',
                                           fontWeight: FontWeight.w500),
                                     ],
