@@ -403,13 +403,13 @@ class Userapi {
     }
   }
 
-  static Future<String?> updateProfile(String fullname,
+  static Future<String?> updateProfile(UserID,String fullname,
       String email,
       String pwd,
-      File? image,) async {
+      File? image) async {
     try {
       final url =
-      Uri.parse('https://api.telecallingcrm.com/api/update-profile/95');
+      Uri.parse('https://api.telecallingcrm.com/api/update-profile/${UserID}');
 
       // Create a MultipartRequest for a multipart form upload
       final request = http.MultipartRequest('POST', url);

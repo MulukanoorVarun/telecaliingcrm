@@ -60,9 +60,14 @@ class _SignInScreenState extends State<SignInScreen> {
 
       if (data != null) {
         if (data['access_token'] != null) {
+          // Get the current timestamp in seconds
+          int currentTimestampInSeconds = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+
+          // Calculate the expiry timestamp
+          int expiryTimestamp = (currentTimestampInSeconds + data['expires_in']).toInt();
           // Successful login
           PreferenceService().saveString('token', data['access_token']);
-          PreferenceService().saveInt('access_expiry_timestamp', data['expires_in']);
+          PreferenceService().saveInt('access_expiry_timestamp', expiryTimestamp);
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => Dashboard()),

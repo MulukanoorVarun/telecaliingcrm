@@ -50,12 +50,19 @@ Future<Map<String, String>> getheader2() async {
 }
 
 Future<bool> checkHeaderValidity() async {
-  String timestamp = DateTime.now().millisecondsSinceEpoch.toString().substring(0, 10);
-  final int? validityTimestamp = await PreferenceService().getInt("access_expiry_timestamp");
-  print("validityTimestamp:${validityTimestamp}");
-  print("timestamp:${timestamp}");
+  // Get the current timestamp in milliseconds
+  int currentTimestamp = DateTime.now().millisecondsSinceEpoch;
+  final int? validityTimestampInSeconds = await PreferenceService().getInt("access_expiry_timestamp");
 
-  if (validityTimestamp == null || validityTimestamp <= int.parse(timestamp)) {
+  // Convert validityTimestamp to milliseconds
+  int? validityTimestampInMilliseconds = validityTimestampInSeconds != null
+      ? validityTimestampInSeconds * 1000
+      : null;
+
+  print("validityTimestampInMilliseconds: $validityTimestampInMilliseconds");
+  print("currentTimestamp: $currentTimestamp");
+
+  if (validityTimestampInMilliseconds == null || validityTimestampInMilliseconds <= currentTimestamp) {
     // Token has expired or no valid timestamp
     final data = await Userapi.UpdateRefreshToken();
     if (data != null) {
@@ -63,7 +70,8 @@ Future<bool> checkHeaderValidity() async {
       if (data["success"] == true) {
         print("Successfully got the token");
         PreferenceService().saveString('token', data['access_token']);
-        PreferenceService().saveInt('access_expiry_timestamp', data['expires_in']);
+        // Assuming `expires_in` is in seconds, save the expiry time in milliseconds
+        PreferenceService().saveInt('access_expiry_timestamp', ((currentTimestamp ~/ 1000) + data['expires_in']).toInt());
         return true;
       } else {
         // If the success key is not true, return false
@@ -74,12 +82,8 @@ Future<bool> checkHeaderValidity() async {
       return false;
     }
   }
-
-  // If token is still valid
   return true;
 }
-
-
 
 class NoInternetWidget extends StatelessWidget {
   @override

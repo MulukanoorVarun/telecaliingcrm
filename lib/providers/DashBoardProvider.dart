@@ -34,8 +34,8 @@ class DashboardProvider with ChangeNotifier {
         return response?.status;
       } else {
         phone_numbers = null;
-        notifyListeners();
         _isLoading=false;
+        notifyListeners();
         return response?.status;
       }
       // Notify listeners that the data has been updated

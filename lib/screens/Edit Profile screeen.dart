@@ -76,6 +76,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   String profile_image = "";
+  String UserID="";
 
   Future<void> _pickImage() async {
     final XFile? pickedFile = await _picker.pickImage(
@@ -103,6 +104,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           fullnameController.text = res.username ?? "";
           emailController.text = res.email ?? '';
           profile_image = res.photo ?? "";
+          UserID = res.id.toString() ?? "";
         }
       });
     } catch (e) {
@@ -117,7 +119,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     final profile_provider =
         Provider.of<UserDetailsProvider>(context, listen: false);
     var response =
-        await profile_provider.updateUserDetails(fullname, email, pwd, _image);
+        await profile_provider.updateUserDetails(UserID,fullname, email, pwd, _image);
     setState(() {
       if (response != null) {
         isLoading = false;

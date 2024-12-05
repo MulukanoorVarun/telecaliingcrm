@@ -26,9 +26,9 @@ class UserDetailsProvider with ChangeNotifier {
     return null;
   }
 
-  Future<String?> updateUserDetails(fullname, email, pwd, _image) async{
+  Future<String?> updateUserDetails(UserID,fullname, email, pwd, _image) async{
     try{
-      var response =await Userapi.updateProfile(fullname, email,pwd, _image);
+      var response =await Userapi.updateProfile(UserID,fullname, email,pwd, _image);
       if (response!= null) {
         fetchUserDetails();
         return response;

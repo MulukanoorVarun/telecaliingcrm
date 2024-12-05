@@ -191,7 +191,6 @@ class _HomescreenState extends State<Homescreen> {
   Future<void> _retrieveCallDurationFromCallLog() async {
     Iterable<CallLogEntry> logs = await CallLog.get();
     String lastDialedNumber = phoneNumbers![currentIndex - 1].number!;
-
     var sortedLogs = logs.toList()
       ..sort((a, b) {
         int timestampA = a.timestamp ?? 0;
@@ -588,12 +587,18 @@ class _HomescreenState extends State<Homescreen> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 InkResponse(
-                                  onTap: () {
-                                    Navigator.push(
+                                  onTap: () async {
+                                    var res= await Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) => LeadScreen(),
+                                          builder: (context) =>
+                                              LeadScreen(),
                                         ));
+                                    if(res==true){
+                                      final dashboard_provider =
+                                      Provider.of<DashboardProvider>(context, listen: false);
+                                      dashboard_provider.fetchDashBoardDetails();
+                                    }
                                   },
                                   child: container(
                                     w: w * 0.44,
@@ -619,13 +624,18 @@ class _HomescreenState extends State<Homescreen> {
                                   ),
                                 ),
                                 InkResponse(
-                                  onTap: () {
-                                    Navigator.push(
+                                  onTap: () async {
+                                    var res= await Navigator.push(
                                         context,
                                         MaterialPageRoute(
                                           builder: (context) =>
                                               FollowupsScreen(),
                                         ));
+                                    if(res==true){
+                                      final dashboard_provider =
+                                      Provider.of<DashboardProvider>(context, listen: false);
+                                      dashboard_provider.fetchDashBoardDetails();
+                                    }
                                   },
                                   child: container(
                                     w: w * 0.44,
