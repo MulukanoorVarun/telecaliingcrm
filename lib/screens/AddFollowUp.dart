@@ -11,7 +11,8 @@ import '../utils/constants.dart';
 
 class AddFollowUp extends StatefulWidget {
   String id;
-   AddFollowUp({super.key,required this.id});
+  String name;
+   AddFollowUp({super.key,required this.id,required this.name});
 
   @override
   State<AddFollowUp> createState() => _AddFollowUpState();
@@ -37,6 +38,7 @@ class _AddFollowUpState extends State<AddFollowUp> {
   void initState() {
     Provider.of<ConnectivityProviders>(context, listen: false)
         .initConnectivity();
+    _nameController.text= widget.name;
     super.initState();
   }
 
@@ -152,6 +154,7 @@ class _AddFollowUpState extends State<AddFollowUp> {
               TextFormField(
                 controller: _nameController,
                 keyboardType: TextInputType.text,
+                readOnly: true,
                 decoration: InputDecoration(
                   contentPadding: const EdgeInsets.symmetric(
                     vertical: 0,

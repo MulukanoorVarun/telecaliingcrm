@@ -255,7 +255,7 @@ class _LeadsScreenState extends State<LeadScreen> {
                                                                     builder:
                                                                         (context) =>
                                                                             AddFollowUp(
-                                                                              id: leads.id.toString(),
+                                                                              id: leads.id.toString(),name: leads.name??"",
                                                                             )));
                                                           },
                                                           child: text(
