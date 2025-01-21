@@ -21,7 +21,6 @@ class _DashboardState extends State<Dashboard> {
   final PageController _pageController = PageController();
   final List<Widget> _pages = [
     Homescreen(),
-    // CallScreen(),
     LeaderboardScreen(),
   ];
 
@@ -57,8 +56,7 @@ class _DashboardState extends State<Dashboard> {
           children: _pages,
         ),
       ),
-      bottomNavigationBar:
-      CurvedNavigationBar(
+      bottomNavigationBar: CurvedNavigationBar(
         key: _bottomNavigationKey,
         animationDuration: const Duration(milliseconds: 200),
         color: color28,

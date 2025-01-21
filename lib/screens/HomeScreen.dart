@@ -364,12 +364,7 @@ class _HomescreenState extends State<Homescreen> {
                     print("Selected Status: $selectedStatus");
                     // Close the dialog
                     Navigator.of(context).pop();
-                    // Reset call duration
-                    setState(() {
-                      callDuration = 0;
-                    });
-                    updateCallStatus(
-                        id.toString(), selectedStatus, callDuration.toString());
+                    updateCallStatus(id.toString(), selectedStatus, callDuration.toString());
                   } else {
                     // If no status is selected, show a message or do nothing
                     print("No status selected");
@@ -392,8 +387,7 @@ class _HomescreenState extends State<Homescreen> {
   }
 
   void updateCallStatus(id, callStatus, String callDuration) async {
-    var result =
-        await Userapi.UpdateCallStatusApi(id, callStatus, callDuration);
+    var result = await Userapi.UpdateCallStatusApi(id, callStatus, callDuration);
     if (result != null) {
       // Process the result here (e.g., display a message to the user)
       print("Response: $result");
@@ -566,9 +560,7 @@ class _HomescreenState extends State<Homescreen> {
                                     children: [
                                       text(
                                           context,
-                                          dashboardProvider.pendingCalls
-                                                  .toString() ??
-                                              "",
+                                          dashboardProvider.pendingCalls.toString() ?? "",
                                           46,
                                           fontfamily: 'Poppins',
                                           fontWeight: FontWeight.w500),

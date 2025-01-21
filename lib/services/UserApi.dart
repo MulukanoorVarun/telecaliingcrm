@@ -49,9 +49,7 @@ class Userapi {
         return jsonResponse;
       } else {
         // Handle other status codes and return the response
-        print(
-            "Request failed with status: ${response
-                .statusCode}, body: $jsonResponse");
+        print("Request failed with status: ${response.statusCode}, body: $jsonResponse");
         return jsonResponse;
       }
     } catch (e) {
