@@ -1,34 +1,124 @@
 class DashBoardModel {
-  final bool? status;
-  final String? todayCalls; // Expecting String type
-  final String? pendingCalls; // Expecting String type
-  final String? leadCount; // Expecting String type
-  final String? followupCount; // Expecting String type
-  final List<PhoneNumbers>? phoneNumbers;
+  bool? status;
+  int? todayCalls;
+  int? pendingCalls;
+  int? leadCount;
+  int? followupCount;
+  PhoneNumbers? phoneNumbers;
 
-  DashBoardModel({
-    this.status,
-    this.todayCalls,
-    this.pendingCalls,
-    this.leadCount,
-    this.followupCount,
-    this.phoneNumbers,
-  });
+  DashBoardModel(
+      {this.status,
+        this.todayCalls,
+        this.pendingCalls,
+        this.leadCount,
+        this.followupCount,
+        this.phoneNumbers});
 
-  factory DashBoardModel.fromJson(Map<String, dynamic> json) {
-    return DashBoardModel(
-      status: json['status'],
-      todayCalls: json['today_calls']?.toString(), // Convert to String
-      pendingCalls: json['pending_calls']?.toString(), // Convert to String
-      leadCount: json['lead_count']?.toString(), // Convert to String
-      followupCount: json['followup_count']?.toString(), // Convert to String
-      phoneNumbers: (json['phone_numbers'] as List?)
-          ?.map((item) => PhoneNumbers.fromJson(item))
-          .toList(),
-    );
+  DashBoardModel.fromJson(Map<String, dynamic> json) {
+    status = json['status'];
+    todayCalls = json['today_calls'];
+    pendingCalls = json['pending_calls'];
+    leadCount = json['lead_count'];
+    followupCount = json['followup_count'];
+    phoneNumbers = json['phone_numbers'] != null
+        ? new PhoneNumbers.fromJson(json['phone_numbers'])
+        : null;
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['status'] = this.status;
+    data['today_calls'] = this.todayCalls;
+    data['pending_calls'] = this.pendingCalls;
+    data['lead_count'] = this.leadCount;
+    data['followup_count'] = this.followupCount;
+    if (this.phoneNumbers != null) {
+      data['phone_numbers'] = this.phoneNumbers!.toJson();
+    }
+    return data;
   }
 }
+
 class PhoneNumbers {
+  int? currentPage;
+  List<MobileNumbers>? data;
+  String? firstPageUrl;
+  int? from;
+  int? lastPage;
+  String? lastPageUrl;
+  List<Links>? links;
+  Null? nextPageUrl;
+  String? path;
+  int? perPage;
+  Null? prevPageUrl;
+  int? to;
+  int? total;
+
+  PhoneNumbers(
+      {this.currentPage,
+        this.data,
+        this.firstPageUrl,
+        this.from,
+        this.lastPage,
+        this.lastPageUrl,
+        this.links,
+        this.nextPageUrl,
+        this.path,
+        this.perPage,
+        this.prevPageUrl,
+        this.to,
+        this.total});
+
+  PhoneNumbers.fromJson(Map<String, dynamic> json) {
+    currentPage = json['current_page'];
+    if (json['data'] != null) {
+      data = <MobileNumbers>[];
+      json['data'].forEach((v) {
+        data!.add(new MobileNumbers.fromJson(v));
+      });
+    }
+    firstPageUrl = json['first_page_url'];
+    from = json['from'];
+    lastPage = json['last_page'];
+    lastPageUrl = json['last_page_url'];
+    if (json['links'] != null) {
+      links = <Links>[];
+      json['links'].forEach((v) {
+        links!.add(new Links.fromJson(v));
+      });
+    }
+    nextPageUrl = json['next_page_url'];
+    path = json['path'];
+    perPage = json['per_page'];
+    prevPageUrl = json['prev_page_url'];
+    to = json['to'];
+    total = json['total'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['current_page'] = this.currentPage;
+    if (this.data != null) {
+      data['data'] = this.data!.map((v) => v.toJson()).toList();
+    }
+    data['first_page_url'] = this.firstPageUrl;
+    data['from'] = this.from;
+    data['last_page'] = this.lastPage;
+    data['last_page_url'] = this.lastPageUrl;
+    if (this.links != null) {
+      data['links'] = this.links!.map((v) => v.toJson()).toList();
+    }
+    data['next_page_url'] = this.nextPageUrl;
+    data['path'] = this.path;
+    data['per_page'] = this.perPage;
+    data['prev_page_url'] = this.prevPageUrl;
+    data['to'] = this.to;
+    data['total'] = this.total;
+    return data;
+  }
+}
+
+class MobileNumbers {
   int? id;
   String? number;
   int? staffId;
@@ -45,8 +135,9 @@ class PhoneNumbers {
   Null? leadStageId;
   Null? dealClosureDate;
   int? callDuration;
+  Null? latestUpdate;
 
-  PhoneNumbers(
+  MobileNumbers(
       {this.id,
         this.number,
         this.staffId,
@@ -62,9 +153,10 @@ class PhoneNumbers {
         this.lastCalledDate,
         this.leadStageId,
         this.dealClosureDate,
-        this.callDuration});
+        this.callDuration,
+        this.latestUpdate});
 
-  PhoneNumbers.fromJson(Map<String, dynamic> json) {
+  MobileNumbers.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     number = json['number'];
     staffId = json['staff_id'];
@@ -81,6 +173,7 @@ class PhoneNumbers {
     leadStageId = json['lead_stage_id'];
     dealClosureDate = json['deal_closure_date'];
     callDuration = json['call_duration'];
+    latestUpdate = json['latest_update'];
   }
 
   Map<String, dynamic> toJson() {
@@ -101,6 +194,29 @@ class PhoneNumbers {
     data['lead_stage_id'] = this.leadStageId;
     data['deal_closure_date'] = this.dealClosureDate;
     data['call_duration'] = this.callDuration;
+    data['latest_update'] = this.latestUpdate;
+    return data;
+  }
+}
+
+class Links {
+  String? url;
+  String? label;
+  bool? active;
+
+  Links({this.url, this.label, this.active});
+
+  Links.fromJson(Map<String, dynamic> json) {
+    url = json['url'];
+    label = json['label'];
+    active = json['active'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['url'] = this.url;
+    data['label'] = this.label;
+    data['active'] = this.active;
     return data;
   }
 }

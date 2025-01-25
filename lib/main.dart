@@ -4,13 +4,9 @@ import 'package:telecaliingcrm/providers/ConnectivityProviders.dart';
 import 'package:telecaliingcrm/providers/DashBoardProvider.dart';
 import 'package:telecaliingcrm/providers/LeadsProvider.dart';
 import 'package:telecaliingcrm/providers/UserDetailsProvider.dart';
-
-
 import 'screens/SpalshScreen.dart';
 
 void main() async {
-
-
   runApp(
     MultiProvider(
       providers: [
@@ -43,7 +39,7 @@ class MyApp extends StatelessWidget {
             child: child ?? Container(),
           );
         },
-        title: 'TelecallingCRM',
+        title: 'Telecalling CRM',
         theme: ThemeData(
           visualDensity: VisualDensity.adaptivePlatformDensity,
           splashColor: Colors.transparent,

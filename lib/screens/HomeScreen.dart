@@ -14,6 +14,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:telecaliingcrm/Authentication/SignInScreen.dart';
 import 'package:telecaliingcrm/Services/UserApi.dart';
+import 'package:telecaliingcrm/model/CallHistoryModel.dart';
 import 'package:telecaliingcrm/providers/DashBoardProvider.dart';
 import 'package:telecaliingcrm/providers/UserDetailsProvider.dart';
 import 'package:telecaliingcrm/screens/Edit%20Profile%20screeen.dart';
@@ -26,6 +27,7 @@ import '../model/DashBoardModel.dart';
 import '../providers/ConnectivityProviders.dart';
 import '../services/Shimmers.dart';
 import '../services/otherservices.dart';
+import 'CallHistoryScreen.dart';
 
 class Homescreen extends StatefulWidget {
   const Homescreen({super.key});
@@ -56,8 +58,7 @@ class _HomescreenState extends State<Homescreen> {
     }
   }
 
-  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-      FlutterLocalNotificationsPlugin();
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
   int currentIndex = 0;
   bool isCalling = false;
   late Timer callDurationTimer;
@@ -219,8 +220,7 @@ class _HomescreenState extends State<Homescreen> {
     // After showing the dialog, remove the number from the list
     setState(() {
       phoneNumbers!.removeAt(currentIndex - 1); // Remove the last dialed number
-      currentIndex =
-          currentIndex > 0 ? currentIndex - 1 : 0; // Correct the index
+      currentIndex = currentIndex > 0 ? currentIndex - 1 : 0; // Correct the index
     });
   }
 
@@ -521,33 +521,58 @@ class _HomescreenState extends State<Homescreen> {
                   child: Column(
                     children: [
                       Padding(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+                        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 0),
                         child: Column(
                           children: [
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                container(
-                                  margin: EdgeInsets.symmetric(
-                                      horizontal: 0, vertical: 0),
-                                  w: w * 0.44,
-                                  context,
-                                  colors: color31,
-                                  child: Column(
-                                    children: [
-                                      text(
-                                          context,
-                                          dashboardProvider.todayCalls
-                                                  .toString() ??
-                                              "",
-                                          46,
-                                          fontfamily: 'Poppins',
-                                          fontWeight: FontWeight.w500),
-                                      text(context, 'Today Calls', 18,
-                                          fontfamily: 'Poppins',
-                                          fontWeight: FontWeight.w500),
-                                    ],
+                                InkResponse(
+                                  onTap: (){
+                                    Navigator.of(context)
+                                        .push(PageRouteBuilder(
+                                      pageBuilder: (context, animation,
+                                          secondaryAnimation) {
+                                        return Callhistoryscreen();
+                                      },
+                                      transitionsBuilder: (context,
+                                          animation,
+                                          secondaryAnimation,
+                                          child) {
+                                        const begin = Offset(1.0, 0.0);
+                                        const end = Offset.zero;
+                                        const curve = Curves.easeInOut;
+                                        var tween = Tween(
+                                            begin: begin, end: end)
+                                            .chain(CurveTween(
+                                            curve: curve));
+                                        var offsetAnimation =
+                                        animation.drive(tween);
+                                        return SlideTransition(
+                                            position: offsetAnimation,
+                                            child: child);
+                                      },
+                                    ));
+                                  },
+                                  child: container(
+                                    margin: EdgeInsets.symmetric(
+                                        horizontal: 0, vertical: 0),
+                                    w: w * 0.44,
+                                    context,
+                                    colors: color31,
+                                    child: Column(
+                                      children: [
+                                        text(
+                                            context,
+                                            dashboardProvider.todayCalls?? "0",
+                                            46,
+                                            fontfamily: 'Poppins',
+                                            fontWeight: FontWeight.w500),
+                                        text(context, 'Today Calls', 18,
+                                            fontfamily: 'Poppins',
+                                            fontWeight: FontWeight.w500),
+                                      ],
+                                    ),
                                   ),
                                 ),
                                 container(
@@ -560,7 +585,7 @@ class _HomescreenState extends State<Homescreen> {
                                     children: [
                                       text(
                                           context,
-                                          dashboardProvider.pendingCalls.toString() ?? "",
+                                          dashboardProvider.pendingCalls?? "0",
                                           46,
                                           fontfamily: 'Poppins',
                                           fontWeight: FontWeight.w500),
@@ -602,9 +627,7 @@ class _HomescreenState extends State<Homescreen> {
                                       children: [
                                         text(
                                             context,
-                                            dashboardProvider.leadCount
-                                                    .toString() ??
-                                                "",
+                                            dashboardProvider.leadCount?? "0",
                                             46,
                                             fontfamily: 'Poppins',
                                             fontWeight: FontWeight.w500),
@@ -639,9 +662,7 @@ class _HomescreenState extends State<Homescreen> {
                                       children: [
                                         text(
                                             context,
-                                            dashboardProvider.followup_count
-                                                    .toString() ??
-                                                "",
+                                            dashboardProvider.followup_count ?? "0",
                                             46,
                                             fontfamily: 'Poppins',
                                             fontWeight: FontWeight.w500),
@@ -1026,7 +1047,7 @@ class _HomescreenState extends State<Homescreen> {
                               fontfamily: 'Poppins',
                               16),
                           Spacer(),
-                          Icon(Icons.keyboard_arrow_down_rounded),
+                          Icon(Icons.keyboard_arrow_right),
                         ],
                       ),
                     ),
@@ -1064,7 +1085,7 @@ class _HomescreenState extends State<Homescreen> {
                               fontfamily: 'Poppins',
                               16),
                           Spacer(),
-                          Icon(Icons.keyboard_arrow_down_rounded),
+                          Icon(Icons.keyboard_arrow_right),
                         ],
                       ),
                     ),

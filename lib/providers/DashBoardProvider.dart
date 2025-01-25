@@ -6,7 +6,7 @@ import '../Services/UserApi.dart';
 import '../model/DashBoardModel.dart';
 
 class DashboardProvider with ChangeNotifier {
-  List<PhoneNumbers>? phone_numbers;
+  List<MobileNumbers>? phone_numbers;
   String? todayCalls;
   String? pendingCalls;
   String? leadCount;
@@ -14,7 +14,7 @@ class DashboardProvider with ChangeNotifier {
   bool _isLoading = true;
 
   // Getter for userDetails that ensures null safety
-  List<PhoneNumbers>? get phoneNumbers => phone_numbers;
+  List<MobileNumbers>? get phoneNumbers => phone_numbers;
   bool get isLoading => _isLoading;
 
   // Method to fetch user details asynchronously

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
+import 'package:telecaliingcrm/model/CallHistoryModel.dart';
 import 'package:telecaliingcrm/model/DashBoardModel.dart';
 import 'package:telecaliingcrm/model/LeadsModel.dart';
 import 'package:telecaliingcrm/model/LeadeBoardModel.dart';
@@ -488,6 +489,24 @@ class Userapi {
       }
     } catch (e) {
       debugPrint('hello bev=bug $e ');
+      return null;
+    }
+  }
+
+  static Future<CallHistoryModel?> getCallHistory() async {
+    try {
+      final url = Uri.parse("${host}/api/today-called-history");
+      final header = await getheader1();
+      final response = await http.get(url, headers: header);
+
+      if (response.statusCode == 200) {
+        final jsonResponse = json.decode(response.body);
+        return CallHistoryModel.fromJson(jsonResponse);
+      } else {
+        return null;
+      }
+    } catch (e) {
+      debugPrint('Error occurred: $e');
       return null;
     }
   }

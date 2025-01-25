@@ -6,6 +6,7 @@ import 'package:telecaliingcrm/utils/ColorConstants.dart';
 import '../Services/otherservices.dart';
 import '../providers/ConnectivityProviders.dart';
 import '../utils/constants.dart';
+import 'CallHistoryScreen.dart';
 import 'HomeScreen.dart';
 import 'LeaderBoardScreen.dart';
 
@@ -21,6 +22,7 @@ class _DashboardState extends State<Dashboard> {
   final PageController _pageController = PageController();
   final List<Widget> _pages = [
     Homescreen(),
+    Callhistoryscreen(),
     LeaderboardScreen(),
   ];
 
@@ -81,6 +83,18 @@ class _DashboardState extends State<Dashboard> {
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: _selectedIndex == 1 ? primaryColor : Colors.transparent, // Color when selected
+            ),
+            child: Icon(
+              Icons.call,
+              size: 30,
+              color: Colors.white,
+            ),
+          ),
+          Container(
+            padding: EdgeInsets.all(5),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: _selectedIndex == 2 ? primaryColor : Colors.transparent, // Color when selected
             ),
             child: Icon(
               Icons.leaderboard,
