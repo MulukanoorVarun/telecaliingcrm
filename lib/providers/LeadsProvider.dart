@@ -9,17 +9,15 @@ import '../model/LeadsModel.dart';
 class LeadsProvider with ChangeNotifier {
   List<Leads>? leadslist;
   bool _isLoading = true;
-
-  // Getter for userDetails that ensures null safety
   List<Leads>? get leadsList => leadslist;
   bool get isLoading => _isLoading;
 
   // Method to fetch user details asynchronously
-  Future<bool?> fetchLeadsList() async {
+  Future<bool?> fetchLeadsList(type) async {
     try {
-      var result = await Userapi.getLeads();
+      var result = await Userapi.getLeads(type);
       if (result?.status == true) {
-        leadslist = result?.data ?? [];
+        leadslist = result?.data??[];
         _isLoading = false;
         notifyListeners();
       } else {
@@ -40,7 +38,7 @@ class LeadsProvider with ChangeNotifier {
           await Userapi.postAddLeads(name, mobile, date, remarks, leadStatus);
       if (response != null) {
         if (response["status"] == true) {
-          fetchLeadsList();
+          fetchLeadsList('all');
           return response["status"];
         } else {
           return response["status"];
@@ -68,7 +66,7 @@ class LeadsProvider with ChangeNotifier {
       ;
       if (response != null) {
         if (response["status"] == true) {
-          fetchLeadsList();
+          fetchLeadsList('all');
           return response["status"];
         } else {
           return response["status"];
