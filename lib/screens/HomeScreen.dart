@@ -603,8 +603,7 @@ class _HomescreenState extends State<Homescreen> {
                                         text(
                                             context,
                                             dashboardProvider.leadCount
-                                                    .toString() ??
-                                                "",
+                                                    .toString()?? "",
                                             46,
                                             fontfamily: 'Poppins',
                                             fontWeight: FontWeight.w500),

@@ -6,7 +6,7 @@ import '../Services/UserApi.dart';
 import '../model/DashBoardModel.dart';
 
 class DashboardProvider with ChangeNotifier {
-  List<PhoneNumbers>? phone_numbers;
+  List<PhoneNumbers>? phone_numbers=[];
   String? todayCalls;
   String? pendingCalls;
   String? leadCount;
@@ -28,7 +28,7 @@ class DashboardProvider with ChangeNotifier {
         pendingCalls = response?.pendingCalls?.toString(); // Convert to String
         leadCount = response?.leadCount?.toString(); // Convert to String
         followup_count = response?.followupCount?.toString(); // Convert to String
-        phone_numbers =response?.phoneNumbers;
+        phone_numbers = response?.phoneNumbers??[];
         notifyListeners();
         _isLoading=false;
         return response?.status;

@@ -18,10 +18,10 @@ class DashBoardModel {
   factory DashBoardModel.fromJson(Map<String, dynamic> json) {
     return DashBoardModel(
       status: json['status'],
-      todayCalls: json['today_calls']?.toString(), // Convert to String
-      pendingCalls: json['pending_calls']?.toString(), // Convert to String
-      leadCount: json['lead_count']?.toString(), // Convert to String
-      followupCount: json['followup_count']?.toString(), // Convert to String
+      todayCalls: json['today_calls']?.toString(),
+      pendingCalls: json['pending_calls']?.toString(),
+      leadCount: json['lead_count']?.toString(),
+      followupCount: json['followup_count']?.toString(),
       phoneNumbers: (json['phone_numbers'] as List?)
           ?.map((item) => PhoneNumbers.fromJson(item))
           .toList(),
