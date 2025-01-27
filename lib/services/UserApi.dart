@@ -480,4 +480,75 @@ class Userapi {
       return null;
     }
   }
+
+  static Future<bool?> updatePassword(String email, String password) async {
+    try{
+      final Uri url = Uri.parse('${host}/api/update_password');
+      final response = await http.post(
+        url,
+        body: {
+          'email': email,
+          'password': password,
+        },
+      );
+      if (response.statusCode == 200) {
+        // Handling the response as JSON
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        if (responseData['status']) {
+          return true;
+        } else {
+          return false;
+        }
+      } else {
+        return false;
+      }
+    }catch(e){
+      debugPrint('Error occurred: $e');
+      return null;
+    }
+  }
+
+  static Future<bool?> forgetPassword(String email) async {
+    try{
+      final Uri url = Uri.parse('${host}/api/forget-password');
+      final response = await http.post(
+        url,
+        body: {
+          'email': email,
+        },
+      );
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        return false;
+      }
+    }catch(e){
+      debugPrint('Error occurred: $e');
+      return null;
+    }
+  }
+
+
+  static Future<bool?> forgetPasswordOtpVerify(String email,String otp) async {
+    try{
+      final Uri url = Uri.parse('${host}/api/verify-otp');
+      final response = await http.post(
+        url,
+        body: {
+          'email': email,
+          'otp': otp,
+        },
+      );
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        return false;
+      }
+    }catch(e){
+      debugPrint('Error occurred: $e');
+      return null;
+    }
+  }
+
+
 }
