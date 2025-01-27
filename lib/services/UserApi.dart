@@ -91,7 +91,6 @@ class Userapi {
   }
 
   static Future<UserDetailsModel?> getUserDetails() async {
-    if (await checkHeaderValidity()) {
       try {
         final url = Uri.parse("${host}/api/profile");
         final headers = await getheader1();
@@ -99,7 +98,6 @@ class Userapi {
           url,
           headers: headers,
         );
-
         if (response.statusCode == 200) {
           final jsonResponse = jsonDecode(response.body);
           print("getUserDetails response: ${response.body}");
@@ -114,11 +112,6 @@ class Userapi {
         print("Error occurred in getUserDetails: $e");
         return null;
       }
-    } else {
-      // Catch and log any errors
-      print("returned");
-      return null;
-    }
   }
 
   static Future<Map<String, dynamic>?> UpdateCallStatusApi(String id,
@@ -162,10 +155,7 @@ class Userapi {
     try {
       final url = Uri.parse("${host}/api/get_lead_calls?type=${type}");
       final headers = await getheader1();
-      final response = await http.post(
-        url,
-        headers: headers,
-      );
+      final response = await http.post(url, headers: headers);
       if (response.statusCode == 200) {
         final jsonResponse = jsonDecode(response.body);
         print("getLeads response: ${response.body}");
@@ -175,8 +165,7 @@ class Userapi {
         return null;
       }
     } catch (e) {
-      // Log any errors
-      print("Error occurred in getUserDetails: $e");
+      print("Error occurred in getLeads: $e");
       return null;
     }
   }
@@ -368,9 +357,9 @@ class Userapi {
     }
   }
 
-  static Future<GetFollowUpModel?> getFollowup() async {
+  static Future<GetFollowUpModel?> getFollowup(page) async {
     try {
-      final url = Uri.parse("${host}/api/follow_up_list");
+      final url = Uri.parse("${host}/api/follow_up_list?page=$page");
       final headers = await getheader1();
       final response = await http.get(
         url,

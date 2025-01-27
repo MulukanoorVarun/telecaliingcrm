@@ -1,18 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
-import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
+import 'package:telecaliingcrm/providers/FollowupProvider.dart';
 import 'package:telecaliingcrm/utils/ColorConstants.dart';
 import 'package:telecaliingcrm/utils/constants.dart';
 import 'package:url_launcher/url_launcher.dart';
-
-import '../Services/UserApi.dart';
-import '../model/GetFollowUpModel.dart';
 import '../providers/ConnectivityProviders.dart';
 import '../services/Shimmers.dart';
 import '../services/otherservices.dart';
-import 'AddFollowUp.dart';
 import 'LeadInformation.dart';
 
 class FollowupsScreen extends StatefulWidget {
@@ -23,37 +19,29 @@ class FollowupsScreen extends StatefulWidget {
 }
 
 class _FollowupsScreenState extends State<FollowupsScreen> {
+  late ConnectivityProviders _connectivityProvider;
+
   @override
   void initState() {
-    getFollowUpApi();
-    Provider.of<ConnectivityProviders>(context, listen: false)
-        .initConnectivity();
+    _connectivityProvider = Provider.of<ConnectivityProviders>(context, listen: false);
+    _connectivityProvider.initConnectivity();
+    Provider.of<ConnectivityProviders>(context, listen: false).initConnectivity();
+    // Delay fetchLeads until after the widget tree has finished building
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _fetchFollowups();
+    });
     super.initState();
+  }
+
+  Future<void> _fetchFollowups() async {
+    final leadsProvider = Provider.of<FollowupProvider>(context, listen: false);
+    leadsProvider.getFollowUpApi();
   }
 
   @override
   void dispose() {
-    Provider.of<ConnectivityProviders>(context, listen: false).dispose();
+    _connectivityProvider.dispose();
     super.dispose();
-  }
-
-  bool is_loading = true;
-
-  List<FollowUpModel> data = [];
-
-  void getFollowUpApi() async {
-    var result = await Userapi.getFollowup();
-
-    setState(() {
-      if (result?.status == true) {
-        data = result?.data?.followup_list ?? [];
-        is_loading = false;
-        print("Response: $result");
-      } else {
-        is_loading = false;
-        print("Failed to update the call status.");
-      }
-    });
   }
 
   String formatDate(String dateTime) {
@@ -106,19 +94,33 @@ class _FollowupsScreenState extends State<FollowupsScreen> {
                   },
                 ),
               ),
-              body: is_loading
-                  ? _buildShimmerList()
-                  : (data.length > 0)
-                      ? Column(
-                          children: [
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Expanded(
-                              child: ListView.builder(
-                                  itemCount: data.length,
-                                  itemBuilder: (context, index) {
-                                    final followup_List = data[index];
+              body:Consumer<FollowupProvider>(builder: (context,followupProvider,child){
+                if(followupProvider.isLoading){
+                  return _buildShimmerList();
+                }else if(followupProvider.followupList.length>0){
+                  return Column(
+                    children: [
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Expanded(
+                        child: NotificationListener<ScrollNotification>(
+                          onNotification: (ScrollNotification scrollInfo) {
+                            if (!followupProvider.isLoading &&
+                                scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
+                              if (followupProvider.nextPage) {
+                                followupProvider.fetchMoreFollowUpList();
+                              }
+                              return true;
+                            }
+                            return false;
+                          },
+                          child: CustomScrollView(
+                            slivers: [
+                              SliverList(
+                                delegate: SliverChildBuilderDelegate(
+                                      (context, index) {
+                                    final followup_List = followupProvider.followupList[index];
                                     return container(
                                       context,
                                       margin: EdgeInsets.symmetric(
@@ -127,7 +129,7 @@ class _FollowupsScreenState extends State<FollowupsScreen> {
                                         children: [
                                           Row(
                                             mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
+                                            MainAxisAlignment.spaceBetween,
                                             children: [
                                               text(
                                                   context,
@@ -143,42 +145,42 @@ class _FollowupsScreenState extends State<FollowupsScreen> {
                                             height: 1.8,
                                             thickness: 0.8,
                                             color:
-                                                Colors.black.withOpacity(0.25),
+                                            Colors.black.withOpacity(0.25),
                                           ),
                                           SizedBox(height: 5),
                                           Row(
                                             mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
+                                            MainAxisAlignment.spaceBetween,
                                             children: [
                                               Expanded(
                                                 child: Column(
                                                   crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
+                                                  CrossAxisAlignment.start,
                                                   mainAxisAlignment:
-                                                      MainAxisAlignment.start,
+                                                  MainAxisAlignment.start,
                                                   children: [
                                                     Row(
                                                       mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceBetween,
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
                                                       children: [
                                                         container(context,
                                                             colors: (followup_List
-                                                                        .leadType
-                                                                        ?.stageName
-                                                                        ?.stageName ==
-                                                                    "Cold")
+                                                                .leadType
+                                                                ?.stageName
+                                                                ?.stageName ==
+                                                                "Cold")
                                                                 ? coldbgColor
                                                                 : (followup_List.leadType?.stageName?.stageName ==
-                                                                        "Hot")
-                                                                    ? Color(
-                                                                        0xffFFA89C)
-                                                                    : Color(
-                                                                        0xff95F8B6),
+                                                                "Hot")
+                                                                ? Color(
+                                                                0xffFFA89C)
+                                                                : Color(
+                                                                0xff95F8B6),
                                                             borderRadius:
-                                                                BorderRadius.all(
-                                                                    Radius.circular(
-                                                                        5)),
+                                                            BorderRadius.all(
+                                                                Radius.circular(
+                                                                    5)),
                                                             padding: EdgeInsets.symmetric(
                                                                 vertical: 2,
                                                                 horizontal: 10),
@@ -200,28 +202,28 @@ class _FollowupsScreenState extends State<FollowupsScreen> {
                                                                 MaterialPageRoute(
                                                                   builder:
                                                                       (context) =>
-                                                                          LeadInformation(
-                                                                    ID: followup_List
-                                                                        .leadId
-                                                                        .toString(),
-                                                                  ),
+                                                                      LeadInformation(
+                                                                        ID: followup_List
+                                                                            .leadId
+                                                                            .toString(),
+                                                                      ),
                                                                 ));
                                                           },
                                                           child: Padding(
                                                             padding:
-                                                                const EdgeInsets
-                                                                    .all(8.0),
+                                                            const EdgeInsets
+                                                                .all(8.0),
                                                             child: text(
                                                                 context,
                                                                 "View Info>",
                                                                 14,
                                                                 color:
-                                                                    primaryColor,
+                                                                primaryColor,
                                                                 textdecoration:
-                                                                    TextDecoration
-                                                                        .underline,
+                                                                TextDecoration
+                                                                    .underline,
                                                                 decorationcolor:
-                                                                    primaryColor),
+                                                                primaryColor),
                                                           ),
                                                         ),
                                                       ],
@@ -235,28 +237,28 @@ class _FollowupsScreenState extends State<FollowupsScreen> {
                                                         children: [
                                                           TextSpan(
                                                               text:
-                                                                  'Remarks : ',
+                                                              'Remarks : ',
                                                               style: TextStyle(
                                                                   fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
+                                                                  FontWeight
+                                                                      .bold,
                                                                   fontFamily:
-                                                                      "Poppins")),
+                                                                  "Poppins")),
                                                           TextSpan(
                                                               text: followup_List
-                                                                          .remarks !=
-                                                                      null
+                                                                  .remarks !=
+                                                                  null
                                                                   ? '${followup_List.remarks}'
                                                                   : "NA",
                                                               style: TextStyle(
                                                                   fontWeight:
-                                                                      FontWeight
-                                                                          .normal)),
+                                                                  FontWeight
+                                                                      .normal)),
                                                         ],
                                                       ),
                                                       maxLines: 3,
                                                       textAlign:
-                                                          TextAlign.start,
+                                                      TextAlign.start,
                                                       overflow: TextOverflow
                                                           .ellipsis, // Optional, to handle text overflow
                                                     )
@@ -269,18 +271,18 @@ class _FollowupsScreenState extends State<FollowupsScreen> {
                                                     onTap: () async {
                                                       await FlutterPhoneDirectCaller
                                                           .callNumber(followup_List
-                                                                  .phone
-                                                                  .toString() ??
-                                                              "");
+                                                          .phone
+                                                          .toString() ??
+                                                          "");
                                                     },
                                                     child: container(context,
                                                         colors: primaryColor,
                                                         padding:
-                                                            EdgeInsets.all(10),
+                                                        EdgeInsets.all(10),
                                                         margin: EdgeInsets
                                                             .symmetric(
-                                                                vertical: 3,
-                                                                horizontal: 3),
+                                                            vertical: 3,
+                                                            horizontal: 3),
                                                         child: Image(
                                                           image: AssetImage(
                                                               "assets/call.png"),
@@ -292,17 +294,17 @@ class _FollowupsScreenState extends State<FollowupsScreen> {
                                                     onTap: () {
                                                       _launchWhatsApp(
                                                           followup_List.phone
-                                                                  .toString() ??
+                                                              .toString() ??
                                                               "");
                                                     },
                                                     child: container(context,
                                                         colors: primaryColor,
                                                         padding:
-                                                            EdgeInsets.all(10),
+                                                        EdgeInsets.all(10),
                                                         margin: EdgeInsets
                                                             .symmetric(
-                                                                vertical: 3,
-                                                                horizontal: 3),
+                                                            vertical: 3,
+                                                            horizontal: 3),
                                                         child: Image(
                                                           image: AssetImage(
                                                               "assets/whatsapp.png"),
@@ -316,29 +318,45 @@ class _FollowupsScreenState extends State<FollowupsScreen> {
                                           )
                                         ],
                                       ),
-                                    );
-                                  }),
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                          ],
-                        )
-                      : Center(
-                          child: Column(
-                            children: [
-                              SizedBox(
-                                height: w * 0.54,
+                                    );;
+                                  },
+                                  childCount: followupProvider.followupList.length,
+                                ),
                               ),
-                              Lottie.asset(
-                                'assets/animations/nodata1.json', // Your Lottie animation file
-                                width: 150, // Adjust the size as needed
-                                height: 150,
-                                fit: BoxFit.cover,
-                              ),
+                              if (followupProvider.pageLoading)
+                                SliverToBoxAdapter(
+                                  child: Align(alignment: Alignment.center,
+                                    child:CircularProgressIndicator(strokeWidth: 1)
+                                  ),
+                                )
                             ],
                           ),
                         ),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                    ],
+                  );
+                }else{
+                  return Center(
+                    child: Column(
+                      children: [
+                        SizedBox(
+                          height: w * 0.54,
+                        ),
+                        Lottie.asset(
+                          'assets/animations/nodata1.json', // Your Lottie animation file
+                          width: 150, // Adjust the size as needed
+                          height: 150,
+                          fit: BoxFit.cover,
+                        ),
+                      ],
+                    ),
+                  );
+                }
+
+              }),
             ),
           )
         : NoInternetWidget();

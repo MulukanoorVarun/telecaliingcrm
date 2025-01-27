@@ -85,10 +85,11 @@ class _HomescreenState extends State<Homescreen> {
   List<MobileNumbers>? phoneNumbers;
   Future<void> GetDashBoardDetails() async {
     final dashboard_provider = Provider.of<DashboardProvider>(context, listen: false);
-    final user_details_provider =
-        Provider.of<UserDetailsProvider>(context, listen: false);
-    dashboard_provider.fetchDashBoardDetails();
-    user_details_provider.fetchUserDetails();
+    final user_details_provider = Provider.of<UserDetailsProvider>(context, listen: false);
+    var res = await dashboard_provider.fetchDashBoardDetails();
+    if(res==true){
+      user_details_provider.fetchUserDetails();
+    }
   }
 
   Future<void> _initializeNotifications() async {

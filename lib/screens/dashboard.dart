@@ -2,7 +2,6 @@ import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:telecaliingcrm/utils/ColorConstants.dart';
-
 import '../Services/otherservices.dart';
 import '../providers/ConnectivityProviders.dart';
 import '../utils/constants.dart';
@@ -12,7 +11,6 @@ import 'LeaderBoardScreen.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
-
   @override
   State<Dashboard> createState() => _DashboardState();
 }
