@@ -323,6 +323,14 @@ class _FollowupsScreenState extends State<FollowupsScreen> {
                                   childCount: followupProvider.followupList.length,
                                 ),
                               ),
+                              SliverPadding(
+                                padding: EdgeInsets.only(bottom: 30),
+                                sliver: SliverToBoxAdapter(
+                                  child: SizedBox(
+                                    height: 10,
+                                  ),
+                                ),
+                              ),
                               if (followupProvider.pageLoading)
                                 SliverToBoxAdapter(
                                   child: Align(alignment: Alignment.center,

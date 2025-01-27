@@ -29,7 +29,6 @@ import 'CallHistoryScreen.dart';
 
 class Homescreen extends StatefulWidget {
   const Homescreen({super.key});
-
   @override
   State<Homescreen> createState() => _HomescreenState();
 }
@@ -45,7 +44,6 @@ class _HomescreenState extends State<Homescreen> {
       source: ImageSource.gallery, // Use ImageSource.camera for camera
       imageQuality: 100,
     );
-
     if (pickedFile != null) {
       setState(() {
         _image = File(pickedFile.path); // Set the selected image file
