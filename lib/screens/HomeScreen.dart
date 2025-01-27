@@ -14,7 +14,6 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:telecaliingcrm/Authentication/SignInScreen.dart';
 import 'package:telecaliingcrm/Services/UserApi.dart';
-import 'package:telecaliingcrm/model/CallHistoryModel.dart';
 import 'package:telecaliingcrm/providers/DashBoardProvider.dart';
 import 'package:telecaliingcrm/providers/UserDetailsProvider.dart';
 import 'package:telecaliingcrm/screens/Edit%20Profile%20screeen.dart';
@@ -22,7 +21,6 @@ import 'package:telecaliingcrm/screens/FollowupsScreen.dart';
 import 'package:telecaliingcrm/screens/LeadsScreen.dart';
 import 'package:telecaliingcrm/utils/ColorConstants.dart';
 import 'package:telecaliingcrm/utils/constants.dart';
-
 import '../model/DashBoardModel.dart';
 import '../providers/ConnectivityProviders.dart';
 import '../services/Shimmers.dart';
@@ -62,7 +60,7 @@ class _HomescreenState extends State<Homescreen> {
   int currentIndex = 0;
   bool isCalling = false;
   late Timer callDurationTimer;
-  int callDuration = 0; // Track call duration in seconds
+  int callDuration = 0;
   String mobile_nnumber = "";
   bool isPaused = false;
   bool isCallOngoing = false;
@@ -71,8 +69,7 @@ class _HomescreenState extends State<Homescreen> {
   @override
   void initState() {
     GetDashBoardDetails();
-    Provider.of<ConnectivityProviders>(context, listen: false)
-        .initConnectivity();
+    Provider.of<ConnectivityProviders>(context, listen: false).initConnectivity();
     _initializeNotifications();
     _initializePhoneStateListener();
     _requestPermission();
@@ -85,7 +82,7 @@ class _HomescreenState extends State<Homescreen> {
     super.dispose();
   }
 
-  List<PhoneNumbers>? phoneNumbers;
+  List<MobileNumbers>? phoneNumbers;
   Future<void> GetDashBoardDetails() async {
     final dashboard_provider =
         Provider.of<DashboardProvider>(context, listen: false);
