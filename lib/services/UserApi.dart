@@ -170,9 +170,9 @@ class Userapi {
     }
   }
 
-  static Future<List<LeaderBoardModel>?> getLeaderboard() async {
+  static Future<LeaderBoardModel?> getLeaderboard(_currentPage) async {
     try {
-      final url = Uri.parse("${host}/api/get_leader_board");
+      final url = Uri.parse("${host}/api/get_leader_board?page=${_currentPage}");
       final headers = await getheader1();
       final response = await http.post(
         url,
@@ -182,15 +182,7 @@ class Userapi {
       if (response.statusCode == 200) {
         final jsonResponse = jsonDecode(response.body);
         print("getLeaderboard response: ${response.body}");
-
-        if (jsonResponse is List) {
-          return jsonResponse
-              .map<LeaderBoardModel>((item) => LeaderBoardModel.fromJson(item))
-              .toList();
-        } else {
-          print("Expected a list but got ${jsonResponse.runtimeType}");
-          return null;
-        }
+        return LeaderBoardModel.fromJson(jsonResponse);
       } else {
         print("Request failed with status: ${response.statusCode}");
         return null;
@@ -471,9 +463,9 @@ class Userapi {
     }
   }
 
-  static Future<CallHistoryModel?> getCallHistory() async {
+  static Future<CallHistoryModel?> getCallHistory(page) async {
     try {
-      final url = Uri.parse("${host}/api/today-called-history");
+      final url = Uri.parse("${host}/api/today-called-history?page=${page}");
       final header = await getheader1();
       final response = await http.get(url, headers: header);
 

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:telecaliingcrm/providers/CallHistoryProvider.dart';
 import 'package:telecaliingcrm/providers/ConnectivityProviders.dart';
 import 'package:telecaliingcrm/providers/DashBoardProvider.dart';
 import 'package:telecaliingcrm/providers/FollowupProvider.dart';
 import 'package:telecaliingcrm/providers/LeadsProvider.dart';
 import 'package:telecaliingcrm/providers/UserDetailsProvider.dart';
+import 'package:telecaliingcrm/providers/leaderBoardprovider.dart';
 import 'screens/SpalshScreen.dart';
 
 void main() async {
@@ -17,10 +19,11 @@ void main() async {
         ),
         ChangeNotifierProvider(
           create: (_) => UserDetailsProvider(),
+        ),ChangeNotifierProvider(
+          create: (_) => CallHistoryProvider(),
         ),
-        ChangeNotifierProvider(
-          create: (_) => LeadsProvider(),
-        ),
+        ChangeNotifierProvider(create: (_) => LeadsProvider(),),
+        ChangeNotifierProvider(create: (_) => LeaderBoardProvider(),),
         ChangeNotifierProvider(
           create: (_) => FollowupProvider(),
         ),

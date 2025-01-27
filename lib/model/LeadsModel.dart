@@ -30,7 +30,7 @@ class Data {
   String? nextPageUrl;
   String? path;
   int? perPage;
-  String? prevPageUrl;
+  Null? prevPageUrl;
   int? to;
   int? total;
 
@@ -106,16 +106,16 @@ class Leads {
   String? callStatus;
   String? calledStatus;
   String? name;
-  String? followUpDate;
+  Null? followUpDate;
   String? remarks;
   String? dealStatus;
-  String? dealAmount;
+  Null? dealAmount;
   int? totalCalls;
-  String? lastCalledDate;
+  Null? lastCalledDate;
   int? leadStageId;
-  String? dealClosureDate;
+  Null? dealClosureDate;
   int? callDuration;
-  String? fId;
+  Null? latestUpdate;
   StageName? stageName;
   LatestFollowupDetail? latestFollowupDetail;
 
@@ -136,7 +136,7 @@ class Leads {
         this.leadStageId,
         this.dealClosureDate,
         this.callDuration,
-        this.fId,
+        this.latestUpdate,
         this.stageName,
         this.latestFollowupDetail});
 
@@ -157,7 +157,7 @@ class Leads {
     leadStageId = json['lead_stage_id'];
     dealClosureDate = json['deal_closure_date'];
     callDuration = json['call_duration'];
-    fId = json['f_id'];
+    latestUpdate = json['latest_update'];
     stageName = json['stage_name'] != null
         ? new StageName.fromJson(json['stage_name'])
         : null;
@@ -184,7 +184,7 @@ class Leads {
     data['lead_stage_id'] = this.leadStageId;
     data['deal_closure_date'] = this.dealClosureDate;
     data['call_duration'] = this.callDuration;
-    data['f_id'] = this.fId;
+    data['latest_update'] = this.latestUpdate;
     if (this.stageName != null) {
       data['stage_name'] = this.stageName!.toJson();
     }

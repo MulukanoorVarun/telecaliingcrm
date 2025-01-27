@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:telecaliingcrm/Services/UserApi.dart';
-
-import '../model/CallHistoryModel.dart';
+import 'package:telecaliingcrm/Services/otherservices.dart';
+import 'package:telecaliingcrm/providers/ConnectivityProviders.dart';
 import '../services/Shimmers.dart';
 import '../utils/ColorConstants.dart';
+import '../providers/CallHistoryProvider.dart';
 
 class Callhistoryscreen extends StatefulWidget {
   const Callhistoryscreen({super.key});
@@ -13,7 +15,6 @@ class Callhistoryscreen extends StatefulWidget {
 }
 
 class _CallhistoryscreenState extends State<Callhistoryscreen> {
-
   final List<Map<String, String>> callData = [
     {
       'number': '9440161007',
@@ -35,120 +36,158 @@ class _CallhistoryscreenState extends State<Callhistoryscreen> {
 
   @override
   void initState() {
+    Provider.of<ConnectivityProviders>(context, listen: false)
+        .initConnectivity();
     getCallHistoryApi();
     super.initState();
   }
 
-  bool loading=true;
-  List<CallHistory> call_history=[];
-  Future<void> getCallHistoryApi() async {
-    try {
-      var res = await  Userapi.getCallHistory();
-      setState(() {
-        if (res != null) {
-          call_history= res.call_history??[];
-          loading=false;
-        } else {
-          loading=false;
-          debugPrint("No data received");
-        }
-      });
-    } catch (e) {
-      debugPrint("Error in GetCallHistoryApi: $e");
-    }
+  @override
+  void dispose() {
+    Provider.of<ConnectivityProviders>(context, listen: false).dispose();
+    super.dispose();
   }
 
+  Future<void> getCallHistoryApi() async {
+    final callhistory =
+        Provider.of<CallHistoryProvider>(context, listen: false);
+    callhistory.getCallHistoryApi();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Call History',
-          style: TextStyle(
-              fontSize: 22,
-              fontFamily: "Poppins",
-              fontWeight: FontWeight.w600,
-              color: Colors.white),
-        ),
-        backgroundColor: primaryColor,
-        leading:Container(),
-        leadingWidth: 10,
-        // IconButton(
-        //   icon: Icon(
-        //     Icons.arrow_back,
-        //     color: Colors.white,
-        //   ),
-        //   onPressed: () {
-        //     Navigator.pop(context, true);
-        //   },
-        // ),
-      ),
-      body:loading?_buildShimmerList():
-      Padding(
-        padding: EdgeInsets.all(16.0),
-        child: ListView.builder(
-          itemCount: call_history.length,
-          itemBuilder: (context, index) {
-            final call = call_history[index];
-            return Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15.0),
+    var connectiVityStatus = Provider.of<ConnectivityProviders>(context);
+    return (connectiVityStatus.isDeviceConnected == "ConnectivityResult.wifi" ||
+            connectiVityStatus.isDeviceConnected == "ConnectivityResult.mobile")
+        ? Scaffold(
+            appBar: AppBar(
+              title: Text(
+                'Call History',
+                style: TextStyle(
+                    fontSize: 22,
+                    fontFamily: "Poppins",
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white),
               ),
-              elevation: 4,
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(height: 8),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          call.number??"",
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontFamily: "Poppins",
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Row(
-                          children: [
-                            Icon(Icons.calendar_today, size: 16, color: Colors.grey),
-                            SizedBox(width: 8),
-                            Text(
-                              call.dateAdded??"",
-                              style: TextStyle(
-                                color: Colors.grey,
-                                fontFamily: "Poppins",
+
+              backgroundColor: primaryColor,
+              leading: Container(),
+              leadingWidth: 10,
+              // IconButton(
+              //   icon: Icon(
+              //     Icons.arrow_back,
+              //     color: Colors.white,
+              //   ),
+              //   onPressed: () {
+              //     Navigator.pop(context, true);
+              //   },
+              // ),
+            ),
+            body: Consumer<CallHistoryProvider>(
+              builder: (context, callhistoryprovider, child) {
+                if (callhistoryprovider.loading) {
+                  return _buildShimmerList();
+                } else {
+                  return Expanded(
+                    child: NotificationListener<ScrollNotification>(
+                      onNotification: (ScrollNotification scrollinfo) {
+                        if (callhistoryprovider.loading &&
+                            scrollinfo.metrics.pixels ==
+                                scrollinfo.metrics.maxScrollExtent) {
+                          if (callhistoryprovider.hasNext) {
+                            callhistoryprovider.getMoreCallHistoryApi();
+                          }
+                          return true;
+                        }
+                        return false;
+                      },
+                      child: CustomScrollView(
+                        slivers: [
+                          SliverList(
+                              delegate: SliverChildBuilderDelegate(
+                                  (context, index) {
+                            final call =
+                                callhistoryprovider.call_history[index];
+                            return Card(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15.0),
                               ),
-                            ),
-                          ],
-                        ),
-                      ],
+                              elevation: 4,
+                              child: Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    SizedBox(height: 8),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          call.number ?? "",
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                            fontFamily: "Poppins",
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        Row(
+                                          children: [
+                                            Icon(Icons.calendar_today,
+                                                size: 16, color: Colors.grey),
+                                            SizedBox(width: 8),
+                                            Text(
+                                              call.dateAdded ?? "",
+                                              style: TextStyle(
+                                                color: Colors.grey,
+                                                fontFamily: "Poppins",
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(height: 8),
+                                    Text(
+                                      'Call Status: ${call.callStatus}',
+                                      style: TextStyle(
+                                          fontSize: 16,
+                                          fontFamily: "Poppins",
+                                          fontWeight: FontWeight.w400,
+                                          color: Colors.black),
+                                    ),
+                                    Text(
+                                      'Duration: ${call.callDuration}',
+                                      style: TextStyle(
+                                          fontSize: 16,
+                                          fontFamily: "Poppins",
+                                          fontWeight: FontWeight.w400,
+                                          color: Colors.black),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                                  childCount:
+                                      callhistoryprovider.call_history.length)),
+                          if (callhistoryprovider.pageLoading)
+                            SliverToBoxAdapter(
+                              child: Center(
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 0.8,
+                                ),
+                              ),
+                            )
+                        ],
+                      ),
                     ),
-                    SizedBox(height: 8),
-                    Text('Call Status: ${call.callStatus}',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontFamily: "Poppins",
-                        fontWeight: FontWeight.w400,
-                        color: Colors.black),),
-                    Text('Duration: ${call.callDuration}',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontFamily: "Poppins",
-                        fontWeight: FontWeight.w400,
-                        color: Colors.black),),
-                  ],
-                ),
-              ),
-            );
-          },
-        ),
-      ),
-    );
+                  );
+                }
+              },
+            ),
+          )
+        : NoInternetWidget();
   }
 
   Widget _buildShimmerList() {
@@ -197,4 +236,3 @@ class _CallhistoryscreenState extends State<Callhistoryscreen> {
     );
   }
 }
-
