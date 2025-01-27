@@ -30,7 +30,8 @@ class _LeadsScreenState extends State<LeadScreen>
   @override
   void initState() {
     // Save the provider reference during initState
-    _connectivityProvider = Provider.of<ConnectivityProviders>(context, listen: false);
+    _connectivityProvider =
+        Provider.of<ConnectivityProviders>(context, listen: false);
     _connectivityProvider.initConnectivity();
     // Delay fetchLeads until after the widget tree has finished building
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -79,7 +80,7 @@ class _LeadsScreenState extends State<LeadScreen>
         ? WillPopScope(
             onWillPop: () async {
               Navigator.pop(context, true);
-              return false; // Return true to allow the pop
+              return false;
             },
             child: Scaffold(
               backgroundColor: scaffoldbgColor,
@@ -135,365 +136,416 @@ class _LeadsScreenState extends State<LeadScreen>
                   ),
                 ],
               ),
-              body:Column(
+              body: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 10),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              ElevatedButton(
-                                style: ButtonStyle(
-                                  padding: MaterialStateProperty.all(
-                                    const EdgeInsets.symmetric(vertical: 0, horizontal: 18), // Adjust as needed
-                                  ),
-                                  shape: MaterialStateProperty.all(
-                                    RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8), // Adjust the value to your desired radius
-                                    ),
-                                  ),
-                                  backgroundColor: MaterialStateProperty.all(
-                                    _selectedTabIndex == 0
-                                        ? Color(0xff7165E3)
-                                        : Colors.white, // Active color if selected
-                                  ),
-                                ),
-                                onPressed: () {
-                                  _onButtonPressed(0);
-                                  _fetchLeads('all');
-                                },
-                                child: Text(
-                                  'ALL',
-                                  style: TextStyle(
-                                    color: _selectedTabIndex == 0 ? Colors.white : Color(0xff7165E3),
-                                  ),
-                                ),
+                        ElevatedButton(
+                          style: ButtonStyle(
+                            padding: MaterialStateProperty.all(
+                              const EdgeInsets.symmetric(
+                                  vertical: 0,
+                                  horizontal: 18), // Adjust as needed
+                            ),
+                            shape: MaterialStateProperty.all(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(
+                                    8), // Adjust the value to your desired radius
                               ),
-                              ElevatedButton(
-                                style: ButtonStyle(
-                                  padding: MaterialStateProperty.all(
-                                    const EdgeInsets.symmetric(vertical: 0, horizontal: 18), // Adjust as needed
-                                  ),
-                                  shape: MaterialStateProperty.all(
-                                    RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(
-                                          8), // Adjust the value to your desired radius
-                                    ),
-                                  ),
-                                  backgroundColor: MaterialStateProperty.all(
-                                    _selectedTabIndex == 1
-                                        ? Color(0xff7165E3)
-                                        : Colors
-                                            .white, // Active color if selected
-                                  ),
-                                ),
-                                onPressed: () {
-                                  _onButtonPressed(1);
-                                  _fetchLeads('hot');
-                                },
-                                child: Text(
-                                  'HOT',
-                                  style: TextStyle(
-                                      color: _selectedTabIndex == 1
-                                          ? Colors.white
-                                          : Color(0xff7165E3)),
-                                ),
-                              ),
-                              ElevatedButton(
-                                style: ButtonStyle(
-                                  padding: MaterialStateProperty.all(
-                                    const EdgeInsets.symmetric(vertical: 0, horizontal: 18), // Adjust as needed
-                                  ),
-                                  shape: MaterialStateProperty.all(
-                                    RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(
-                                          8), // Adjust the value to your desired radius
-                                    ),
-                                  ),
-                                  backgroundColor: MaterialStateProperty.all(
-                                    _selectedTabIndex == 2
-                                        ? Color(0xff7165E3)
-                                        : Colors
-                                            .white, // Active color if selected
-                                  ),
-                                ),
-                                onPressed: () {
-                                  _onButtonPressed(2);
-                                  _fetchLeads('cold');
-                                },
-                                child: Text(
-                                  'COLD',
-                                  style: TextStyle(
-                                      color: _selectedTabIndex == 2
-                                          ? Colors.white
-                                          : Color(0xff7165E3)),
-                                ),
-                              ),
-                              ElevatedButton(
-                                style: ButtonStyle(
-                                  padding: MaterialStateProperty.all(
-                                    const EdgeInsets.symmetric(vertical: 0, horizontal:18), // Adjust as needed
-                                  ),
-                                  shape: MaterialStateProperty.all(
-                                    RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(
-                                          8), // Adjust the value to your desired radius
-                                    ),
-                                  ),
-                                  backgroundColor: MaterialStateProperty.all(
-                                    _selectedTabIndex == 3
-                                        ? Color(0xff7165E3)
-                                        : Colors
-                                            .white, // Active color if selected
-                                  ),
-                                ),
-                                onPressed: () {
-                                  _fetchLeads('warm');
-                                  _onButtonPressed(3);
-                                },
-                                child: Text(
-                                  'WARM',
-                                  style: TextStyle(
-                                      color: _selectedTabIndex == 3
-                                          ? Colors.white
-                                          : Color(0xff7165E3)),
-                                ),
-                              ),
-                            ],
+                            ),
+                            backgroundColor: MaterialStateProperty.all(
+                              _selectedTabIndex == 0
+                                  ? Color(0xff7165E3)
+                                  : Colors.white, // Active color if selected
+                            ),
+                          ),
+                          onPressed: () {
+                            _onButtonPressed(0);
+                            _fetchLeads('all');
+                          },
+                          child: Text(
+                            'ALL',
+                            style: TextStyle(
+                              color: _selectedTabIndex == 0
+                                  ? Colors.white
+                                  : Color(0xff7165E3),
+                            ),
                           ),
                         ),
-                     Consumer<LeadsProvider>(
-                              builder: (context, leadsProvider, child) {
-                            final LeadsList = leadsProvider.leadsList ?? [];
-                            if(leadsProvider.isLoading){
-                             return _buildShimmerList();
-                            } else if (LeadsList.length == 0) {
-                              return Center(
-                                child: Column(
-                                  children: [
-                                    SizedBox(
-                                      height: 20,
-                                    ),
-                                    Lottie.asset(
-                                      'assets/animations/nodata1.json', // Your Lottie animation file
-                                      width: 150, // Adjust the size as needed
-                                      height: 150,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ],
-                                ),
-                              );
-                            } else {
-                              return Expanded(
-                                child: ListView.builder(
-                                    itemCount: LeadsList.length,
-                                    itemBuilder: (context, index) {
-                                      var leads = LeadsList[index];
-                                      return container(
-                                        context,
-                                        margin: EdgeInsets.symmetric(
-                                            vertical: 5, horizontal: 16),
-                                        child: Column(
-                                          children: [
-                                            SizedBox(height: 5),
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
+                        ElevatedButton(
+                          style: ButtonStyle(
+                            padding: MaterialStateProperty.all(
+                              const EdgeInsets.symmetric(
+                                  vertical: 0,
+                                  horizontal: 18), // Adjust as needed
+                            ),
+                            shape: MaterialStateProperty.all(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(
+                                    8), // Adjust the value to your desired radius
+                              ),
+                            ),
+                            backgroundColor: MaterialStateProperty.all(
+                              _selectedTabIndex == 1
+                                  ? Color(0xff7165E3)
+                                  : Colors.white, // Active color if selected
+                            ),
+                          ),
+                          onPressed: () {
+                            _onButtonPressed(1);
+                            _fetchLeads('hot');
+                          },
+                          child: Text(
+                            'HOT',
+                            style: TextStyle(
+                                color: _selectedTabIndex == 1
+                                    ? Colors.white
+                                    : Color(0xff7165E3)),
+                          ),
+                        ),
+                        ElevatedButton(
+                          style: ButtonStyle(
+                            padding: MaterialStateProperty.all(
+                              const EdgeInsets.symmetric(
+                                  vertical: 0,
+                                  horizontal: 18), // Adjust as needed
+                            ),
+                            shape: MaterialStateProperty.all(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(
+                                    8), // Adjust the value to your desired radius
+                              ),
+                            ),
+                            backgroundColor: MaterialStateProperty.all(
+                              _selectedTabIndex == 2
+                                  ? Color(0xff7165E3)
+                                  : Colors.white, // Active color if selected
+                            ),
+                          ),
+                          onPressed: () {
+                            _onButtonPressed(2);
+                            _fetchLeads('cold');
+                          },
+                          child: Text(
+                            'COLD',
+                            style: TextStyle(
+                                color: _selectedTabIndex == 2
+                                    ? Colors.white
+                                    : Color(0xff7165E3)),
+                          ),
+                        ),
+                        ElevatedButton(
+                          style: ButtonStyle(
+                            padding: MaterialStateProperty.all(
+                              const EdgeInsets.symmetric(
+                                  vertical: 0,
+                                  horizontal: 18), // Adjust as needed
+                            ),
+                            shape: MaterialStateProperty.all(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(
+                                    8), // Adjust the value to your desired radius
+                              ),
+                            ),
+                            backgroundColor: MaterialStateProperty.all(
+                              _selectedTabIndex == 3
+                                  ? Color(0xff7165E3)
+                                  : Colors.white, // Active color if selected
+                            ),
+                          ),
+                          onPressed: () {
+                            _fetchLeads('warm');
+                            _onButtonPressed(3);
+                          },
+                          child: Text(
+                            'WARM',
+                            style: TextStyle(
+                                color: _selectedTabIndex == 3
+                                    ? Colors.white
+                                    : Color(0xff7165E3)),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Consumer<LeadsProvider>(
+                      builder: (context, leadsProvider, child) {
+                    final LeadsList = leadsProvider.leadsList ?? [];
+                    if (leadsProvider.isLoading) {
+                      return _buildShimmerList();
+                    } else {
+                      return Expanded(
+                        child: NotificationListener<ScrollNotification>(
+                          onNotification: (ScrollNotification scrollinfo) {
+                            if (leadsProvider.isLoading &&
+                                scrollinfo.metrics.pixels ==
+                                    scrollinfo.metrics.maxScrollExtent) {
+                              if (leadsProvider.hasNextPage) {
+                                leadsProvider.fetchMoreLeadsList('');
+                              }
+                              return true;
+                            }
+                            return false;
+                          },
+                          child: CustomScrollView(
+                            physics: AlwaysScrollableScrollPhysics(),
+                            slivers: [
+                              SliverList(
+                                delegate: SliverChildBuilderDelegate(
+                                    (context, index) {
+                                  if (LeadsList.length == 0) {
+                                    return Center(
+                                      child: Column(
+                                        children: [
+                                          SizedBox(
+                                            height: 20,
+                                          ),
+                                          Lottie.asset(
+                                            'assets/animations/nodata1.json',
+                                            width: 150,
+                                            height: 150,
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  } else {
+                                    return ListView.builder(
+                                        itemCount: LeadsList.length,
+                                        itemBuilder: (context, index) {
+                                          var leads = LeadsList[index];
+                                          return container(
+                                            context,
+                                            margin: EdgeInsets.symmetric(
+                                                vertical: 5, horizontal: 16),
+                                            child: Column(
                                               children: [
-                                                Expanded(
-                                                  child: Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.start,
-                                                    children: [
-                                                      text(
-                                                          context,
-                                                          leads.name == ""
-                                                              ? "unknown"
-                                                              : leads.name ??
-                                                                  "unknown",
-                                                          17,
-                                                          fontWeight:
-                                                              FontWeight.w600),
-                                                      text(
-                                                          context,
-                                                          leads.number ??
-                                                              "unknown",
-                                                          20,
-                                                          fontWeight:
-                                                              FontWeight.w500,
-                                                          color: Color(
-                                                              0xff949494)),
-                                                      if (leads.followUpDate !=
-                                                          null) ...[
-                                                        text(
-                                                            context,
-                                                            "Followup : ${leads.followUpDate ?? ""}",
-                                                            16,
-                                                            fontWeight:
-                                                                FontWeight.w400,
-                                                            color: Color(
-                                                                0xff949494)),
-                                                      ],
-                                                      SizedBox(
-                                                        height: 10,
-                                                      ),
-                                                      Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .spaceBetween,
+                                                SizedBox(height: 5),
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    Expanded(
+                                                      child: Column(
                                                         crossAxisAlignment:
                                                             CrossAxisAlignment
                                                                 .start,
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .start,
                                                         children: [
-                                                          container(context,
-                                                              colors: (leads
-                                                                          .stageName
-                                                                          ?.stageName ==
-                                                                      "Cold")
-                                                                  ? coldbgColor
-                                                                  : (leads.stageName?.stageName ==
-                                                                          "Hot")
-                                                                      ? Color(
-                                                                          0xffFFA89C)
-                                                                      : Color(
-                                                                          0xff95F8B6),
-                                                              borderRadius:
-                                                                  BorderRadius.all(
-                                                                      Radius.circular(
-                                                                          5)),
-                                                              padding: EdgeInsets.symmetric(
-                                                                  vertical: 2,
-                                                                  horizontal:
-                                                                      10),
-                                                              margin: EdgeInsets.only(
-                                                                  bottom: 10,
-                                                                  left: 0),
-                                                              child: text(
-                                                                  context,
-                                                                  leads.stageName?.stageName ?? "",
-                                                                  14,
-                                                                  color: color11)),
-                                                          InkResponse(
-                                                            onTap: () {
-                                                              Navigator.push(
-                                                                  context,
-                                                                  MaterialPageRoute(
-                                                                      builder: (context) =>
-                                                                          AddFollowUp(
-                                                                            id: leads.id.toString(),
-                                                                            name:
-                                                                                leads.name ?? "",
-                                                                          )));
-                                                            },
-                                                            child: text(
+                                                          text(
+                                                              context,
+                                                              leads.name == ""
+                                                                  ? "unknown"
+                                                                  : leads.name ??
+                                                                      "unknown",
+                                                              17,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600),
+                                                          text(
+                                                              context,
+                                                              leads.number ??
+                                                                  "unknown",
+                                                              20,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500,
+                                                              color: Color(
+                                                                  0xff949494)),
+                                                          if (leads
+                                                                  .followUpDate !=
+                                                              null) ...[
+                                                            text(
                                                                 context,
-                                                                'Add Follow Up>',
-                                                                13,
+                                                                "Followup : ${leads.followUpDate ?? ""}",
+                                                                16,
                                                                 fontWeight:
                                                                     FontWeight
-                                                                        .w500,
-                                                                fontfamily:
-                                                                    'Poppins',
-                                                                color:
-                                                                    primaryColor),
-                                                          ),
-                                                          InkWell(
-                                                            onTap: () {
-                                                              Navigator.push(
-                                                                  context,
-                                                                  MaterialPageRoute(
-                                                                    builder:
-                                                                        (context) =>
-                                                                            LeadInformation(
-                                                                      ID: leads
-                                                                          .id
-                                                                          .toString(),
-                                                                    ),
-                                                                  ));
-                                                            },
-                                                            child: Padding(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                      .only(
-                                                                      right:
-                                                                          8.0),
-                                                              child: text(
-                                                                context,
-                                                                "View Info>",
-                                                                14,
+                                                                        .w400,
                                                                 color: Color(
-                                                                    0xff646363),
+                                                                    0xff949494)),
+                                                          ],
+                                                          SizedBox(
+                                                            height: 10,
+                                                          ),
+                                                          Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .spaceBetween,
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              container(context,
+                                                                  colors: (leads.stageName?.stageName ==
+                                                                          "Cold")
+                                                                      ? coldbgColor
+                                                                      : (leads.stageName?.stageName ==
+                                                                              "Hot")
+                                                                          ? Color(
+                                                                              0xffFFA89C)
+                                                                          : Color(
+                                                                              0xff95F8B6),
+                                                                  borderRadius:
+                                                                      BorderRadius.all(
+                                                                          Radius.circular(
+                                                                              5)),
+                                                                  padding: EdgeInsets.symmetric(
+                                                                      vertical:
+                                                                          2,
+                                                                      horizontal:
+                                                                          10),
+                                                                  margin: EdgeInsets.only(
+                                                                      bottom:
+                                                                          10,
+                                                                      left: 0),
+                                                                  child: text(
+                                                                      context,
+                                                                      leads.stageName?.stageName ??
+                                                                          "",
+                                                                      14,
+                                                                      color: color11)),
+                                                              InkResponse(
+                                                                onTap: () {
+                                                                  Navigator.push(
+                                                                      context,
+                                                                      MaterialPageRoute(
+                                                                          builder: (context) => AddFollowUp(
+                                                                                id: leads.id.toString(),
+                                                                                name: leads.name ?? "",
+                                                                              )));
+                                                                },
+                                                                child: text(
+                                                                    context,
+                                                                    'Add Follow Up>',
+                                                                    13,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w500,
+                                                                    fontfamily:
+                                                                        'Poppins',
+                                                                    color:
+                                                                        primaryColor),
                                                               ),
-                                                            ),
-                                                          )
+                                                              InkWell(
+                                                                onTap: () {
+                                                                  Navigator.push(
+                                                                      context,
+                                                                      MaterialPageRoute(
+                                                                        builder:
+                                                                            (context) =>
+                                                                                LeadInformation(
+                                                                          ID: leads
+                                                                              .id
+                                                                              .toString(),
+                                                                        ),
+                                                                      ));
+                                                                },
+                                                                child: Padding(
+                                                                  padding:
+                                                                      const EdgeInsets
+                                                                          .only(
+                                                                          right:
+                                                                              8.0),
+                                                                  child: text(
+                                                                    context,
+                                                                    "View Info>",
+                                                                    14,
+                                                                    color: Color(
+                                                                        0xff646363),
+                                                                  ),
+                                                                ),
+                                                              )
+                                                            ],
+                                                          ),
                                                         ],
                                                       ),
-                                                    ],
-                                                  ),
-                                                ),
-                                                Column(
-                                                  children: [
-                                                    InkWell(
-                                                      onTap: () async {
-                                                        await FlutterPhoneDirectCaller
-                                                            .callNumber(
+                                                    ),
+                                                    Column(
+                                                      children: [
+                                                        InkWell(
+                                                          onTap: () async {
+                                                            await FlutterPhoneDirectCaller
+                                                                .callNumber(
+                                                                    leads.number ??
+                                                                        "");
+                                                          },
+                                                          child: container(
+                                                              context,
+                                                              colors:
+                                                                  primaryColor,
+                                                              padding:
+                                                                  EdgeInsets
+                                                                      .all(16),
+                                                              margin: EdgeInsets
+                                                                  .all(0),
+                                                              child: Image(
+                                                                image: AssetImage(
+                                                                    "assets/call.png"),
+                                                                width: 20,
+                                                                height: 20,
+                                                              )),
+                                                        ),
+                                                        SizedBox(
+                                                          height: 14,
+                                                        ),
+                                                        GestureDetector(
+                                                          onTap: () {
+                                                            _launchWhatsApp(
                                                                 leads.number ??
                                                                     "");
-                                                      },
-                                                      child: container(context,
-                                                          colors: primaryColor,
-                                                          padding:
-                                                              EdgeInsets.all(
-                                                                  16),
-                                                          margin:
-                                                              EdgeInsets.all(0),
-                                                          child: Image(
-                                                            image: AssetImage(
-                                                                "assets/call.png"),
-                                                            width: 20,
-                                                            height: 20,
-                                                          )),
-                                                    ),
-                                                    SizedBox(
-                                                      height: 14,
-                                                    ),
-                                                    GestureDetector(
-                                                      onTap: () {
-                                                        _launchWhatsApp(
-                                                            leads.number ?? "");
-                                                      },
-                                                      child: container(context,
-                                                          colors: primaryColor,
-                                                          padding:
-                                                              EdgeInsets.all(
-                                                                  16),
-                                                          margin:
-                                                              EdgeInsets.all(0),
-                                                          child: Image(
-                                                            image: AssetImage(
-                                                                "assets/whatsapp.png"),
-                                                            width: 20,
-                                                            height: 20,
-                                                          )),
+                                                          },
+                                                          child: container(
+                                                              context,
+                                                              colors:
+                                                                  primaryColor,
+                                                              padding:
+                                                                  EdgeInsets
+                                                                      .all(16),
+                                                              margin: EdgeInsets
+                                                                  .all(0),
+                                                              child: Image(
+                                                                image: AssetImage(
+                                                                    "assets/whatsapp.png"),
+                                                                width: 20,
+                                                                height: 20,
+                                                              )),
+                                                        ),
+                                                      ],
                                                     ),
                                                   ],
-                                                ),
+                                                )
                                               ],
-                                            )
-                                          ],
-                                        ),
-                                      );
-                                    }),
-                              );
-                            }
-                          })
-                      ],
-                    ),
+                                            ),
+                                          );
+                                        });
+                                  }
+
+                                }, childCount: leadsProvider.leadslist?.length),
+                              ),
+                              if (leadsProvider.pageLoading)
+                                SliverToBoxAdapter(
+                                  child: Center(
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 0.8,
+                                    ),
+                                  ),
+                                )
+                            ],
+                          ),
+                        ),
+                      );
+                    }
+                  })
+                ],
+              ),
             ),
           )
         : NoInternetWidget();
