@@ -26,7 +26,6 @@ class LeadScreen extends StatefulWidget {
 class _LeadsScreenState extends State<LeadScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  bool is_loading = true;
   @override
   void initState() {
     Provider.of<ConnectivityProviders>(context, listen: false)
@@ -43,7 +42,6 @@ class _LeadsScreenState extends State<LeadScreen>
     bool? result = await leadsProvider.fetchLeadsList(type);
     // After fetching, update the state accordingly
     setState(() {
-      is_loading = leadsProvider.isLoading;
       if (result == false) {
         print("Failed to fetch leads.");
       } else {
@@ -141,13 +139,11 @@ class _LeadsScreenState extends State<LeadScreen>
                   ),
                 ],
               ),
-              body: is_loading
-                  ? _buildShimmerList()
-                  : Column(
+              body:Column(
                       children: [
                         Padding(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 10),
+                              horizontal: 16, vertical: 10),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -248,7 +244,7 @@ class _LeadsScreenState extends State<LeadScreen>
                                   ),
                                 ),
                                 onPressed: () {
-                                  _fetchLeads('worm');
+                                  _fetchLeads('warm');
                                   _onButtonPressed(3);
                                 },
                                 child: Text(
@@ -262,11 +258,12 @@ class _LeadsScreenState extends State<LeadScreen>
                             ],
                           ),
                         ),
-                        if (_selectedTabIndex == 0) ...[
-                          Consumer<LeadsProvider>(
+                     Consumer<LeadsProvider>(
                               builder: (context, leadsProvider, child) {
                             final LeadsList = leadsProvider.leadsList ?? [];
-                            if (LeadsList.length == 0) {
+                            if(leadsProvider.isLoading){
+                             return _buildShimmerList();
+                            } else if (LeadsList.length == 0) {
                               return Center(
                                 child: Column(
                                   children: [
@@ -490,679 +487,6 @@ class _LeadsScreenState extends State<LeadScreen>
                               );
                             }
                           })
-                        ],
-                        if (_selectedTabIndex == 1) ...[
-                          Consumer<LeadsProvider>(
-                              builder: (context,hot, child) {
-                            final LeadsHotList = hot.leadsList ?? [];
-                            if (LeadsHotList.length == 0) {
-                              return Center(
-                                child: Column(
-                                  children: [
-                                    SizedBox(
-                                      height: 20,
-                                    ),
-                                    Lottie.asset(
-                                      'assets/animations/nodata1.json', // Your Lottie animation file
-                                      width: 150, // Adjust the size as needed
-                                      height: 150,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ],
-                                ),
-                              );
-                            } else {
-                              return Expanded(
-                                child: ListView.builder(
-                                    itemCount: LeadsHotList.length,
-                                    itemBuilder: (context, index) {
-                                      var hotlist = LeadsHotList[index];
-                                      return container(
-                                        context,
-                                        margin: EdgeInsets.symmetric(
-                                            vertical: 5, horizontal: 16),
-                                        child: Column(
-                                          children: [
-                                            SizedBox(height: 5),
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Expanded(
-                                                  child: Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.start,
-                                                    children: [
-                                                      text(
-                                                          context,
-                                                          hotlist.name == ""
-                                                              ? "unknown"
-                                                              : hotlist.name ??
-                                                                  "unknown",
-                                                          17,
-                                                          fontWeight:
-                                                              FontWeight.w600),
-                                                      text(
-                                                          context,
-                                                          hotlist.number ??
-                                                              "unknown",
-                                                          20,
-                                                          fontWeight:
-                                                              FontWeight.w500,
-                                                          color: Color(
-                                                              0xff949494)),
-                                                      if (hotlist.followUpDate != null) ...[
-                                                        text(context, "Followup : ${hotlist.followUpDate ?? ""}", 16, fontWeight:
-                                                                FontWeight.w400,
-                                                            color: Color(
-                                                                0xff949494)),
-                                                      ],
-                                                      SizedBox(
-                                                        height: 10,
-                                                      ),
-                                                      Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .spaceBetween,
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          container(context,
-                                                              colors: (hotlist
-                                                                          .stageName
-                                                                          ?.stageName ==
-                                                                      "Cold")
-                                                                  ? coldbgColor
-                                                                  : (hotlist.stageName?.stageName ==
-                                                                          "Hot")
-                                                                      ? Color(
-                                                                          0xffFFA89C)
-                                                                      : Color(
-                                                                          0xff95F8B6),
-                                                              borderRadius:
-                                                                  BorderRadius.all(
-                                                                      Radius.circular(
-                                                                          5)),
-                                                              padding: EdgeInsets.symmetric(
-                                                                  vertical: 2,
-                                                                  horizontal:
-                                                                      10),
-                                                              margin: EdgeInsets.only(
-                                                                  bottom: 10,
-                                                                  left: 0),
-                                                              child: text(
-                                                                  context,
-                                                                  hotlist.stageName?.stageName ?? "",
-                                                                  14,
-                                                                  color: color11)),
-                                                          InkResponse(
-                                                            onTap: () {
-                                                              Navigator.push(
-                                                                  context,
-                                                                  MaterialPageRoute(
-                                                                      builder: (context) =>
-                                                                          AddFollowUp(
-                                                                            id: hotlist.id.toString(),
-                                                                            name:
-                                                                            hotlist.name ?? "",
-                                                                          )));
-                                                            },
-                                                            child: text(
-                                                                context,
-                                                                'Add Follow Up>',
-                                                                13,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500,
-                                                                fontfamily:
-                                                                    'Poppins',
-                                                                color:
-                                                                    primaryColor),
-                                                          ),
-                                                          InkWell(
-                                                            onTap: () {
-                                                              Navigator.push(
-                                                                  context,
-                                                                  MaterialPageRoute(
-                                                                    builder:
-                                                                        (context) =>
-                                                                            LeadInformation(
-                                                                      ID: hotlist
-                                                                          .id
-                                                                          .toString(),
-                                                                    ),
-                                                                  ));
-                                                            },
-                                                            child: Padding(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                      .only(
-                                                                      right:
-                                                                          8.0),
-                                                              child: text(
-                                                                context,
-                                                                "View Info>",
-                                                                14,
-                                                                color: Color(
-                                                                    0xff646363),
-                                                              ),
-                                                            ),
-                                                          )
-                                                        ],
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                                Column(
-                                                  children: [
-                                                    InkWell(
-                                                      onTap: () async {
-                                                        await FlutterPhoneDirectCaller
-                                                            .callNumber(
-                                                            hotlist.number ??
-                                                                    "");
-                                                      },
-                                                      child: container(context,
-                                                          colors: primaryColor,
-                                                          padding:
-                                                              EdgeInsets.all(
-                                                                  16),
-                                                          margin:
-                                                              EdgeInsets.all(0),
-                                                          child: Image(
-                                                            image: AssetImage(
-                                                                "assets/call.png"),
-                                                            width: 20,
-                                                            height: 20,
-                                                          )),
-                                                    ),
-                                                    SizedBox(
-                                                      height: 14,
-                                                    ),
-                                                    GestureDetector(
-                                                      onTap: () {
-                                                        _launchWhatsApp(
-                                                            hotlist.number ?? "");
-                                                      },
-                                                      child: container(context,
-                                                          colors: primaryColor,
-                                                          padding:
-                                                              EdgeInsets.all(
-                                                                  16),
-                                                          margin:
-                                                              EdgeInsets.all(0),
-                                                          child: Image(
-                                                            image: AssetImage(
-                                                                "assets/whatsapp.png"),
-                                                            width: 20,
-                                                            height: 20,
-                                                          )),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ],
-                                            )
-                                          ],
-                                        ),
-                                      );
-                                    }),
-                              );
-                            }
-                          })
-                        ],
-                        if (_selectedTabIndex == 2) ...[
-                          Consumer<LeadsProvider>(
-                              builder: (context, cold, child) {
-                            final LeadsColdList = cold.leadsList ?? [];
-                            if (LeadsColdList.length == 0) {
-                              return Center(
-                                child: Column(
-                                  children: [
-                                    SizedBox(
-                                      height: 20,
-                                    ),
-                                    Lottie.asset(
-                                      'assets/animations/nodata1.json', // Your Lottie animation file
-                                      width: 150, // Adjust the size as needed
-                                      height: 150,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ],
-                                ),
-                              );
-                            } else {
-                              return Expanded(
-                                child: ListView.builder(
-                                    itemCount: LeadsColdList.length,
-                                    itemBuilder: (context, index) {
-                                      var coldlist = LeadsColdList[index];
-                                      return container(
-                                        context,
-                                        margin: EdgeInsets.symmetric(
-                                            vertical: 5, horizontal: 16),
-                                        child: Column(
-                                          children: [
-                                            SizedBox(height: 5),
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Expanded(
-                                                  child: Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.start,
-                                                    children: [
-                                                      text(
-                                                          context,
-                                                          coldlist.name == ""
-                                                              ? "unknown"
-                                                              : coldlist.name ??
-                                                                  "unknown",
-                                                          17,
-                                                          fontWeight:
-                                                              FontWeight.w600),
-                                                      text(
-                                                          context,
-                                                          coldlist.number ??
-                                                              "unknown",
-                                                          20,
-                                                          fontWeight:
-                                                              FontWeight.w500,
-                                                          color: Color(
-                                                              0xff949494)),
-                                                      if (coldlist.followUpDate != null) ...[
-                                                        text(context, "Followup : ${coldlist.followUpDate ?? ""}", 16, fontWeight:
-                                                                FontWeight.w400,
-                                                            color: Color(
-                                                                0xff949494)),
-                                                      ],
-                                                      SizedBox(
-                                                        height: 10,
-                                                      ),
-                                                      Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .spaceBetween,
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          container(context,
-                                                              colors: (coldlist
-                                                                          .stageName
-                                                                          ?.stageName ==
-                                                                      "Cold")
-                                                                  ? coldbgColor
-                                                                  : (coldlist.stageName?.stageName ==
-                                                                          "Hot")
-                                                                      ? Color(
-                                                                          0xffFFA89C)
-                                                                      : Color(
-                                                                          0xff95F8B6),
-                                                              borderRadius:
-                                                                  BorderRadius.all(
-                                                                      Radius.circular(
-                                                                          5)),
-                                                              padding: EdgeInsets.symmetric(
-                                                                  vertical: 2,
-                                                                  horizontal:
-                                                                      10),
-                                                              margin: EdgeInsets.only(
-                                                                  bottom: 10,
-                                                                  left: 0),
-                                                              child: text(
-                                                                  context,
-                                                                  coldlist.stageName?.stageName ?? "",
-                                                                  14,
-                                                                  color: color11)),
-                                                          InkResponse(
-                                                            onTap: () {
-                                                              Navigator.push(
-                                                                  context,
-                                                                  MaterialPageRoute(
-                                                                      builder: (context) =>
-                                                                          AddFollowUp(
-                                                                            id: coldlist.id.toString(),
-                                                                            name:
-                                                                            coldlist.name ?? "",
-                                                                          )));
-                                                            },
-                                                            child: text(
-                                                                context,
-                                                                'Add Follow Up>',
-                                                                13,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500,
-                                                                fontfamily:
-                                                                    'Poppins',
-                                                                color:
-                                                                    primaryColor),
-                                                          ),
-                                                          InkWell(
-                                                            onTap: () {
-                                                              Navigator.push(
-                                                                  context,
-                                                                  MaterialPageRoute(
-                                                                    builder:
-                                                                        (context) =>
-                                                                            LeadInformation(
-                                                                      ID: coldlist
-                                                                          .id
-                                                                          .toString(),
-                                                                    ),
-                                                                  ));
-                                                            },
-                                                            child: Padding(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                      .only(
-                                                                      right:
-                                                                          8.0),
-                                                              child: text(
-                                                                context,
-                                                                "View Info>",
-                                                                14,
-                                                                color: Color(
-                                                                    0xff646363),
-                                                              ),
-                                                            ),
-                                                          )
-                                                        ],
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                                Column(
-                                                  children: [
-                                                    InkWell(
-                                                      onTap: () async {
-                                                        await FlutterPhoneDirectCaller
-                                                            .callNumber(
-                                                            coldlist.number ??
-                                                                    "");
-                                                      },
-                                                      child: container(context,
-                                                          colors: primaryColor,
-                                                          padding:
-                                                              EdgeInsets.all(
-                                                                  16),
-                                                          margin:
-                                                              EdgeInsets.all(0),
-                                                          child: Image(
-                                                            image: AssetImage(
-                                                                "assets/call.png"),
-                                                            width: 20,
-                                                            height: 20,
-                                                          )),
-                                                    ),
-                                                    SizedBox(
-                                                      height: 14,
-                                                    ),
-                                                    GestureDetector(
-                                                      onTap: () {
-                                                        _launchWhatsApp(
-                                                            coldlist.number ?? "");
-                                                      },
-                                                      child: container(context,
-                                                          colors: primaryColor,
-                                                          padding:
-                                                              EdgeInsets.all(
-                                                                  16),
-                                                          margin:
-                                                              EdgeInsets.all(0),
-                                                          child: Image(
-                                                            image: AssetImage(
-                                                                "assets/whatsapp.png"),
-                                                            width: 20,
-                                                            height: 20,
-                                                          )),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ],
-                                            )
-                                          ],
-                                        ),
-                                      );
-                                    }),
-                              );
-                            }
-                          })
-                        ],
-                        if (_selectedTabIndex == 3) ...[
-                          Consumer<LeadsProvider>(
-                              builder: (context, worm, child) {
-                            final LeadsWormList = worm.leadsList ?? [];
-                            if (LeadsWormList.length == 0) {
-                              return Center(
-                                child: Column(
-                                  children: [
-                                    SizedBox(
-                                      height: 20,
-                                    ),
-                                    Lottie.asset(
-                                      'assets/animations/nodata1.json', // Your Lottie animation file
-                                      width: 150, // Adjust the size as needed
-                                      height: 150,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ],
-                                ),
-                              );
-                            } else {
-                              return Expanded(
-                                child: ListView.builder(
-                                    itemCount: LeadsWormList.length,
-                                    itemBuilder: (context, index) {
-                                      var wormlist = LeadsWormList[index];
-                                      return container(
-                                        context,
-                                        margin: EdgeInsets.symmetric(
-                                            vertical: 5, horizontal: 16),
-                                        child: Column(
-                                          children: [
-                                            SizedBox(height: 5),
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Expanded(
-                                                  child: Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.start,
-                                                    children: [
-                                                      text(
-                                                          context,
-                                                          wormlist.name == ""
-                                                              ? "unknown"
-                                                              : wormlist.name ??
-                                                                  "unknown",
-                                                          17,
-                                                          fontWeight:
-                                                              FontWeight.w600),
-                                                      text(
-                                                          context,
-                                                          wormlist.number ??
-                                                              "unknown",
-                                                          20,
-                                                          fontWeight:
-                                                              FontWeight.w500,
-                                                          color: Color(
-                                                              0xff949494)),
-                                                      if (wormlist.followUpDate != null) ...[
-                                                        text(context, "Followup : ${wormlist.followUpDate ?? ""}", 16, fontWeight:
-                                                                FontWeight.w400,
-                                                            color: Color(
-                                                                0xff949494)),
-                                                      ],
-                                                      SizedBox(
-                                                        height: 10,
-                                                      ),
-                                                      Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .spaceBetween,
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          container(context,
-                                                              colors: (wormlist
-                                                                          .stageName
-                                                                          ?.stageName ==
-                                                                      "Cold")
-                                                                  ? coldbgColor
-                                                                  : (wormlist.stageName?.stageName ==
-                                                                          "Hot")
-                                                                      ? Color(
-                                                                          0xffFFA89C)
-                                                                      : Color(
-                                                                          0xff95F8B6),
-                                                              borderRadius:
-                                                                  BorderRadius.all(
-                                                                      Radius.circular(
-                                                                          5)),
-                                                              padding: EdgeInsets.symmetric(
-                                                                  vertical: 2,
-                                                                  horizontal:
-                                                                      10),
-                                                              margin: EdgeInsets.only(
-                                                                  bottom: 10,
-                                                                  left: 0),
-                                                              child: text(
-                                                                  context,
-                                                                  wormlist.stageName?.stageName ?? "",
-                                                                  14,
-                                                                  color: color11)),
-                                                          InkResponse(
-                                                            onTap: () {
-                                                              Navigator.push(
-                                                                  context,
-                                                                  MaterialPageRoute(
-                                                                      builder: (context) =>
-                                                                          AddFollowUp(
-                                                                            id: wormlist.id.toString(),
-                                                                            name:
-                                                                            wormlist.name ?? "",
-                                                                          )));
-                                                            },
-                                                            child: text(
-                                                                context,
-                                                                'Add Follow Up>',
-                                                                13,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500,
-                                                                fontfamily:
-                                                                    'Poppins',
-                                                                color:
-                                                                    primaryColor),
-                                                          ),
-                                                          InkWell(
-                                                            onTap: () {
-                                                              Navigator.push(
-                                                                  context,
-                                                                  MaterialPageRoute(
-                                                                    builder:
-                                                                        (context) =>
-                                                                            LeadInformation(
-                                                                      ID: wormlist
-                                                                          .id
-                                                                          .toString(),
-                                                                    ),
-                                                                  ));
-                                                            },
-                                                            child: Padding(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                      .only(
-                                                                      right:
-                                                                          8.0),
-                                                              child: text(
-                                                                context,
-                                                                "View Info>",
-                                                                14,
-                                                                color: Color(
-                                                                    0xff646363),
-                                                              ),
-                                                            ),
-                                                          )
-                                                        ],
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                                Column(
-                                                  children: [
-                                                    InkWell(
-                                                      onTap: () async {
-                                                        await FlutterPhoneDirectCaller
-                                                            .callNumber(
-                                                            wormlist.number ??
-                                                                    "");
-                                                      },
-                                                      child: container(context,
-                                                          colors: primaryColor,
-                                                          padding:
-                                                              EdgeInsets.all(
-                                                                  16),
-                                                          margin:
-                                                              EdgeInsets.all(0),
-                                                          child: Image(
-                                                            image: AssetImage(
-                                                                "assets/call.png"),
-                                                            width: 20,
-                                                            height: 20,
-                                                          )),
-                                                    ),
-                                                    SizedBox(
-                                                      height: 14,
-                                                    ),
-                                                    GestureDetector(
-                                                      onTap: () {
-                                                        _launchWhatsApp(
-                                                            wormlist.number ?? "");
-                                                      },
-                                                      child: container(context,
-                                                          colors: primaryColor,
-                                                          padding:
-                                                              EdgeInsets.all(
-                                                                  16),
-                                                          margin:
-                                                              EdgeInsets.all(0),
-                                                          child: Image(
-                                                            image: AssetImage(
-                                                                "assets/whatsapp.png"),
-                                                            width: 20,
-                                                            height: 20,
-                                                          )),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ],
-                                            )
-                                          ],
-                                        ),
-                                      );
-                                    }),
-                              );
-                            }
-                          })
-                        ],
                       ],
                     ),
             ),
@@ -1171,48 +495,50 @@ class _LeadsScreenState extends State<LeadScreen>
   }
 
   Widget _buildShimmerList() {
-    return ListView.builder(
-      itemCount: 10, // Adjust the number of shimmer items as needed
-      shrinkWrap: true,
-      physics: const AlwaysScrollableScrollPhysics(),
-      itemBuilder: (context, index) {
-        return Container(
-          margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(7),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  shimmerRectangle(20), // Shimmer for calendar icon
-                  const SizedBox(width: 8),
-                  shimmerText(100, 15), // Shimmer for due date
-                  const Spacer(),
-                  shimmerRectangle(20), // Shimmer for edit icon
-                ],
-              ),
-              const SizedBox(height: 20),
-              shimmerText(150, 20), // Shimmer for milestone title
-              const SizedBox(height: 4),
-              shimmerText(300, 14), // Shimmer for milestone description
-              const SizedBox(height: 10),
-              shimmerText(350, 14),
-              const SizedBox(height: 4),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  shimmerText(60, 14), // Shimmer for "Progress" label
-                  shimmerText(40, 14), // Shimmer for percentage
-                ],
-              ),
-            ],
-          ),
-        );
-      },
+    return Expanded(
+      child: ListView.builder(
+        itemCount: 4,
+        shrinkWrap: true,
+        physics: const AlwaysScrollableScrollPhysics(),
+        itemBuilder: (context, index) {
+          return Container(
+            margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(7),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    shimmerRectangle(20), // Shimmer for calendar icon
+                    const SizedBox(width: 8),
+                    shimmerText(100, 15), // Shimmer for due date
+                    const Spacer(),
+                    shimmerRectangle(20), // Shimmer for edit icon
+                  ],
+                ),
+                const SizedBox(height: 20),
+                shimmerText(150, 20), // Shimmer for milestone title
+                const SizedBox(height: 4),
+                shimmerText(300, 14), // Shimmer for milestone description
+                const SizedBox(height: 10),
+                shimmerText(350, 14),
+                const SizedBox(height: 4),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    shimmerText(60, 14), // Shimmer for "Progress" label
+                    shimmerText(40, 14), // Shimmer for percentage
+                  ],
+                ),
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 }

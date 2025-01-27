@@ -333,7 +333,7 @@ class _SignInScreenState extends State<SignInScreen> {
                           height: 45,
                           width: w,
                           decoration: BoxDecoration(
-                            color: color11,
+                            color: color4,
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: _loading?Center(child: CircularProgressIndicator(color: color28,)):
@@ -341,7 +341,7 @@ class _SignInScreenState extends State<SignInScreen> {
                             child: Text(
                               'LogIn',
                               style: TextStyle(
-                                color: Color(0xFFFFFFFF),
+                                color: color28,
                                 fontWeight: FontWeight.w700,
                                 fontSize: 16,
                                 height: 21.78 / 16,

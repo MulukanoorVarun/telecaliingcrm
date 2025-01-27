@@ -8,12 +8,14 @@ import '../model/LeadsModel.dart';
 
 class LeadsProvider with ChangeNotifier {
   List<Leads>? leadslist;
-  bool _isLoading = true;
+  bool _isLoading = false;
   List<Leads>? get leadsList => leadslist;
   bool get isLoading => _isLoading;
 
   // Method to fetch user details asynchronously
   Future<bool?> fetchLeadsList(type) async {
+    _isLoading = true;
+    notifyListeners();
     try {
       var result = await Userapi.getLeads(type);
       if (result?.status == true) {
