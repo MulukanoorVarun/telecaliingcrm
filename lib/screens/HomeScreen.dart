@@ -178,7 +178,7 @@ class _HomescreenState extends State<Homescreen> {
     }
 
     // Wait for 5 seconds before retrieving the call duration from the call log
-    Future.delayed(Duration(seconds: 3), () {
+    Future.delayed(Duration(seconds: 1), () {
       _retrieveCallDurationFromCallLog();
     });
   }

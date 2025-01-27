@@ -227,18 +227,19 @@ class LatestFollowupDetail {
   int? staffId;
   String? followupDate;
   String? name;
-  Null? remarks;
+  String? remarks; // Changed Null? to String?
   int? status;
 
-  LatestFollowupDetail(
-      {this.id,
-        this.leadId,
-        this.phone,
-        this.staffId,
-        this.followupDate,
-        this.name,
-        this.remarks,
-        this.status});
+  LatestFollowupDetail({
+    this.id,
+    this.leadId,
+    this.phone,
+    this.staffId,
+    this.followupDate,
+    this.name,
+    this.remarks,
+    this.status,
+  });
 
   LatestFollowupDetail.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -247,7 +248,7 @@ class LatestFollowupDetail {
     staffId = json['staff_id'];
     followupDate = json['followup_date'];
     name = json['name'];
-    remarks = json['remarks'];
+    remarks = json['remarks'] ?? ''; // Default empty string
     status = json['status'];
   }
 

@@ -153,9 +153,9 @@ class Userapi {
 
   static Future<LeadsModel?> getLeads(type,page) async {
     try {
-      final url = Uri.parse("${host}/api/get_lead_calls?type=${type}&page=${page}");
+      final url = Uri.parse("${host}/api/get_lead_calls?stagename=${type}&page=${page}");
       final headers = await getheader1();
-      final response = await http.post(url, headers: headers);
+      final response = await http.get(url, headers: headers);
       if (response.statusCode == 200) {
         final jsonResponse = jsonDecode(response.body);
         print("getLeads response: ${response.body}");

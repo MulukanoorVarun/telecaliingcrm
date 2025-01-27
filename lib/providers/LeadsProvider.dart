@@ -1,14 +1,11 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart'; // For ChangeNotifier
 import '../Services/UserApi.dart';
-import '../model/DashBoardModel.dart';
 import '../model/LeadsModel.dart';
 
 class LeadsProvider with ChangeNotifier {
-  List<Leads>? leadslist;
-  bool _isLoading = false;
+  List<Leads> leadslist=[];
+  bool _isLoading = true;
   bool _hasNextPage = true;
   List<Leads>? get leadsList => leadslist;
   bool get isLoading => _isLoading;
@@ -19,7 +16,7 @@ class LeadsProvider with ChangeNotifier {
   bool get pageLoading => _pageLoading;
 
 
-  Future<bool?> fetchLeadsList(type) async {
+  Future<void> fetchLeadsList(type) async {
     _isLoading = true;
     _currentPage = 1;
     notifyListeners();
@@ -46,21 +43,21 @@ class LeadsProvider with ChangeNotifier {
     }
   }
 
-  Future<bool?> fetchMoreLeadsList(type) async {
+  Future<void> fetchMoreLeadsList(type) async {
     _currentPage ++;
     _pageLoading=true;
     notifyListeners();
     try {
       var result = await Userapi.getLeads(type,_currentPage);
       if (result?.status == true) {
-        leadslist?.addAll(result?.data?.leadslist ?? []);
+        leadslist.addAll(result?.data?.leadslist ?? []);
         if(result?.data?.nextPageUrl!=null){
           _hasNextPage = true;
         }else{
           _hasNextPage = false;
         }
       } else {
-        leadslist?.addAll(result?.data?.leadslist ?? []);
+        leadslist.addAll(result?.data?.leadslist ?? []);
         _hasNextPage = false;
       }
     } catch (e) {
@@ -71,6 +68,7 @@ class LeadsProvider with ChangeNotifier {
       _pageLoading = false;
       notifyListeners();
     }
+    return null;
   }
 
   Future<bool?> AddleadsApi(name, mobile, date, remarks, leadStatus) async {
@@ -80,7 +78,7 @@ class LeadsProvider with ChangeNotifier {
           await Userapi.postAddLeads(name, mobile, date, remarks, leadStatus);
       if (response != null) {
         if (response["status"] == true) {
-          fetchLeadsList('all');
+          fetchLeadsList('');
           return response["status"];
         } else {
           return response["status"];
@@ -108,7 +106,7 @@ class LeadsProvider with ChangeNotifier {
       ;
       if (response != null) {
         if (response["status"] == true) {
-          fetchLeadsList('all');
+          fetchLeadsList('');
           return response["status"];
         } else {
           return response["status"];
