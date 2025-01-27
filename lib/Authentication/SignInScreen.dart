@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:telecaliingcrm/Authentication/ForgetPasswordEmail.dart';
 import 'package:telecaliingcrm/screens/HomeScreen.dart';
 import 'package:telecaliingcrm/screens/dashboard.dart';
 import '../providers/ConnectivityProviders.dart';
@@ -61,13 +62,16 @@ class _SignInScreenState extends State<SignInScreen> {
       if (data != null) {
         if (data['access_token'] != null) {
           // Get the current timestamp in seconds
-          int currentTimestampInSeconds = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+          int currentTimestampInSeconds =
+              DateTime.now().millisecondsSinceEpoch ~/ 1000;
 
           // Calculate the expiry timestamp
-          int expiryTimestamp = (currentTimestampInSeconds + data['expires_in']).toInt();
+          int expiryTimestamp =
+              (currentTimestampInSeconds + data['expires_in']).toInt();
           // Successful login
           PreferenceService().saveString('token', data['access_token']);
-          PreferenceService().saveInt('access_expiry_timestamp', expiryTimestamp);
+          PreferenceService()
+              .saveInt('access_expiry_timestamp', expiryTimestamp);
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => Dashboard()),
@@ -75,7 +79,7 @@ class _SignInScreenState extends State<SignInScreen> {
         } else if (data['error'] != null) {
           // Authentication error
           CustomSnackBar.show(context, data['error']);
-        } else if (data['email'] != null || data['password'] != null) { 
+        } else if (data['email'] != null || data['password'] != null) {
           // Validation error
           String emailError =
               (data['email'] != null) ? data['email'].join(", ") : "";
@@ -320,15 +324,29 @@ class _SignInScreenState extends State<SignInScreen> {
                     ] else ...[
                       SizedBox(height: 8),
                     ],
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        TextButton(
+                            onPressed: () {
+                              Navigator.push(context, MaterialPageRoute(builder: (context)=>Forgotpasswordscreen()));
+                            },
+                            child: Text(
+                              'ForgetPassword?',
+                              style: TextStyle(color: Color(0xffffffff)),
+                            )),
+                      ],
+                    ),
                     SizedBox(
                       height: h * 0.06,
                     ),
-                    InkResponse(onTap: (){
-                      if (_loading) {
-                      } else {
-                        _validateFields();
-                      }
-                    },
+                    InkResponse(
+                      onTap: () {
+                        if (_loading) {
+                        } else {
+                          _validateFields();
+                        }
+                      },
                       child: Container(
                           height: 45,
                           width: w,
@@ -336,20 +354,24 @@ class _SignInScreenState extends State<SignInScreen> {
                             color: color4,
                             borderRadius: BorderRadius.circular(8),
                           ),
-                          child: _loading?Center(child: CircularProgressIndicator(color: color28,)):
-                          Center(
-                            child: Text(
-                              'LogIn',
-                              style: TextStyle(
-                                color: color28,
-                                fontWeight: FontWeight.w700,
-                                fontSize: 16,
-                                height: 21.78 / 16,
-                                letterSpacing: 1,
-                                fontFamily: "Poppins",
-                              ),
-                            ),
-                          )),
+                          child: _loading
+                              ? Center(
+                                  child: CircularProgressIndicator(
+                                  color: color28,
+                                ))
+                              : Center(
+                                  child: Text(
+                                    'LogIn',
+                                    style: TextStyle(
+                                      color: color28,
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 16,
+                                      height: 21.78 / 16,
+                                      letterSpacing: 1,
+                                      fontFamily: "Poppins",
+                                    ),
+                                  ),
+                                )),
                     )
                   ],
                 ),
