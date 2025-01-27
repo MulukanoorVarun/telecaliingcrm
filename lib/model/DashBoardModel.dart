@@ -47,10 +47,10 @@ class PhoneNumbers {
   int? lastPage;
   String? lastPageUrl;
   List<Links>? links;
-  Null? nextPageUrl;
+  String? nextPageUrl;
   String? path;
   int? perPage;
-  Null? prevPageUrl;
+  String? prevPageUrl;
   int? to;
   int? total;
 
@@ -126,16 +126,16 @@ class MobileNumbers {
   String? callStatus;
   String? calledStatus;
   String? name;
-  Null? followUpDate;
-  Null? remarks;
+  String? followUpDate;
+  String? remarks;
   String? dealStatus;
-  Null? dealAmount;
+  int? dealAmount;
   int? totalCalls;
-  Null? lastCalledDate;
-  Null? leadStageId;
-  Null? dealClosureDate;
+  String? lastCalledDate;
+  int? leadStageId;
+  String? dealClosureDate;
   int? callDuration;
-  Null? latestUpdate;
+  String? latestUpdate;
 
   MobileNumbers(
       {this.id,

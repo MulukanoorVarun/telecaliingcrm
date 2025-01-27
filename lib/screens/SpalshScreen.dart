@@ -1,64 +1,126 @@
-import 'package:flutter/cupertino.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:telecaliingcrm/screens/LeadInformation.dart';
-import 'package:telecaliingcrm/screens/LeadsScreen.dart';
-import 'package:telecaliingcrm/screens/dashboard.dart';
-import 'package:telecaliingcrm/utils/preferences.dart';
-
+import 'package:in_app_update/in_app_update.dart';
+import 'package:provider/provider.dart';
+import 'package:telecaliingcrm/screens/OnBoardingScreen.dart';
+import '../Services/otherservices.dart';
+import '../providers/ConnectivityProviders.dart';
 import '../utils/ColorConstants.dart';
-import 'AddLeadsScreen.dart';
-import 'HomeScreen.dart';
-import 'LeaderBoardScreen.dart';
-import 'OnBoardingScreen.dart';
-import 'UpdatePasswordScreen.dart';
-
+import '../utils/preferences.dart';
+import 'dashboard.dart';
 
 class Splash extends StatefulWidget {
-  const Splash({super.key});
-
   @override
-  State<Splash> createState() => _SplashState();
+  _SplashState createState() => _SplashState();
 }
 
 class _SplashState extends State<Splash> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
+  late ConnectivityProviders _connectivityProvider;
 
-  String token="";
-  String status="";
+  String token = "";
 
   @override
   void initState() {
     super.initState();
+    // Save the provider reference during initState
+    _connectivityProvider = Provider.of<ConnectivityProviders>(context, listen: false);
+    _connectivityProvider.initConnectivity();
+    // Initialize animation controller
     _controller = AnimationController(
       duration: Duration(seconds: 2),
       vsync: this,
     );
 
     _animation = CurvedAnimation(parent: _controller, curve: Curves.easeIn);
-
     _controller.forward();
 
-    // Navigate to the next screen after the animation
-    SchedulerBinding.instance.addPostFrameCallback((_) {
-      Future.delayed(Duration(seconds: 3), () async {
-        if(token!=""){
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Dashboard()));
-        }else{
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => OnBoardindScreen()));
-        }
-      });
+    SchedulerBinding.instance.addPostFrameCallback((_) async {
+      if (await isNetworkAvailable()) {
+        await checkForUpdates();
+        await handleNavigation();
+      } else {
+
+      }
     });
     Fetchdetails();
   }
 
+Future<bool> isNetworkAvailable() async {
+  final connectivityResult = await Connectivity().checkConnectivity();
+  return connectivityResult != ConnectivityResult.none;
+}
 
+  // Fetch user token or details
   Fetchdetails() async {
-    var Token = (await PreferenceService().getString('token'))??"";
+    var Token = (await PreferenceService().getString('token')) ?? "";
     setState(() {
-      token=Token;
+      token = Token;
     });
+  }
+
+  // Method to check for mandatory updates
+  Future<void> checkForUpdates() async {
+    try {
+      final info = await InAppUpdate.checkForUpdate();
+
+      if (info.updateAvailability == UpdateAvailability.updateAvailable) {
+        if (info.immediateUpdateAllowed) {
+          // Force the immediate update before proceeding
+          await InAppUpdate.performImmediateUpdate().then((result) {
+            if (result == AppUpdateResult.success) {
+              print("Update completed successfully!");
+              // Proceed only after successful update
+            } else {
+              print("Update not completed. App cannot proceed.");
+              // Optionally, retry or show an error dialog
+              _showUpdateRequiredDialog();
+            }
+          });
+        } else {
+          print("Immediate update not allowed. Exiting.");
+        }
+      } else {
+        print("No update available. Proceeding.");
+      }
+    } catch (e) {
+      print("Update check failed: $e");
+    }
+  }
+
+  // Show dialog when an update is mandatory
+  void _showUpdateRequiredDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        title: Text("Update Required"),
+        content: Text("A new version of the app is available. You must update to continue."),
+        actions: [
+          TextButton(
+            onPressed: () async {
+              await checkForUpdates(); // Retry the update check
+            },
+            child: Text("Retry"),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Handle navigation after update and splash animation
+  Future<void> handleNavigation() async {
+    // Navigate after update and animation complete
+    await Future.delayed(Duration(seconds: 3));
+    if (token.isNotEmpty) {
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => Dashboard()));
+    } else {
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => OnBoardindScreen()));
+    }
   }
 
   @override
@@ -69,7 +131,10 @@ class _SplashState extends State<Splash> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    var connectiVityStatus = Provider.of<ConnectivityProviders>(context);
+    return (connectiVityStatus.isDeviceConnected == "ConnectivityResult.wifi" ||
+        connectiVityStatus.isDeviceConnected == "ConnectivityResult.mobile")?
+      Scaffold(
       backgroundColor: primaryColor,
       body: Container(
         child: Center(
@@ -83,6 +148,6 @@ class _SplashState extends State<Splash> with SingleTickerProviderStateMixin {
           ),
         ),
       ),
-    );
+    ):NoInternetWidget();
   }
 }

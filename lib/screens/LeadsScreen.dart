@@ -8,9 +8,6 @@ import 'package:telecaliingcrm/screens/LeadInformation.dart';
 import 'package:telecaliingcrm/utils/ColorConstants.dart';
 import 'package:telecaliingcrm/utils/constants.dart';
 import 'package:url_launcher/url_launcher.dart';
-
-import '../Services/UserApi.dart';
-import '../model/LeadsModel.dart';
 import '../providers/ConnectivityProviders.dart';
 import '../providers/LeadsProvider.dart';
 import '../services/Shimmers.dart';
@@ -30,8 +27,7 @@ class _LeadsScreenState extends State<LeadScreen>
   @override
   void initState() {
     // Save the provider reference during initState
-    _connectivityProvider =
-        Provider.of<ConnectivityProviders>(context, listen: false);
+    _connectivityProvider = Provider.of<ConnectivityProviders>(context, listen: false);
     _connectivityProvider.initConnectivity();
     // Delay fetchLeads until after the widget tree has finished building
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -326,18 +322,12 @@ class _LeadsScreenState extends State<LeadScreen>
                                               children: [
                                                 SizedBox(height: 5),
                                                 Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
+                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                   children: [
                                                     Expanded(
                                                       child: Column(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .start,
+                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                        mainAxisAlignment: MainAxisAlignment.start,
                                                         children: [
                                                           text(
                                                               context,
@@ -359,9 +349,7 @@ class _LeadsScreenState extends State<LeadScreen>
                                                                       .w500,
                                                               color: Color(
                                                                   0xff949494)),
-                                                          if (leads
-                                                                  .followUpDate !=
-                                                              null) ...[
+                                                          if (leads.followUpDate != null) ...[
                                                             text(
                                                                 context,
                                                                 "Followup : ${leads.followUpDate ?? ""}",

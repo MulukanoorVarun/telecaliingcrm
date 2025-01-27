@@ -127,7 +127,6 @@ class NoInternetWidget extends StatelessWidget {
               onTap: () async {
                 final connectivityResult = await Connectivity().checkConnectivity();
                 String message;
-
                 if (connectivityResult == ConnectivityResult.mobile) {
                   message = "Connected to Mobile Network";
                 } else if (connectivityResult == ConnectivityResult.wifi) {
