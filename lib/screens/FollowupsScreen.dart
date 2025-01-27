@@ -46,7 +46,7 @@ class _FollowupsScreenState extends State<FollowupsScreen> {
 
     setState(() {
       if (result?.status == true) {
-        data = result?.data ?? [];
+        data = result?.data?.followup_list ?? [];
         is_loading = false;
         print("Response: $result");
       } else {

@@ -19,7 +19,7 @@ class LeadsProvider with ChangeNotifier {
     try {
       var result = await Userapi.getLeads(type);
       if (result?.status == true) {
-        leadslist = result?.data??[];
+        leadslist = result?.data?.leadslist??[];
         _isLoading = false;
         notifyListeners();
       } else {

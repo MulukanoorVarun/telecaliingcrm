@@ -84,8 +84,7 @@ class _HomescreenState extends State<Homescreen> {
 
   List<MobileNumbers>? phoneNumbers;
   Future<void> GetDashBoardDetails() async {
-    final dashboard_provider =
-        Provider.of<DashboardProvider>(context, listen: false);
+    final dashboard_provider = Provider.of<DashboardProvider>(context, listen: false);
     final user_details_provider =
         Provider.of<UserDetailsProvider>(context, listen: false);
     dashboard_provider.fetchDashBoardDetails();
@@ -386,8 +385,9 @@ class _HomescreenState extends State<Homescreen> {
   void updateCallStatus(id, callStatus, String callDuration) async {
     var result = await Userapi.UpdateCallStatusApi(id, callStatus, callDuration);
     if (result != null) {
-      // Process the result here (e.g., display a message to the user)
       print("Response: $result");
+      final dashboard_provider = Provider.of<DashboardProvider>(context, listen: false);
+      dashboard_provider.fetchDashBoardDetails();
       CustomSnackBar.show(context, "Call Staus Updated Successfully!");
       Future.delayed(Duration(seconds: 3), () {
         _scheduleNextCall(); // Start the next call if available
@@ -602,12 +602,30 @@ class _HomescreenState extends State<Homescreen> {
                               children: [
                                 InkResponse(
                                   onTap: () async {
-                                    var res= await Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              LeadScreen(),
-                                        ));
+                                    var res= await Navigator.of(context)
+                                        .push(PageRouteBuilder(
+                                      pageBuilder: (context, animation,
+                                          secondaryAnimation) {
+                                        return LeadScreen();
+                                      },
+                                      transitionsBuilder: (context,
+                                          animation,
+                                          secondaryAnimation,
+                                          child) {
+                                        const begin = Offset(1.0, 0.0);
+                                        const end = Offset.zero;
+                                        const curve = Curves.easeInOut;
+                                        var tween = Tween(
+                                            begin: begin, end: end)
+                                            .chain(CurveTween(
+                                            curve: curve));
+                                        var offsetAnimation =
+                                        animation.drive(tween);
+                                        return SlideTransition(
+                                            position: offsetAnimation,
+                                            child: child);
+                                      },
+                                    ));
                                     if(res==true){
                                       final dashboard_provider =
                                       Provider.of<DashboardProvider>(context, listen: false);
@@ -637,12 +655,30 @@ class _HomescreenState extends State<Homescreen> {
                                 ),
                                 InkResponse(
                                   onTap: () async {
-                                    var res= await Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              FollowupsScreen(),
-                                        ));
+                                    var res= await Navigator.of(context)
+                                        .push(PageRouteBuilder(
+                                      pageBuilder: (context, animation,
+                                          secondaryAnimation) {
+                                        return FollowupsScreen();
+                                      },
+                                      transitionsBuilder: (context,
+                                          animation,
+                                          secondaryAnimation,
+                                          child) {
+                                        const begin = Offset(1.0, 0.0);
+                                        const end = Offset.zero;
+                                        const curve = Curves.easeInOut;
+                                        var tween = Tween(
+                                            begin: begin, end: end)
+                                            .chain(CurveTween(
+                                            curve: curve));
+                                        var offsetAnimation =
+                                        animation.drive(tween);
+                                        return SlideTransition(
+                                            position: offsetAnimation,
+                                            child: child);
+                                      },
+                                    ));
                                     if(res==true){
                                       final dashboard_provider =
                                       Provider.of<DashboardProvider>(context, listen: false);
@@ -684,11 +720,11 @@ class _HomescreenState extends State<Homescreen> {
                               }
                             },
                                 color: color28,
-                                width: w * 0.4,
+                                width: w * 0.5,
                                 isCalling
                                     ? (isPaused ? 'RESUME' : 'PAUSE')
                                     : 'START NOW',
-                                height: h * 0.1),
+                            ),
                             SizedBox(height: w * 0.05),
                             text(context, 'CALLS IN QUEUE', 20,
                                 fontWeight: FontWeight.w500,

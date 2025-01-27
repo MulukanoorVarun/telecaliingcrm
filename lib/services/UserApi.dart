@@ -18,8 +18,7 @@ import '../utils/preferences.dart';
 class Userapi {
   static String host = "https://api.telecallingcrm.com";
 
-  static Future<Map<String, dynamic>?> PostSignIn(String email,
-      String pwd) async {
+  static Future<Map<String, dynamic>?> PostSignIn(String email, String pwd) async {
     try {
       // Prepare the request data
       Map<String, String> data = {
@@ -34,7 +33,6 @@ class Userapi {
         },
         body: jsonEncode(data),
       );
-
       // Check if the response body is empty
       if (response.body.isEmpty) {
         print("Empty response body.");
@@ -141,29 +139,20 @@ class Userapi {
         headers: headers,
         body: data,
       );
-      // Check if the status code is 200
       if (response.statusCode == 200) {
         try {
-          // Try decoding the response body to JSON
           final jsonResponse = jsonDecode(response.body);
           print("Request successful: $jsonResponse");
           return jsonResponse;
         } catch (e) {
-          // Handle the case where the response is not valid JSON
-          print(
-              "Error: Failed to decode response body. Response: ${response
-                  .body}");
+          print("Error: Failed to decode response body. Response: ${response.body}");
           return null;
         }
       } else {
-        // Log the response status code and body if it's not 200
-        print(
-            "Request failed with status: ${response
-                .statusCode}, body: ${response.body}");
+        print("Request failed with status: ${response.statusCode}, body: ${response.body}");
         return null;
       }
     } catch (e) {
-      // Catch and log any errors during the request
       print("Error occurred: $e");
       return null;
     }

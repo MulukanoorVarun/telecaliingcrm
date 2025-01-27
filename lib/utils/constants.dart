@@ -229,37 +229,37 @@ Color color37 = Color(0xffF5F5F5);
 
 final spinkits=Spinkits1();
 
-
 Widget containertext(BuildContext context, String buttonText,
-    {Function()? onTap,Color? color, double? width, height, bool isLoading = false}) {
-  var h = MediaQuery.of(context).size.height;
-  var w = MediaQuery.of(context).size.width;
-
-  return InkResponse(
-      onTap: onTap,
-      child: Container(
-        height: 45,
-        width: width ?? MediaQuery.of(context).size.width,
-        decoration: BoxDecoration(
-          color: color?? color28 ,
+    {Function()? onTap, Color? color, double? width, double? height, bool isLoading = false}) {
+  return SizedBox(
+    width: width ?? MediaQuery.of(context).size.width,
+    height: height ?? 45,
+    child: ElevatedButton(
+      onPressed: isLoading ? null : onTap,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: color ?? color28, // Replace 'color28' with your default color.
+        shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8),
         ),
-        child:
-        Center(
-          child:isLoading? CircularProgressIndicator(color: Colors.white,):
-          Text(
-            buttonText,
-            style: TextStyle(
-              color: Color(0xFFFFFFFF),
-              fontWeight: FontWeight.w700,
-              fontSize: 16,
-              height: 21.78 / 16,
-              letterSpacing: 1,
-              fontFamily: "Poppins",
-            ),
-          ),
+      ),
+      child: isLoading
+          ? CircularProgressIndicator(
+        strokeWidth: 1,
+        color: Colors.white,
+      )
+          : Text(
+        buttonText,
+        style: TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.w700,
+          fontSize: 16,
+          height: 21.78 / 16,
+          letterSpacing: 1,
+          fontFamily: "Poppins",
         ),
-      ));
+      ),
+    ),
+  );
 }
 
  Container container(BuildContext context,

@@ -26,34 +26,30 @@ class LeadScreen extends StatefulWidget {
 class _LeadsScreenState extends State<LeadScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  late ConnectivityProviders _connectivityProvider;
   @override
   void initState() {
-    Provider.of<ConnectivityProviders>(context, listen: false)
-        .initConnectivity();
-    _fetchLeads('all');
+    // Save the provider reference during initState
+    _connectivityProvider = Provider.of<ConnectivityProviders>(context, listen: false);
+    _connectivityProvider.initConnectivity();
+    // Delay fetchLeads until after the widget tree has finished building
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _fetchLeads('all');
+    });
     _tabController = TabController(length: 4, vsync: this);
     super.initState();
   }
 
-  void _fetchLeads(type) async {
-    // Access the LeadsProvider to fetch the data
+  Future<void> _fetchLeads(type) async {
     final leadsProvider = Provider.of<LeadsProvider>(context, listen: false);
-    // Call the fetchLeadsList method from the provider
-    bool? result = await leadsProvider.fetchLeadsList(type);
-    // After fetching, update the state accordingly
-    setState(() {
-      if (result == false) {
-        print("Failed to fetch leads.");
-      } else {
-        print("Leads fetched successfully.");
-      }
-    });
+    leadsProvider.fetchLeadsList(type);
   }
 
   @override
   void dispose() {
     _tabController.dispose();
-    Provider.of<ConnectivityProviders>(context, listen: false).dispose();
+    // Use the saved reference to dispose of the connectivity provider
+    _connectivityProvider.dispose();
     super.dispose();
   }
 
@@ -149,17 +145,18 @@ class _LeadsScreenState extends State<LeadScreen>
                             children: [
                               ElevatedButton(
                                 style: ButtonStyle(
+                                  padding: MaterialStateProperty.all(
+                                    const EdgeInsets.symmetric(vertical: 0, horizontal: 18), // Adjust as needed
+                                  ),
                                   shape: MaterialStateProperty.all(
                                     RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(
-                                          8), // Adjust the value to your desired radius
+                                      borderRadius: BorderRadius.circular(8), // Adjust the value to your desired radius
                                     ),
                                   ),
                                   backgroundColor: MaterialStateProperty.all(
                                     _selectedTabIndex == 0
                                         ? Color(0xff7165E3)
-                                        : Colors
-                                            .white, // Active color if selected
+                                        : Colors.white, // Active color if selected
                                   ),
                                 ),
                                 onPressed: () {
@@ -169,13 +166,15 @@ class _LeadsScreenState extends State<LeadScreen>
                                 child: Text(
                                   'ALL',
                                   style: TextStyle(
-                                      color: _selectedTabIndex == 0
-                                          ? Colors.white
-                                          : Color(0xff7165E3)),
+                                    color: _selectedTabIndex == 0 ? Colors.white : Color(0xff7165E3),
+                                  ),
                                 ),
                               ),
                               ElevatedButton(
                                 style: ButtonStyle(
+                                  padding: MaterialStateProperty.all(
+                                    const EdgeInsets.symmetric(vertical: 0, horizontal: 18), // Adjust as needed
+                                  ),
                                   shape: MaterialStateProperty.all(
                                     RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(
@@ -203,6 +202,9 @@ class _LeadsScreenState extends State<LeadScreen>
                               ),
                               ElevatedButton(
                                 style: ButtonStyle(
+                                  padding: MaterialStateProperty.all(
+                                    const EdgeInsets.symmetric(vertical: 0, horizontal: 18), // Adjust as needed
+                                  ),
                                   shape: MaterialStateProperty.all(
                                     RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(
@@ -230,6 +232,9 @@ class _LeadsScreenState extends State<LeadScreen>
                               ),
                               ElevatedButton(
                                 style: ButtonStyle(
+                                  padding: MaterialStateProperty.all(
+                                    const EdgeInsets.symmetric(vertical: 0, horizontal:18), // Adjust as needed
+                                  ),
                                   shape: MaterialStateProperty.all(
                                     RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(

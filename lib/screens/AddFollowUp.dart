@@ -28,10 +28,9 @@ class _AddFollowUpState extends State<AddFollowUp> {
   String? _leadStatus;
   bool _loading = false;
   String _validateFullName = "";
-  // String _validateMobilenumber = "";
   String _validatedate = "";
   String _validateRemarks = "";
-  String _validateStatus = "";
+
 
 
   @override
@@ -57,26 +56,15 @@ class _AddFollowUpState extends State<AddFollowUp> {
       !_nameController.text.contains(RegExp(r"^[a-zA-Z\s]+$"))
           ? "Please enter a valid name"
           : "";
+      // Validate date
+      _validatedate = formattedDate.isEmpty
+          ? "Please select a valid Date."
+          : "";
 
-      // Validate Mobile Number
-      // _validateMobilenumber = _mobileController.text.isEmpty
-      //     ? "Please enter a mobile number"
-      //     : (!_mobileController.text.contains(RegExp(r"^[0-9]{10}$"))
-      //     ? "Please enter a valid 10-digit mobile number"
-      //     : "");
-
-      // Validate Remarks
       _validateRemarks =
       _remarksController.text.isEmpty ? "Please add some remarks" : "";
-
-      // Validate Lead Status
-      // final statusError = (_leadStatus == null || _leadStatus!.isEmpty)
-      //     ? "Please select a status"
-      //     : null;
-
-      // Proceed only if all fields are valid
       if (_validateFullName.isEmpty &&
-          // _validateMobilenumber.isEmpty &&
+          _validatedate.isEmpty &&
           _validateRemarks.isEmpty) {
         AddFollowUp(); // Trigger the AddLeads function if validations pass
       } else {
@@ -203,67 +191,8 @@ class _AddFollowUpState extends State<AddFollowUp> {
                   ),
                 ),
               ] else ...[
-                SizedBox(height: 8),
+                SizedBox(height: 16),
               ],
-              const SizedBox(height: 16),
-
-              // Mobile Number Field
-              // TextFormField(
-              //   controller: _mobileController,
-              //   decoration: InputDecoration(
-              //     contentPadding: const EdgeInsets.symmetric(
-              //       vertical: 0,
-              //       horizontal: 10,
-              //     ),
-              //     labelText: "Mobile Number",
-              //     labelStyle: const TextStyle(
-              //       fontSize: 14,
-              //       letterSpacing: 0,
-              //       height: 25.73 / 14,
-              //       color: Colors.grey,
-              //       fontFamily: 'Poppins',
-              //       fontWeight: FontWeight.w400,
-              //     ),
-              //     filled: true,
-              //     fillColor: const Color(0xffffffff),
-              //     enabledBorder: OutlineInputBorder(
-              //       borderRadius: BorderRadius.circular(7),
-              //       borderSide: const BorderSide(
-              //           width: 1, color: Color(0xffCDE2FB)),
-              //     ),
-              //     focusedBorder: OutlineInputBorder(
-              //       borderRadius: BorderRadius.circular(7),
-              //       borderSide: const BorderSide(
-              //           width: 1, color: Color(0xffCDE2FB)),
-              //     ),
-              //   ),
-              //   keyboardType: TextInputType.phone,
-              // ),
-              // if (_validateMobilenumber.isNotEmpty) ...[
-              //   Container(
-              //     alignment: Alignment.topLeft,
-              //     margin: EdgeInsets.only(left: 8, bottom: 10, top: 5),
-              //     width: MediaQuery.of(context).size.width * 0.6,
-              //     child: ShakeWidget(
-              //       key: Key("value"),
-              //       duration: Duration(milliseconds: 700),
-              //       child: Text(
-              //         _validateMobilenumber,
-              //         style: TextStyle(
-              //           fontFamily: "Poppins",
-              //           fontSize: 12,
-              //           color: Colors.red,
-              //           fontWeight: FontWeight.w500,
-              //         ),
-              //       ),
-              //     ),
-              //   ),
-              // ] else ...[
-              //   SizedBox(height: 8),
-              // ],
-              // const SizedBox(height: 16),
-
-              // Date Field
               TextFormField(
                 controller: TextEditingController(
                     text: formattedDate
@@ -333,7 +262,28 @@ class _AddFollowUpState extends State<AddFollowUp> {
                   return null;
                 },
               ),
-              const SizedBox(height: 16),
+              if (_validatedate.isNotEmpty) ...[
+                Container(
+                  alignment: Alignment.topLeft,
+                  margin: EdgeInsets.only(left: 8, bottom: 10, top: 5),
+                  width: MediaQuery.of(context).size.width * 0.6,
+                  child: ShakeWidget(
+                    key: Key("value"),
+                    duration: Duration(milliseconds: 700),
+                    child: Text(
+                      _validatedate,
+                      style: TextStyle(
+                        fontFamily: "Poppins",
+                        fontSize: 12,
+                        color: Colors.red,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ),
+              ] else ...[
+                SizedBox(height: 16),
+              ],
               // Remarks Field
               TextFormField(
                 controller: _remarksController,

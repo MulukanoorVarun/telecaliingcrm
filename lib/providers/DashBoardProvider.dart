@@ -21,7 +21,6 @@ class DashboardProvider with ChangeNotifier {
       // Fetching user details from the API
       var response = await Userapi.DahsBoardApi();
       if (response?.status==true) {
-        // If expecting Strings, convert integer values to Strings
         todayCalls = response?.todayCalls?.toString(); // Convert to String
         pendingCalls = response?.pendingCalls?.toString(); // Convert to String
         leadCount = response?.leadCount?.toString(); // Convert to String
