@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:in_app_update/in_app_update.dart';
 import 'package:provider/provider.dart';
+import 'package:telecaliingcrm/Authentication/SignInScreen.dart';
 import 'package:telecaliingcrm/screens/OnBoardingScreen.dart';
 import '../Services/otherservices.dart';
 import '../providers/ConnectivityProviders.dart';
@@ -21,12 +22,13 @@ class _SplashState extends State<Splash> with SingleTickerProviderStateMixin {
   late ConnectivityProviders _connectivityProvider;
 
   String token = "";
-
+  String onboard_status = "";
   @override
   void initState() {
     super.initState();
     // Save the provider reference during initState
-    _connectivityProvider = Provider.of<ConnectivityProviders>(context, listen: false);
+    _connectivityProvider =
+        Provider.of<ConnectivityProviders>(context, listen: false);
     _connectivityProvider.initConnectivity();
     // Initialize animation controller
     _controller = AnimationController(
@@ -41,22 +43,22 @@ class _SplashState extends State<Splash> with SingleTickerProviderStateMixin {
       if (await isNetworkAvailable()) {
         await checkForUpdates();
         await handleNavigation();
-      } else {
-
-      }
+      } else {}
     });
     Fetchdetails();
   }
 
-Future<bool> isNetworkAvailable() async {
-  final connectivityResult = await Connectivity().checkConnectivity();
-  return connectivityResult != ConnectivityResult.none;
-}
+  Future<bool> isNetworkAvailable() async {
+    final connectivityResult = await Connectivity().checkConnectivity();
+    return connectivityResult != ConnectivityResult.none;
+  }
 
   // Fetch user token or details
   Fetchdetails() async {
     var Token = (await PreferenceService().getString('token')) ?? "";
+    var status = (await PreferenceService().getString('onboard_status')) ?? "";
     setState(() {
+      onboard_status = status;
       token = Token;
     });
   }
@@ -97,7 +99,8 @@ Future<bool> isNetworkAvailable() async {
       barrierDismissible: false,
       builder: (context) => AlertDialog(
         title: Text("Update Required"),
-        content: Text("A new version of the app is available. You must update to continue."),
+        content: Text(
+            "A new version of the app is available. You must update to continue."),
         actions: [
           TextButton(
             onPressed: () async {
@@ -114,12 +117,17 @@ Future<bool> isNetworkAvailable() async {
   Future<void> handleNavigation() async {
     // Navigate after update and animation complete
     await Future.delayed(Duration(seconds: 3));
-    if (token.isNotEmpty) {
+
+
+    if (onboard_status == '') {
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => OnBoardindScreen()));
+    } else if (token.isNotEmpty) {
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (context) => Dashboard()));
     } else {
       Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => OnBoardindScreen()));
+          context, MaterialPageRoute(builder: (context) => SignInScreen()));
     }
   }
 
@@ -133,21 +141,22 @@ Future<bool> isNetworkAvailable() async {
   Widget build(BuildContext context) {
     var connectiVityStatus = Provider.of<ConnectivityProviders>(context);
     return (connectiVityStatus.isDeviceConnected == "ConnectivityResult.wifi" ||
-        connectiVityStatus.isDeviceConnected == "ConnectivityResult.mobile")?
-      Scaffold(
-      backgroundColor: primaryColor,
-      body: Container(
-        child: Center(
-          child: FadeTransition(
-            opacity: _animation,
-            child: Image.asset(
-              "assets/telecalling_splash.png",
-              width: 240,
-              height: 200,
+            connectiVityStatus.isDeviceConnected == "ConnectivityResult.mobile")
+        ? Scaffold(
+            backgroundColor: primaryColor,
+            body: Container(
+              child: Center(
+                child: FadeTransition(
+                  opacity: _animation,
+                  child: Image.asset(
+                    "assets/telecalling_splash.png",
+                    width: 240,
+                    height: 200,
+                  ),
+                ),
+              ),
             ),
-          ),
-        ),
-      ),
-    ):NoInternetWidget();
+          )
+        : NoInternetWidget();
   }
 }

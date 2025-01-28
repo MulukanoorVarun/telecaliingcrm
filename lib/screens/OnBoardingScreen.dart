@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:telecaliingcrm/Authentication/SignInScreen.dart';
 import 'package:telecaliingcrm/utils/constants.dart';
+import 'package:telecaliingcrm/utils/preferences.dart';
 
 class OnBoardindScreen extends StatefulWidget {
   const OnBoardindScreen({super.key});
@@ -10,6 +12,13 @@ class OnBoardindScreen extends StatefulWidget {
 }
 
 class _OnBoardindScreenState extends State<OnBoardindScreen> {
+
+  @override
+  void initState() {
+    PreferenceService().saveString("onboard_status","1");
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     var w = MediaQuery.of(context).size.width;
