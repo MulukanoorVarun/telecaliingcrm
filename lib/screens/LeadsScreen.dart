@@ -37,7 +37,7 @@ class _LeadsScreenState extends State<LeadScreen>
 
   Future<void> _fetchLeads() async {
     final leadsProvider = Provider.of<LeadsProvider>(context, listen: false);
-    leadsProvider.fetchLeadsList(stage_name);
+    leadsProvider.fetchLeadsList(stage_name,context);
   }
 
   @override
@@ -287,15 +287,13 @@ class _LeadsScreenState extends State<LeadScreen>
                     } else {
                       return Expanded(
                         child: NotificationListener<ScrollNotification>(
-                          onNotification: (ScrollNotification scrollinfo) {
-                            if (!leadsProvider.isLoading &&
-                                scrollinfo.metrics.pixels == scrollinfo.metrics.maxScrollExtent) {
-                              if (leadsProvider.hasNextPage) {
-                                leadsProvider.fetchMoreLeadsList(stage_name);
-                              }
-                              return true;
+                          onNotification: (ScrollNotification scrollInfo) {
+                            if (leadsProvider.hasNextPage &&
+                                !leadsProvider.pageLoading &&
+                                scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
+                              leadsProvider.fetchMoreLeadsList(stage_name, context);
                             }
-                            return false;
+                            return true; // Always return true to consume the notification.
                           },
                           child: CustomScrollView(
                             physics: AlwaysScrollableScrollPhysics(),

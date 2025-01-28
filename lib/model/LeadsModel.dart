@@ -30,7 +30,7 @@ class Data {
   String? nextPageUrl;
   String? path;
   int? perPage;
-  Null? prevPageUrl;
+  String? prevPageUrl;
   int? to;
   int? total;
 
@@ -106,16 +106,16 @@ class Leads {
   String? callStatus;
   String? calledStatus;
   String? name;
-  Null? followUpDate;
+  String? followUpDate;
   String? remarks;
   String? dealStatus;
-  Null? dealAmount;
+  String? dealAmount;
   int? totalCalls;
-  Null? lastCalledDate;
+  String? lastCalledDate;
   int? leadStageId;
-  Null? dealClosureDate;
+  String? dealClosureDate;
   int? callDuration;
-  Null? latestUpdate;
+  String? latestUpdate;
   StageName? stageName;
   LatestFollowupDetail? latestFollowupDetail;
 

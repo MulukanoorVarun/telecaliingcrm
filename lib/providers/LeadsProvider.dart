@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart'; // For ChangeNotifier
 import '../Services/UserApi.dart';
 import '../model/LeadsModel.dart';
+import '../screens/SubscriptionExpiredScreen.dart';
 
 class LeadsProvider with ChangeNotifier {
   List<Leads> leadslist=[];
@@ -16,7 +17,7 @@ class LeadsProvider with ChangeNotifier {
   bool get pageLoading => _pageLoading;
 
 
-  Future<void> fetchLeadsList(type) async {
+  Future<void> fetchLeadsList(type,BuildContext context) async {
     _isLoading = true;
     _currentPage = 1;
     notifyListeners();
@@ -24,12 +25,41 @@ class LeadsProvider with ChangeNotifier {
       var result = await Userapi.getLeads(type, _currentPage);
       if (result?.status == true) {
         leadslist = result?.data?.leadslist ?? [];
-        if(result?.data?.nextPageUrl!= null){
+        if(result?.data?.nextPageUrl!=null){
           _hasNextPage = true;
+          notifyListeners();
+          print("fetchLeadsList Called  _hasNextPage = true;");
         }else{
           _hasNextPage = false;
+          notifyListeners();
+          print("fetchLeadsList Called  _hasNextPage = false");
         }
+        notifyListeners();
       } else {
+        Navigator.of(context)
+            .push(PageRouteBuilder(
+          pageBuilder: (context, animation,
+              secondaryAnimation) {
+            return SubscriptionExpiredScreen();
+          },
+          transitionsBuilder: (context,
+              animation,
+              secondaryAnimation,
+              child) {
+            const begin = Offset(1.0, 0.0);
+            const end = Offset.zero;
+            const curve = Curves.easeInOut;
+            var tween = Tween(
+                begin: begin, end: end)
+                .chain(CurveTween(
+                curve: curve));
+            var offsetAnimation =
+            animation.drive(tween);
+            return SlideTransition(
+                position: offsetAnimation,
+                child: child);
+          },
+        ));
         leadslist = result?.data?.leadslist ?? [];
         _hasNextPage = false;
       }
@@ -42,43 +72,59 @@ class LeadsProvider with ChangeNotifier {
       notifyListeners();
     }
   }
+  Future<void> fetchMoreLeadsList(String type, BuildContext context) async {
+    if (!_hasNextPage || _pageLoading) {
+      // If there are no more pages or another fetch is ongoing, stop.
+      return;
+    }
 
-  Future<void> fetchMoreLeadsList(type) async {
-    _currentPage ++;
-    _pageLoading=true;
+    _pageLoading = true; // Indicate loading state for pagination.
     notifyListeners();
+
     try {
-      var result = await Userapi.getLeads(type,_currentPage);
+      var result = await Userapi.getLeads(type, _currentPage + 1);
+
       if (result?.status == true) {
+        _currentPage++; // Increment the current page after a successful fetch.
         leadslist.addAll(result?.data?.leadslist ?? []);
-        if(result?.data?.nextPageUrl!=null){
-          _hasNextPage = true;
-        }else{
-          _hasNextPage = false;
-        }
+
+        _hasNextPage = result?.data?.nextPageUrl != null; // Check for more pages.
       } else {
-        leadslist.addAll(result?.data?.leadslist ?? []);
-        _hasNextPage = false;
+        _hasNextPage = false; // No more pages.
+        Navigator.of(context).push(
+          PageRouteBuilder(
+            pageBuilder: (context, animation, secondaryAnimation) {
+              return SubscriptionExpiredScreen();
+            },
+            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+              const begin = Offset(1.0, 0.0);
+              const end = Offset.zero;
+              const curve = Curves.easeInOut;
+              var tween = Tween(begin: begin, end: end)
+                  .chain(CurveTween(curve: curve));
+              var offsetAnimation = animation.drive(tween);
+              return SlideTransition(position: offsetAnimation, child: child);
+            },
+          ),
+        );
       }
     } catch (e) {
-      // If an error occurs, log or rethrow an exception
-      print('Error fetching Leads list: $e');
-      throw Exception('Failed to Leads list: $e');
+      print('Error fetching more leads: $e');
     } finally {
-      _pageLoading = false;
+      _pageLoading = false; // Reset loading state.
       notifyListeners();
     }
-    return null;
   }
 
-  Future<bool?> AddleadsApi(name, mobile, date, remarks, leadStatus) async {
+
+  Future<bool?> AddleadsApi(name, mobile, date, remarks, leadStatus,BuildContext context) async {
     try {
       // Fetching user details from the API
       var response =
           await Userapi.postAddLeads(name, mobile, date, remarks, leadStatus);
       if (response != null) {
         if (response["status"] == true) {
-          fetchLeadsList('');
+          fetchLeadsList('',context);
           return response["status"];
         } else {
           return response["status"];
@@ -93,9 +139,8 @@ class LeadsProvider with ChangeNotifier {
   }
 
   Future<bool?> UpdateleadsApi(
-      name, leadID, remarks, leadStatusID, leadStageID) async {
+      name, leadID, remarks, leadStatusID, leadStageID,BuildContext context) async {
     try {
-      // Fetching user details from the API
       var response = await Userapi.postUpdateLeads(
         name,
         leadID,
@@ -103,10 +148,9 @@ class LeadsProvider with ChangeNotifier {
         leadStatusID,
         leadStageID,
       );
-      ;
       if (response != null) {
         if (response["status"] == true) {
-          fetchLeadsList('');
+          fetchLeadsList('',context);
           return response["status"];
         } else {
           return response["status"];

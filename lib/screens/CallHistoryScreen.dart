@@ -53,7 +53,7 @@ class _CallhistoryscreenState extends State<Callhistoryscreen> {
   Future<void> getCallHistoryApi() async {
     final callhistory =
         Provider.of<CallHistoryProvider>(context, listen: false);
-    callhistory.getCallHistoryApi();
+    callhistory.getCallHistoryApi(context);
   }
 
   @override
@@ -100,7 +100,7 @@ class _CallhistoryscreenState extends State<Callhistoryscreen> {
                                 scrollinfo.metrics.pixels ==
                                     scrollinfo.metrics.maxScrollExtent) {
                               if (callhistoryprovider.hasNext) {
-                                callhistoryprovider.getMoreCallHistoryApi();
+                                callhistoryprovider.getMoreCallHistoryApi(context);
                               }
                               return true;
                             }
@@ -179,6 +179,15 @@ class _CallhistoryscreenState extends State<Callhistoryscreen> {
                               },
                                       childCount:
                                           callhistoryprovider.call_history.length)),
+
+                              SliverPadding(
+                                padding: EdgeInsets.only(bottom: 30),
+                                sliver: SliverToBoxAdapter(
+                                  child: SizedBox(
+                                    height: 10,
+                                  ),
+                                ),
+                              ),
                               if (callhistoryprovider.pageLoading)
                                 SliverToBoxAdapter(
                                   child: Center(

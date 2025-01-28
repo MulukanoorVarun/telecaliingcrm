@@ -44,25 +44,41 @@ class LeaderBoardProvider extends ChangeNotifier {
   }
 
   Future<void> fetchMoreLeaderboardData() async {
-    _pageLoading = true;
-    _currentPage++;
+    // Prevent redundant calls if no more pages or a fetch is already in progress
+    if (!_hasNext || _pageLoading) {
+      debugPrint("No more pages to fetch or another fetch is in progress.");
+      return;
+    }
+
+    _pageLoading = true; // Mark as loading
     notifyListeners();
+
     try {
-      var res = await Userapi.getLeaderboard(_currentPage);
+      debugPrint("Fetching leaderboard data for page $_currentPage...");
+
+      var res = await Userapi.getLeaderboard(_currentPage + 1); // Increment the page for the API call
+
       if (res != null) {
-        leaderboardData = res.leaderboardData ?? [];
-        if (res.nextPageUrl != null) {
-          _hasNext = true;
-        } else {
-          _hasNext = false;
-        }
+        _currentPage++; // Increment the page count on success
+
+        leaderboardData.addAll(res.leaderboardData ?? []); // Append new leaderboard data
+
+        // Update `_hasNext` based on the API response
+        _hasNext = res.nextPageUrl != null;
+
+        debugPrint(_hasNext
+            ? "More leaderboard data available, preparing for next page."
+            : "No more leaderboard data to fetch.");
       } else {
-        print("No leaderboard data found.");
+        debugPrint("No leaderboard data found.");
       }
     } catch (e) {
+      // Log errors for debugging
+      debugPrint("Error while fetching leaderboard data: $e");
     } finally {
-      _pageLoading = false;
-      notifyListeners();
+      _pageLoading = false; // Reset loading state
+      notifyListeners();    // Notify listeners of state change
     }
   }
+
 }

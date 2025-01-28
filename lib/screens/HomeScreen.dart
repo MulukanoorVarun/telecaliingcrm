@@ -63,7 +63,7 @@ class _HomescreenState extends State<Homescreen> {
   Future<void> GetDashBoardDetails() async {
     final dashboard_provider = Provider.of<DashboardProvider>(context, listen: false);
     final user_details_provider = Provider.of<UserDetailsProvider>(context, listen: false);
-    var res = await dashboard_provider.fetchDashBoardDetails();
+    var res = await dashboard_provider.fetchDashBoardDetails(context);
     if(res==true){
       user_details_provider.fetchUserDetails();
     }
@@ -357,7 +357,7 @@ class _HomescreenState extends State<Homescreen> {
     if (result != null) {
       print("Response: $result");
       final dashboard_provider = Provider.of<DashboardProvider>(context, listen: false);
-      dashboard_provider.fetchDashBoardDetails();
+      dashboard_provider.fetchDashBoardDetails(context);
       CustomSnackBar.show(context, "Call Staus Updated Successfully!");
       Future.delayed(Duration(seconds: 3), () {
         _scheduleNextCall(); // Start the next call if available
@@ -599,7 +599,7 @@ class _HomescreenState extends State<Homescreen> {
                                     if(res==true){
                                       final dashboard_provider =
                                       Provider.of<DashboardProvider>(context, listen: false);
-                                      dashboard_provider.fetchDashBoardDetails();
+                                      dashboard_provider.fetchDashBoardDetails(context);
                                     }
                                   },
                                   child: container(
@@ -652,7 +652,7 @@ class _HomescreenState extends State<Homescreen> {
                                     if(res==true){
                                       final dashboard_provider =
                                       Provider.of<DashboardProvider>(context, listen: false);
-                                      dashboard_provider.fetchDashBoardDetails();
+                                      dashboard_provider.fetchDashBoardDetails(context);
                                     }
                                   },
                                   child: container(

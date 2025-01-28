@@ -30,7 +30,7 @@ class _FollowupsScreenState extends State<FollowupsScreen> {
 
   Future<void> _fetchFollowups() async {
     final leadsProvider = Provider.of<FollowupProvider>(context, listen: false);
-    leadsProvider.getFollowUpApi();
+    leadsProvider.getFollowUpApi(context);
   }
 
   @override
@@ -104,7 +104,7 @@ class _FollowupsScreenState extends State<FollowupsScreen> {
                             if (!followupProvider.isLoading &&
                                 scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
                               if (followupProvider.nextPage) {
-                                followupProvider.fetchMoreFollowUpList();
+                                followupProvider.fetchMoreFollowUpList(context);
                               }
                               return true;
                             }

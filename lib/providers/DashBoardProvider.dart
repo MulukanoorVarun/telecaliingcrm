@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';  // For ChangeNotifier
+import 'package:telecaliingcrm/screens/SubscriptionExpiredScreen.dart';
 import '../Services/UserApi.dart';
 import '../model/DashBoardModel.dart';
 
@@ -16,7 +17,7 @@ class DashboardProvider with ChangeNotifier {
   bool get isLoading => _isLoading;
 
   // Method to fetch user details asynchronously
-  Future<bool?> fetchDashBoardDetails() async {
+  Future<bool?> fetchDashBoardDetails(BuildContext context) async {
     try {
       // Fetching user details from the API
       var response = await Userapi.DahsBoardApi();
@@ -28,12 +29,36 @@ class DashboardProvider with ChangeNotifier {
         phone_numbers =response?.phoneNumbers?.data??[];
         notifyListeners();
         _isLoading=false;
-        return response?.status;
+        return true;
       } else {
-        phone_numbers = null;
+        Navigator.of(context)
+            .push(PageRouteBuilder(
+          pageBuilder: (context, animation,
+              secondaryAnimation) {
+            return SubscriptionExpiredScreen();
+          },
+          transitionsBuilder: (context,
+              animation,
+              secondaryAnimation,
+              child) {
+            const begin = Offset(1.0, 0.0);
+            const end = Offset.zero;
+            const curve = Curves.easeInOut;
+            var tween = Tween(
+                begin: begin, end: end)
+                .chain(CurveTween(
+                curve: curve));
+            var offsetAnimation =
+            animation.drive(tween);
+            return SlideTransition(
+                position: offsetAnimation,
+                child: child);
+          },
+        ));
+        phone_numbers = [];
         _isLoading=false;
         notifyListeners();
-        return response?.status;
+        return false;
       }
       // Notify listeners that the data has been updated
     } catch (e) {
