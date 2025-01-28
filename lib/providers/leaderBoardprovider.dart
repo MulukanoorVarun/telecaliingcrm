@@ -5,9 +5,9 @@ import 'package:telecaliingcrm/services/UserApi.dart';
 class LeaderBoardProvider extends ChangeNotifier {
   List<LeaderBoard> leaderboardData = [];
   bool _isLoading = false;
-
   bool get isLoading => _isLoading;
   int _currentPage = 1;
+  LeaderBoard?  photo;
 
   int get currentPage => _currentPage;
   bool _hasNext = false;
@@ -16,6 +16,8 @@ class LeaderBoardProvider extends ChangeNotifier {
   bool _pageLoading = false;
 
   bool get pageLoading => _pageLoading;
+  // String _profile_image = "";
+  // String get profile_image=>_profile_image;
 
   Future<void> fetchLeaderboardData() async {
     _isLoading = true;
@@ -25,6 +27,7 @@ class LeaderBoardProvider extends ChangeNotifier {
       var res = await Userapi.getLeaderboard(_currentPage);
       if (res != null) {
         leaderboardData = res.leaderboardData ?? [];
+
         if (res.nextPageUrl != null) {
           _hasNext = true;
         } else {

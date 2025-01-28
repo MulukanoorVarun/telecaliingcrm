@@ -27,7 +27,7 @@ class EditProfileScreen extends StatefulWidget {
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
   final TextEditingController fullnameController = TextEditingController();
-  final TextEditingController pwdController = TextEditingController();
+  // final TextEditingController pwdController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final FocusNode _focusNodeFullName = FocusNode();
   final FocusNode _focusNodeEmail = FocusNode();
@@ -67,7 +67,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               ? "Please enter a valid email address (e.g. user@domain.com)"
               : "";
 
-      if (_validateName.isEmpty && _validateEmail.isEmpty) {
+      if (_validateName.isEmpty && _validateEmail.isEmpty){
         _updateProfile();
       } else {
         isLoading = false;
@@ -115,11 +115,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   Future<int?> _updateProfile() async {
     String fullname = fullnameController.text;
     String email = emailController.text;
-    String pwd = pwdController.text;
+    // String pwd = pwdController.text;
     final profile_provider =
         Provider.of<UserDetailsProvider>(context, listen: false);
     var response =
-        await profile_provider.updateUserDetails(UserID,fullname, email, pwd, _image);
+        await profile_provider.updateUserDetails(UserID,fullname, email, _image);
     setState(() {
       if (response != null) {
         isLoading = false;
@@ -263,12 +263,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       ),
                     SizedBox(height: 16),
                     Label(text: 'PassWord'),
-                    SizedBox(height: 4),
-                    _buildTextField(
-                      controller: pwdController,
-                      hint: "Enter password",
-                      focusNode: _focusNodepwd,
-                    ),
                     SizedBox(height: 40),
                     InkResponse(
                       onTap: () {

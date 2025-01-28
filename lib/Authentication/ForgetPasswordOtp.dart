@@ -2,12 +2,17 @@ import 'dart:io';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
 import 'package:pin_code_fields/pin_code_fields.dart';
+import 'package:telecaliingcrm/Authentication/PasswordReset.dart';
+import 'package:telecaliingcrm/Authentication/SetNewPassword.dart';
+
+import '../Services/UserApi.dart';
 import '../utils/constants.dart';
 
 class ForgotOTPscreen extends StatefulWidget {
   final String email;
-  const ForgotOTPscreen({super.key,required this.email});
+  const ForgotOTPscreen({super.key, required this.email});
 
   @override
   State<ForgotOTPscreen> createState() => _ForgotOTPscreenState();
@@ -17,7 +22,7 @@ class _ForgotOTPscreenState extends State<ForgotOTPscreen> {
   final TextEditingController otpController = TextEditingController();
   final FocusNode focusNodeOTP = FocusNode();
   bool _loading = false;
-  String validateOTP="";
+  String validateOTP = "";
 
   @override
   void initState() {
@@ -27,9 +32,8 @@ class _ForgotOTPscreenState extends State<ForgotOTPscreen> {
   void _validateFields() {
     setState(() {
       _loading = true;
-      validateOTP =otpController.text.length<6
-          ? "Please enter a valid OTP"
-          : "";
+      validateOTP =
+          otpController.text.length < 6 ? "Please enter a valid OTP" : "";
       if (validateOTP.isEmpty) {
         ForgotpasswordOtpVerifyApi();
       } else {
@@ -39,29 +43,23 @@ class _ForgotOTPscreenState extends State<ForgotOTPscreen> {
   }
 
   Future<void> ForgotpasswordOtpVerifyApi() async {
-    // await Userapi.ForgetPasswordOTPVerify(widget.email,otpController.text).then((data) => {
-    //   setState(() {
-    //     if (data != null) {
-    //       if (data.settings?.success == 1) {
-    //         _loading = false;
-    //         Navigator.pushReplacement(context,
-    //             MaterialPageRoute(builder: (context) => Passwordreset(email: widget.email,)));
-    //       } else {
-    //         _loading = false;
-    //         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-    //           content: Text(
-    //             data.settings?.message ?? "",
-    //             style: TextStyle(color: Color(0xff000000)),
-    //           ),
-    //           duration: Duration(seconds: 1),
-    //           backgroundColor: color1,
-    //         ));
-    //       }
-    //     }
-    //   })
-    // });
+    var res =
+        await Userapi.forgetPasswordOtpVerify(widget.email, otpController.text);
+    if (res != null) {
+      setState(() {
+         _loading = false;
+        if (res == true) {
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => SetnewpasswordScreen(
+                  email: widget.email,
+                ),
+              ));
+        } else {}
+      });
+    }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -83,8 +81,7 @@ class _ForgotOTPscreenState extends State<ForgotOTPscreen> {
             padding: EdgeInsets.all(20),
             decoration: BoxDecoration(
                 color: color4,
-                borderRadius: BorderRadius.all(Radius.circular(8))
-            ),
+                borderRadius: BorderRadius.all(Radius.circular(8))),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -93,7 +90,12 @@ class _ForgotOTPscreenState extends State<ForgotOTPscreen> {
                 ),
                 Row(
                   children: [
-                    Icon(Icons.arrow_back),
+                    IconButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      icon: Icon(Icons.arrow_back),
+                    ),
                     SizedBox(
                       width: 15,
                     ),
@@ -108,25 +110,35 @@ class _ForgotOTPscreenState extends State<ForgotOTPscreen> {
                 ),
                 RichText(
                   text: TextSpan(
-                    style: TextStyle(fontSize: 13, color: color2,fontFamily: "Inter",fontWeight: FontWeight.w400), // Default text style
+                    style: TextStyle(
+                        fontSize: 13,
+                        color: color2,
+                        fontFamily: "Inter",
+                        fontWeight: FontWeight.w400), // Default text style
                     children: <TextSpan>[
-                      TextSpan(text: 'We sent a reset link to ',
+                      TextSpan(
+                        text: 'We sent a reset link to ',
                       ),
                       TextSpan(
-                        text: 'contact@gmail.com',
+                        text: '${widget.email}',
                         style: TextStyle(
                           color: color11,
                         ),
-                        recognizer: TapGestureRecognizer()..onTap = () {
-                          print('Email clicked');
-                        },
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () {
+                            print('Email clicked');
+                          },
                       ),
-                      TextSpan(text: '\nEnter 5 digit code that mentioned in the email',
+                      TextSpan(
+                        text:
+                            '\nEnter 5 digit code that mentioned in the email',
                       ),
                     ],
                   ),
                 ),
-                SizedBox(height: 25,),
+                SizedBox(
+                  height: 25,
+                ),
                 PinCodeTextField(
                   autoUnfocus: true,
                   appContext: context,
@@ -156,8 +168,8 @@ class _ForgotOTPscreenState extends State<ForgotOTPscreen> {
                   pinTheme: PinTheme(
                       shape: PinCodeFieldShape.box,
                       borderRadius: BorderRadius.circular(8),
-                      fieldHeight: h*0.06,
-                      fieldWidth: w*0.11,
+                      fieldHeight: h * 0.06,
+                      fieldWidth: w * 0.11,
                       fieldOuterPadding: EdgeInsets.only(left: 0, right: 3),
                       activeFillColor: Color(0xFFF4F4F4),
                       activeColor: Color(0xff110B0F),
@@ -195,7 +207,7 @@ class _ForgotOTPscreenState extends State<ForgotOTPscreen> {
                   },
                 ),
                 SizedBox(
-                  height: w*0.25,
+                  height: w * 0.25,
                 ),
                 Center(
                   child: Image.asset(
@@ -205,29 +217,32 @@ class _ForgotOTPscreenState extends State<ForgotOTPscreen> {
                   ),
                 ),
                 SizedBox(
-                  height: w*0.42,
+                  height: w * 0.42,
                 ),
                 InkWell(
-                  onTap: (){
-                    if(_loading){
-
-                    }else{
+                  onTap: () {
+                    if (_loading) {
+                    } else {
                       _validateFields();
                     }
                   },
                   child: Center(
                     child: Container(
                       width: w,
-                      height: 60,
-                      padding: EdgeInsets.symmetric(horizontal: 10,vertical: 8),
+                      height: 55,
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                       decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(8),
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(8),
                           ),
-
-                      ),
+                          color: color28),
                       child: Center(
-                        child:
-                        text(context, 'RESET PASSWORD', 16,
+                        child: _loading
+                            ? CircularProgressIndicator(
+                              color: color4,
+                            )
+                            :  text(context, 'RESET PASSWORD', 16,
                             color: color4,
                             fontfamily: "Inter",
                             fontWeight: FontWeight.w500),
@@ -245,7 +260,6 @@ class _ForgotOTPscreenState extends State<ForgotOTPscreen> {
                       color: Colors.black, // Default text color
                     ),
                     children: <TextSpan>[
-                      // Regular text
                       TextSpan(
                         text: "Haven’t got the email yet? ",
                         style: TextStyle(
@@ -262,9 +276,7 @@ class _ForgotOTPscreenState extends State<ForgotOTPscreen> {
                           fontFamily: "Inter",
                           decoration: TextDecoration.underline,
                         ),
-                        recognizer: TapGestureRecognizer()..onTap = () {
-                          print("Resend email clicked");
-                        },
+                        recognizer: TapGestureRecognizer()..onTap = () {},
                       ),
                     ],
                   ),

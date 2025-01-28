@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:telecaliingcrm/Authentication/SignInScreen.dart';
+import 'package:telecaliingcrm/utils/ShakeWidget.dart';
 
 import '../Services/UserApi.dart';
 import '../utils/constants.dart';
@@ -35,7 +36,9 @@ class _SetnewpasswordScreenState extends State<SetnewpasswordScreen> {
           password.text.isEmpty ? "Please enter a valid password" : "";
       validateConfirmPassword =
           password.text.isEmpty ? "Please enter a valid confirm password" : "";
-      if (validatePassword.isEmpty && validateConfirmPassword.isEmpty) {
+      if (validatePassword.isEmpty &&
+          validateConfirmPassword.isEmpty &&
+          validatePassword == validateConfirmPassword) {
         SetnewPasswordApi();
       } else {
         _loading = false;
@@ -44,31 +47,11 @@ class _SetnewpasswordScreenState extends State<SetnewpasswordScreen> {
   }
 
   Future<void> SetnewPasswordApi() async {
-    // await Userapi.ResetPassword(
-    //         widget.email, password.text, confirmpassword.text)
-    //     .then((data) => {
-    //           setState(() {
-    //             if (data != null) {
-    //               if (data.settings?.success == 1) {
-    //                 _loading = false;
-    //                 Navigator.pushReplacement(
-    //                     context,
-    //                     MaterialPageRoute(
-    //                         builder: (context) => SignInScreen()));
-    //               } else {
-    //                 _loading = false;
-    //                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-    //                   content: Text(
-    //                     data.settings?.message ?? "",
-    //                     style: TextStyle(color: Color(0xff000000)),
-    //                   ),
-    //                   duration: Duration(seconds: 1),
-    //                   // backgroundColor: color1,
-    //                 ));
-    //               }
-    //             }
-    //           })
-    //         });
+    var res = await Userapi.updatePassword(widget.email, password.text);
+    if (res == true) {
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => SignInScreen()));
+    } else {}
   }
 
   @override
@@ -100,7 +83,12 @@ class _SetnewpasswordScreenState extends State<SetnewpasswordScreen> {
                 ),
                 Row(
                   children: [
-                    Icon(Icons.arrow_back),
+                    IconButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      icon: Icon(Icons.arrow_back),
+                    ),
                     SizedBox(
                       width: 15,
                     ),
@@ -152,6 +140,29 @@ class _SetnewpasswordScreenState extends State<SetnewpasswordScreen> {
                     ),
                   ),
                 ),
+                if (validatePassword.isNotEmpty) ...[
+                  Container(
+                    alignment: Alignment.topLeft,
+                    margin: EdgeInsets.only(bottom: 5),
+                    child: ShakeWidget(
+                      key: Key("value"),
+                      duration: Duration(milliseconds: 700),
+                      child: Text(
+                        validatePassword,
+                        style: TextStyle(
+                          fontFamily: "Poppins",
+                          fontSize: 12,
+                          color: Colors.red,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ),
+                ] else ...[
+                  const SizedBox(
+                    height: 12,
+                  ),
+                ],
                 SizedBox(
                   height: w * 0.07,
                 ),
@@ -182,8 +193,31 @@ class _SetnewpasswordScreenState extends State<SetnewpasswordScreen> {
                     ),
                   ),
                 ),
+                if (validateConfirmPassword.isNotEmpty) ...[
+                  Container(
+                    alignment: Alignment.topLeft,
+                    margin: EdgeInsets.only(bottom: 5),
+                    child: ShakeWidget(
+                      key: Key("value"),
+                      duration: Duration(milliseconds: 700),
+                      child: Text(
+                        validateConfirmPassword,
+                        style: TextStyle(
+                          fontFamily: "Poppins",
+                          fontSize: 12,
+                          color: Colors.red,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ),
+                ] else ...[
+                  const SizedBox(
+                    height: 12,
+                  ),
+                ],
                 SizedBox(
-                  height: w * 1,
+                  height: w * 0.8,
                 ),
                 InkWell(
                   onTap: () {
@@ -192,27 +226,30 @@ class _SetnewpasswordScreenState extends State<SetnewpasswordScreen> {
                       _validateFields();
                     }
                   },
-                  child: Center(
-                    child: Container(
-                      width: w,
-                      height: 60,
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(8),
-                          ),
-                          // color: color1
-                      ),
-                      child: Center(
-                        child: text(context, 'UPDATE PASSWORD', 16,
-                                color: color4,
-                                fontfamily: "Inter",
-                                fontWeight: FontWeight.w500),
-                      ),
+                  child: Container(
+                    width: w,
+                    height: 60,
+                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(8),
+                        ),
+                        color: color28),
+                    child: Center(
+                      child: _loading
+                          ? CircularProgressIndicator(
+                            color: color4,
+                          )
+                          :  text(context, 'UPDATE PASSWORD', 16,
+                          color: color4,
+                          fontfamily: "Inter",
+                          fontWeight: FontWeight.w500),
                     ),
                   ),
-                )
+                ),
+                SizedBox(
+                  height: 20,
+                ),
               ],
             ),
           ),

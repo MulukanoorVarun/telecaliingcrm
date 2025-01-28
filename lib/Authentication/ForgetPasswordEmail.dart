@@ -1,6 +1,7 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:telecaliingcrm/Authentication/ForgetPasswordOtp.dart';
+import 'package:telecaliingcrm/services/UserApi.dart';
 import 'package:telecaliingcrm/utils/ShakeWidget.dart';
 import 'package:telecaliingcrm/utils/constants.dart';
 
@@ -12,26 +13,24 @@ class Forgotpasswordscreen extends StatefulWidget {
 }
 
 class _ForgotpasswordscreenState extends State<Forgotpasswordscreen> {
-
   final TextEditingController email = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-
   }
 
   bool _loading = false;
-  String _validateEmail = ""; // Corrected the typo here
+  String _validateEmail = "";
 
   void _validateFields() {
     setState(() {
       _loading = true;
       _validateEmail =
-      !RegExp(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$")
-          .hasMatch(email.text)
-          ? "Please enter a valid email"
-          : "";
+          !RegExp(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$")
+                  .hasMatch(email.text)
+              ? "Please enter a valid email"
+              : "";
       if (_validateEmail.isEmpty) {
         ForgotpasswordApi();
       } else {
@@ -41,33 +40,26 @@ class _ForgotpasswordscreenState extends State<Forgotpasswordscreen> {
   }
 
   Future<void> ForgotpasswordApi() async {
-    // await Userapi.ForgetPasswordOTP(email.text).then((data) {
-    //   setState(() {
-    //     if (data != null) {
-    //       if (data.settings?.success == 1) {
-    //         _loading = false;
-    //         Navigator.pushReplacement(
-    //           context,
-    //           MaterialPageRoute(
-    //             builder: (context) => ForgotOTPscreen(
-    //               email: email.text,
-    //             ),
-    //           ),
-    //         );
-    //       } else {
-    //         _loading = false;
-    //         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-    //           content: Text(
-    //             data.settings?.message ?? "",
-    //             style: TextStyle(color: Color(0xff000000)),
-    //           ),
-    //           duration: Duration(seconds: 1),
-    //           backgroundColor: color1,
-    //         ));
-    //       }
-    //     }
-    //   });
-    // });
+   var res= await Userapi.forgetPassword(email.text,context);
+   if(res!=null){
+     setState(() {
+       _loading = false;
+       if(res==true){
+         Navigator.pushReplacement(
+           context,
+           MaterialPageRoute(
+             builder: (context) => ForgotOTPscreen(
+               email: email.text,
+             ),
+           ),
+         );
+       }else{
+
+       }
+     });
+
+
+   }
   }
 
   @override
@@ -100,7 +92,12 @@ class _ForgotpasswordscreenState extends State<Forgotpasswordscreen> {
                 ),
                 Row(
                   children: [
-                    Icon(Icons.arrow_back),
+                    IconButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      icon: Icon(Icons.arrow_back),
+                    ),
                     SizedBox(
                       width: 15,
                     ),
@@ -195,7 +192,6 @@ class _ForgotpasswordscreenState extends State<Forgotpasswordscreen> {
                 InkWell(
                   onTap: () {
                     if (_loading) {
-
                       return;
                     } else {
                       _validateFields();
@@ -205,17 +201,19 @@ class _ForgotpasswordscreenState extends State<Forgotpasswordscreen> {
                     child: Container(
                       width: w,
                       height: 55,
-                      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(8),
-
-                        ),
-                        color: color28
-
-                      ),
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(8),
+                          ),
+                          color: color28),
                       child: Center(
-                        child: text(
+                        child: _loading
+                            ? CircularProgressIndicator(
+                              color: color4,
+                            )
+                            : text(
                           context,
                           'RESET PASSWORD',
                           16,

@@ -10,6 +10,7 @@ import 'package:telecaliingcrm/model/UserDetailsModel.dart';
 import 'package:telecaliingcrm/services/otherservices.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:mime/mime.dart';
+import 'package:telecaliingcrm/utils/constants.dart';
 import '../model/RegisterModel.dart';
 import '../model/ViewInfoModel.dart';
 import '../model/GetFollowUpModel.dart';
@@ -374,7 +375,6 @@ class Userapi {
 
   static Future<String?> updateProfile(UserID,String fullname,
       String email,
-      String pwd,
       File? image) async {
     try {
       final url =
@@ -383,16 +383,11 @@ class Userapi {
       // Create a MultipartRequest for a multipart form upload
       final request = http.MultipartRequest('POST', url);
       final sessionid = await PreferenceService().getString("token");
-
-      // Add headers
       request.headers['Authorization'] = 'Bearer $sessionid';
 
-      // Add fields (username, email, password)
       request.fields['username'] = fullname;
       request.fields['email'] = email;
-      request.fields['password'] = pwd;
 
-      // Add the photo file if provided
       if (image != null) {
         final mimeType = lookupMimeType(image.path);
         print("Image MIME type: $mimeType");
@@ -492,7 +487,6 @@ class Userapi {
         },
       );
       if (response.statusCode == 200) {
-        // Handling the response as JSON
         final Map<String, dynamic> responseData = json.decode(response.body);
         if (responseData['status']) {
           return true;
@@ -508,7 +502,7 @@ class Userapi {
     }
   }
 
-  static Future<bool?> forgetPassword(String email) async {
+  static Future<bool?> forgetPassword(String email,BuildContext context) async {
     try{
       final Uri url = Uri.parse('${host}/api/forget-password');
       final response = await http.post(
@@ -539,6 +533,7 @@ class Userapi {
           'otp': otp,
         },
       );
+
       if (response.statusCode == 200) {
         return true;
       } else {

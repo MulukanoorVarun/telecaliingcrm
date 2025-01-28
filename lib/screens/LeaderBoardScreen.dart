@@ -106,31 +106,37 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                           },
                         )
                       : Expanded(
-                        child: NotificationListener<ScrollNotification>(onNotification: (ScrollNotification scrollInfo){
-                          if(leaderBoardProvider.isLoading && scrollInfo.metrics.pixels==scrollInfo.metrics.maxScrollExtent){
-                            if(leaderBoardProvider.hasNext){
-                              leaderBoardProvider.fetchMoreLeaderboardData();
-                            }
-                            return true;
-                          }
-                          return false;
-                        },
-                          child: CustomScrollView(
+                          child: NotificationListener<ScrollNotification>(
+                            onNotification: (ScrollNotification scrollInfo) {
+                              if (leaderBoardProvider.isLoading &&
+                                  scrollInfo.metrics.pixels ==
+                                      scrollInfo.metrics.maxScrollExtent) {
+                                if (leaderBoardProvider.hasNext) {
+                                  leaderBoardProvider
+                                      .fetchMoreLeaderboardData();
+                                }
+                                return true;
+                              }
+                              return false;
+                            },
+                            child: CustomScrollView(
                               slivers: [
                                 SliverList(
                                     delegate: SliverChildBuilderDelegate(
                                         (context, index) {
-                                  final leadboard =
-                                      leaderBoardProvider.leaderboardData[index];
+                                  final leadboard = leaderBoardProvider
+                                      .leaderboardData[index];
                                   final leaderNumber = index + 1;
+                                  String profile_image = leadboard.photo ?? '';
                                   return Card(
                                     child: Container(
-                                      margin:
-                                          const EdgeInsets.symmetric(vertical: 8.0),
+                                      margin: const EdgeInsets.symmetric(
+                                          vertical: 8.0),
                                       padding: const EdgeInsets.all(12.0),
                                       decoration: BoxDecoration(
                                         color: Colors.white,
-                                        borderRadius: BorderRadius.circular(10.0),
+                                        borderRadius:
+                                            BorderRadius.circular(10.0),
                                       ),
                                       child: Row(
                                         children: [
@@ -154,25 +160,36 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                                                   primaryColor, // Background color for the container (can be customized)
                                               alignment: Alignment
                                                   .center, // Center the text
-                                              child: Text(
-                                                leadboard.name?.isNotEmpty ?? false
-                                                    ? leadboard.name![0]
-                                                        .toUpperCase()
-                                                    : '', // Show first character or empty if name is null/empty
-                                                style: const TextStyle(
-                                                  fontSize:
-                                                      24.0, // Font size for the letter
-                                                  fontFamily: "Poppins",
-                                                  fontWeight: FontWeight.w600,
-                                                  color: Colors.white, // Text color
-                                                ),
-                                              ),
+                                              child: profile_image
+                                                      .isNotEmpty // Check if the profile image is available
+                                                  ? CircleAvatar(
+                                                      radius: 50,
+                                                      foregroundImage: NetworkImage(
+                                                          profile_image), // Display image if available
+                                                    )
+                                                  : Text(
+                                                      leadboard.name
+                                                                  ?.isNotEmpty ??
+                                                              false
+                                                          ? leadboard.name![0]
+                                                              .toUpperCase()
+                                                          : '',
+                                                      style: const TextStyle(
+                                                        fontSize:
+                                                            24.0, // Font size for the letter
+                                                        fontFamily: "Poppins",
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        color: Colors
+                                                            .white, // Text color
+                                                      ),
+                                                    ),
                                             ),
                                           ),
                                           const SizedBox(width: 16.0),
                                           Text(
                                             capitalizeFirstLetter(
-                                                leadboard.name?? ""),
+                                                leadboard.name ?? ""),
                                             style: const TextStyle(
                                               fontSize: 16.0,
                                               fontFamily: "Poppins",
@@ -206,8 +223,8 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                                   )
                               ],
                             ),
+                          ),
                         ),
-                      ),
                 );
               },
             ),

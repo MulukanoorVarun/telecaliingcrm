@@ -79,18 +79,21 @@ class LeaderBoardModel {
 
 class LeaderBoard {
   String? name;
+  String? photo;
   int? count;
 
-  LeaderBoard({this.name, this.count});
+  LeaderBoard({this.name, this.photo,this.count});
 
   LeaderBoard.fromJson(Map<String, dynamic> json) {
     name = json['name'];
+    photo = json['photo'];
     count = json['count'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['name'] = this.name;
+    data['photo'] = this.photo;
     data['count'] = this.count;
     return data;
   }
