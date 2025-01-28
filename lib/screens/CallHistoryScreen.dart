@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:telecaliingcrm/Services/UserApi.dart';
 import 'package:telecaliingcrm/Services/otherservices.dart';
@@ -58,6 +59,8 @@ class _CallhistoryscreenState extends State<Callhistoryscreen> {
 
   @override
   Widget build(BuildContext context) {
+    var w = MediaQuery.of(context).size.width;
+    var h = MediaQuery.of(context).size.height;
     var connectiVityStatus = Provider.of<ConnectivityProviders>(context);
     return (connectiVityStatus.isDeviceConnected == "ConnectivityResult.wifi" ||
             connectiVityStatus.isDeviceConnected == "ConnectivityResult.mobile")
@@ -89,7 +92,24 @@ class _CallhistoryscreenState extends State<Callhistoryscreen> {
               builder: (context, callhistoryprovider, child) {
                 if (callhistoryprovider.loading) {
                   return _buildShimmerList();
-                } else {
+                }else if(callhistoryprovider.call_history.isEmpty){
+                  return Center(
+                    child: Column(
+                      children: [
+                        SizedBox(
+                          height: w * 0.54,
+                        ),
+                        Lottie.asset(
+                          'assets/animations/nodata1.json', // Your Lottie animation file
+                          width: 150, // Adjust the size as needed
+                          height: 150,
+                          fit: BoxFit.cover,
+                        ),
+                      ],
+                    ),
+                  );
+                }
+                else {
                   return Column(
                     children: [
                       SizedBox(height: 16,),

@@ -284,7 +284,24 @@ class _LeadsScreenState extends State<LeadScreen>
                     final LeadsList = leadsProvider.leadsList ?? [];
                     if (leadsProvider.isLoading) {
                       return _buildShimmerList();
-                    } else {
+                    } else if(LeadsList.isEmpty){
+                      return Center(
+                        child: Column(
+                          children: [
+                            SizedBox(
+                              height: w * 0.54,
+                            ),
+                            Lottie.asset(
+                              'assets/animations/nodata1.json', // Your Lottie animation file
+                              width: 150, // Adjust the size as needed
+                              height: 150,
+                              fit: BoxFit.cover,
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+                    else {
                       return Expanded(
                         child: NotificationListener<ScrollNotification>(
                           onNotification: (ScrollNotification scrollInfo) {
