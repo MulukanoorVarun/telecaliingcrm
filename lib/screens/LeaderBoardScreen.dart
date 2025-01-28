@@ -160,7 +160,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                                                   primaryColor, // Background color for the container (can be customized)
                                               alignment: Alignment
                                                   .center, // Center the text
-                                              child: profile_image
+                                              child: profile_image!=null&&profile_image
                                                       .isNotEmpty // Check if the profile image is available
                                                   ? CircleAvatar(
                                                       radius: 50,

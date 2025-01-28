@@ -74,11 +74,9 @@ class LeadsProvider with ChangeNotifier {
   }
   Future<void> fetchMoreLeadsList(String type, BuildContext context) async {
     if (!_hasNextPage || _pageLoading) {
-      // If there are no more pages or another fetch is ongoing, stop.
       return;
     }
-
-    _pageLoading = true; // Indicate loading state for pagination.
+    _pageLoading = true;
     notifyListeners();
 
     try {

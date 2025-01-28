@@ -475,7 +475,7 @@ class Userapi {
     }
   }
 
-  static Future<bool?> updatePassword(String email, String password) async {
+  static Future<bool?> updatePassword(String email, String password,BuildContext context) async {
     try{
       final Uri url = Uri.parse('${host}/api/update_password');
       final response = await http.post(
@@ -488,11 +488,16 @@ class Userapi {
       if (response.statusCode == 200) {
         final Map<String, dynamic> responseData = json.decode(response.body);
         if (responseData['status']) {
+          final Map<String, dynamic> responseData = json.decode(response.body);
+          CustomSnackBar.show(context, responseData['message']);
           return true;
         } else {
+          final Map<String, dynamic> responseData = json.decode(response.body);
+          CustomSnackBar.show(context, responseData['message']);
           return false;
         }
       } else {
+
         return false;
       }
     }catch(e){
@@ -511,8 +516,12 @@ class Userapi {
         },
       );
       if (response.statusCode == 200) {
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        CustomSnackBar.show(context, responseData['message']);
         return true;
       } else {
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        CustomSnackBar.show(context, responseData['message']);
         return false;
       }
     }catch(e){
@@ -522,7 +531,7 @@ class Userapi {
   }
 
 
-  static Future<bool?> forgetPasswordOtpVerify(String email,String otp) async {
+  static Future<bool?> forgetPasswordOtpVerify(String email,String otp,BuildContext context) async {
     try{
       final Uri url = Uri.parse('${host}/api/verify-otp');
       final response = await http.post(
@@ -534,8 +543,12 @@ class Userapi {
       );
 
       if (response.statusCode == 200) {
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        CustomSnackBar.show(context, responseData['message']);
         return true;
       } else {
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        CustomSnackBar.show(context, responseData['message']);
         return false;
       }
     }catch(e){

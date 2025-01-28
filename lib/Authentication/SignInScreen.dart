@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:telecaliingcrm/Authentication/ForgetPasswordEmail.dart';
 import 'package:telecaliingcrm/screens/HomeScreen.dart';
 import 'package:telecaliingcrm/screens/dashboard.dart';
 import '../providers/ConnectivityProviders.dart';
@@ -341,6 +342,19 @@ class _SignInScreenState extends State<SignInScreen> {
                     ] else ...[
                       SizedBox(height: 8),
                     ],
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        TextButton(
+                            onPressed: () {
+                              Navigator.push(context, MaterialPageRoute(builder: (context)=>Forgotpasswordscreen()));
+                            },
+                            child: Text(
+                              'Forget Password',
+                              style: TextStyle(color: color28),
+                            )),
+                      ],
+                    ),
                     SizedBox(
                       height: h * 0.06,
                     ),
