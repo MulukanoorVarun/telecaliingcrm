@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:telecaliingcrm/Authentication/ForgetPasswordEmail.dart';
 import 'package:telecaliingcrm/screens/HomeScreen.dart';
 import 'package:telecaliingcrm/screens/dashboard.dart';
 import '../providers/ConnectivityProviders.dart';
@@ -62,24 +61,41 @@ class _SignInScreenState extends State<SignInScreen> {
       if (data != null) {
         if (data['access_token'] != null) {
           // Get the current timestamp in seconds
-          int currentTimestampInSeconds =
-              DateTime.now().millisecondsSinceEpoch ~/ 1000;
+          int currentTimestampInSeconds = DateTime.now().millisecondsSinceEpoch ~/ 1000;
 
           // Calculate the expiry timestamp
-          int expiryTimestamp =
-              (currentTimestampInSeconds + data['expires_in']).toInt();
+          int expiryTimestamp = (currentTimestampInSeconds + data['expires_in']).toInt();
           // Successful login
           PreferenceService().saveString('token', data['access_token']);
-          PreferenceService()
-              .saveInt('access_expiry_timestamp', expiryTimestamp);
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => Dashboard()),
-          );
+          PreferenceService().saveInt('access_expiry_timestamp', expiryTimestamp);
+          Navigator.of(context)
+              .pushReplacement(PageRouteBuilder(
+            pageBuilder: (context, animation,
+                secondaryAnimation) {
+              return Dashboard();
+            },
+            transitionsBuilder: (context,
+                animation,
+                secondaryAnimation,
+                child) {
+              const begin = Offset(1.0, 0.0);
+              const end = Offset.zero;
+              const curve = Curves.easeInOut;
+              var tween = Tween(
+                  begin: begin, end: end)
+                  .chain(CurveTween(
+                  curve: curve));
+              var offsetAnimation =
+              animation.drive(tween);
+              return SlideTransition(
+                  position: offsetAnimation,
+                  child: child);
+            },
+          ));
         } else if (data['error'] != null) {
           // Authentication error
           CustomSnackBar.show(context, data['error']);
-        } else if (data['email'] != null || data['password'] != null) {
+        } else if (data['email'] != null || data['password'] != null) { 
           // Validation error
           String emailError =
               (data['email'] != null) ? data['email'].join(", ") : "";
@@ -123,7 +139,7 @@ class _SignInScreenState extends State<SignInScreen> {
     return (connectiVityStatus.isDeviceConnected == "ConnectivityResult.wifi" ||
             connectiVityStatus.isDeviceConnected == "ConnectivityResult.mobile")
         ? Scaffold(
-            backgroundColor: color28,
+            backgroundColor: Colors.white,
             body: SingleChildScrollView(
               physics: NeverScrollableScrollPhysics(),
               child: Padding(
@@ -136,6 +152,7 @@ class _SignInScreenState extends State<SignInScreen> {
                       'assets/telecalling_splash.png',
                       fit: BoxFit.contain,
                       height: h * 0.12,
+                      color: Color(0xff7165E3),
                       width: w,
                     ),
                     SizedBox(
@@ -180,19 +197,19 @@ class _SignInScreenState extends State<SignInScreen> {
                           fillColor: const Color(0xffFCFAFF),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(7),
-                            borderSide: BorderSide(width: 1, color: color28),
+                            borderSide: BorderSide(width: 1, color: Color(0xffd0cbdb)),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(7),
-                            borderSide: BorderSide(width: 1, color: color28),
+                            borderSide: BorderSide(width: 1,  color: Color(0xffd0cbdb)),
                           ),
                           errorBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(7),
-                            borderSide: BorderSide(width: 1, color: color28),
+                            borderSide: BorderSide(width: 1, color: Color(0xffd0cbdb)),
                           ),
                           focusedErrorBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(7),
-                            borderSide: BorderSide(width: 1, color: color28),
+                            borderSide: BorderSide(width: 1,  color: Color(0xffd0cbdb)),
                           ),
                         ),
                         style: TextStyle(
@@ -207,7 +224,7 @@ class _SignInScreenState extends State<SignInScreen> {
                       Container(
                         alignment: Alignment.topLeft,
                         margin: EdgeInsets.only(left: 8, bottom: 10, top: 5),
-                        width: MediaQuery.of(context).size.width * 0.6,
+                        width: MediaQuery.of(context).size.width * 0.8,
                         child: ShakeWidget(
                           key: Key("value"),
                           duration: Duration(milliseconds: 700),
@@ -275,7 +292,7 @@ class _SignInScreenState extends State<SignInScreen> {
                           fillColor: const Color(0xffFCFAFF),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(7),
-                            borderSide: BorderSide(width: 1, color: color28),
+                            borderSide: BorderSide(width: 1, color:Color(0xffd0cbdb)),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(7),
@@ -306,7 +323,7 @@ class _SignInScreenState extends State<SignInScreen> {
                       Container(
                         alignment: Alignment.topLeft,
                         margin: EdgeInsets.only(left: 8, bottom: 10, top: 5),
-                        width: MediaQuery.of(context).size.width * 0.6,
+                        width: MediaQuery.of(context).size.width * 0.8,
                         child: ShakeWidget(
                           key: Key("value"),
                           duration: Duration(milliseconds: 700),
@@ -324,55 +341,26 @@ class _SignInScreenState extends State<SignInScreen> {
                     ] else ...[
                       SizedBox(height: 8),
                     ],
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        TextButton(
-                            onPressed: () {
-                              Navigator.push(context, MaterialPageRoute(builder: (context)=>Forgotpasswordscreen()));
-                            },
-                            child: Text(
-                              'ForgetPassword?',
-                              style: TextStyle(color: Color(0xffffffff)),
-                            )),
-                      ],
-                    ),
                     SizedBox(
                       height: h * 0.06,
                     ),
-                    InkResponse(
-                      onTap: () {
-                        if (_loading) {
-                        } else {
-                          _validateFields();
-                        }
-                      },
-                      child: Container(
-                          height: 45,
-                          width: w,
-                          decoration: BoxDecoration(
-                            color: color4,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: _loading
-                              ? Center(
-                                  child: CircularProgressIndicator(
-                                  color: color28,
-                                ))
-                              : Center(
-                                  child: Text(
-                                    'LogIn',
-                                    style: TextStyle(
-                                      color: color28,
-                                      fontWeight: FontWeight.w700,
-                                      fontSize: 16,
-                                      height: 21.78 / 16,
-                                      letterSpacing: 1,
-                                      fontFamily: "Poppins",
-                                    ),
-                                  ),
-                                )),
-                    )
+                    Center(
+                      child: containertext(
+                        context,
+                        'LOGIN',
+                        width: MediaQuery.of(context).size.width * 0.9, // Avoid using 'w' unless it's well-defined
+                        color:Color(0xff7165E3),
+                        isLoading: _loading,
+                        onTap: () {
+                          if (_loading) {
+                            return; // Handle accordingly
+                          } else {
+                            _validateFields();
+                          }
+                        },
+                      ),
+                    ),
+
                   ],
                 ),
               ),

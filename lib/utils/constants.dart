@@ -230,14 +230,20 @@ Color color37 = Color(0xffF5F5F5);
 final spinkits=Spinkits1();
 
 Widget containertext(BuildContext context, String buttonText,
-    {Function()? onTap, Color? color, double? width, double? height, bool isLoading = false}) {
+    {Function()? onTap,
+      Color? color,
+      double? width,
+      double? height,
+      bool isLoading = false}) {
+  final buttonColor = color ?? const Color(0xffECEBFB);
   return SizedBox(
     width: width ?? MediaQuery.of(context).size.width,
     height: height ?? 45,
     child: ElevatedButton(
       onPressed: isLoading ? null : onTap,
       style: ElevatedButton.styleFrom(
-        backgroundColor: color ?? color28, // Replace 'color28' with your default color.
+        backgroundColor: buttonColor,
+        disabledBackgroundColor: buttonColor,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8),
         ),
@@ -249,7 +255,7 @@ Widget containertext(BuildContext context, String buttonText,
       )
           : Text(
         buttonText,
-        style: TextStyle(
+        style: const TextStyle(
           color: Colors.white,
           fontWeight: FontWeight.w700,
           fontSize: 16,
@@ -261,6 +267,7 @@ Widget containertext(BuildContext context, String buttonText,
     ),
   );
 }
+
 
  Container container(BuildContext context,
     {required Widget child,

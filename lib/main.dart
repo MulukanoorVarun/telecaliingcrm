@@ -78,7 +78,11 @@ class MyApp extends StatelessWidget {
             surfaceTintColor: Colors.white,
             color: Colors.white,
           ),
-
+          elevatedButtonTheme: ElevatedButtonThemeData(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Color(0xffECEBFB),
+            ),
+          ),
           textButtonTheme: TextButtonThemeData(
             style: ButtonStyle(
               // overlayColor: MaterialStateProperty.all(Colors.white),

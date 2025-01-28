@@ -2,11 +2,7 @@ import 'dart:io';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
 import 'package:pin_code_fields/pin_code_fields.dart';
-import 'package:telecaliingcrm/Authentication/PasswordReset.dart';
-
-import '../Services/UserApi.dart';
 import '../utils/constants.dart';
 
 class ForgotOTPscreen extends StatefulWidget {

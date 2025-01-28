@@ -34,27 +34,7 @@ class Homescreen extends StatefulWidget {
 }
 
 class _HomescreenState extends State<Homescreen> {
-  File? _image; // To store the selected image
   bool isLoading = false; // Loading state
-  XFile? _pickedFile;
-  final ImagePicker _picker = ImagePicker();
-
-  Future<void> _pickImage() async {
-    final XFile? pickedFile = await _picker.pickImage(
-      source: ImageSource.gallery, // Use ImageSource.camera for camera
-      imageQuality: 100,
-    );
-    if (pickedFile != null) {
-      setState(() {
-        _image = File(pickedFile.path); // Set the selected image file
-        print("Image: ${_image?.path}"); // Print the image path for debugging
-      });
-    } else {
-      print("No image selected.");
-    }
-  }
-
-  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
   int currentIndex = 0;
   bool isCalling = false;
   late Timer callDurationTimer;
@@ -68,7 +48,6 @@ class _HomescreenState extends State<Homescreen> {
   void initState() {
     GetDashBoardDetails();
     Provider.of<ConnectivityProviders>(context, listen: false).initConnectivity();
-    _initializeNotifications();
     _initializePhoneStateListener();
     _requestPermission();
     super.initState();
@@ -88,14 +67,6 @@ class _HomescreenState extends State<Homescreen> {
     if(res==true){
       user_details_provider.fetchUserDetails();
     }
-  }
-
-  Future<void> _initializeNotifications() async {
-    const initializationSettingsAndroid =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
-    final initializationSettings =
-        InitializationSettings(android: initializationSettingsAndroid);
-    await flutterLocalNotificationsPlugin.initialize(initializationSettings);
   }
 
   // Request phone permissions

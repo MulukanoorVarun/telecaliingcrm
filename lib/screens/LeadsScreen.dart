@@ -23,13 +23,10 @@ class LeadScreen extends StatefulWidget {
 class _LeadsScreenState extends State<LeadScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  late ConnectivityProviders _connectivityProvider;
   String stage_name="";
   @override
   void initState() {
-    // Save the provider reference during initState
-    _connectivityProvider = Provider.of<ConnectivityProviders>(context, listen: false);
-    _connectivityProvider.initConnectivity();
+    Provider.of<ConnectivityProviders>(context, listen: false).initConnectivity();
     // Delay fetchLeads until after the widget tree has finished building
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _fetchLeads();
@@ -47,7 +44,7 @@ class _LeadsScreenState extends State<LeadScreen>
   void dispose() {
     _tabController.dispose();
     // Use the saved reference to dispose of the connectivity provider
-    _connectivityProvider.dispose();
+    Provider.of<ConnectivityProviders>(context, listen: false).dispose();
     super.dispose();
   }
 

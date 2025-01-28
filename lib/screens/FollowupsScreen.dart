@@ -19,14 +19,9 @@ class FollowupsScreen extends StatefulWidget {
 }
 
 class _FollowupsScreenState extends State<FollowupsScreen> {
-  late ConnectivityProviders _connectivityProvider;
-
   @override
   void initState() {
-    _connectivityProvider = Provider.of<ConnectivityProviders>(context, listen: false);
-    _connectivityProvider.initConnectivity();
     Provider.of<ConnectivityProviders>(context, listen: false).initConnectivity();
-    // Delay fetchLeads until after the widget tree has finished building
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _fetchFollowups();
     });
@@ -40,7 +35,7 @@ class _FollowupsScreenState extends State<FollowupsScreen> {
 
   @override
   void dispose() {
-    _connectivityProvider.dispose();
+    Provider.of<ConnectivityProviders>(context, listen: false).dispose();
     super.dispose();
   }
 

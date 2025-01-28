@@ -41,12 +41,27 @@ class _OnBoardindScreenState extends State<OnBoardindScreen> {
           SizedBox(
             height: h * 0.2,
           ),
-          InkResponse(
-              onTap: () {
-                Navigator.pushReplacement(context,
-                    MaterialPageRoute(builder: (context) => SignInScreen()));
+          containertext(context, 'NEXT', width: w * 0.9,color:Color(0xff7165E3),onTap: (){
+            Navigator.of(context).pushReplacement(
+                PageRouteBuilder(pageBuilder: (context, animation, secondaryAnimation) {
+                return SignInScreen();
               },
-              child: containertext(context, 'NEXT', width: w * 0.3)),
+              transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                const begin = Offset(1.0, 0.0);
+                const end = Offset.zero;
+                const curve = Curves.easeInOut;
+                var tween = Tween(
+                    begin: begin, end: end)
+                    .chain(CurveTween(
+                    curve: curve));
+                var offsetAnimation =
+                animation.drive(tween);
+                return SlideTransition(
+                    position: offsetAnimation,
+                    child: child);
+              },
+            ));
+          }),
         ],
       ),
     );
