@@ -151,39 +151,34 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                                           ),
                                           const SizedBox(width: 16.0),
                                           ClipRRect(
-                                            borderRadius:
-                                                BorderRadius.circular(8.0),
+                                            borderRadius: BorderRadius.circular(8.0),
                                             child: Container(
                                               width: 50.0,
                                               height: 50.0,
-                                              color:
-                                                  primaryColor, // Background color for the container (can be customized)
-                                              alignment: Alignment
-                                                  .center, // Center the text
-                                              child: profile_image!=null&&profile_image
-                                                      .isNotEmpty // Check if the profile image is available
-                                                  ? CircleAvatar(
-                                                      radius: 50,
-                                                      foregroundImage: NetworkImage(
-                                                          profile_image), // Display image if available
-                                                    )
-                                                  : Text(
-                                                      leadboard.name
-                                                                  ?.isNotEmpty ??
-                                                              false
-                                                          ? leadboard.name![0]
-                                                              .toUpperCase()
-                                                          : '',
-                                                      style: const TextStyle(
-                                                        fontSize:
-                                                            24.0, // Font size for the letter
-                                                        fontFamily: "Poppins",
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        color: Colors
-                                                            .white, // Text color
-                                                      ),
-                                                    ),
+                                              decoration: BoxDecoration(
+                                                color: primaryColor, // Background color for the container
+                                                shape: BoxShape.circle,
+                                                image: profile_image.isNotEmpty // Check if the profile image is available
+                                                    ? DecorationImage(
+                                                  image: NetworkImage(profile_image),
+                                                  fit: BoxFit.cover, // Control how the image fits
+                                                )
+                                                    : null, // No image decoration if profile_image is not available
+                                              ),
+                                              alignment: Alignment.center,
+                                              child: (profile_image.isEmpty) // Fallback to text if no image
+                                                  ? Text(
+                                                leadboard.name?.isNotEmpty ?? false
+                                                    ? leadboard.name![0].toUpperCase()
+                                                    : '',
+                                                style: const TextStyle(
+                                                  fontSize: 24.0, // Font size for the letter
+                                                  fontFamily: "Poppins",
+                                                  fontWeight: FontWeight.w600,
+                                                  color: Colors.white, // Text color
+                                                ),
+                                              )
+                                                  : null,
                                             ),
                                           ),
                                           const SizedBox(width: 16.0),

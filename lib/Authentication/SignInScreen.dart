@@ -5,6 +5,7 @@ import 'package:telecaliingcrm/Authentication/ForgetPasswordEmail.dart';
 import 'package:telecaliingcrm/screens/HomeScreen.dart';
 import 'package:telecaliingcrm/screens/dashboard.dart';
 import '../providers/ConnectivityProviders.dart';
+import '../screens/SubscriptionExpiredScreen.dart';
 import '../services/UserApi.dart';
 import '../services/otherservices.dart';
 import '../utils/ShakeWidget.dart';
@@ -93,7 +94,33 @@ class _SignInScreenState extends State<SignInScreen> {
                   child: child);
             },
           ));
-        } else if (data['error'] != null) {
+        }else if(data['status']==false){
+          Navigator.of(context)
+              .push(PageRouteBuilder(
+            pageBuilder: (context, animation,
+                secondaryAnimation) {
+              return SubscriptionExpiredScreen();
+            },
+            transitionsBuilder: (context,
+                animation,
+                secondaryAnimation,
+                child) {
+              const begin = Offset(1.0, 0.0);
+              const end = Offset.zero;
+              const curve = Curves.easeInOut;
+              var tween = Tween(
+                  begin: begin, end: end)
+                  .chain(CurveTween(
+                  curve: curve));
+              var offsetAnimation =
+              animation.drive(tween);
+              return SlideTransition(
+                  position: offsetAnimation,
+                  child: child);
+            },
+          ));
+        }
+        else if (data['error'] != null) {
           // Authentication error
           CustomSnackBar.show(context, data['error']);
         } else if (data['email'] != null || data['password'] != null) { 
@@ -103,11 +130,13 @@ class _SignInScreenState extends State<SignInScreen> {
           String passwordError =
               (data['password'] != null) ? data['password'].join(", ") : "";
           CustomSnackBar.show(context, "$emailError $passwordError".trim());
-        } else {
+        }
+        else {
           // Unexpected response
           CustomSnackBar.show(context, "An unexpected error occurred.");
         }
-      } else {
+      }
+      else {
         // Null response
         CustomSnackBar.show(context, "Failed to sign in. Please try again.");
       }

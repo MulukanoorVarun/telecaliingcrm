@@ -331,7 +331,15 @@ class _FollowupsScreenState extends State<FollowupsScreen> {
                                   child: Align(alignment: Alignment.center,
                                     child:CircularProgressIndicator(strokeWidth: 1)
                                   ),
-                                )
+                                ),
+                              SliverPadding(
+                                padding: EdgeInsets.only(bottom: 20),
+                                sliver: SliverToBoxAdapter(
+                                  child: SizedBox(
+                                    height: 10,
+                                  ),
+                                ),
+                              ),
                             ],
                           ),
                         ),

@@ -262,10 +262,10 @@ class _LeadsScreenState extends State<LeadScreen>
                             ),
                           ),
                           onPressed: () {
-                            _fetchLeads();
                             setState(() {
                               stage_name="warm";
                             });
+                            _fetchLeads();
                             _onButtonPressed(3);
                           },
                           child: Text(
@@ -533,7 +533,15 @@ class _LeadsScreenState extends State<LeadScreen>
                               child: Align(alignment: Alignment.center,
                                   child:CircularProgressIndicator(strokeWidth: 1)
                               ),
-                            )
+                            ),
+                          SliverPadding(
+                            padding: EdgeInsets.only(bottom: 20),
+                            sliver: SliverToBoxAdapter(
+                              child: SizedBox(
+                                height: 10,
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                         ),

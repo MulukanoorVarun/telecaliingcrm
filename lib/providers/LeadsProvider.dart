@@ -20,6 +20,7 @@ class LeadsProvider with ChangeNotifier {
   Future<void> fetchLeadsList(type,BuildContext context) async {
     _isLoading = true;
     _currentPage = 1;
+    leadslist =[];
     notifyListeners();
     try {
       var result = await Userapi.getLeads(type, _currentPage);

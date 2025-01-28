@@ -70,8 +70,11 @@ class _SetnewpasswordScreenState extends State<SetnewpasswordScreen> {
                 height: 10,
               ),
               Row(
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   IconButton(
+                    visualDensity: VisualDensity.compact,
+                    padding: EdgeInsets.only(left: 0),
                     onPressed: () {
                       Navigator.pop(context);
                     },

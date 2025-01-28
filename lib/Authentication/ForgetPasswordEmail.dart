@@ -84,6 +84,8 @@ class _ForgotpasswordscreenState extends State<Forgotpasswordscreen> {
               Row(
                 children: [
                   IconButton(
+                    visualDensity: VisualDensity.compact,
+                    padding: EdgeInsets.only(left: 0),
                     onPressed: () {
                       Navigator.pop(context);
                     },

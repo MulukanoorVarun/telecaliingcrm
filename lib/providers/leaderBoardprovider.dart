@@ -27,12 +27,8 @@ class LeaderBoardProvider extends ChangeNotifier {
       var res = await Userapi.getLeaderboard(_currentPage);
       if (res != null) {
         leaderboardData = res.leaderboardData ?? [];
-
-        if (res.nextPageUrl != null) {
-          _hasNext = true;
-        } else {
-          _hasNext = false;
-        }
+        // Update `_hasNext` based on the API response
+        _hasNext = res.nextPageUrl != null;
       } else {
         print("No leaderboard data found.");
       }

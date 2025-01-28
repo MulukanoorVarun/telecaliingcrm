@@ -704,8 +704,7 @@ class _HomescreenState extends State<Homescreen> {
                                 decorationcolor: color34),
                             SizedBox(height: w * 0.05),
                             Container(
-                              height:
-                                  h * 0.3, // Ensure a fixed height for ListView
+                              height: w*0.6, // Ensure a fixed height for ListView
                               child: ListView.builder(
                                 itemCount: phoneNumbers?.length ?? 0,
                                 itemBuilder: (context, index) {
@@ -768,7 +767,7 @@ class _HomescreenState extends State<Homescreen> {
                                   );
                                 },
                               ),
-                            )
+                            ),
                             ]else...[
                               Column(
                                 children: [
@@ -780,7 +779,7 @@ class _HomescreenState extends State<Homescreen> {
                                       fit: BoxFit.cover,),
                                 ],
                               ),
-                            ]
+                            ],
                           ],
                         ),
                       )

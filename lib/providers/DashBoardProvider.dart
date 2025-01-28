@@ -27,8 +27,8 @@ class DashboardProvider with ChangeNotifier {
         leadCount = response?.leadCount?.toString(); // Convert to String
         followup_count = response?.followupCount?.toString(); // Convert to String
         phone_numbers =response?.phoneNumbers?.data??[];
-        notifyListeners();
         _isLoading=false;
+        notifyListeners();
         return true;
       } else {
         Navigator.of(context)

@@ -178,7 +178,6 @@ class Userapi {
         url,
         headers: headers,
       );
-
       if (response.statusCode == 200) {
         final jsonResponse = jsonDecode(response.body);
         print("getLeaderboard response: ${response.body}");
@@ -506,8 +505,8 @@ class Userapi {
     }
   }
 
-  static Future<bool?> forgetPassword(String email,BuildContext context) async {
-    try{
+  static Future<bool?> forgetPassword(String email, BuildContext context) async {
+    try {
       final Uri url = Uri.parse('${host}/api/forget-password');
       final response = await http.post(
         url,
@@ -515,18 +514,32 @@ class Userapi {
           'email': email,
         },
       );
+
+      final Map<String, dynamic> responseData = json.decode(response.body);
+
       if (response.statusCode == 200) {
-        final Map<String, dynamic> responseData = json.decode(response.body);
+        // Handle successful response
         CustomSnackBar.show(context, responseData['message']);
         return true;
+      } else if (response.statusCode == 400) {
+        // Handle invalid email scenario
+        if (responseData.containsKey('email')) {
+          // Email is not registered
+          CustomSnackBar.show(context, responseData['email'][0]);
+        } else {
+          // Other error messages
+          CustomSnackBar.show(context, "An error occurred.");
+        }
+        return false;
       } else {
-        final Map<String, dynamic> responseData = json.decode(response.body);
-        CustomSnackBar.show(context, responseData['message']);
+        // Handle any other unsuccessful response
+        CustomSnackBar.show(context, "Unexpected error: ${response.statusCode}");
         return false;
       }
-    }catch(e){
+    } catch (e) {
       debugPrint('Error occurred: $e');
-      return null;
+      CustomSnackBar.show(context, "An error occurred. Please try again.");
+      return null; // In case of error (e.g., no network)
     }
   }
 
