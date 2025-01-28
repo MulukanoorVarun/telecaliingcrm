@@ -9,6 +9,7 @@ import 'package:telecaliingcrm/Authentication/SetNewPassword.dart';
 import 'package:telecaliingcrm/utils/ShakeWidget.dart';
 
 import '../Services/UserApi.dart';
+import '../utils/ColorConstants.dart';
 import '../utils/constants.dart';
 
 class ForgotOTPscreen extends StatefulWidget {
@@ -49,14 +50,9 @@ class _ForgotOTPscreenState extends State<ForgotOTPscreen> {
       setState(() {
         _loading = false;
         if(res==true){
-
         }else{
-
-
         }
       });
-
-
     }
   }
   Future<void> ForgotpasswordOtpVerifyApi() async {
@@ -83,6 +79,29 @@ class _ForgotOTPscreenState extends State<ForgotOTPscreen> {
     var h = MediaQuery.of(context).size.height;
     var w = MediaQuery.of(context).size.width;
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: primaryColor, // Set the background color of the AppBar
+        leading: IconButton(
+          visualDensity: VisualDensity.compact,
+          padding: EdgeInsets.only(left: 0),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: Icon(
+            Icons.arrow_back,
+            color: Colors.white, // Change the color to match your theme
+          ),
+        ),
+        title: text(
+          context,
+          'CHECK YOUR EMAIL',
+          18,
+          color: Colors.white,
+          fontfamily: "Inter",
+          fontWeight: FontWeight.w700,
+        ),
+        elevation: 0, // Removes the shadow
+      ),
       body: SingleChildScrollView(
         child: Container(
           margin: EdgeInsets.only(top: 30),
@@ -93,29 +112,6 @@ class _ForgotOTPscreenState extends State<ForgotOTPscreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(
-                height: 10,
-              ),
-              Row(
-                children: [
-                  IconButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    icon: Icon(Icons.arrow_back),
-                  ),
-                  SizedBox(
-                    width: 15,
-                  ),
-                  text(context, 'CHECK YOUR EMAIL', 18,
-                      color: color11,
-                      fontfamily: "Inter",
-                      fontWeight: FontWeight.w700),
-                ],
-              ),
-              SizedBox(
-                height: 30,
-              ),
               RichText(
                 text: TextSpan(
                   style: TextStyle(

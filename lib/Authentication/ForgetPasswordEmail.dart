@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:telecaliingcrm/Authentication/ForgetPasswordOtp.dart';
 import 'package:telecaliingcrm/services/UserApi.dart';
+import 'package:telecaliingcrm/utils/ColorConstants.dart';
 import 'package:telecaliingcrm/utils/ShakeWidget.dart';
 import 'package:telecaliingcrm/utils/constants.dart';
 
@@ -67,9 +68,32 @@ class _ForgotpasswordscreenState extends State<Forgotpasswordscreen> {
     var h = MediaQuery.of(context).size.height;
     var w = MediaQuery.of(context).size.width;
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: primaryColor, // Set the background color of the AppBar
+        leading: IconButton(
+          visualDensity: VisualDensity.compact,
+          padding: EdgeInsets.only(left: 0),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: Icon(
+            Icons.arrow_back,
+            color: Colors.white, // Change the color to match your theme
+          ),
+        ),
+        title: text(
+          context,
+          'FORGOT PASSWORD',
+          18,
+          color: Colors.white,
+          fontfamily: "Inter",
+          fontWeight: FontWeight.w700,
+        ),
+        elevation: 0, // Removes the shadow
+      ),
       body: SingleChildScrollView(
         child: Container(
-          margin: EdgeInsets.only(top: 30),
+          margin: EdgeInsets.only(top: 40),
           padding: EdgeInsets.all(20),
           decoration: BoxDecoration(
             color: color4,
@@ -78,38 +102,9 @@ class _ForgotpasswordscreenState extends State<Forgotpasswordscreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(
-                height: 10,
-              ),
-              Row(
-                children: [
-                  IconButton(
-                    visualDensity: VisualDensity.compact,
-                    padding: EdgeInsets.only(left: 0),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    icon: Icon(Icons.arrow_back),
-                  ),
-                  SizedBox(
-                    width: 15,
-                  ),
-                  text(
-                    context,
-                    'FORGOT PASSWORD',
-                    18,
-                    color: color11,
-                    fontfamily: "Inter",
-                    fontWeight: FontWeight.w700,
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: 45,
-              ),
               text(
                 context,
-                'Please enter your email to reset the password',
+                'Email',
                 14,
                 color: color2,
                 textAlign: TextAlign.start,
@@ -117,7 +112,7 @@ class _ForgotpasswordscreenState extends State<Forgotpasswordscreen> {
                 fontWeight: FontWeight.w400,
               ),
               SizedBox(
-                height: 20,
+                height: 5,
               ),
               Container(
                 height: 54,

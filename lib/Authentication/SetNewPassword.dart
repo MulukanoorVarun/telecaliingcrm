@@ -3,6 +3,7 @@ import 'package:telecaliingcrm/Authentication/SignInScreen.dart';
 import 'package:telecaliingcrm/utils/ShakeWidget.dart';
 
 import '../Services/UserApi.dart';
+import '../utils/ColorConstants.dart';
 import '../utils/constants.dart';
 
 class SetnewpasswordScreen extends StatefulWidget {
@@ -16,9 +17,6 @@ class SetnewpasswordScreen extends StatefulWidget {
 class _SetnewpasswordScreenState extends State<SetnewpasswordScreen> {
   final TextEditingController password = TextEditingController();
   final TextEditingController confirmpassword = TextEditingController();
-
-  bool _obscurePassword = true;
-  bool _obscureConfirmPassword = true;
 
   bool _loading = false;
   String validatePassword = "";
@@ -56,6 +54,29 @@ class _SetnewpasswordScreenState extends State<SetnewpasswordScreen> {
     var h = MediaQuery.of(context).size.height;
     var w = MediaQuery.of(context).size.width;
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: primaryColor, // Set the background color of the AppBar
+        leading: IconButton(
+          visualDensity: VisualDensity.compact,
+          padding: EdgeInsets.only(left: 0),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: Icon(
+            Icons.arrow_back,
+            color: Colors.white, // Change the color to match your theme
+          ),
+        ),
+        title: text(
+          context,
+          'SET NEW PASSWORD',
+          18,
+          color: Colors.white,
+          fontfamily: "Inter",
+          fontWeight: FontWeight.w700,
+        ),
+        elevation: 0, // Removes the shadow
+      ),
       body: SingleChildScrollView(
         child: Container(
           margin: EdgeInsets.only(top: 30),
@@ -66,32 +87,6 @@ class _SetnewpasswordScreenState extends State<SetnewpasswordScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(
-                height: 10,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  IconButton(
-                    visualDensity: VisualDensity.compact,
-                    padding: EdgeInsets.only(left: 0),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    icon: Icon(Icons.arrow_back),
-                  ),
-                  SizedBox(
-                    width: 15,
-                  ),
-                  text(context, 'SET NEW PASSWORD', 18,
-                      color: color11,
-                      fontfamily: "Inter",
-                      fontWeight: FontWeight.w700),
-                ],
-              ),
-              SizedBox(
-                height: 35,
-              ),
               text(
                   context,
                   'Create a new password. Ensure it differs from previous ones for security',
