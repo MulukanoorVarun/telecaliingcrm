@@ -54,7 +54,6 @@ class _HomescreenState extends State<Homescreen> {
     Provider.of<ConnectivityProviders>(context, listen: false)
         .initConnectivity();
     _initializePhoneStateListener();
-    _requestPermission();
     super.initState();
   }
 
@@ -73,16 +72,6 @@ class _HomescreenState extends State<Homescreen> {
     var res = await dashboard_provider.fetchDashBoardDetails(context);
     if (res == true) {
       user_details_provider.fetchUserDetails(context);
-    }
-  }
-
-  // Request phone permissions
-  Future<void> _requestPermission() async {
-    var status = await Permission.phone.request();
-    if (status.isGranted) {
-    } else {
-      // Handle permission denial if needed
-      print('Permission Denied');
     }
   }
 
