@@ -165,6 +165,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                                                   fontWeight: FontWeight.w500,
                                                 ),
                                               ),
+
                                               Spacer(),
                                               Text(
                                                 leadboard.count.toString(),
