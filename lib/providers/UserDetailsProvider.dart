@@ -8,10 +8,10 @@ class UserDetailsProvider with ChangeNotifier {
 
   UserDetailsModel? get userDetails => _userDetails;
 
-  Future<int?> fetchUserDetails() async {
+  Future<int?> fetchUserDetails(BuildContext context) async {
     try {
       // Fetch the user details from the API
-      var response = await Userapi.getUserDetails();
+      var response = await Userapi.getUserDetails(context);
       if (response != null) {
         _userDetails = response;
         notifyListeners();
@@ -26,11 +26,11 @@ class UserDetailsProvider with ChangeNotifier {
     return null;
   }
 
-  Future<String?> updateUserDetails(UserID,fullname, email, _image) async{
+  Future<String?> updateUserDetails(UserID,fullname, email, _image,BuildContext context) async{
     try{
-      var response =await Userapi.updateProfile(UserID,fullname, email, _image);
+      var response =await Userapi.updateProfile(UserID,fullname, email, _image,context);
       if (response!= null) {
-        fetchUserDetails();
+        fetchUserDetails(context);
         return response;
       } else {
         return response;

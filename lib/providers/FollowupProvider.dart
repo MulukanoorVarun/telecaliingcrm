@@ -25,7 +25,7 @@ class FollowupProvider extends ChangeNotifier {
     _currentPage = 1;
     notifyListeners();
     try {
-      var result = await Userapi.getFollowup(_currentPage);
+      var result = await Userapi.getFollowup(_currentPage,context);
       if (result?.status == true) {
         _followuplist = result?.data?.followup_list ?? [];
         if(result?.data?.nextPageUrl!=null){
@@ -34,30 +34,6 @@ class FollowupProvider extends ChangeNotifier {
           _nextPage = false;
         }
       } else {
-        Navigator.of(context)
-            .push(PageRouteBuilder(
-          pageBuilder: (context, animation,
-              secondaryAnimation) {
-            return SubscriptionExpiredScreen();
-          },
-          transitionsBuilder: (context,
-              animation,
-              secondaryAnimation,
-              child) {
-            const begin = Offset(1.0, 0.0);
-            const end = Offset.zero;
-            const curve = Curves.easeInOut;
-            var tween = Tween(
-                begin: begin, end: end)
-                .chain(CurveTween(
-                curve: curve));
-            var offsetAnimation =
-            animation.drive(tween);
-            return SlideTransition(
-                position: offsetAnimation,
-                child: child);
-          },
-        ));
         _followuplist = [];
         debugPrint("Failed to update the call status.");
       }
@@ -81,7 +57,7 @@ class FollowupProvider extends ChangeNotifier {
 
     try {
       debugPrint("Fetching page $_currentPage...");
-      var result = await Userapi.getFollowup(_currentPage + 1); // Increment the page for API call
+      var result = await Userapi.getFollowup(_currentPage + 1,context); // Increment the page for API call
 
       if (result?.status == true) {
         _currentPage++; // Increment the current page only after a successful fetch

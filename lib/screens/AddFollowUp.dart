@@ -63,7 +63,7 @@ class _AddFollowUpState extends State<AddFollowUp> {
       _validateRemarks =
       _remarksController.text.isEmpty ? "Please add some remarks" : "";
       if (_validateFullName.isEmpty && _validatedate.isEmpty && _validateRemarks.isEmpty) {
-        AddFollowUp();
+        AddFollowUp(context);
       } else {
         _loading = false;
 
@@ -71,9 +71,9 @@ class _AddFollowUpState extends State<AddFollowUp> {
     });
   }
 
-  Future<void> AddFollowUp() async {
+  Future<void> AddFollowUp(BuildContext context) async {
     try {
-      final res = await Userapi.postAddFollowUp(widget.id, _nameController.text, formattedDate, _remarksController.text);
+      final res = await Userapi.postAddFollowUp(widget.id, _nameController.text, formattedDate, _remarksController.text,context);
       print("res>>${res}");
       if (res!= null) {
         if(res["status"]==true){

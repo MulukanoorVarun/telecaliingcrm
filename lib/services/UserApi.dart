@@ -8,6 +8,7 @@ import 'package:telecaliingcrm/model/LeadsModel.dart';
 import 'package:telecaliingcrm/model/LeadeBoardModel.dart';
 import 'package:telecaliingcrm/model/UserDetailsModel.dart';
 import 'package:telecaliingcrm/screens/SubscriptionExpiredScreen.dart';
+import 'package:telecaliingcrm/screens/TooManyRequestsScreen.dart';
 import 'package:telecaliingcrm/services/otherservices.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:mime/mime.dart';
@@ -21,7 +22,7 @@ class Userapi {
   static String host = "https://api.telecallingcrm.com";
 
   static Future<Map<String, dynamic>?> PostSignIn(
-      String email, String pwd,BuildContext context) async {
+      String email, String pwd, BuildContext context) async {
     try {
       // Prepare the request data
       Map<String, String> data = {
@@ -51,28 +52,19 @@ class Userapi {
         return jsonResponse;
       } else if (response.statusCode == 403) {
         {
-          Navigator.of(context)
-              .push(PageRouteBuilder(
-            pageBuilder: (context, animation,
-                secondaryAnimation) {
+          Navigator.of(context).push(PageRouteBuilder(
+            pageBuilder: (context, animation, secondaryAnimation) {
               return SubscriptionExpiredScreen();
             },
-            transitionsBuilder: (context,
-                animation,
-                secondaryAnimation,
-                child) {
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
               const begin = Offset(1.0, 0.0);
               const end = Offset.zero;
               const curve = Curves.easeInOut;
-              var tween = Tween(
-                  begin: begin, end: end)
-                  .chain(CurveTween(
-                  curve: curve));
-              var offsetAnimation =
-              animation.drive(tween);
-              return SlideTransition(
-                  position: offsetAnimation,
-                  child: child);
+              var tween =
+                  Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+              var offsetAnimation = animation.drive(tween);
+              return SlideTransition(position: offsetAnimation, child: child);
             },
           ));
         }
@@ -88,7 +80,7 @@ class Userapi {
     }
   }
 
-  static Future<DashBoardModel?> DahsBoardApi() async {
+  static Future<DashBoardModel?> DahsBoardApi(BuildContext context) async {
     if (await checkHeaderValidity()) {
       try {
         final url = Uri.parse("${host}/api/dashboard");
@@ -101,7 +93,42 @@ class Userapi {
           final jsonResponse = jsonDecode(response.body);
           print("DahsBoardApi response: ${response.body}");
           return DashBoardModel.fromJson(jsonResponse);
-        } else {
+        } else if (response.statusCode == 429) {
+
+            Navigator.of(context).push(PageRouteBuilder(
+              pageBuilder: (context, animation, secondaryAnimation) {
+                return TooManyRequestsScreen();
+              },
+              transitionsBuilder:
+                  (context, animation, secondaryAnimation, child) {
+                const begin = Offset(1.0, 0.0);
+                const end = Offset.zero;
+                const curve = Curves.easeInOut;
+                var tween =
+                Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+                var offsetAnimation = animation.drive(tween);
+                return SlideTransition(position: offsetAnimation, child: child);
+              },
+            ));}
+        else if (response.statusCode == 403) {
+
+            Navigator.of(context).push(PageRouteBuilder(
+              pageBuilder: (context, animation, secondaryAnimation) {
+                return SubscriptionExpiredScreen();
+              },
+              transitionsBuilder:
+                  (context, animation, secondaryAnimation, child) {
+                const begin = Offset(1.0, 0.0);
+                const end = Offset.zero;
+                const curve = Curves.easeInOut;
+                var tween =
+                Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+                var offsetAnimation = animation.drive(tween);
+                return SlideTransition(position: offsetAnimation, child: child);
+              },
+            ));
+
+        }else {
           // Handle non-200 responses (e.g., 401, 404, etc.)
           print("DahsBoardApi response: ${response.body}");
           print("Request failed with status: ${response.statusCode}");
@@ -119,7 +146,7 @@ class Userapi {
     }
   }
 
-  static Future<UserDetailsModel?> getUserDetails() async {
+  static Future<UserDetailsModel?> getUserDetails(BuildContext context) async {
     try {
       final url = Uri.parse("${host}/api/profile");
       final headers = await getheader1();
@@ -132,6 +159,24 @@ class Userapi {
         print("getUserDetails response: ${response.body}");
 
         return UserDetailsModel.fromJson(jsonResponse);
+      }else if (response.statusCode == 403) {
+
+        Navigator.of(context).push(PageRouteBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) {
+            return SubscriptionExpiredScreen();
+          },
+          transitionsBuilder:
+              (context, animation, secondaryAnimation, child) {
+            const begin = Offset(1.0, 0.0);
+            const end = Offset.zero;
+            const curve = Curves.easeInOut;
+            var tween =
+            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+            var offsetAnimation = animation.drive(tween);
+            return SlideTransition(position: offsetAnimation, child: child);
+          },
+        ));
+
       } else {
         print("Request failed with status: ${response.statusCode}");
         return null;
@@ -144,7 +189,7 @@ class Userapi {
   }
 
   static Future<Map<String, dynamic>?> UpdateCallStatusApi(
-      String id, String call_status, String call_duration) async {
+      String id, String call_status, String call_duration, BuildContext context) async {
     try {
       // Prepare the request data
       Map<String, String> data = {
@@ -171,6 +216,24 @@ class Userapi {
               "Error: Failed to decode response body. Response: ${response.body}");
           return null;
         }
+      }else if (response.statusCode == 403) {
+
+        Navigator.of(context).push(PageRouteBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) {
+            return SubscriptionExpiredScreen();
+          },
+          transitionsBuilder:
+              (context, animation, secondaryAnimation, child) {
+            const begin = Offset(1.0, 0.0);
+            const end = Offset.zero;
+            const curve = Curves.easeInOut;
+            var tween =
+            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+            var offsetAnimation = animation.drive(tween);
+            return SlideTransition(position: offsetAnimation, child: child);
+          },
+        ));
+
       } else {
         print(
             "Request failed with status: ${response.statusCode}, body: ${response.body}");
@@ -182,7 +245,7 @@ class Userapi {
     }
   }
 
-  static Future<LeadsModel?> getLeads(type, page) async {
+  static Future<LeadsModel?> getLeads(type, page,BuildContext context) async {
     try {
       final url = Uri.parse(
           "${host}/api/get_lead_calls?stagename=${type}&page=${page}");
@@ -192,6 +255,24 @@ class Userapi {
         final jsonResponse = jsonDecode(response.body);
         print("getLeads response: ${response.body}");
         return LeadsModel.fromJson(jsonResponse);
+      }else if (response.statusCode == 403) {
+
+        Navigator.of(context).push(PageRouteBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) {
+            return SubscriptionExpiredScreen();
+          },
+          transitionsBuilder:
+              (context, animation, secondaryAnimation, child) {
+            const begin = Offset(1.0, 0.0);
+            const end = Offset.zero;
+            const curve = Curves.easeInOut;
+            var tween =
+            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+            var offsetAnimation = animation.drive(tween);
+            return SlideTransition(position: offsetAnimation, child: child);
+          },
+        ));
+
       } else {
         print("Request failed with status: ${response.statusCode}");
         return null;
@@ -202,7 +283,7 @@ class Userapi {
     }
   }
 
-  static Future<LeaderBoardModel?> getLeaderboard(_currentPage) async {
+  static Future<LeaderBoardModel?> getLeaderboard(_currentPage,BuildContext context) async {
     try {
       final url =
           Uri.parse("${host}/api/get_leader_board?page=${_currentPage}");
@@ -215,6 +296,42 @@ class Userapi {
         final jsonResponse = jsonDecode(response.body);
         print("getLeaderboard response: ${response.body}");
         return LeaderBoardModel.fromJson(jsonResponse);
+      }else if (response.statusCode == 429) {
+
+          Navigator.of(context).push(PageRouteBuilder(
+            pageBuilder: (context, animation, secondaryAnimation) {
+              return TooManyRequestsScreen();
+            },
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+              const begin = Offset(1.0, 0.0);
+              const end = Offset.zero;
+              const curve = Curves.easeInOut;
+              var tween =
+              Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+              var offsetAnimation = animation.drive(tween);
+              return SlideTransition(position: offsetAnimation, child: child);
+            },
+          ));
+
+      } else if (response.statusCode == 403) {
+
+          Navigator.of(context).push(PageRouteBuilder(
+            pageBuilder: (context, animation, secondaryAnimation) {
+              return SubscriptionExpiredScreen();
+            },
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+              const begin = Offset(1.0, 0.0);
+              const end = Offset.zero;
+              const curve = Curves.easeInOut;
+              var tween =
+              Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+              var offsetAnimation = animation.drive(tween);
+              return SlideTransition(position: offsetAnimation, child: child);
+            },
+          ));
+
       } else {
         print("Request failed with status: ${response.statusCode}");
         return null;
@@ -223,6 +340,7 @@ class Userapi {
       print("Error occurred: $e");
       return null;
     }
+    return null;
   }
 
   static Future<Map<String, dynamic>?> postAddLeads(
@@ -230,7 +348,7 @@ class Userapi {
     String num,
     String followup_date,
     String remarks,
-    String lead_id,
+    String lead_id,BuildContext context
   ) async {
     try {
       final Map<String, String> data = {
@@ -259,6 +377,24 @@ class Userapi {
       if (response.statusCode == 200) {
         print("postAddLeads successful: $jsonResponse");
         return jsonResponse;
+      }else if (response.statusCode == 403) {
+
+        Navigator.of(context).push(PageRouteBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) {
+            return SubscriptionExpiredScreen();
+          },
+          transitionsBuilder:
+              (context, animation, secondaryAnimation, child) {
+            const begin = Offset(1.0, 0.0);
+            const end = Offset.zero;
+            const curve = Curves.easeInOut;
+            var tween =
+            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+            var offsetAnimation = animation.drive(tween);
+            return SlideTransition(position: offsetAnimation, child: child);
+          },
+        ));
+
       } else {
         print(
           "Request failed with status: ${response.statusCode}, body: $jsonResponse",
@@ -275,7 +411,7 @@ class Userapi {
     String leadid,
     String name,
     String followup_date,
-    String remarks,
+    String remarks,BuildContext context
   ) async {
     try {
       final Map<String, String> data = {
@@ -303,6 +439,24 @@ class Userapi {
       if (response.statusCode == 200) {
         print("postAddFollowUp successful: $jsonResponse");
         return jsonResponse;
+      }else if (response.statusCode == 403) {
+
+        Navigator.of(context).push(PageRouteBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) {
+            return SubscriptionExpiredScreen();
+          },
+          transitionsBuilder:
+              (context, animation, secondaryAnimation, child) {
+            const begin = Offset(1.0, 0.0);
+            const end = Offset.zero;
+            const curve = Curves.easeInOut;
+            var tween =
+            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+            var offsetAnimation = animation.drive(tween);
+            return SlideTransition(position: offsetAnimation, child: child);
+          },
+        ));
+
       } else {
         print(
           "Request failed with status: ${response.statusCode}, body: $jsonResponse",
@@ -320,7 +474,7 @@ class Userapi {
     String lead_id,
     String remarks,
     String lead_stage_id,
-    String deal_stage,
+    String deal_stage,BuildContext context
   ) async {
     try {
       final Map<String, String> data = {
@@ -349,6 +503,24 @@ class Userapi {
       if (response.statusCode == 200) {
         print("postUpdateLeads successful: $jsonResponse");
         return jsonResponse;
+      }else if (response.statusCode == 403) {
+
+        Navigator.of(context).push(PageRouteBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) {
+            return SubscriptionExpiredScreen();
+          },
+          transitionsBuilder:
+              (context, animation, secondaryAnimation, child) {
+            const begin = Offset(1.0, 0.0);
+            const end = Offset.zero;
+            const curve = Curves.easeInOut;
+            var tween =
+            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+            var offsetAnimation = animation.drive(tween);
+            return SlideTransition(position: offsetAnimation, child: child);
+          },
+        ));
+
       } else {
         print(
           "Request failed with status: ${response.statusCode}, body: $jsonResponse",
@@ -385,7 +557,7 @@ class Userapi {
     }
   }
 
-  static Future<GetFollowUpModel?> getFollowup(page) async {
+  static Future<GetFollowUpModel?> getFollowup(page, BuildContext context) async {
     try {
       final url = Uri.parse("${host}/api/follow_up_list?page=$page");
       final headers = await getheader1();
@@ -397,6 +569,24 @@ class Userapi {
         final jsonResponse = jsonDecode(response.body);
         print("getFollowup response: ${response.body}");
         return GetFollowUpModel.fromJson(jsonResponse);
+      }else if (response.statusCode == 403) {
+
+        Navigator.of(context).push(PageRouteBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) {
+            return SubscriptionExpiredScreen();
+          },
+          transitionsBuilder:
+              (context, animation, secondaryAnimation, child) {
+            const begin = Offset(1.0, 0.0);
+            const end = Offset.zero;
+            const curve = Curves.easeInOut;
+            var tween =
+            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+            var offsetAnimation = animation.drive(tween);
+            return SlideTransition(position: offsetAnimation, child: child);
+          },
+        ));
+
       } else {
         print("Request failed with status: ${response.statusCode}");
         return null;
@@ -409,7 +599,7 @@ class Userapi {
   }
 
   static Future<String?> updateProfile(
-      UserID, String fullname, String email, File? image) async {
+      UserID, String fullname, String email, File? image,BuildContext context) async {
     try {
       final url = Uri.parse(
           'https://api.telecallingcrm.com/api/update-profile/${UserID}');
@@ -452,6 +642,24 @@ class Userapi {
         } else {
           return 'Profile update failed: ${jsonResponse['message']}';
         }
+      }else if (response.statusCode == 403) {
+
+        Navigator.of(context).push(PageRouteBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) {
+            return SubscriptionExpiredScreen();
+          },
+          transitionsBuilder:
+              (context, animation, secondaryAnimation, child) {
+            const begin = Offset(1.0, 0.0);
+            const end = Offset.zero;
+            const curve = Curves.easeInOut;
+            var tween =
+            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+            var offsetAnimation = animation.drive(tween);
+            return SlideTransition(position: offsetAnimation, child: child);
+          },
+        ));
+
       } else {
         return 'Error: ${response.statusCode}';
       }
@@ -492,9 +700,10 @@ class Userapi {
     }
   }
 
-  static Future<CallHistoryModel?> getCallHistory(date,page) async {
+  static Future<CallHistoryModel?> getCallHistory(date, page,BuildContext context) async {
     try {
-      final url = Uri.parse("${host}/api/today-called-history?latest_update=${date}&page=${page}");
+      final url = Uri.parse(
+          "${host}/api/today-called-history?latest_update=${date}&page=${page}");
       final header = await getheader1();
       final response = await http.get(url, headers: header);
 
@@ -502,7 +711,43 @@ class Userapi {
         final jsonResponse = json.decode(response.body);
         print("getCallHistory response:${jsonResponse}");
         return CallHistoryModel.fromJson(jsonResponse);
-      } else {
+      } else if (response.statusCode == 429) {
+
+          Navigator.of(context).push(PageRouteBuilder(
+            pageBuilder: (context, animation, secondaryAnimation) {
+              return TooManyRequestsScreen();
+            },
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+              const begin = Offset(1.0, 0.0);
+              const end = Offset.zero;
+              const curve = Curves.easeInOut;
+              var tween =
+              Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+              var offsetAnimation = animation.drive(tween);
+              return SlideTransition(position: offsetAnimation, child: child);
+            },
+          ));
+        }
+        else if (response.statusCode == 403) {
+
+          Navigator.of(context).push(PageRouteBuilder(
+            pageBuilder: (context, animation, secondaryAnimation) {
+              return SubscriptionExpiredScreen();
+            },
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+              const begin = Offset(1.0, 0.0);
+              const end = Offset.zero;
+              const curve = Curves.easeInOut;
+              var tween =
+              Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+              var offsetAnimation = animation.drive(tween);
+              return SlideTransition(position: offsetAnimation, child: child);
+            },
+          ));
+
+      }else {
         return null;
       }
     } catch (e) {
@@ -533,6 +778,24 @@ class Userapi {
           CustomSnackBar.show(context, responseData['message']);
           return false;
         }
+      }else if (response.statusCode == 403) {
+
+        Navigator.of(context).push(PageRouteBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) {
+            return SubscriptionExpiredScreen();
+          },
+          transitionsBuilder:
+              (context, animation, secondaryAnimation, child) {
+            const begin = Offset(1.0, 0.0);
+            const end = Offset.zero;
+            const curve = Curves.easeInOut;
+            var tween =
+            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+            var offsetAnimation = animation.drive(tween);
+            return SlideTransition(position: offsetAnimation, child: child);
+          },
+        ));
+
       } else {
         return false;
       }
@@ -559,6 +822,24 @@ class Userapi {
         // Handle successful response
         CustomSnackBar.show(context, responseData['message']);
         return true;
+      }else if (response.statusCode == 403) {
+
+        Navigator.of(context).push(PageRouteBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) {
+            return SubscriptionExpiredScreen();
+          },
+          transitionsBuilder:
+              (context, animation, secondaryAnimation, child) {
+            const begin = Offset(1.0, 0.0);
+            const end = Offset.zero;
+            const curve = Curves.easeInOut;
+            var tween =
+            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+            var offsetAnimation = animation.drive(tween);
+            return SlideTransition(position: offsetAnimation, child: child);
+          },
+        ));
+
       } else if (response.statusCode == 400) {
         // Handle invalid email scenario
         if (responseData.containsKey('email')) {
@@ -598,6 +879,24 @@ class Userapi {
         final Map<String, dynamic> responseData = json.decode(response.body);
         CustomSnackBar.show(context, responseData['message']);
         return true;
+      }else if (response.statusCode == 403) {
+
+        Navigator.of(context).push(PageRouteBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) {
+            return SubscriptionExpiredScreen();
+          },
+          transitionsBuilder:
+              (context, animation, secondaryAnimation, child) {
+            const begin = Offset(1.0, 0.0);
+            const end = Offset.zero;
+            const curve = Curves.easeInOut;
+            var tween =
+            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+            var offsetAnimation = animation.drive(tween);
+            return SlideTransition(position: offsetAnimation, child: child);
+          },
+        ));
+
       } else {
         final Map<String, dynamic> responseData = json.decode(response.body);
         CustomSnackBar.show(context, responseData['message']);

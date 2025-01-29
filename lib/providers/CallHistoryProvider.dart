@@ -20,36 +20,36 @@ class CallHistoryProvider extends ChangeNotifier {
     _currentPage = 1;
     notifyListeners();
     try {
-      var res = await Userapi.getCallHistory(date,_currentPage);
+      var res = await Userapi.getCallHistory(date,_currentPage,context);
       if (res?.status==true) {
         call_history = res?.data?.call_history??[];
         // Update `_hasNext` based on the API response
         _hasNext = res?.data?.nextPageUrl != null;
       } else {
-        Navigator.of(context)
-            .push(PageRouteBuilder(
-          pageBuilder: (context, animation,
-              secondaryAnimation) {
-            return SubscriptionExpiredScreen();
-          },
-          transitionsBuilder: (context,
-              animation,
-              secondaryAnimation,
-              child) {
-            const begin = Offset(1.0, 0.0);
-            const end = Offset.zero;
-            const curve = Curves.easeInOut;
-            var tween = Tween(
-                begin: begin, end: end)
-                .chain(CurveTween(
-                curve: curve));
-            var offsetAnimation =
-            animation.drive(tween);
-            return SlideTransition(
-                position: offsetAnimation,
-                child: child);
-          },
-        ));
+        // Navigator.of(context)
+        //     .push(PageRouteBuilder(
+        //   pageBuilder: (context, animation,
+        //       secondaryAnimation) {
+        //     return SubscriptionExpiredScreen();
+        //   },
+        //   transitionsBuilder: (context,
+        //       animation,
+        //       secondaryAnimation,
+        //       child) {
+        //     const begin = Offset(1.0, 0.0);
+        //     const end = Offset.zero;
+        //     const curve = Curves.easeInOut;
+        //     var tween = Tween(
+        //         begin: begin, end: end)
+        //         .chain(CurveTween(
+        //         curve: curve));
+        //     var offsetAnimation =
+        //     animation.drive(tween);
+        //     return SlideTransition(
+        //         position: offsetAnimation,
+        //         child: child);
+        //   },
+        // ));
         debugPrint("No data received");
         _hasNext = false;
       }
@@ -73,7 +73,7 @@ class CallHistoryProvider extends ChangeNotifier {
 
     try {
       debugPrint("Fetching page $_currentPage...");
-      var res = await Userapi.getCallHistory(date,_currentPage + 1); // Increment the page for API call
+      var res = await Userapi.getCallHistory(date,_currentPage + 1,context); // Increment the page for API call
 
       if (res?.status == true) {
         _currentPage++; // Increment page count after successful fetch
@@ -87,30 +87,30 @@ class CallHistoryProvider extends ChangeNotifier {
             ? "Next page available, more data to fetch."
             : "No more pages to fetch.");
       } else {
-        Navigator.of(context)
-            .push(PageRouteBuilder(
-          pageBuilder: (context, animation,
-              secondaryAnimation) {
-            return SubscriptionExpiredScreen();
-          },
-          transitionsBuilder: (context,
-              animation,
-              secondaryAnimation,
-              child) {
-            const begin = Offset(1.0, 0.0);
-            const end = Offset.zero;
-            const curve = Curves.easeInOut;
-            var tween = Tween(
-                begin: begin, end: end)
-                .chain(CurveTween(
-                curve: curve));
-            var offsetAnimation =
-            animation.drive(tween);
-            return SlideTransition(
-                position: offsetAnimation,
-                child: child);
-          },
-        ));
+        // Navigator.of(context)
+        //     .push(PageRouteBuilder(
+        //   pageBuilder: (context, animation,
+        //       secondaryAnimation) {
+        //     return SubscriptionExpiredScreen();
+        //   },
+        //   transitionsBuilder: (context,
+        //       animation,
+        //       secondaryAnimation,
+        //       child) {
+        //     const begin = Offset(1.0, 0.0);
+        //     const end = Offset.zero;
+        //     const curve = Curves.easeInOut;
+        //     var tween = Tween(
+        //         begin: begin, end: end)
+        //         .chain(CurveTween(
+        //         curve: curve));
+        //     var offsetAnimation =
+        //     animation.drive(tween);
+        //     return SlideTransition(
+        //         position: offsetAnimation,
+        //         child: child);
+        //   },
+        // ));
         debugPrint("API returned failure status. No data received.");
       }
     } catch (e) {

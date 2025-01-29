@@ -72,7 +72,7 @@ class _HomescreenState extends State<Homescreen> {
         Provider.of<UserDetailsProvider>(context, listen: false);
     var res = await dashboard_provider.fetchDashBoardDetails(context);
     if (res == true) {
-      user_details_provider.fetchUserDetails();
+      user_details_provider.fetchUserDetails(context);
     }
   }
 
@@ -339,7 +339,7 @@ class _HomescreenState extends State<Homescreen> {
                     // Close the dialog
                     Navigator.of(context).pop();
                     updateCallStatus(
-                        id.toString(), selectedStatus, callDuration.toString());
+                        id.toString(), selectedStatus, callDuration.toString(),context);
                   } else {
                     // If no status is selected, show a message or do nothing
                     print("No status selected");
@@ -361,9 +361,9 @@ class _HomescreenState extends State<Homescreen> {
     );
   }
 
-  void updateCallStatus(id, callStatus, String callDuration) async {
+  void updateCallStatus(id, callStatus, String callDuration,BuildContext context) async {
     var result =
-        await Userapi.UpdateCallStatusApi(id, callStatus, callDuration);
+        await Userapi.UpdateCallStatusApi(id, callStatus, callDuration,context);
     if (result != null) {
       print("Response: $result");
       final dashboard_provider =

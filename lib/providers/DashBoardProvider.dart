@@ -20,7 +20,7 @@ class DashboardProvider with ChangeNotifier {
   Future<bool?> fetchDashBoardDetails(BuildContext context) async {
     try {
       // Fetching user details from the API
-      var response = await Userapi.DahsBoardApi();
+      var response = await Userapi.DahsBoardApi(context);
       if (response?.status==true) {
         todayCalls = response?.todayCalls?.toString(); // Convert to String
         pendingCalls = response?.pendingCalls?.toString(); // Convert to String
@@ -31,30 +31,30 @@ class DashboardProvider with ChangeNotifier {
         notifyListeners();
         return true;
       } else {
-        Navigator.of(context)
-            .push(PageRouteBuilder(
-          pageBuilder: (context, animation,
-              secondaryAnimation) {
-            return SubscriptionExpiredScreen();
-          },
-          transitionsBuilder: (context,
-              animation,
-              secondaryAnimation,
-              child) {
-            const begin = Offset(1.0, 0.0);
-            const end = Offset.zero;
-            const curve = Curves.easeInOut;
-            var tween = Tween(
-                begin: begin, end: end)
-                .chain(CurveTween(
-                curve: curve));
-            var offsetAnimation =
-            animation.drive(tween);
-            return SlideTransition(
-                position: offsetAnimation,
-                child: child);
-          },
-        ));
+        // Navigator.of(context)
+        //     .push(PageRouteBuilder(
+        //   pageBuilder: (context, animation,
+        //       secondaryAnimation) {
+        //     return SubscriptionExpiredScreen();
+        //   },
+        //   transitionsBuilder: (context,
+        //       animation,
+        //       secondaryAnimation,
+        //       child) {
+        //     const begin = Offset(1.0, 0.0);
+        //     const end = Offset.zero;
+        //     const curve = Curves.easeInOut;
+        //     var tween = Tween(
+        //         begin: begin, end: end)
+        //         .chain(CurveTween(
+        //         curve: curve));
+        //     var offsetAnimation =
+        //     animation.drive(tween);
+        //     return SlideTransition(
+        //         position: offsetAnimation,
+        //         child: child);
+        //   },
+        // ));
         phone_numbers = [];
         _isLoading=false;
         notifyListeners();

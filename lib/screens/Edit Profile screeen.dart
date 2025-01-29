@@ -119,7 +119,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     final profile_provider =
         Provider.of<UserDetailsProvider>(context, listen: false);
     var response =
-        await profile_provider.updateUserDetails(UserID,fullname, email, _image);
+        await profile_provider.updateUserDetails(UserID,fullname, email, _image,context);
     setState(() {
       if (response != null) {
         isLoading = false;

@@ -23,7 +23,7 @@ class LeadsProvider with ChangeNotifier {
     leadslist =[];
     notifyListeners();
     try {
-      var result = await Userapi.getLeads(type, _currentPage);
+      var result = await Userapi.getLeads(type, _currentPage,context);
       if (result?.status == true) {
         leadslist = result?.data?.leadslist ?? [];
         if(result?.data?.nextPageUrl!=null){
@@ -37,30 +37,6 @@ class LeadsProvider with ChangeNotifier {
         }
         notifyListeners();
       } else {
-        Navigator.of(context)
-            .push(PageRouteBuilder(
-          pageBuilder: (context, animation,
-              secondaryAnimation) {
-            return SubscriptionExpiredScreen();
-          },
-          transitionsBuilder: (context,
-              animation,
-              secondaryAnimation,
-              child) {
-            const begin = Offset(1.0, 0.0);
-            const end = Offset.zero;
-            const curve = Curves.easeInOut;
-            var tween = Tween(
-                begin: begin, end: end)
-                .chain(CurveTween(
-                curve: curve));
-            var offsetAnimation =
-            animation.drive(tween);
-            return SlideTransition(
-                position: offsetAnimation,
-                child: child);
-          },
-        ));
         leadslist = result?.data?.leadslist ?? [];
         _hasNextPage = false;
       }
@@ -81,7 +57,7 @@ class LeadsProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      var result = await Userapi.getLeads(type, _currentPage + 1);
+      var result = await Userapi.getLeads(type, _currentPage + 1,context);
 
       if (result?.status == true) {
         _currentPage++; // Increment the current page after a successful fetch.
@@ -90,22 +66,7 @@ class LeadsProvider with ChangeNotifier {
         _hasNextPage = result?.data?.nextPageUrl != null; // Check for more pages.
       } else {
         _hasNextPage = false; // No more pages.
-        Navigator.of(context).push(
-          PageRouteBuilder(
-            pageBuilder: (context, animation, secondaryAnimation) {
-              return SubscriptionExpiredScreen();
-            },
-            transitionsBuilder: (context, animation, secondaryAnimation, child) {
-              const begin = Offset(1.0, 0.0);
-              const end = Offset.zero;
-              const curve = Curves.easeInOut;
-              var tween = Tween(begin: begin, end: end)
-                  .chain(CurveTween(curve: curve));
-              var offsetAnimation = animation.drive(tween);
-              return SlideTransition(position: offsetAnimation, child: child);
-            },
-          ),
-        );
+
       }
     } catch (e) {
       print('Error fetching more leads: $e');
@@ -120,7 +81,7 @@ class LeadsProvider with ChangeNotifier {
     try {
       // Fetching user details from the API
       var response =
-          await Userapi.postAddLeads(name, mobile, date, remarks, leadStatus);
+          await Userapi.postAddLeads(name, mobile, date, remarks, leadStatus,context);
       if (response != null) {
         if (response["status"] == true) {
           fetchLeadsList('',context);
@@ -145,7 +106,7 @@ class LeadsProvider with ChangeNotifier {
         leadID,
         remarks,
         leadStatusID,
-        leadStageID,
+        leadStageID,context
       );
       if (response != null) {
         if (response["status"] == true) {
