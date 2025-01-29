@@ -45,6 +45,8 @@ class _SplashState extends State<Splash> with SingleTickerProviderStateMixin {
         await handleNavigation();
       } else {}
     });
+
+
     Fetchdetails();
   }
 
@@ -74,10 +76,8 @@ class _SplashState extends State<Splash> with SingleTickerProviderStateMixin {
           await InAppUpdate.performImmediateUpdate().then((result) {
             if (result == AppUpdateResult.success) {
               print("Update completed successfully!");
-              // Proceed only after successful update
             } else {
               print("Update not completed. App cannot proceed.");
-              // Optionally, retry or show an error dialog
               _showUpdateRequiredDialog();
             }
           });
@@ -104,7 +104,7 @@ class _SplashState extends State<Splash> with SingleTickerProviderStateMixin {
         actions: [
           TextButton(
             onPressed: () async {
-              await checkForUpdates(); // Retry the update check
+              await checkForUpdates();
             },
             child: Text("Retry"),
           ),
@@ -113,12 +113,10 @@ class _SplashState extends State<Splash> with SingleTickerProviderStateMixin {
     );
   }
 
-  // Handle navigation after update and splash animation
+
   Future<void> handleNavigation() async {
     // Navigate after update and animation complete
     await Future.delayed(Duration(seconds: 3));
-
-
     if (onboard_status == '') {
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (context) => OnBoardindScreen()));

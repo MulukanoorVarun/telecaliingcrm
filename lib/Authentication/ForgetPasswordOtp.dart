@@ -4,8 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:pin_code_fields/pin_code_fields.dart';
+import 'package:provider/provider.dart';
 import 'package:telecaliingcrm/Authentication/PasswordReset.dart';
 import 'package:telecaliingcrm/Authentication/SetNewPassword.dart';
+import 'package:telecaliingcrm/Services/otherservices.dart';
+import 'package:telecaliingcrm/providers/ConnectivityProviders.dart';
 import 'package:telecaliingcrm/utils/ShakeWidget.dart';
 
 import '../Services/UserApi.dart';
@@ -28,7 +31,14 @@ class _ForgotOTPscreenState extends State<ForgotOTPscreen> {
 
   @override
   void initState() {
+    Provider.of<ConnectivityProviders>(context, listen: false)
+        .initConnectivity();
     super.initState();
+  }
+  @override
+  void dispose() {
+    Provider.of<ConnectivityProviders>(context, listen: false).dispose();
+    super.dispose();
   }
 
   void _validateFields() {
@@ -78,7 +88,10 @@ class _ForgotOTPscreenState extends State<ForgotOTPscreen> {
   Widget build(BuildContext context) {
     var h = MediaQuery.of(context).size.height;
     var w = MediaQuery.of(context).size.width;
-    return Scaffold(
+    var connectiVityStatus = Provider.of<ConnectivityProviders>(context);
+    return (connectiVityStatus.isDeviceConnected == "ConnectivityResult.wifi" ||
+        connectiVityStatus.isDeviceConnected == "ConnectivityResult.mobile")
+        ? Scaffold(
       appBar: AppBar(
         backgroundColor: primaryColor, // Set the background color of the AppBar
         leading: IconButton(
@@ -314,6 +327,6 @@ class _ForgotOTPscreenState extends State<ForgotOTPscreen> {
           ),
         ),
       ),
-    );
+    ): NoInternetWidget();
   }
 }
