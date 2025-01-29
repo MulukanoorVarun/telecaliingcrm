@@ -9,7 +9,9 @@ import '../utils/ColorConstants.dart';
 import '../providers/CallHistoryProvider.dart';
 
 class Callhistoryscreen extends StatefulWidget {
-  const Callhistoryscreen({super.key});
+  String date;
+  String type;
+  Callhistoryscreen({super.key, required this.date, required this.type});
 
   @override
   State<Callhistoryscreen> createState() => _CallhistoryscreenState();
@@ -38,7 +40,8 @@ class _CallhistoryscreenState extends State<Callhistoryscreen> {
   @override
   void initState() {
     // Save the provider reference during initState
-    _connectivityProvider = Provider.of<ConnectivityProviders>(context, listen: false);
+    _connectivityProvider =
+        Provider.of<ConnectivityProviders>(context, listen: false);
     _connectivityProvider.initConnectivity();
     getCallHistoryApi();
     super.initState();
@@ -54,7 +57,7 @@ class _CallhistoryscreenState extends State<Callhistoryscreen> {
   Future<void> getCallHistoryApi() async {
     final callhistory =
         Provider.of<CallHistoryProvider>(context, listen: false);
-    callhistory.getCallHistoryApi(context);
+    callhistory.getCallHistoryApi(widget.date, context);
   }
 
   @override
@@ -74,25 +77,29 @@ class _CallhistoryscreenState extends State<Callhistoryscreen> {
                     fontWeight: FontWeight.w600,
                     color: Colors.white),
               ),
-
               backgroundColor: primaryColor,
-              leading: Container(),
-              leadingWidth: 10,
-              // IconButton(
-              //   icon: Icon(
-              //     Icons.arrow_back,
-              //     color: Colors.white,
-              //   ),
-              //   onPressed: () {
-              //     Navigator.pop(context, true);
-              //   },
-              // ),
+              leading: widget.type != ""
+                  ? IconButton(
+                      icon: Icon(
+                        Icons.arrow_back,
+                        color: Colors.white,
+                      ),
+                      onPressed: () {
+                        print('hihjh');
+
+                        Navigator.pop(context, true);
+                      },
+                    )
+                  : Container(),
+
+              leadingWidth: widget.type != '' ? 56 : 20,
+
             ),
             body: Consumer<CallHistoryProvider>(
               builder: (context, callhistoryprovider, child) {
                 if (callhistoryprovider.loading) {
                   return _buildShimmerList();
-                }else if(callhistoryprovider.call_history.isEmpty){
+                } else if (callhistoryprovider.call_history.isEmpty) {
                   return Center(
                     child: Column(
                       children: [
@@ -108,11 +115,12 @@ class _CallhistoryscreenState extends State<Callhistoryscreen> {
                       ],
                     ),
                   );
-                }
-                else {
+                } else {
                   return Column(
                     children: [
-                      SizedBox(height: 16,),
+                      SizedBox(
+                        height: 16,
+                      ),
                       Expanded(
                         child: NotificationListener<ScrollNotification>(
                           onNotification: (ScrollNotification scrollinfo) {
@@ -120,7 +128,8 @@ class _CallhistoryscreenState extends State<Callhistoryscreen> {
                                 scrollinfo.metrics.pixels ==
                                     scrollinfo.metrics.maxScrollExtent) {
                               if (callhistoryprovider.hasNext) {
-                                callhistoryprovider.getMoreCallHistoryApi(context);
+                                callhistoryprovider.getMoreCallHistoryApi(
+                                    '', context);
                               }
                               return true;
                             }
@@ -134,7 +143,8 @@ class _CallhistoryscreenState extends State<Callhistoryscreen> {
                                 final call =
                                     callhistoryprovider.call_history[index];
                                 return Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 12.0),
                                   child: Card(
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(15.0),
@@ -143,7 +153,8 @@ class _CallhistoryscreenState extends State<Callhistoryscreen> {
                                     child: Padding(
                                       padding: const EdgeInsets.all(16.0),
                                       child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
                                           SizedBox(height: 8),
                                           Row(
@@ -161,7 +172,8 @@ class _CallhistoryscreenState extends State<Callhistoryscreen> {
                                               Row(
                                                 children: [
                                                   Icon(Icons.calendar_today,
-                                                      size: 16, color: Colors.grey),
+                                                      size: 16,
+                                                      color: Colors.grey),
                                                   SizedBox(width: 8),
                                                   Text(
                                                     call.dateAdded ?? "",
@@ -197,9 +209,8 @@ class _CallhistoryscreenState extends State<Callhistoryscreen> {
                                   ),
                                 );
                               },
-                                      childCount:
-                                          callhistoryprovider.call_history.length)),
-
+                                      childCount: callhistoryprovider
+                                          .call_history.length)),
                               SliverPadding(
                                 padding: EdgeInsets.only(bottom: 30),
                                 sliver: SliverToBoxAdapter(

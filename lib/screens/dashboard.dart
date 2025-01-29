@@ -21,7 +21,7 @@ class _DashboardState extends State<Dashboard> {
   final PageController _pageController = PageController();
   final List<Widget> _pages = [
     Homescreen(),
-    Callhistoryscreen(),
+    Callhistoryscreen(type:'' ,date: '',),
     LeaderboardScreen(),
   ];
 

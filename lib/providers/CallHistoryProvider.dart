@@ -15,12 +15,12 @@ class CallHistoryProvider extends ChangeNotifier {
   bool _pageLoading = false;
   bool get pageLoading => _pageLoading;
 
-  Future<void> getCallHistoryApi(BuildContext context) async {
+  Future<void> getCallHistoryApi(date,BuildContext context) async {
     _loading = true;
     _currentPage = 1;
     notifyListeners();
     try {
-      var res = await Userapi.getCallHistory(_currentPage);
+      var res = await Userapi.getCallHistory(date,_currentPage);
       if (res?.status==true) {
         call_history = res?.data?.call_history??[];
         // Update `_hasNext` based on the API response
@@ -61,7 +61,7 @@ class CallHistoryProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> getMoreCallHistoryApi(BuildContext context) async {
+  Future<void> getMoreCallHistoryApi(date,BuildContext context) async {
     // Prevent redundant calls if no more pages or a fetch is already in progress
     if (!_hasNext || _pageLoading) {
       debugPrint("No more pages to fetch or another fetch is in progress.");
@@ -73,7 +73,7 @@ class CallHistoryProvider extends ChangeNotifier {
 
     try {
       debugPrint("Fetching page $_currentPage...");
-      var res = await Userapi.getCallHistory(_currentPage + 1); // Increment the page for API call
+      var res = await Userapi.getCallHistory(date,_currentPage + 1); // Increment the page for API call
 
       if (res?.status == true) {
         _currentPage++; // Increment page count after successful fetch

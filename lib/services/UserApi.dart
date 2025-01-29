@@ -491,9 +491,9 @@ class Userapi {
     }
   }
 
-  static Future<CallHistoryModel?> getCallHistory(page) async {
+  static Future<CallHistoryModel?> getCallHistory(date,page) async {
     try {
-      final url = Uri.parse("${host}/api/today-called-history?page=${page}");
+      final url = Uri.parse("${host}/api/today-called-history?latest_update=${date}&page=${page}");
       final header = await getheader1();
       final response = await http.get(url, headers: header);
 

@@ -1,12 +1,14 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:call_log/call_log.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:phone_state/phone_state.dart';
@@ -43,11 +45,14 @@ class _HomescreenState extends State<Homescreen> {
   bool isPaused = false;
   bool isCallOngoing = false;
   late StreamSubscription<PhoneState> _phoneStateSubscription;
+  String Date =DateFormat('yyyy-MM-dd').format(DateTime.now());
+
 
   @override
   void initState() {
     GetDashBoardDetails();
-    Provider.of<ConnectivityProviders>(context, listen: false).initConnectivity();
+    Provider.of<ConnectivityProviders>(context, listen: false)
+        .initConnectivity();
     _initializePhoneStateListener();
     _requestPermission();
     super.initState();
@@ -61,10 +66,12 @@ class _HomescreenState extends State<Homescreen> {
 
   List<MobileNumbers>? phoneNumbers;
   Future<void> GetDashBoardDetails() async {
-    final dashboard_provider = Provider.of<DashboardProvider>(context, listen: false);
-    final user_details_provider = Provider.of<UserDetailsProvider>(context, listen: false);
+    final dashboard_provider =
+        Provider.of<DashboardProvider>(context, listen: false);
+    final user_details_provider =
+        Provider.of<UserDetailsProvider>(context, listen: false);
     var res = await dashboard_provider.fetchDashBoardDetails(context);
-    if(res==true){
+    if (res == true) {
       user_details_provider.fetchUserDetails();
     }
   }
@@ -186,7 +193,8 @@ class _HomescreenState extends State<Homescreen> {
     // After showing the dialog, remove the number from the list
     setState(() {
       phoneNumbers!.removeAt(currentIndex - 1); // Remove the last dialed number
-      currentIndex = currentIndex > 0 ? currentIndex - 1 : 0; // Correct the index
+      currentIndex =
+          currentIndex > 0 ? currentIndex - 1 : 0; // Correct the index
     });
   }
 
@@ -330,7 +338,8 @@ class _HomescreenState extends State<Homescreen> {
                     print("Selected Status: $selectedStatus");
                     // Close the dialog
                     Navigator.of(context).pop();
-                    updateCallStatus(id.toString(), selectedStatus, callDuration.toString());
+                    updateCallStatus(
+                        id.toString(), selectedStatus, callDuration.toString());
                   } else {
                     // If no status is selected, show a message or do nothing
                     print("No status selected");
@@ -353,10 +362,12 @@ class _HomescreenState extends State<Homescreen> {
   }
 
   void updateCallStatus(id, callStatus, String callDuration) async {
-    var result = await Userapi.UpdateCallStatusApi(id, callStatus, callDuration);
+    var result =
+        await Userapi.UpdateCallStatusApi(id, callStatus, callDuration);
     if (result != null) {
       print("Response: $result");
-      final dashboard_provider = Provider.of<DashboardProvider>(context, listen: false);
+      final dashboard_provider =
+          Provider.of<DashboardProvider>(context, listen: false);
       dashboard_provider.fetchDashBoardDetails(context);
       CustomSnackBar.show(context, "Call Staus Updated Successfully!");
       Future.delayed(Duration(seconds: 3), () {
@@ -488,33 +499,30 @@ class _HomescreenState extends State<Homescreen> {
                   child: Column(
                     children: [
                       Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 16, vertical: 0),
                         child: Column(
                           children: [
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 InkResponse(
-                                  onTap: (){
-                                    Navigator.of(context)
-                                        .push(PageRouteBuilder(
+                                  onTap: () {
+                                    Navigator.of(context).push(PageRouteBuilder(
                                       pageBuilder: (context, animation,
                                           secondaryAnimation) {
-                                        return Callhistoryscreen();
+                                        return Callhistoryscreen(type:'today',date: Date,);
                                       },
-                                      transitionsBuilder: (context,
-                                          animation,
-                                          secondaryAnimation,
-                                          child) {
+                                      transitionsBuilder: (context, animation,
+                                          secondaryAnimation, child) {
                                         const begin = Offset(1.0, 0.0);
                                         const end = Offset.zero;
                                         const curve = Curves.easeInOut;
                                         var tween = Tween(
-                                            begin: begin, end: end)
-                                            .chain(CurveTween(
-                                            curve: curve));
+                                                begin: begin, end: end)
+                                            .chain(CurveTween(curve: curve));
                                         var offsetAnimation =
-                                        animation.drive(tween);
+                                            animation.drive(tween);
                                         return SlideTransition(
                                             position: offsetAnimation,
                                             child: child);
@@ -531,7 +539,7 @@ class _HomescreenState extends State<Homescreen> {
                                       children: [
                                         text(
                                             context,
-                                            dashboardProvider.todayCalls?? "0",
+                                            dashboardProvider.todayCalls ?? "0",
                                             46,
                                             fontfamily: 'Poppins',
                                             fontWeight: FontWeight.w500),
@@ -552,7 +560,7 @@ class _HomescreenState extends State<Homescreen> {
                                     children: [
                                       text(
                                           context,
-                                          dashboardProvider.pendingCalls?? "0",
+                                          dashboardProvider.pendingCalls ?? "0",
                                           46,
                                           fontfamily: 'Poppins',
                                           fontWeight: FontWeight.w500),
@@ -572,34 +580,34 @@ class _HomescreenState extends State<Homescreen> {
                               children: [
                                 InkResponse(
                                   onTap: () async {
-                                    var res= await Navigator.of(context)
+                                    var res = await Navigator.of(context)
                                         .push(PageRouteBuilder(
                                       pageBuilder: (context, animation,
                                           secondaryAnimation) {
                                         return LeadScreen();
                                       },
-                                      transitionsBuilder: (context,
-                                          animation,
-                                          secondaryAnimation,
-                                          child) {
+                                      transitionsBuilder: (context, animation,
+                                          secondaryAnimation, child) {
                                         const begin = Offset(1.0, 0.0);
                                         const end = Offset.zero;
                                         const curve = Curves.easeInOut;
                                         var tween = Tween(
-                                            begin: begin, end: end)
-                                            .chain(CurveTween(
-                                            curve: curve));
+                                                begin: begin, end: end)
+                                            .chain(CurveTween(curve: curve));
                                         var offsetAnimation =
-                                        animation.drive(tween);
+                                            animation.drive(tween);
                                         return SlideTransition(
                                             position: offsetAnimation,
                                             child: child);
                                       },
                                     ));
-                                    if(res==true){
+                                    if (res == true) {
                                       final dashboard_provider =
-                                      Provider.of<DashboardProvider>(context, listen: false);
-                                      dashboard_provider.fetchDashBoardDetails(context);
+                                          Provider.of<DashboardProvider>(
+                                              context,
+                                              listen: false);
+                                      dashboard_provider
+                                          .fetchDashBoardDetails(context);
                                     }
                                   },
                                   child: container(
@@ -612,7 +620,7 @@ class _HomescreenState extends State<Homescreen> {
                                       children: [
                                         text(
                                             context,
-                                            dashboardProvider.leadCount?? "0",
+                                            dashboardProvider.leadCount ?? "0",
                                             46,
                                             fontfamily: 'Poppins',
                                             fontWeight: FontWeight.w500),
@@ -625,34 +633,34 @@ class _HomescreenState extends State<Homescreen> {
                                 ),
                                 InkResponse(
                                   onTap: () async {
-                                    var res= await Navigator.of(context)
+                                    var res = await Navigator.of(context)
                                         .push(PageRouteBuilder(
                                       pageBuilder: (context, animation,
                                           secondaryAnimation) {
                                         return FollowupsScreen();
                                       },
-                                      transitionsBuilder: (context,
-                                          animation,
-                                          secondaryAnimation,
-                                          child) {
+                                      transitionsBuilder: (context, animation,
+                                          secondaryAnimation, child) {
                                         const begin = Offset(1.0, 0.0);
                                         const end = Offset.zero;
                                         const curve = Curves.easeInOut;
                                         var tween = Tween(
-                                            begin: begin, end: end)
-                                            .chain(CurveTween(
-                                            curve: curve));
+                                                begin: begin, end: end)
+                                            .chain(CurveTween(curve: curve));
                                         var offsetAnimation =
-                                        animation.drive(tween);
+                                            animation.drive(tween);
                                         return SlideTransition(
                                             position: offsetAnimation,
                                             child: child);
                                       },
                                     ));
-                                    if(res==true){
+                                    if (res == true) {
                                       final dashboard_provider =
-                                      Provider.of<DashboardProvider>(context, listen: false);
-                                      dashboard_provider.fetchDashBoardDetails(context);
+                                          Provider.of<DashboardProvider>(
+                                              context,
+                                              listen: false);
+                                      dashboard_provider
+                                          .fetchDashBoardDetails(context);
                                     }
                                   },
                                   child: container(
@@ -665,7 +673,8 @@ class _HomescreenState extends State<Homescreen> {
                                       children: [
                                         text(
                                             context,
-                                            dashboardProvider.followup_count ?? "0",
+                                            dashboardProvider.followup_count ??
+                                                "0",
                                             46,
                                             fontfamily: 'Poppins',
                                             fontWeight: FontWeight.w500),
@@ -678,105 +687,116 @@ class _HomescreenState extends State<Homescreen> {
                                 ),
                               ],
                             ),
-                            if(phoneNumbers?.length!=0)...[
-                            SizedBox(height: w * 0.07),
-                            containertext(context, onTap: () {
-                              if (!isCalling) {
-                                // Start the calling process
-                                _startCallingProcess();
-                              } else {
-                                // Toggle between Pause and Resume
-                                _togglePauseResume();
-                              }
-                            },
+                            if (phoneNumbers?.length != 0) ...[
+                              SizedBox(height: w * 0.07),
+                              containertext(
+                                context,
+                                onTap: () {
+                                  if (!isCalling) {
+                                    // Start the calling process
+                                    _startCallingProcess();
+                                  } else {
+                                    // Toggle between Pause and Resume
+                                    _togglePauseResume();
+                                  }
+                                },
                                 color: color28,
                                 width: w * 0.5,
                                 isCalling
                                     ? (isPaused ? 'RESUME' : 'PAUSE')
                                     : 'START NOW',
-                            ),
-                            SizedBox(height: w * 0.05),
-                            text(context, 'CALLS IN QUEUE', 20,
-                                fontWeight: FontWeight.w500,
-                                fontfamily: 'Poppins',
-                                color: color11,
-                                textdecoration: TextDecoration.underline,
-                                decorationcolor: color34),
-                            SizedBox(height: w * 0.05),
-                            Container(
-                              height: w*0.6, // Ensure a fixed height for ListView
-                              child: ListView.builder(
-                                itemCount: phoneNumbers?.length ?? 0,
-                                itemBuilder: (context, index) {
-                                  final data = phoneNumbers![index];
-                                  return container(
-                                    context,
-                                    border:
-                                        Border.all(color: color35, width: 1),
-                                    margin: EdgeInsets.only(bottom: 10),
-                                    padding: EdgeInsets.all(5),
-                                    borderRadius: BorderRadius.circular(15),
-                                    child: Row(
-                                      children: [
-                                        container(
-                                          context,
-                                          borderRadius:
-                                              BorderRadius.circular(100),
-                                          colors: color3,
-                                          child: Icon(
-                                            Icons.call,
-                                            size: 18,
-                                            color: color11,
-                                          ),
-                                        ),
-                                        SizedBox(
-                                          width: w * 0.02,
-                                        ),
-                                        Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            if(data.name== null)...[
-                                              Container(width: w*0.6,
-                                                child: text(
-                                                    context,
-                                                    (data.name != "")
-                                                        ? data.name ?? "Unknown"
-                                                        : "Unknown",
-                                                    18,
-                                                    fontfamily: 'Poppins',
-                                                    fontWeight: FontWeight.w600,
-                                                    textAlign: TextAlign.left,
-                                                    overflow: TextOverflow.ellipsis,
-                                                    color: color11),
-                                              ),
-                                            ],
-                                            SizedBox(
-                                              height: 5,
-                                            ),
-                                            text(context, data.number ?? "", 18,
-                                                fontfamily: 'Poppins',
-                                                fontWeight: FontWeight.w500,
-                                                color: color11),
-                                          ],
-                                        )
-                                      ],
-                                    ),
-                                  );
-                                },
                               ),
-                            ),
-                            ]else...[
+                              SizedBox(height: w * 0.05),
+                              text(context, 'CALLS IN QUEUE', 20,
+                                  fontWeight: FontWeight.w500,
+                                  fontfamily: 'Poppins',
+                                  color: color11,
+                                  textdecoration: TextDecoration.underline,
+                                  decorationcolor: color34),
+                              SizedBox(height: w * 0.05),
+                              Container(
+                                height: w *
+                                    0.6, // Ensure a fixed height for ListView
+                                child: ListView.builder(
+                                  itemCount: phoneNumbers?.length ?? 0,
+                                  itemBuilder: (context, index) {
+                                    final data = phoneNumbers![index];
+                                    return container(
+                                      context,
+                                      border:
+                                          Border.all(color: color35, width: 1),
+                                      margin: EdgeInsets.only(bottom: 10),
+                                      padding: EdgeInsets.all(5),
+                                      borderRadius: BorderRadius.circular(15),
+                                      child: Row(
+                                        children: [
+                                          container(
+                                            context,
+                                            borderRadius:
+                                                BorderRadius.circular(100),
+                                            colors: color3,
+                                            child: Icon(
+                                              Icons.call,
+                                              size: 18,
+                                              color: color11,
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            width: w * 0.02,
+                                          ),
+                                          Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              if (data.name == null) ...[
+                                                Container(
+                                                  width: w * 0.6,
+                                                  child: text(
+                                                      context,
+                                                      (data.name != "")
+                                                          ? data.name ??
+                                                              "Unknown"
+                                                          : "Unknown",
+                                                      18,
+                                                      fontfamily: 'Poppins',
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      textAlign: TextAlign.left,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      color: color11),
+                                                ),
+                                              ],
+                                              SizedBox(
+                                                height: 5,
+                                              ),
+                                              text(context, data.number ?? "",
+                                                  18,
+                                                  fontfamily: 'Poppins',
+                                                  fontWeight: FontWeight.w500,
+                                                  color: color11),
+                                            ],
+                                          )
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                            ] else ...[
                               Column(
                                 children: [
-                                  SizedBox(height: w*0.2,),
+                                  SizedBox(
+                                    height: w * 0.2,
+                                  ),
                                   Lottie.asset(
-                                      'assets/animations/nodata1.json', // Your Lottie animation file
-                                      width: 150, // Adjust the size as needed
-                                      height: 150,
-                                      fit: BoxFit.cover,),
+                                    'assets/animations/nodata1.json', // Your Lottie animation file
+                                    width: 150, // Adjust the size as needed
+                                    height: 150,
+                                    fit: BoxFit.cover,
+                                  ),
                                 ],
                               ),
                             ],
@@ -814,14 +834,17 @@ class _HomescreenState extends State<Homescreen> {
                                           null
                                       ? ClipOval(
                                           // Ensure the image is clipped into a circle
-                                          child: Image.network(
-                                            userDetailsProvider
+                                          child: CachedNetworkImage(
+                                            imageUrl: userDetailsProvider
                                                 .userDetails!.photo!,
                                             fit: BoxFit.cover,
                                             width:
                                                 60, // Ensure it's sized to fit the CircleAvatar
                                             height:
-                                                60, // Ensure it's sized to fit the CircleAvatar
+                                                60,
+                                            errorWidget: (BuildContext context, String url, dynamic error){
+                                              return Image.asset('assets/');
+                                            },
                                           ),
                                         )
                                       : userDetailsProvider
@@ -858,8 +881,7 @@ class _HomescreenState extends State<Homescreen> {
                                 Container(
                                   width: w * 0.4,
                                   child: Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.center,
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
@@ -916,9 +938,9 @@ class _HomescreenState extends State<Homescreen> {
                                 Container(
                                   padding: EdgeInsets.all(0.0),
                                   decoration: BoxDecoration(
-                                    color: primaryColor, // background color of the container
-                                    borderRadius:
-                                    BorderRadius.circular(
+                                    color:
+                                        primaryColor, // background color of the container
+                                    borderRadius: BorderRadius.circular(
                                         10), // rounded corners
                                   ),
                                   child: IconButton(
@@ -926,22 +948,22 @@ class _HomescreenState extends State<Homescreen> {
                                     padding: EdgeInsets.all(0),
                                     icon: Icon(
                                       Icons.edit,
-                                      color:
-                                      Colors.white, // Icon color
+                                      color: Colors.white, // Icon color
                                     ),
                                     onPressed: () async {
                                       // Action when the edit button is pressed
                                       var res = await Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                            builder: (context) =>
-
-                                          EditProfileScreen()));
-                                      },
+                                              builder: (context) =>
+                                                  EditProfileScreen()));
+                                    },
                                     tooltip: 'Edit',
                                   ),
                                 ),
-                                SizedBox(width: 10,),
+                                SizedBox(
+                                  width: 10,
+                                ),
                               ],
                             ),
                           ),
@@ -949,7 +971,10 @@ class _HomescreenState extends State<Homescreen> {
                       },
                     ),
                   ),
-                  Divider(color: Colors.grey[300],height: 0.5,),
+                  Divider(
+                    color: Colors.grey[300],
+                    height: 0.5,
+                  ),
                   // InkWell(
                   //   onTap: () {
                   //     // Your onTap action here

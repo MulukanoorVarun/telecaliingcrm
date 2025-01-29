@@ -233,6 +233,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     Label(text: 'Email'),
                     SizedBox(height: 4),
                     _buildTextField(
+                      readonly: true,
                       controller: emailController,
                       hint: "Enter Email Address",
                       focusNode: _focusNodeEmail,
@@ -241,29 +242,29 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             RegExp(r"[a-zA-Z0-9@._-]")),
                       ],
                     ),
-                    if (_validateEmail.isNotEmpty)
-                      Container(
-                        alignment: Alignment.topLeft,
-                        margin: EdgeInsets.only(left: 8, bottom: 10, top: 5),
-                        width: w * w,
-                        child: ShakeWidget(
-                          key: Key("value"),
-                          duration: Duration(milliseconds: 700),
-                          child: Text(
-                            _validateEmail,
-                            style: TextStyle(
-                              fontFamily: "Poppins",
-                              fontSize: 12,
-                              color: Colors.red,
-                              fontWeight: FontWeight.w500,
-
-                            ),
-                          ),
-                        ),
-                      ),
-                    SizedBox(height: 16),
-                    Label(text: 'PassWord'),
-                    SizedBox(height: 40),
+                    // if (_validateEmail.isNotEmpty)
+                    //   Container(
+                    //     alignment: Alignment.topLeft,
+                    //     margin: EdgeInsets.only(left: 8, bottom: 10, top: 5),
+                    //     width: w * w,
+                    //     child: ShakeWidget(
+                    //       key: Key("value"),
+                    //       duration: Duration(milliseconds: 700),
+                    //       child: Text(
+                    //         _validateEmail,
+                    //         style: TextStyle(
+                    //           fontFamily: "Poppins",
+                    //           fontSize: 12,
+                    //           color: Colors.red,
+                    //           fontWeight: FontWeight.w500,
+                    //
+                    //         ),
+                    //       ),
+                    //     ),
+                    //   ),
+                    // SizedBox(height: 16),
+                    // Label(text: 'PassWord'),
+                    SizedBox(height: 100),
                     InkResponse(
                       onTap: () {
                         if (isLoading) {
@@ -275,7 +276,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         width: w,
                         height: MediaQuery.of(context).size.height * 0.060,
                         decoration: BoxDecoration(
-                          color: const Color(0xff110B0F),
+                          color: primaryColor,
                           borderRadius: BorderRadius.circular(7),
                         ),
                         child: Center(
@@ -307,11 +308,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     required TextEditingController controller,
     required String hint,
     required FocusNode focusNode,
+    bool readonly= false,
     List<TextInputFormatter>? inputFormatters,
   }) {
     return Container(
       height: MediaQuery.of(context).size.height * 0.05,
       child: TextFormField(
+        readOnly: readonly,
         controller: controller,
         focusNode: focusNode,
         inputFormatters: inputFormatters,

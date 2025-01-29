@@ -116,8 +116,8 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                                                 ),
                                               ),
                                               const SizedBox(width: 16.0),
-                                              ClipRRect(
-                                                borderRadius: BorderRadius.circular(8.0),
+                                              ClipOval(
+                                                // borderRadius: BorderRadius.circular(8.0),
                                                 child: Container(
                                                   width: 50.0,
                                                   height: 50.0,
