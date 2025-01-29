@@ -7,6 +7,7 @@ import 'package:telecaliingcrm/model/DashBoardModel.dart';
 import 'package:telecaliingcrm/model/LeadsModel.dart';
 import 'package:telecaliingcrm/model/LeadeBoardModel.dart';
 import 'package:telecaliingcrm/model/UserDetailsModel.dart';
+import 'package:telecaliingcrm/screens/SubscriptionExpiredScreen.dart';
 import 'package:telecaliingcrm/services/otherservices.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:mime/mime.dart';
@@ -19,7 +20,8 @@ import '../utils/preferences.dart';
 class Userapi {
   static String host = "https://api.telecallingcrm.com";
 
-  static Future<Map<String, dynamic>?> PostSignIn(String email, String pwd) async {
+  static Future<Map<String, dynamic>?> PostSignIn(
+      String email, String pwd,BuildContext context) async {
     try {
       // Prepare the request data
       Map<String, String> data = {
@@ -47,9 +49,36 @@ class Userapi {
         // Success: Return the parsed response
         print("Request successful: $jsonResponse");
         return jsonResponse;
+      } else if (response.statusCode == 403) {
+        {
+          Navigator.of(context)
+              .push(PageRouteBuilder(
+            pageBuilder: (context, animation,
+                secondaryAnimation) {
+              return SubscriptionExpiredScreen();
+            },
+            transitionsBuilder: (context,
+                animation,
+                secondaryAnimation,
+                child) {
+              const begin = Offset(1.0, 0.0);
+              const end = Offset.zero;
+              const curve = Curves.easeInOut;
+              var tween = Tween(
+                  begin: begin, end: end)
+                  .chain(CurveTween(
+                  curve: curve));
+              var offsetAnimation =
+              animation.drive(tween);
+              return SlideTransition(
+                  position: offsetAnimation,
+                  child: child);
+            },
+          ));
+        }
       } else {
-        // Handle other status codes and return the response
-        print("Request failed with status: ${response.statusCode}, body: $jsonResponse");
+        print(
+            "Request failed with status: ${response.statusCode}, body: $jsonResponse");
         return jsonResponse;
       }
     } catch (e) {
@@ -91,31 +120,31 @@ class Userapi {
   }
 
   static Future<UserDetailsModel?> getUserDetails() async {
-      try {
-        final url = Uri.parse("${host}/api/profile");
-        final headers = await getheader1();
-        final response = await http.post(
-          url,
-          headers: headers,
-        );
-        if (response.statusCode == 200) {
-          final jsonResponse = jsonDecode(response.body);
-          print("getUserDetails response: ${response.body}");
+    try {
+      final url = Uri.parse("${host}/api/profile");
+      final headers = await getheader1();
+      final response = await http.post(
+        url,
+        headers: headers,
+      );
+      if (response.statusCode == 200) {
+        final jsonResponse = jsonDecode(response.body);
+        print("getUserDetails response: ${response.body}");
 
-          return UserDetailsModel.fromJson(jsonResponse);
-        } else {
-          print("Request failed with status: ${response.statusCode}");
-          return null;
-        }
-      } catch (e) {
-        // Log any errors
-        print("Error occurred in getUserDetails: $e");
+        return UserDetailsModel.fromJson(jsonResponse);
+      } else {
+        print("Request failed with status: ${response.statusCode}");
         return null;
       }
+    } catch (e) {
+      // Log any errors
+      print("Error occurred in getUserDetails: $e");
+      return null;
+    }
   }
 
-  static Future<Map<String, dynamic>?> UpdateCallStatusApi(String id,
-      String call_status, String call_duration) async {
+  static Future<Map<String, dynamic>?> UpdateCallStatusApi(
+      String id, String call_status, String call_duration) async {
     try {
       // Prepare the request data
       Map<String, String> data = {
@@ -126,7 +155,7 @@ class Userapi {
       print("UpdateCallStatusApi data: $data");
       final url = Uri.parse("${host}/api/update_call_status_api");
       final headers =
-      await getheader1(); // Ensure this function returns the correct headers
+          await getheader1(); // Ensure this function returns the correct headers
       final response = await http.post(
         url,
         headers: headers,
@@ -138,11 +167,13 @@ class Userapi {
           print("Request successful: $jsonResponse");
           return jsonResponse;
         } catch (e) {
-          print("Error: Failed to decode response body. Response: ${response.body}");
+          print(
+              "Error: Failed to decode response body. Response: ${response.body}");
           return null;
         }
       } else {
-        print("Request failed with status: ${response.statusCode}, body: ${response.body}");
+        print(
+            "Request failed with status: ${response.statusCode}, body: ${response.body}");
         return null;
       }
     } catch (e) {
@@ -151,9 +182,10 @@ class Userapi {
     }
   }
 
-  static Future<LeadsModel?> getLeads(type,page) async {
+  static Future<LeadsModel?> getLeads(type, page) async {
     try {
-      final url = Uri.parse("${host}/api/get_lead_calls?stagename=${type}&page=${page}");
+      final url = Uri.parse(
+          "${host}/api/get_lead_calls?stagename=${type}&page=${page}");
       final headers = await getheader1();
       final response = await http.get(url, headers: headers);
       if (response.statusCode == 200) {
@@ -172,7 +204,8 @@ class Userapi {
 
   static Future<LeaderBoardModel?> getLeaderboard(_currentPage) async {
     try {
-      final url = Uri.parse("${host}/api/get_leader_board?page=${_currentPage}");
+      final url =
+          Uri.parse("${host}/api/get_leader_board?page=${_currentPage}");
       final headers = await getheader1();
       final response = await http.post(
         url,
@@ -192,11 +225,13 @@ class Userapi {
     }
   }
 
-  static Future<Map<String, dynamic>?> postAddLeads(String name,
-      String num,
-      String followup_date,
-      String remarks,
-      String lead_id,) async {
+  static Future<Map<String, dynamic>?> postAddLeads(
+    String name,
+    String num,
+    String followup_date,
+    String remarks,
+    String lead_id,
+  ) async {
     try {
       final Map<String, String> data = {
         "name": name,
@@ -226,8 +261,7 @@ class Userapi {
         return jsonResponse;
       } else {
         print(
-          "Request failed with status: ${response
-              .statusCode}, body: $jsonResponse",
+          "Request failed with status: ${response.statusCode}, body: $jsonResponse",
         );
         return jsonResponse;
       }
@@ -237,10 +271,12 @@ class Userapi {
     }
   }
 
-  static Future<Map<String, dynamic>?> postAddFollowUp(String leadid,
-      String name,
-      String followup_date,
-      String remarks,) async {
+  static Future<Map<String, dynamic>?> postAddFollowUp(
+    String leadid,
+    String name,
+    String followup_date,
+    String remarks,
+  ) async {
     try {
       final Map<String, String> data = {
         "lead_id": leadid,
@@ -269,8 +305,7 @@ class Userapi {
         return jsonResponse;
       } else {
         print(
-          "Request failed with status: ${response
-              .statusCode}, body: $jsonResponse",
+          "Request failed with status: ${response.statusCode}, body: $jsonResponse",
         );
         return jsonResponse;
       }
@@ -280,11 +315,13 @@ class Userapi {
     }
   }
 
-  static Future<Map<String, dynamic>?> postUpdateLeads(String name,
-      String lead_id,
-      String remarks,
-      String lead_stage_id,
-      String deal_stage,) async {
+  static Future<Map<String, dynamic>?> postUpdateLeads(
+    String name,
+    String lead_id,
+    String remarks,
+    String lead_stage_id,
+    String deal_stage,
+  ) async {
     try {
       final Map<String, String> data = {
         "name": name,
@@ -314,8 +351,7 @@ class Userapi {
         return jsonResponse;
       } else {
         print(
-          "Request failed with status: ${response
-              .statusCode}, body: $jsonResponse",
+          "Request failed with status: ${response.statusCode}, body: $jsonResponse",
         );
         return jsonResponse;
       }
@@ -371,12 +407,11 @@ class Userapi {
     }
   }
 
-  static Future<String?> updateProfile(UserID,String fullname,
-      String email,
-      File? image) async {
+  static Future<String?> updateProfile(
+      UserID, String fullname, String email, File? image) async {
     try {
-      final url =
-      Uri.parse('https://api.telecallingcrm.com/api/update-profile/${UserID}');
+      final url = Uri.parse(
+          'https://api.telecallingcrm.com/api/update-profile/${UserID}');
 
       // Create a MultipartRequest for a multipart form upload
       final request = http.MultipartRequest('POST', url);
@@ -474,8 +509,9 @@ class Userapi {
     }
   }
 
-  static Future<bool?> updatePassword(String email, String password,BuildContext context) async {
-    try{
+  static Future<bool?> updatePassword(
+      String email, String password, BuildContext context) async {
+    try {
       final Uri url = Uri.parse('${host}/api/update_password');
       final response = await http.post(
         url,
@@ -496,16 +532,16 @@ class Userapi {
           return false;
         }
       } else {
-
         return false;
       }
-    }catch(e){
+    } catch (e) {
       debugPrint('Error occurred: $e');
       return null;
     }
   }
 
-  static Future<bool?> forgetPassword(String email, BuildContext context) async {
+  static Future<bool?> forgetPassword(
+      String email, BuildContext context) async {
     try {
       final Uri url = Uri.parse('${host}/api/forget-password');
       final response = await http.post(
@@ -533,7 +569,8 @@ class Userapi {
         return false;
       } else {
         // Handle any other unsuccessful response
-        CustomSnackBar.show(context, "Unexpected error: ${response.statusCode}");
+        CustomSnackBar.show(
+            context, "Unexpected error: ${response.statusCode}");
         return false;
       }
     } catch (e) {
@@ -543,9 +580,9 @@ class Userapi {
     }
   }
 
-
-  static Future<bool?> forgetPasswordOtpVerify(String email,String otp,BuildContext context) async {
-    try{
+  static Future<bool?> forgetPasswordOtpVerify(
+      String email, String otp, BuildContext context) async {
+    try {
       final Uri url = Uri.parse('${host}/api/verify-otp');
       final response = await http.post(
         url,
@@ -564,11 +601,9 @@ class Userapi {
         CustomSnackBar.show(context, responseData['message']);
         return false;
       }
-    }catch(e){
+    } catch (e) {
       debugPrint('Error occurred: $e');
       return null;
     }
   }
-
-
 }

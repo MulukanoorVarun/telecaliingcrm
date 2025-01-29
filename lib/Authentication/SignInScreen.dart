@@ -54,7 +54,7 @@ class _SignInScreenState extends State<SignInScreen> {
       _loading = true;
     });
 
-    await Userapi.PostSignIn(_emailController.text, _pwdController.text)
+    await Userapi.PostSignIn(_emailController.text, _pwdController.text,context)
         .then((data) {
       setState(() {
         _loading = false;
@@ -75,31 +75,6 @@ class _SignInScreenState extends State<SignInScreen> {
             pageBuilder: (context, animation,
                 secondaryAnimation) {
               return Dashboard();
-            },
-            transitionsBuilder: (context,
-                animation,
-                secondaryAnimation,
-                child) {
-              const begin = Offset(1.0, 0.0);
-              const end = Offset.zero;
-              const curve = Curves.easeInOut;
-              var tween = Tween(
-                  begin: begin, end: end)
-                  .chain(CurveTween(
-                  curve: curve));
-              var offsetAnimation =
-              animation.drive(tween);
-              return SlideTransition(
-                  position: offsetAnimation,
-                  child: child);
-            },
-          ));
-        }else if(data['status']==false){
-          Navigator.of(context)
-              .push(PageRouteBuilder(
-            pageBuilder: (context, animation,
-                secondaryAnimation) {
-              return SubscriptionExpiredScreen();
             },
             transitionsBuilder: (context,
                 animation,
