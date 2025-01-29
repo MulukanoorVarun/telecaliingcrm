@@ -45,7 +45,6 @@ class LeaderBoardProvider extends ChangeNotifier {
       debugPrint("No more pages to fetch or another fetch is in progress.");
       return;
     }
-
     _pageLoading = true; // Mark as loading
     notifyListeners();
 

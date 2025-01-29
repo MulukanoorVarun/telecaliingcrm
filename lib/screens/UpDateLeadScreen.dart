@@ -84,10 +84,8 @@ class _UpDateLeadScreenState extends State<UpDateLeadScreen> {
       setState(() {
         _loading = true;
       });
-
       // Call the UpdateleadsApi from LeadsProvider
       final leadsProvider = Provider.of<LeadsProvider>(context, listen: false);
-
       // Pass the parameters from your UI to the provider
       final response = await leadsProvider.UpdateleadsApi(
         _nameController.text,
@@ -97,7 +95,6 @@ class _UpDateLeadScreenState extends State<UpDateLeadScreen> {
         _leadStage,
           context
       );
-
       if (response != null && response == true) {
         setState(() {
           _loading = false;
@@ -117,7 +114,6 @@ class _UpDateLeadScreenState extends State<UpDateLeadScreen> {
       setState(() {
         _loading = false;
       });
-
       // Handle error in case of failure
       print("Error occurred while updating lead: $e");
     }

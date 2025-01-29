@@ -500,6 +500,7 @@ class Userapi {
 
       if (response.statusCode == 200) {
         final jsonResponse = json.decode(response.body);
+        print("getCallHistory response:${jsonResponse}");
         return CallHistoryModel.fromJson(jsonResponse);
       } else {
         return null;

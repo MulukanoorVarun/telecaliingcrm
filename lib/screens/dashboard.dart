@@ -19,11 +19,6 @@ class Dashboard extends StatefulWidget {
 class _DashboardState extends State<Dashboard> {
   int _selectedIndex = 0;
   final PageController _pageController = PageController();
-  final List<Widget> _pages = [
-    Homescreen(),
-    Callhistoryscreen(type:'' ,date: '',),
-    LeaderboardScreen(),
-  ];
 
   @override
   void initState() {
@@ -49,12 +44,11 @@ class _DashboardState extends State<Dashboard> {
         child: PageView(
           physics: NeverScrollableScrollPhysics(),
           controller: _pageController,
-          onPageChanged: (index) {
-            setState(() {
-              _selectedIndex = index;
-            });
-          },
-          children: _pages,
+          children: [
+            Homescreen(),
+            Callhistoryscreen(type:'' ,date: '',),
+            LeaderboardScreen(),
+          ],
         ),
       ),
       bottomNavigationBar: CurvedNavigationBar(
@@ -109,8 +103,6 @@ class _DashboardState extends State<Dashboard> {
           _pageController.jumpToPage(index);
         },
       )
-
-
     ): NoInternetWidget();
   }
 }

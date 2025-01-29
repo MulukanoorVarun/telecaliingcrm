@@ -244,7 +244,7 @@ class _HomescreenState extends State<Homescreen> {
                         fontWeight: FontWeight.w500),
                   ),
                   leading: Radio<String>(
-                    value: "not_lifting",
+                    value: "Not Lifting",
                     visualDensity: VisualDensity.compact,
                     groupValue: selectedStatus,
                     onChanged: (value) {
@@ -266,7 +266,7 @@ class _HomescreenState extends State<Homescreen> {
                   ),
                   leading: Radio<String>(
                     visualDensity: VisualDensity.compact,
-                    value: "not_interested",
+                    value: "Not Interested",
                     groupValue: selectedStatus,
                     onChanged: (value) {
                       setState(() {
@@ -286,7 +286,7 @@ class _HomescreenState extends State<Homescreen> {
                         fontWeight: FontWeight.w500),
                   ),
                   leading: Radio<String>(
-                    value: "interested",
+                    value: "Interested",
                     visualDensity: VisualDensity.compact,
                     groupValue: selectedStatus,
                     onChanged: (value) {
@@ -307,7 +307,7 @@ class _HomescreenState extends State<Homescreen> {
                         fontWeight: FontWeight.w500),
                   ),
                   leading: Radio<String>(
-                    value: "notcorrect_number",
+                    value: "Not Correct Number",
                     visualDensity: VisualDensity.compact,
                     groupValue: selectedStatus,
                     onChanged: (value) {
