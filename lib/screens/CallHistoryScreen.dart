@@ -36,21 +36,18 @@ class _CallhistoryscreenState extends State<Callhistoryscreen> {
       'latestUpdate': 'Jan 24 2025 5:25 PM',
     },
   ];
-  late ConnectivityProviders _connectivityProvider;
+
   @override
   void initState() {
-    // Save the provider reference during initState
-    _connectivityProvider =
-        Provider.of<ConnectivityProviders>(context, listen: false);
-    _connectivityProvider.initConnectivity();
+    Provider.of<ConnectivityProviders>(context, listen: false)
+        .initConnectivity();
     getCallHistoryApi();
     super.initState();
   }
 
   @override
   void dispose() {
-    // Use the saved reference to dispose of the connectivity provider
-    _connectivityProvider.dispose();
+    Provider.of<ConnectivityProviders>(context, listen: false).dispose();
     super.dispose();
   }
 
