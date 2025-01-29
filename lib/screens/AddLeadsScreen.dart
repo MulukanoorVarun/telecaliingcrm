@@ -476,7 +476,7 @@ class _AddleadsscreenState extends State<Addleadsscreen> {
                     SizedBox(
                       height: 50,
                     ),
-                    containertext(context, "Submit",isLoading: _loading, onTap: () {
+                    containertext(context, "Submit",color:primaryColor,isLoading: _loading, onTap: () {
                       if (_loading) {
                       } else {
                         _validateFields();

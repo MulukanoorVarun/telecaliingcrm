@@ -12,6 +12,7 @@ import '../model/ViewInfoModel.dart';
 import '../providers/ConnectivityProviders.dart';
 import '../services/Shimmers.dart';
 import '../services/otherservices.dart';
+import 'SubscriptionExpiredScreen.dart';
 import 'UpDateLeadScreen.dart';
 
 class LeadInformation extends StatefulWidget {
@@ -24,10 +25,11 @@ class LeadInformation extends StatefulWidget {
 
 class _LeadInformationState extends State<LeadInformation> {
   bool is_loading = true;
+
+
   @override
   void initState() {
-    Provider.of<ConnectivityProviders>(context, listen: false)
-        .initConnectivity();
+    Provider.of<ConnectivityProviders>(context, listen: false).initConnectivity();
     getLeadsInformationApi();
     super.initState();
   }
@@ -41,6 +43,30 @@ class _LeadInformationState extends State<LeadInformation> {
         is_loading = false;
         print("Response: $result");
       } else {
+        Navigator.of(context)
+            .push(PageRouteBuilder(
+          pageBuilder: (context, animation,
+              secondaryAnimation) {
+            return SubscriptionExpiredScreen();
+          },
+          transitionsBuilder: (context,
+              animation,
+              secondaryAnimation,
+              child) {
+            const begin = Offset(1.0, 0.0);
+            const end = Offset.zero;
+            const curve = Curves.easeInOut;
+            var tween = Tween(
+                begin: begin, end: end)
+                .chain(CurveTween(
+                curve: curve));
+            var offsetAnimation =
+            animation.drive(tween);
+            return SlideTransition(
+                position: offsetAnimation,
+                child: child);
+          },
+        ));
         is_loading = false;
         print("Failed to update the call status.");
       }

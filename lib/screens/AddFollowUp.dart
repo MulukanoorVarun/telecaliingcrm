@@ -50,7 +50,6 @@ class _AddFollowUpState extends State<AddFollowUp> {
   void _validateFields() {
     setState(() {
       _loading = true;
-
       // Validate Full Name
       _validateFullName =
       !_nameController.text.contains(RegExp(r"^[a-zA-Z\s]+$"))
@@ -63,10 +62,8 @@ class _AddFollowUpState extends State<AddFollowUp> {
 
       _validateRemarks =
       _remarksController.text.isEmpty ? "Please add some remarks" : "";
-      if (_validateFullName.isEmpty &&
-          _validatedate.isEmpty &&
-          _validateRemarks.isEmpty) {
-        AddFollowUp(); // Trigger the AddLeads function if validations pass
+      if (_validateFullName.isEmpty && _validatedate.isEmpty && _validateRemarks.isEmpty) {
+        AddFollowUp();
       } else {
         _loading = false;
 
@@ -78,17 +75,15 @@ class _AddFollowUpState extends State<AddFollowUp> {
     try {
       final res = await Userapi.postAddFollowUp(widget.id, _nameController.text, formattedDate, _remarksController.text);
       print("res>>${res}");
-
       if (res!= null) {
         if(res["status"]==true){
           _loading = false;
           Navigator.pop(context,true);
         }else{
+
           _loading = false;
         }
-
       } else {
-
         print("Failed to add Follow-up: Response is null.");
       }
     } catch (e) {
@@ -410,7 +405,7 @@ class _AddFollowUpState extends State<AddFollowUp> {
               SizedBox(
                 height: 50,
               ),
-              containertext(context, "Submit",isLoading: _loading, onTap: () {
+              containertext(context, "Submit",color:primaryColor,isLoading: _loading, onTap: () {
                 if (_loading) {
                 } else {
                   _validateFields();

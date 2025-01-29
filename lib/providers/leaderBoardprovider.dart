@@ -51,9 +51,7 @@ class LeaderBoardProvider extends ChangeNotifier {
 
     try {
       debugPrint("Fetching leaderboard data for page $_currentPage...");
-
       var res = await Userapi.getLeaderboard(_currentPage + 1); // Increment the page for the API call
-
       if (res != null) {
         _currentPage++; // Increment the page count on success
 

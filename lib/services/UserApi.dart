@@ -364,6 +364,7 @@ class Userapi {
   static Future<ViewInfoModel?> getViewInfo(ID) async {
     try {
       final url = Uri.parse("${host}/api/view-info/$ID");
+      print(url);
       final headers = await getheader1();
       final response = await http.get(
         url,

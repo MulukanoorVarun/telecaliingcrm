@@ -132,151 +132,173 @@ class _LeadsScreenState extends State<LeadScreen>
               ),
               body: Column(
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        ElevatedButton(
-                          style: ButtonStyle(
-                            padding: MaterialStateProperty.all(
-                              const EdgeInsets.symmetric(
-                                  vertical: 0,
-                                  horizontal: 18), // Adjust as needed
-                            ),
-                            shape: MaterialStateProperty.all(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(
-                                    8), // Adjust the value to your desired radius
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          SizedBox(
+                            width: w*0.25,
+                            height: w*0.1,
+                            child: ElevatedButton(
+                              style: ButtonStyle(
+                                // padding: MaterialStateProperty.all(
+                                //   const EdgeInsets.symmetric(
+                                //       vertical: 0,
+                                //       horizontal: 18), // Adjust as needed
+                                // ),
+                                shape: MaterialStateProperty.all(
+                                  RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(
+                                        8), // Adjust the value to your desired radius
+                                  ),
+                                ),
+                                backgroundColor: MaterialStateProperty.all(
+                                  _selectedTabIndex == 0
+                                      ? Color(0xff7165E3)
+                                      : Colors.white, // Active color if selected
+                                ),
+                              ),
+                              onPressed: () {
+                                _onButtonPressed(0);
+                                setState(() {
+                                  stage_name="";
+                                });
+                                _fetchLeads();
+                              },
+                              child: Text(
+                                'ALL',
+                                style: TextStyle(
+                                  color: _selectedTabIndex == 0
+                                      ? Colors.white
+                                      : Color(0xff7165E3),
+                                ),
                               ),
                             ),
-                            backgroundColor: MaterialStateProperty.all(
-                              _selectedTabIndex == 0
-                                  ? Color(0xff7165E3)
-                                  : Colors.white, // Active color if selected
-                            ),
                           ),
-                          onPressed: () {
-                            _onButtonPressed(0);
-                            setState(() {
-                              stage_name="";
-                            });
-                            _fetchLeads();
-                          },
-                          child: Text(
-                            'ALL',
-                            style: TextStyle(
-                              color: _selectedTabIndex == 0
-                                  ? Colors.white
-                                  : Color(0xff7165E3),
-                            ),
-                          ),
-                        ),
-                        ElevatedButton(
-                          style: ButtonStyle(
-                            padding: MaterialStateProperty.all(
-                              const EdgeInsets.symmetric(
-                                  vertical: 0,
-                                  horizontal: 18), // Adjust as needed
-                            ),
-                            shape: MaterialStateProperty.all(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(
-                                    8), // Adjust the value to your desired radius
+                          SizedBox(width: 10,),
+                          SizedBox(
+                            width: w*0.25,
+                            height: w*0.1,
+                            child: ElevatedButton(
+                              style: ButtonStyle(
+                                // padding: MaterialStateProperty.all(
+                                //   const EdgeInsets.symmetric(
+                                //       vertical: 0,
+                                //       horizontal: 18), // Adjust as needed
+                                // ),
+                                shape: MaterialStateProperty.all(
+                                  RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(
+                                        8), // Adjust the value to your desired radius
+                                  ),
+                                ),
+                                backgroundColor: MaterialStateProperty.all(
+                                  _selectedTabIndex == 1
+                                      ? Color(0xff7165E3)
+                                      : Colors.white, // Active color if selected
+                                ),
+                              ),
+                              onPressed: () {
+                                _onButtonPressed(1);
+                                setState(() {
+                                  stage_name="hot";
+                                });
+                                _fetchLeads(
+                                );
+                              },
+                              child: Text(
+                                'HOT',
+                                style: TextStyle(
+                                    color: _selectedTabIndex == 1
+                                        ? Colors.white
+                                        : Color(0xff7165E3)),
                               ),
                             ),
-                            backgroundColor: MaterialStateProperty.all(
-                              _selectedTabIndex == 1
-                                  ? Color(0xff7165E3)
-                                  : Colors.white, // Active color if selected
-                            ),
                           ),
-                          onPressed: () {
-                            _onButtonPressed(1);
-                            setState(() {
-                              stage_name="hot";
-                            });
-                            _fetchLeads(
-                            );
-                          },
-                          child: Text(
-                            'HOT',
-                            style: TextStyle(
-                                color: _selectedTabIndex == 1
-                                    ? Colors.white
-                                    : Color(0xff7165E3)),
-                          ),
-                        ),
-                        ElevatedButton(
-                          style: ButtonStyle(
-                            padding: MaterialStateProperty.all(
-                              const EdgeInsets.symmetric(
-                                  vertical: 0,
-                                  horizontal: 18), // Adjust as needed
-                            ),
-                            shape: MaterialStateProperty.all(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(
-                                    8), // Adjust the value to your desired radius
+                          SizedBox(width: 10,),
+                          SizedBox(
+                            width: w*0.25,
+                            height: w*0.1,
+                            child: ElevatedButton(
+                              style: ButtonStyle(
+                                // padding: MaterialStateProperty.all(
+                                //   const EdgeInsets.symmetric(
+                                //       vertical: 0,
+                                //       horizontal: 18), // Adjust as needed
+                                // ),
+                                shape: MaterialStateProperty.all(
+                                  RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(
+                                        8), // Adjust the value to your desired radius
+                                  ),
+                                ),
+                                backgroundColor: MaterialStateProperty.all(
+                                  _selectedTabIndex == 2
+                                      ? Color(0xff7165E3)
+                                      : Colors.white, // Active color if selected
+                                ),
+                              ),
+                              onPressed: () {
+                                _onButtonPressed(2);
+                                setState(() {
+                                  stage_name="cold";
+                                });
+                                _fetchLeads();
+                              },
+                              child: Text(
+                                'COLD',
+                                style: TextStyle(
+                                    color: _selectedTabIndex == 2
+                                        ? Colors.white
+                                        : Color(0xff7165E3)),
                               ),
                             ),
-                            backgroundColor: MaterialStateProperty.all(
-                              _selectedTabIndex == 2
-                                  ? Color(0xff7165E3)
-                                  : Colors.white, // Active color if selected
-                            ),
                           ),
-                          onPressed: () {
-                            _onButtonPressed(2);
-                            setState(() {
-                              stage_name="cold";
-                            });
-                            _fetchLeads();
-                          },
-                          child: Text(
-                            'COLD',
-                            style: TextStyle(
-                                color: _selectedTabIndex == 2
-                                    ? Colors.white
-                                    : Color(0xff7165E3)),
-                          ),
-                        ),
-                        ElevatedButton(
-                          style: ButtonStyle(
-                            padding: MaterialStateProperty.all(
-                              const EdgeInsets.symmetric(
-                                  vertical: 0,
-                                  horizontal: 18), // Adjust as needed
-                            ),
-                            shape: MaterialStateProperty.all(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(
-                                    8), // Adjust the value to your desired radius
+                          SizedBox(width: 10,),
+                          SizedBox(
+                            width: w*0.28,
+                            height: w*0.1,
+                            child: ElevatedButton(
+                              style: ButtonStyle(
+                                // padding: MaterialStateProperty.all(
+                                //   const EdgeInsets.symmetric(
+                                //       vertical: 0,
+                                //       horizontal: 18), // Adjust as needed
+                                // ),
+                                shape: MaterialStateProperty.all(
+                                  RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(
+                                        8), // Adjust the value to your desired radius
+                                  ),
+                                ),
+                                backgroundColor: MaterialStateProperty.all(
+                                  _selectedTabIndex == 3
+                                      ? Color(0xff7165E3)
+                                      : Colors.white, // Active color if selected
+                                ),
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  stage_name="warm";
+                                });
+                                _fetchLeads();
+                                _onButtonPressed(3);
+                              },
+                              child: Text(
+                                'WARM',
+                                style: TextStyle(
+                                    color: _selectedTabIndex == 3
+                                        ? Colors.white
+                                        : Color(0xff7165E3)),
                               ),
                             ),
-                            backgroundColor: MaterialStateProperty.all(
-                              _selectedTabIndex == 3
-                                  ? Color(0xff7165E3)
-                                  : Colors.white, // Active color if selected
-                            ),
                           ),
-                          onPressed: () {
-                            setState(() {
-                              stage_name="warm";
-                            });
-                            _fetchLeads();
-                            _onButtonPressed(3);
-                          },
-                          child: Text(
-                            'WARM',
-                            style: TextStyle(
-                                color: _selectedTabIndex == 3
-                                    ? Colors.white
-                                    : Color(0xff7165E3)),
-                          ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                   Consumer<LeadsProvider>(
