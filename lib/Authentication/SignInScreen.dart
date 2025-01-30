@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:telecaliingcrm/Authentication/ForgetPasswordEmail.dart';
-import 'package:telecaliingcrm/screens/HomeScreen.dart';
 import 'package:telecaliingcrm/screens/dashboard.dart';
 import '../providers/ConnectivityProviders.dart';
-import '../screens/SubscriptionExpiredScreen.dart';
 import '../services/UserApi.dart';
 import '../services/otherservices.dart';
+import '../utils/PermissionHelper.dart';
 import '../utils/ShakeWidget.dart';
 import '../utils/constants.dart';
 import '../utils/preferences.dart';
@@ -32,7 +31,6 @@ class _SignInScreenState extends State<SignInScreen> {
   void _validateFields() {
     setState(() {
       _loading = true;
-
       _validateEmail =
           !RegExp(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$")
                   .hasMatch(_emailController.text)
@@ -126,8 +124,7 @@ class _SignInScreenState extends State<SignInScreen> {
 
   @override
   void initState() {
-    Provider.of<ConnectivityProviders>(context, listen: false)
-        .initConnectivity();
+    Provider.of<ConnectivityProviders>(context, listen: false).initConnectivity();
     super.initState();
   }
 

@@ -2,6 +2,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:in_app_update/in_app_update.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:telecaliingcrm/Authentication/SignInScreen.dart';
 import 'package:telecaliingcrm/screens/OnBoardingScreen.dart';
@@ -9,6 +10,7 @@ import '../Services/otherservices.dart';
 import '../providers/ConnectivityProviders.dart';
 import '../utils/ColorConstants.dart';
 import '../utils/preferences.dart';
+import 'PermissionScreen.dart';
 import 'dashboard.dart';
 
 class Splash extends StatefulWidget {
@@ -16,29 +18,18 @@ class Splash extends StatefulWidget {
   _SplashState createState() => _SplashState();
 }
 
-class _SplashState extends State<Splash> with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _animation;
-  late ConnectivityProviders _connectivityProvider;
+class _SplashState extends State<Splash> {
+  bool permissions_granted = false;
 
   String token = "";
   String onboard_status = "";
+
+
   @override
   void initState() {
     super.initState();
-    // Save the provider reference during initState
-    _connectivityProvider =
-        Provider.of<ConnectivityProviders>(context, listen: false);
-    _connectivityProvider.initConnectivity();
-    // Initialize animation controller
-    _controller = AnimationController(
-      duration: Duration(seconds: 2),
-      vsync: this,
-    );
-
-    _animation = CurvedAnimation(parent: _controller, curve: Curves.easeIn);
-    _controller.forward();
-
+    Provider.of<ConnectivityProviders>(context, listen: false)
+        .initConnectivity();
     SchedulerBinding.instance.addPostFrameCallback((_) async {
       if (await isNetworkAvailable()) {
         await checkForUpdates();
@@ -46,7 +37,7 @@ class _SplashState extends State<Splash> with SingleTickerProviderStateMixin {
       } else {}
     });
 
-
+    _checkPermissions();
     Fetchdetails();
   }
 
@@ -62,6 +53,24 @@ class _SplashState extends State<Splash> with SingleTickerProviderStateMixin {
     setState(() {
       onboard_status = status;
       token = Token;
+    });
+  }
+
+
+  Future<void> _checkPermissions() async {
+    Map<Permission, PermissionStatus> statuses = {
+     Permission.phone: await Permission.phone.status,
+      Permission.camera: await Permission.camera.status,
+      Permission.contacts: await Permission.contacts.status,
+      Permission.storage: await Permission.storage.status,
+    };
+
+    bool allPermissionsGranted =
+    statuses.values.every((status) => status.isGranted);
+
+    setState(() {
+      permissions_granted = allPermissionsGranted;
+      print("permissions_granted:${permissions_granted}");
     });
   }
 
@@ -120,7 +129,11 @@ class _SplashState extends State<Splash> with SingleTickerProviderStateMixin {
     if (onboard_status == '') {
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (context) => OnBoardindScreen()));
-    } else if (token.isNotEmpty) {
+    } else if(!permissions_granted){
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => PermissionScreen()));
+    }
+    else if (token.isNotEmpty) {
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (context) => Dashboard()));
     } else {
@@ -131,7 +144,7 @@ class _SplashState extends State<Splash> with SingleTickerProviderStateMixin {
 
   @override
   void dispose() {
-    _controller.dispose();
+    Provider.of<ConnectivityProviders>(context, listen: false).dispose();
     super.dispose();
   }
 
@@ -144,13 +157,10 @@ class _SplashState extends State<Splash> with SingleTickerProviderStateMixin {
             backgroundColor: primaryColor,
             body: Container(
               child: Center(
-                child: FadeTransition(
-                  opacity: _animation,
-                  child: Image.asset(
-                    "assets/telecalling_splash.png",
-                    width: 240,
-                    height: 200,
-                  ),
+                child: Image.asset(
+                  "assets/telecalling_splash.png",
+                  width: 240,
+                  height: 200,
                 ),
               ),
             ),
