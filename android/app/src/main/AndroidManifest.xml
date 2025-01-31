@@ -18,7 +18,7 @@
     <application
         android:label="Telecalling CRM"
         android:name="${applicationName}"
-        android:icon="@mipmap/telecalling_appicon">
+        android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
             android:exported="true"

@@ -23,6 +23,7 @@ import 'package:telecaliingcrm/screens/FollowupsScreen.dart';
 import 'package:telecaliingcrm/screens/LeadsScreen.dart';
 import 'package:telecaliingcrm/utils/ColorConstants.dart';
 import 'package:telecaliingcrm/utils/constants.dart';
+import 'package:telecaliingcrm/utils/preferences.dart';
 import '../model/DashBoardModel.dart';
 import '../providers/ConnectivityProviders.dart';
 import '../services/Shimmers.dart';
@@ -325,9 +326,8 @@ class _HomescreenState extends State<Homescreen> {
                     // Save the selected status (you can store it in a variable or database)
                     print("Selected Status: $selectedStatus");
                     // Close the dialog
-                    Navigator.of(context).pop();
-                    updateCallStatus(id.toString(), selectedStatus,
-                        callDuration.toString(), context);
+                    updateCallStatus(id.toString(), selectedStatus, callDuration.toString(), context);
+
                   } else {
                     // If no status is selected, show a message or do nothing
                     print("No status selected");
@@ -357,12 +357,10 @@ class _HomescreenState extends State<Homescreen> {
 
       if (result != null) {
         print("Response: $result");
-
-        final dashboardProvider =
-            Provider.of<DashboardProvider>(context, listen: false);
+        final dashboardProvider = Provider.of<DashboardProvider>(context, listen: false);
         dashboardProvider.fetchDashBoardDetails(context);
-
         CustomSnackBar.show(context, "Call Status Updated Successfully!");
+        Navigator.of(context).pop();
         // Continue processing even if context is unmounted
         Future.delayed(Duration(seconds: 3), () {
           _scheduleNextCall(); // Start the next call if available
@@ -457,7 +455,7 @@ class _HomescreenState extends State<Homescreen> {
                         // Power icon
                         InkResponse(
                           onTap: () async {
-                            _showLogoutDialog(context);
+                            showLogoutDialog(context);
                           },
                           child: Icon(
                             Icons.power_settings_new,
@@ -886,9 +884,7 @@ class _HomescreenState extends State<Homescreen> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        userDetailsProvider.userDetails
-                                                    ?.username?.isNotEmpty ??
-                                                false
+                                        userDetailsProvider.userDetails?.username?.isNotEmpty ?? false
                                             ? userDetailsProvider
                                                     .userDetails!.username![0]
                                                     .toUpperCase() +
@@ -897,23 +893,18 @@ class _HomescreenState extends State<Homescreen> {
                                                     .substring(1)
                                             : "",
                                         style: TextStyle(
-                                            fontSize: 20,
+                                            fontSize:17,
                                             fontFamily: "Poppins",
                                             fontWeight: FontWeight.w500,
                                             overflow: TextOverflow.ellipsis,
                                             color: Colors.black),
                                       ),
-                                      SizedBox(
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .height *
-                                              0.01),
                                       text(
                                         context,
                                         userDetailsProvider
                                                 .userDetails?.email ??
                                             "example@domain.com",
-                                        18,
+                                        16,
                                         fontWeight: FontWeight.w500,
                                         color: color11,
                                         overflow: TextOverflow.ellipsis,
@@ -923,18 +914,6 @@ class _HomescreenState extends State<Homescreen> {
                                   ),
                                 ),
                                 Spacer(),
-                                // InkResponse(
-                                //     onTap: () {
-                                //       Navigator.push(
-                                //           context,
-                                //           MaterialPageRoute(
-                                //               builder: (context) =>
-                                //                   EditProfileScreen()));
-                                //     },
-                                //     child: Icon(
-                                //       Icons.edit,
-                                //       color: color4,
-                                //     ))
                                 Container(
                                   padding: EdgeInsets.all(0.0),
                                   decoration: BoxDecoration(
@@ -952,7 +931,8 @@ class _HomescreenState extends State<Homescreen> {
                                     ),
                                     onPressed: () async {
                                       // Action when the edit button is pressed
-                                      var res = await Navigator.push(
+                                      Navigator.pop(context);
+                                       await Navigator.push(
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>
@@ -1044,11 +1024,27 @@ class _HomescreenState extends State<Homescreen> {
                   InkWell(
                     onTap: () {
                       Navigator.pop(context);
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => LeadScreen(),
-                          ));
+                      Navigator.of(context)
+                          .push(PageRouteBuilder(
+                        pageBuilder: (context, animation,
+                            secondaryAnimation) {
+                          return LeadScreen();
+                        },
+                        transitionsBuilder: (context, animation,
+                            secondaryAnimation, child) {
+                          const begin = Offset(1.0, 0.0);
+                          const end = Offset.zero;
+                          const curve = Curves.easeInOut;
+                          var tween = Tween(
+                              begin: begin, end: end)
+                              .chain(CurveTween(curve: curve));
+                          var offsetAnimation =
+                          animation.drive(tween);
+                          return SlideTransition(
+                              position: offsetAnimation,
+                              child: child);
+                        },
+                      ));
                     },
                     child: Container(
                       padding: EdgeInsets.symmetric(
@@ -1082,11 +1078,27 @@ class _HomescreenState extends State<Homescreen> {
                   InkWell(
                     onTap: () {
                       Navigator.pop(context);
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => FollowupsScreen(),
-                          ));
+                      Navigator.of(context)
+                          .push(PageRouteBuilder(
+                        pageBuilder: (context, animation,
+                            secondaryAnimation) {
+                          return FollowupsScreen();
+                        },
+                        transitionsBuilder: (context, animation,
+                            secondaryAnimation, child) {
+                          const begin = Offset(1.0, 0.0);
+                          const end = Offset.zero;
+                          const curve = Curves.easeInOut;
+                          var tween = Tween(
+                              begin: begin, end: end)
+                              .chain(CurveTween(curve: curve));
+                          var offsetAnimation =
+                          animation.drive(tween);
+                          return SlideTransition(
+                              position: offsetAnimation,
+                              child: child);
+                        },
+                      ));
                     },
                     child: Container(
                       padding: EdgeInsets.symmetric(
@@ -1252,53 +1264,118 @@ class _HomescreenState extends State<Homescreen> {
         : NoInternetWidget();
   }
 
-  void _showLogoutDialog(BuildContext context) {
+  void showLogoutDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Logout Confirmation'),
-          content: Text('Are you sure you want to log out?'),
-          actions: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        return Dialog(
+          elevation: 4.0,
+          insetPadding: const EdgeInsets.symmetric(horizontal: 14.0),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
+          child: SizedBox(
+            width: 300.0,
+            height: 200.0,
+            child: Stack(
+              clipBehavior: Clip.none,
               children: [
-                InkResponse(
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
+                // Power Icon Positioned Above Dialog
+                Positioned(
+                  top: -35.0,
+                  left: 0.0,
+                  right: 0.0,
                   child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                    width: 70.0,
+                    height: 70.0,
+                    alignment: Alignment.center,
                     decoration: BoxDecoration(
-                        color: color28,
-                        borderRadius: BorderRadius.circular(10)),
-                    child: text(context, 'Cancel', 14,
-                        fontfamily: 'Inter', color: color4),
+                      border: Border.all(width: 6.0, color: Colors.white),
+                      shape: BoxShape.circle,
+                      color: Colors.red.shade100, // Light red background
+                    ),
+                    child: const Icon(
+                      Icons.power_settings_new,
+                      size: 40.0,
+                      color: Colors.red, // Power icon color
+                    ),
                   ),
                 ),
-                InkResponse(
-                  onTap: () async {
-                    SharedPreferences sharedPreferences =
-                        await SharedPreferences.getInstance();
-                    sharedPreferences.remove('token');
 
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => SignInScreen()),
-                    );
-                  },
-                  child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: primaryColor)),
-                    child: text(context, 'Logout', 14,
-                        fontfamily: 'Inter', color: primaryColor),
+                // Dialog Content
+                Positioned.fill(
+                  top: 30.0, // Moves content down
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 14.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const SizedBox(height: 15.0),
+                         Text(
+                          "Logout",
+                          style: TextStyle(
+                            fontSize: 24.0,
+                            fontWeight: FontWeight.w700,
+                            color:primaryColor,
+                          ),
+                        ),
+                        const SizedBox(height: 10.0),
+                        const Text(
+                          "Are you sure you want to logout?",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 16.0,
+                            color: Colors.black54,
+                          ),
+                        ),
+                        const SizedBox(height: 20.0),
+
+                        // Buttons Row
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            // No Button (Filled)
+                            SizedBox(
+                              width: 100,
+                              child: ElevatedButton(
+                                onPressed: () => Navigator.pop(context),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: primaryColor, // Filled button color
+                                  foregroundColor: Colors.white, // Text color
+                                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                                ),
+                                child: const Text("No"),
+                              ),
+                            ),
+
+                            // Yes Button (Outlined)
+                            SizedBox(
+                              width: 100,
+                              child: OutlinedButton(
+                                onPressed: () {
+                                  PreferenceService().remove("token");
+                                  Navigator.push(context, MaterialPageRoute(builder: (context)=> SignInScreen()));
+                                },
+                                style: OutlinedButton.styleFrom(
+                                  foregroundColor: primaryColor, // Text color
+                                  side: BorderSide(color: primaryColor), // Border color
+                                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                                ),
+                                child: const Text(
+                                  "Yes",
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+
+
+                      ],
+                    ),
                   ),
                 ),
               ],
             ),
-          ],
+          ),
         );
       },
     );

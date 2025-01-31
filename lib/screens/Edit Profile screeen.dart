@@ -1,19 +1,14 @@
 import 'dart:io';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
-
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:telecaliingcrm/utils/CustomAppBar.dart';
-import '../Model/UserDetailsModel.dart';
-import '../Services/UserApi.dart';
 import '../providers/ConnectivityProviders.dart';
 import '../providers/UserDetailsProvider.dart';
 
 import '../utils/ColorConstants.dart';
 import '../utils/ShakeWidget.dart';
-import 'dart:developer' as developer;
 import 'dart:async';
 import '../Services/otherservices.dart';
 import '../utils/constants.dart';
@@ -27,16 +22,12 @@ class EditProfileScreen extends StatefulWidget {
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
   final TextEditingController fullnameController = TextEditingController();
-  // final TextEditingController pwdController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final FocusNode _focusNodeFullName = FocusNode();
   final FocusNode _focusNodeEmail = FocusNode();
-  final FocusNode _focusNodepwd = FocusNode();
   File? _image; // To store the selected image
   bool isLoading = false; // Loading state
-  XFile? _pickedFile;
-  // CroppedFile? _croppedFile;
-  // String _validatepwd = "";
+
   String _validateEmail = "";
   String _validateName = "";
 
@@ -174,14 +165,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             radius: 50,
                             backgroundColor: Colors.grey,
                             backgroundImage: _image != null
-                                ? FileImage(_image!) as ImageProvider<Object>
-                                : profile_image != null &&
-                                        profile_image.isNotEmpty
-                                    ? NetworkImage(profile_image)
-                                        as ImageProvider<Object>
-                                    : AssetImage('assets/person.png')
-                                        as ImageProvider<
-                                            Object>,
+                                ? FileImage(_image!)
+                                : (profile_image != null && profile_image.isNotEmpty)
+                                ? CachedNetworkImageProvider(profile_image)
+                                : const AssetImage('assets/person.png') as ImageProvider<Object>,
+                            child: (profile_image != null && profile_image.isNotEmpty)
+                                ? null
+                                : Icon(Icons.person, size: 50, color: Colors.white),
                           ),
                           Positioned(
                             bottom: 0,
