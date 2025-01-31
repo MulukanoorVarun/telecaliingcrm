@@ -99,7 +99,6 @@ class _UpDateLeadScreenState extends State<UpDateLeadScreen> {
         setState(() {
           _loading = false;
         });
-        CustomSnackBar.show(context, "Lead Updated Successfully!");
         // If successful, pop the screen with a success message
         Navigator.pop(context, true);
       } else {
@@ -411,7 +410,6 @@ class _UpDateLeadScreenState extends State<UpDateLeadScreen> {
                   _validateFields();
                 }
               }),
-
               SizedBox(
                 height: 20,
               ),

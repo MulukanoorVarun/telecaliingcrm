@@ -444,13 +444,33 @@ class _LeadsScreenState extends State<LeadScreen>
                                                               color: color11)),
                                                       InkResponse(
                                                         onTap: () {
-                                                          Navigator.push(
-                                                              context,
-                                                              MaterialPageRoute(
-                                                                  builder: (context) => AddFollowUp(
-                                                                    id: leads.id.toString(),
-                                                                    name: leads.name ?? "",
-                                                                  )));
+                                                          Navigator.of(context)
+                                                              .pushReplacement(PageRouteBuilder(
+                                                            pageBuilder: (context, animation,
+                                                                secondaryAnimation) {
+                                                              return AddFollowUp(
+                                                                id: leads.id.toString(),
+                                                                name: leads.name ?? "",
+                                                              );
+                                                            },
+                                                            transitionsBuilder: (context,
+                                                                animation,
+                                                                secondaryAnimation,
+                                                                child) {
+                                                              const begin = Offset(1.0, 0.0);
+                                                              const end = Offset.zero;
+                                                              const curve = Curves.easeInOut;
+                                                              var tween = Tween(
+                                                                  begin: begin, end: end)
+                                                                  .chain(CurveTween(
+                                                                  curve: curve));
+                                                              var offsetAnimation =
+                                                              animation.drive(tween);
+                                                              return SlideTransition(
+                                                                  position: offsetAnimation,
+                                                                  child: child);
+                                                            },
+                                                          ));
                                                         },
                                                         child: text(
                                                             context,
@@ -466,17 +486,33 @@ class _LeadsScreenState extends State<LeadScreen>
                                                       ),
                                                       InkWell(
                                                         onTap: () {
-                                                          Navigator.push(
-                                                              context,
-                                                              MaterialPageRoute(
-                                                                builder:
-                                                                    (context) =>
-                                                                    LeadInformation(
-                                                                      ID: leads
-                                                                          .id
-                                                                          .toString(),
-                                                                    ),
-                                                              ));
+                                                          Navigator.of(context)
+                                                              .push(PageRouteBuilder(
+                                                            pageBuilder: (context, animation,
+                                                                secondaryAnimation) {
+                                                              return LeadInformation(ID: leads
+                                                                    .id
+                                                                    .toString(),
+                                                              );
+                                                            },
+                                                            transitionsBuilder: (context,
+                                                                animation,
+                                                                secondaryAnimation,
+                                                                child) {
+                                                              const begin = Offset(1.0, 0.0);
+                                                              const end = Offset.zero;
+                                                              const curve = Curves.easeInOut;
+                                                              var tween = Tween(
+                                                                  begin: begin, end: end)
+                                                                  .chain(CurveTween(
+                                                                  curve: curve));
+                                                              var offsetAnimation =
+                                                              animation.drive(tween);
+                                                              return SlideTransition(
+                                                                  position: offsetAnimation,
+                                                                  child: child);
+                                                            },
+                                                          ));
                                                         },
                                                         child: Padding(
                                                           padding:

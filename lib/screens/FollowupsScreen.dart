@@ -21,7 +21,8 @@ class FollowupsScreen extends StatefulWidget {
 class _FollowupsScreenState extends State<FollowupsScreen> {
   @override
   void initState() {
-    Provider.of<ConnectivityProviders>(context, listen: false).initConnectivity();
+    Provider.of<ConnectivityProviders>(context, listen: false)
+        .initConnectivity();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _fetchFollowups();
     });
@@ -89,10 +90,11 @@ class _FollowupsScreenState extends State<FollowupsScreen> {
                   },
                 ),
               ),
-              body:Consumer<FollowupProvider>(builder: (context,followupProvider,child){
-                if(followupProvider.isLoading){
+              body: Consumer<FollowupProvider>(
+                  builder: (context, followupProvider, child) {
+                if (followupProvider.isLoading) {
                   return _buildShimmerList();
-                }else if(followupProvider.followupList.length>0){
+                } else if (followupProvider.followupList.length > 0) {
                   return Column(
                     children: [
                       SizedBox(
@@ -102,7 +104,8 @@ class _FollowupsScreenState extends State<FollowupsScreen> {
                         child: NotificationListener<ScrollNotification>(
                           onNotification: (ScrollNotification scrollInfo) {
                             if (!followupProvider.isLoading &&
-                                scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
+                                scrollInfo.metrics.pixels ==
+                                    scrollInfo.metrics.maxScrollExtent) {
                               if (followupProvider.nextPage) {
                                 followupProvider.fetchMoreFollowUpList(context);
                               }
@@ -114,8 +117,9 @@ class _FollowupsScreenState extends State<FollowupsScreen> {
                             slivers: [
                               SliverList(
                                 delegate: SliverChildBuilderDelegate(
-                                      (context, index) {
-                                    final followup_List = followupProvider.followupList[index];
+                                  (context, index) {
+                                    final followup_List =
+                                        followupProvider.followupList[index];
                                     return container(
                                       context,
                                       margin: EdgeInsets.symmetric(
@@ -124,7 +128,7 @@ class _FollowupsScreenState extends State<FollowupsScreen> {
                                         children: [
                                           Row(
                                             mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
+                                                MainAxisAlignment.spaceBetween,
                                             children: [
                                               text(
                                                   context,
@@ -140,42 +144,42 @@ class _FollowupsScreenState extends State<FollowupsScreen> {
                                             height: 1.8,
                                             thickness: 0.8,
                                             color:
-                                            Colors.black.withOpacity(0.25),
+                                                Colors.black.withOpacity(0.25),
                                           ),
                                           SizedBox(height: 5),
                                           Row(
                                             mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
+                                                MainAxisAlignment.spaceBetween,
                                             children: [
                                               Expanded(
                                                 child: Column(
                                                   crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
+                                                      CrossAxisAlignment.start,
                                                   mainAxisAlignment:
-                                                  MainAxisAlignment.start,
+                                                      MainAxisAlignment.start,
                                                   children: [
                                                     Row(
                                                       mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
                                                       children: [
                                                         container(context,
                                                             colors: (followup_List
-                                                                .leadType
-                                                                ?.stageName
-                                                                ?.stageName ==
-                                                                "Cold")
+                                                                        .leadType
+                                                                        ?.stageName
+                                                                        ?.stageName ==
+                                                                    "Cold")
                                                                 ? coldbgColor
                                                                 : (followup_List.leadType?.stageName?.stageName ==
-                                                                "Hot")
-                                                                ? Color(
-                                                                0xffFFA89C)
-                                                                : Color(
-                                                                0xff95F8B6),
+                                                                        "Hot")
+                                                                    ? Color(
+                                                                        0xffFFA89C)
+                                                                    : Color(
+                                                                        0xff95F8B6),
                                                             borderRadius:
-                                                            BorderRadius.all(
-                                                                Radius.circular(
-                                                                    5)),
+                                                                BorderRadius.all(
+                                                                    Radius.circular(
+                                                                        5)),
                                                             padding: EdgeInsets.symmetric(
                                                                 vertical: 2,
                                                                 horizontal: 10),
@@ -192,33 +196,67 @@ class _FollowupsScreenState extends State<FollowupsScreen> {
                                                         // ),
                                                         InkWell(
                                                           onTap: () {
-                                                            Navigator.push(
-                                                                context,
-                                                                MaterialPageRoute(
-                                                                  builder:
-                                                                      (context) =>
-                                                                      LeadInformation(
-                                                                        ID: followup_List
-                                                                            .leadId
-                                                                            .toString(),
-                                                                      ),
-                                                                ));
+                                                            Navigator.of(
+                                                                    context)
+                                                                .push(
+                                                                    PageRouteBuilder(
+                                                              pageBuilder: (context,
+                                                                  animation,
+                                                                  secondaryAnimation) {
+                                                                return LeadInformation(
+                                                                  ID: followup_List
+                                                                      .leadId
+                                                                      .toString(),
+                                                                );
+                                                              },
+                                                              transitionsBuilder:
+                                                                  (context,
+                                                                      animation,
+                                                                      secondaryAnimation,
+                                                                      child) {
+                                                                const begin =
+                                                                    Offset(1.0,
+                                                                        0.0);
+                                                                const end =
+                                                                    Offset.zero;
+                                                                const curve =
+                                                                    Curves
+                                                                        .easeInOut;
+                                                                var tween = Tween(
+                                                                        begin:
+                                                                            begin,
+                                                                        end:
+                                                                            end)
+                                                                    .chain(CurveTween(
+                                                                        curve:
+                                                                            curve));
+                                                                var offsetAnimation =
+                                                                    animation
+                                                                        .drive(
+                                                                            tween);
+                                                                return SlideTransition(
+                                                                    position:
+                                                                        offsetAnimation,
+                                                                    child:
+                                                                        child);
+                                                              },
+                                                            ));
                                                           },
                                                           child: Padding(
                                                             padding:
-                                                            const EdgeInsets
-                                                                .all(8.0),
+                                                                const EdgeInsets
+                                                                    .all(8.0),
                                                             child: text(
                                                                 context,
                                                                 "View Info>",
                                                                 14,
                                                                 color:
-                                                                primaryColor,
+                                                                    primaryColor,
                                                                 textdecoration:
-                                                                TextDecoration
-                                                                    .underline,
+                                                                    TextDecoration
+                                                                        .underline,
                                                                 decorationcolor:
-                                                                primaryColor),
+                                                                    primaryColor),
                                                           ),
                                                         ),
                                                       ],
@@ -232,28 +270,28 @@ class _FollowupsScreenState extends State<FollowupsScreen> {
                                                         children: [
                                                           TextSpan(
                                                               text:
-                                                              'Remarks : ',
+                                                                  'Remarks : ',
                                                               style: TextStyle(
                                                                   fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
+                                                                      FontWeight
+                                                                          .bold,
                                                                   fontFamily:
-                                                                  "Poppins")),
+                                                                      "Poppins")),
                                                           TextSpan(
                                                               text: followup_List
-                                                                  .remarks !=
-                                                                  null
+                                                                          .remarks !=
+                                                                      null
                                                                   ? '${followup_List.remarks}'
                                                                   : "NA",
                                                               style: TextStyle(
                                                                   fontWeight:
-                                                                  FontWeight
-                                                                      .normal)),
+                                                                      FontWeight
+                                                                          .normal)),
                                                         ],
                                                       ),
                                                       maxLines: 3,
                                                       textAlign:
-                                                      TextAlign.start,
+                                                          TextAlign.start,
                                                       overflow: TextOverflow
                                                           .ellipsis, // Optional, to handle text overflow
                                                     )
@@ -266,18 +304,18 @@ class _FollowupsScreenState extends State<FollowupsScreen> {
                                                     onTap: () async {
                                                       await FlutterPhoneDirectCaller
                                                           .callNumber(followup_List
-                                                          .phone
-                                                          .toString() ??
-                                                          "");
+                                                                  .phone
+                                                                  .toString() ??
+                                                              "");
                                                     },
                                                     child: container(context,
                                                         colors: primaryColor,
                                                         padding:
-                                                        EdgeInsets.all(10),
+                                                            EdgeInsets.all(10),
                                                         margin: EdgeInsets
                                                             .symmetric(
-                                                            vertical: 3,
-                                                            horizontal: 3),
+                                                                vertical: 3,
+                                                                horizontal: 3),
                                                         child: Image(
                                                           image: AssetImage(
                                                               "assets/call.png"),
@@ -289,17 +327,17 @@ class _FollowupsScreenState extends State<FollowupsScreen> {
                                                     onTap: () {
                                                       _launchWhatsApp(
                                                           followup_List.phone
-                                                              .toString() ??
+                                                                  .toString() ??
                                                               "");
                                                     },
                                                     child: container(context,
                                                         colors: primaryColor,
                                                         padding:
-                                                        EdgeInsets.all(10),
+                                                            EdgeInsets.all(10),
                                                         margin: EdgeInsets
                                                             .symmetric(
-                                                            vertical: 3,
-                                                            horizontal: 3),
+                                                                vertical: 3,
+                                                                horizontal: 3),
                                                         child: Image(
                                                           image: AssetImage(
                                                               "assets/whatsapp.png"),
@@ -313,9 +351,11 @@ class _FollowupsScreenState extends State<FollowupsScreen> {
                                           )
                                         ],
                                       ),
-                                    );;
+                                    );
+                                    ;
                                   },
-                                  childCount: followupProvider.followupList.length,
+                                  childCount:
+                                      followupProvider.followupList.length,
                                 ),
                               ),
                               SliverPadding(
@@ -328,9 +368,10 @@ class _FollowupsScreenState extends State<FollowupsScreen> {
                               ),
                               if (followupProvider.pageLoading)
                                 SliverToBoxAdapter(
-                                  child: Align(alignment: Alignment.center,
-                                    child:CircularProgressIndicator(strokeWidth: 1)
-                                  ),
+                                  child: Align(
+                                      alignment: Alignment.center,
+                                      child: CircularProgressIndicator(
+                                          strokeWidth: 1)),
                                 ),
                               SliverPadding(
                                 padding: EdgeInsets.only(bottom: 20),
@@ -349,7 +390,7 @@ class _FollowupsScreenState extends State<FollowupsScreen> {
                       ),
                     ],
                   );
-                }else{
+                } else {
                   return Center(
                     child: Column(
                       children: [
@@ -366,7 +407,6 @@ class _FollowupsScreenState extends State<FollowupsScreen> {
                     ),
                   );
                 }
-
               }),
             ),
           )

@@ -437,19 +437,21 @@ class _HomescreenState extends State<Homescreen> {
                         SizedBox(
                           width: 10,
                         ),
-                        Text(
-                          userDetailsProvider
-                                      .userDetails?.username?.isNotEmpty ??
-                                  false
-                              ? userDetailsProvider.userDetails!.username![0]
-                                      .toUpperCase() +
-                                  userDetailsProvider.userDetails!.username!
-                                      .substring(1)
-                              : "",
-                          style: TextStyle(
-                              fontSize: 20,
-                              fontFamily: "Poppins",
-                              fontWeight: FontWeight.w500),
+                        SizedBox(width: w*0.52,
+                          child: Text(overflow: TextOverflow.ellipsis,
+                            userDetailsProvider
+                                        .userDetails?.username?.isNotEmpty ??
+                                    false
+                                ? userDetailsProvider.userDetails!.username![0]
+                                        .toUpperCase() +
+                                    userDetailsProvider.userDetails!.username!
+                                        .substring(1)
+                                : "",
+                            style: TextStyle(
+                                fontSize: 20,
+                                fontFamily: "Poppins",
+                                fontWeight: FontWeight.w500),
+                          ),
                         ),
                         Spacer(),
                         // Power icon
@@ -713,8 +715,7 @@ class _HomescreenState extends State<Homescreen> {
                                   decorationcolor: color34),
                               SizedBox(height: w * 0.05),
                               Container(
-                                height: w *
-                                    0.6, // Ensure a fixed height for ListView
+                                height: w * 0.55, // Ensure a fixed height for ListView
                                 child: ListView.builder(
                                   itemCount: phoneNumbers?.length ?? 0,
                                   itemBuilder: (context, index) {

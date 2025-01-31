@@ -105,7 +105,7 @@ class FollowUpModel {
   int? staffId;
   String? followupDate;
   String? name;
-  Null? remarks;
+  String? remarks;
   int? status;
   LeadType? leadType;
 

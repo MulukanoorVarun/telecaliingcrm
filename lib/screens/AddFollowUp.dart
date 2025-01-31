@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:telecaliingcrm/screens/FollowupsScreen.dart';
 
 import '../Services/UserApi.dart';
 import '../providers/ConnectivityProviders.dart';
+import '../providers/FollowupProvider.dart';
 import '../services/otherservices.dart';
 import '../utils/ColorConstants.dart';
 import '../utils/ShakeWidget.dart';
@@ -73,19 +75,41 @@ class _AddFollowUpState extends State<AddFollowUp> {
 
   Future<void> AddFollowUp(BuildContext context) async {
     try {
-      final res = await Userapi.postAddFollowUp(widget.id, _nameController.text, formattedDate, _remarksController.text,context);
-      print("res>>${res}");
-      if (res!= null) {
-        if(res["status"]==true){
-          _loading = false;
-          Navigator.pop(context,true);
-        }else{
-
-          _loading = false;
-        }
-      } else {
-        print("Failed to add Follow-up: Response is null.");
+      final followupsProvider = Provider.of<FollowupProvider>(context, listen: false);
+      var res= await followupsProvider.AddFollowUp(context,widget.id, _nameController.text, formattedDate, _remarksController.text,);
+    setState(() {
+      if(res==true){
+        _loading=false;
+        Navigator.of(context)
+            .pushReplacement(PageRouteBuilder(
+          pageBuilder: (context, animation,
+              secondaryAnimation) {
+            return FollowupsScreen();
+          },
+          transitionsBuilder: (context,
+              animation,
+              secondaryAnimation,
+              child) {
+            const begin = Offset(1.0, 0.0);
+            const end = Offset.zero;
+            const curve = Curves.easeInOut;
+            var tween = Tween(
+                begin: begin, end: end)
+                .chain(CurveTween(
+                curve: curve));
+            var offsetAnimation =
+            animation.drive(tween);
+            return SlideTransition(
+                position: offsetAnimation,
+                child: child);
+          },
+        ));
+        CustomSnackBar.show(context, "Followup Added Successfully!");
+      }else{
+        _loading=false;
+        CustomSnackBar.show(context, "Followup Added Failed!");
       }
+    });
     } catch (e) {
       // Handle any errors
       print("Error occurred while adding Follow-up: $e");

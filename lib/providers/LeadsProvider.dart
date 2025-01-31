@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart'; // For ChangeNotifier
 import '../Services/UserApi.dart';
 import '../model/LeadsModel.dart';
 import '../screens/SubscriptionExpiredScreen.dart';
+import '../utils/constants.dart';
 
 class LeadsProvider with ChangeNotifier {
   List<Leads> leadslist=[];
@@ -98,8 +99,7 @@ class LeadsProvider with ChangeNotifier {
     return null;
   }
 
-  Future<bool?> UpdateleadsApi(
-      name, leadID, remarks, leadStatusID, leadStageID,BuildContext context) async {
+  Future<bool?> UpdateleadsApi(name, leadID, remarks, leadStatusID, leadStageID,BuildContext context) async {
     try {
       var response = await Userapi.postUpdateLeads(
         name,
@@ -111,8 +111,10 @@ class LeadsProvider with ChangeNotifier {
       if (response != null) {
         if (response["status"] == true) {
           fetchLeadsList('',context);
+          CustomSnackBar.show(context, "Lead Updated Successfully!");
           return response["status"];
         } else {
+          CustomSnackBar.show(context, response["message"]);
           return response["status"];
         }
       }

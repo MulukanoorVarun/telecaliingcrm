@@ -73,23 +73,6 @@ class FollowupProvider extends ChangeNotifier {
       } else {
         // Handle API failure, e.g., show a subscription expired page
         debugPrint("API returned failure status, redirecting to subscription screen...");
-        Navigator.of(context).push(
-          PageRouteBuilder(
-            pageBuilder: (context, animation, secondaryAnimation) {
-              return SubscriptionExpiredScreen();
-            },
-            transitionsBuilder: (context, animation, secondaryAnimation, child) {
-              const begin = Offset(1.0, 0.0);
-              const end = Offset.zero;
-              const curve = Curves.easeInOut;
-              var tween = Tween(begin: begin, end: end)
-                  .chain(CurveTween(curve: curve));
-              var offsetAnimation = animation.drive(tween);
-              return SlideTransition(position: offsetAnimation, child: child);
-            },
-          ),
-        );
-
         _followuplist = []; // Clear the list on failure
         _nextPage = false;  // Stop fetching more
       }
@@ -99,6 +82,26 @@ class FollowupProvider extends ChangeNotifier {
     } finally {
       _pageLoading = false; // Reset the loading state
       notifyListeners();    // Notify listeners of the state change
+    }
+  }
+
+
+  Future<bool?> AddFollowUp(BuildContext context,id,name,date,remaks ) async {
+    try {
+      final res = await Userapi.postAddFollowUp(id,name,date,remaks,context);
+      if (res!= null) {
+        if(res["status"]==true){
+          getFollowUpApi(context);
+          return true;
+        }else{
+          return false;
+        }
+      } else {
+        print("Failed to add Follow-up: Response is null.");
+      }
+    } catch (e) {
+      // Handle any errors
+      print("Error occurred while adding Follow-up: $e");
     }
   }
 
