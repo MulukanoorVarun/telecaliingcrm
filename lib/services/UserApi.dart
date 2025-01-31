@@ -212,12 +212,10 @@ class Userapi {
           print("Request successful: $jsonResponse");
           return jsonResponse;
         } catch (e) {
-          print(
-              "Error: Failed to decode response body. Response: ${response.body}");
+          print("Error: Failed to decode response body. Response: ${response.body}");
           return null;
         }
       }else if (response.statusCode == 403) {
-
         Navigator.of(context).push(PageRouteBuilder(
           pageBuilder: (context, animation, secondaryAnimation) {
             return SubscriptionExpiredScreen();

@@ -1,4 +1,5 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:in_app_update/in_app_update.dart';
@@ -58,12 +59,19 @@ class _SplashState extends State<Splash> {
 
 
   Future<void> _checkPermissions() async {
+    DeviceInfoPlugin plugin = DeviceInfoPlugin();
+    AndroidDeviceInfo android = await plugin.androidInfo;
     Map<Permission, PermissionStatus> statuses = {
      Permission.phone: await Permission.phone.status,
       Permission.camera: await Permission.camera.status,
       Permission.contacts: await Permission.contacts.status,
-      Permission.storage: await Permission.storage.status,
     };
+
+    if (android.version.sdkInt < 33) {
+      statuses[Permission.storage] = await Permission.storage.status; // For Android 12 and below
+    } else {
+      statuses[Permission.photos] = await Permission.photos.status; // For Android 13+
+    }
 
     bool allPermissionsGranted =
     statuses.values.every((status) => status.isGranted);

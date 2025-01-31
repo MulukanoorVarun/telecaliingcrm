@@ -1,47 +1,122 @@
+import 'dart:io';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:telecaliingcrm/Authentication/SignInScreen.dart';
-import '../utils/ColorConstants.dart';
-import '../utils/PermissionHelper.dart';
-import '../utils/constants.dart';
-import '../utils/preferences.dart';
+import 'package:flutter/services.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:telecaliingcrm/utils/ColorConstants.dart';
+
+import '../Authentication/SignInScreen.dart';
 
 class PermissionScreen extends StatefulWidget {
-  const PermissionScreen({super.key});
   @override
-  State<PermissionScreen> createState() => _PermissionState();
+  _PermissionScreenState createState() => _PermissionScreenState();
 }
 
-class _PermissionState extends State<PermissionScreen> {
+class _PermissionScreenState extends State<PermissionScreen> {
   bool allPermissionsGranted = false;
-  String token = "";
 
   @override
   void initState() {
     super.initState();
-    Fetchdetails();
+    checkPermissions(); // Check permissions when screen loads
   }
 
-  Fetchdetails() async {
-    var Token = (await PreferenceService().getString('token')) ?? "";
-    setState(() {
-      token = Token;
-    });
-    print("Token: $token");
-  }
-
-  /// Function to check & request permissions
   Future<void> checkPermissions() async {
-    bool granted = await PermissionHelper.requestAllPermissions(context);
+    DeviceInfoPlugin plugin = DeviceInfoPlugin();
+    AndroidDeviceInfo android = await plugin.androidInfo;
+    List<Permission> requiredPermissions = [
+      Permission.phone,
+      Permission.contacts,
+      Permission.camera,
+    ];
+
+    if (android.version.sdkInt < 33) {
+      requiredPermissions.add(Permission.storage);  // Deprecated in Android 13+
+    }else{
+      print("isAndroid11orAbove");
+      requiredPermissions.add(Permission.photos);
+    }
+
+    // Request permissions
+    Map<Permission, PermissionStatus> statuses = {};
+    for (var permission in requiredPermissions) {
+      statuses[permission] = await permission.request();
+    }
+
+    // Check if all required permissions are granted
     setState(() {
-      allPermissionsGranted = granted;
+      allPermissionsGranted = statuses.values.every((status) => status.isGranted);
     });
+
+    // Handle denied or permanently denied permissions
+    if (!allPermissionsGranted) {
+      _handleDeniedPermissions(statuses);
+    }
+  }
+
+  void _handleDeniedPermissions(Map<Permission, PermissionStatus> statuses) {
+    List<Permission> deniedPermissions = statuses.entries
+        .where((entry) => entry.value.isDenied)
+        .map((entry) => entry.key)
+        .toList();
+
+    List<Permission> permanentlyDeniedPermissions = statuses.entries
+        .where((entry) => entry.value.isPermanentlyDenied)
+        .map((entry) => entry.key)
+        .toList();
+
+    if (permanentlyDeniedPermissions.isNotEmpty) {
+      _showPermanentlyDeniedDialog();
+    } else if (deniedPermissions.isNotEmpty) {
+      _showPermissionDeniedDialog(deniedPermissions);
+    }
+  }
+
+  void _showPermissionDeniedDialog(List<Permission> deniedPermissions) {
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text("Permissions Required"),
+        content: Text(
+            "The app needs the following permissions: ${deniedPermissions.join(", ")}. Please grant them to continue.",style: TextStyle(  fontFamily: 'Poppins',)),
+        actions: [
+          TextButton(
+            child: Text("Retry",style: TextStyle(  fontFamily: 'Poppins',)),
+            onPressed: () {
+              Navigator.of(context).pop();
+              checkPermissions(); // Retry permission request
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showPermanentlyDeniedDialog() {
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text("Permissions Denied"),
+        content: Text(
+            "Some permissions have been permanently denied. Please enable them in Settings.",style: TextStyle(  fontFamily: 'Poppins',)),
+        actions: [
+          TextButton(
+            child: Text("Go to Settings",style: TextStyle(  fontFamily: 'Poppins',),),
+            onPressed: () {
+              Navigator.of(context).pop();
+              SystemNavigator.pop();
+              openAppSettings(); // Open app settings
+            },
+          ),
+        ],
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    var h = MediaQuery.of(context).size.height;
-    var w = MediaQuery.of(context).size.width;
-
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -56,7 +131,7 @@ class _PermissionState extends State<PermissionScreen> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
-            Navigator.pop(context);
+            SystemNavigator.pop();
           },
         ),
       ),
@@ -92,17 +167,24 @@ class _PermissionState extends State<PermissionScreen> {
       ),
       bottomNavigationBar: Container(
         margin: EdgeInsets.only(bottom: 20, left: 16, right: 16),
-        child: containertext(
-          context,
-          'GET STARTED',
-          onTap: () {
-            if(allPermissionsGranted){
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => SignInScreen()));
-            }else{
-              checkPermissions();
-            }
-          },
-          color: allPermissionsGranted ? primaryColor : Colors.grey.withOpacity(0.5), // Disable button if permissions not granted
+        child: ElevatedButton(
+          onPressed: allPermissionsGranted
+              ? () {
+            Navigator.pushReplacement(
+                context, MaterialPageRoute(builder: (context) => SignInScreen()));
+          }
+              : null, // Disable button if permissions are not granted
+          style: ElevatedButton.styleFrom(
+            backgroundColor: allPermissionsGranted ? primaryColor : Colors.grey.withOpacity(0.5),
+            padding: EdgeInsets.symmetric(vertical: 15),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+          child: Text(
+            'GET STARTED',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+          ),
         ),
       ),
     );
@@ -113,33 +195,36 @@ class _PermissionState extends State<PermissionScreen> {
     required String title,
     required String description,
   }) {
-    return container(
-      context,
-      colors: color4,
+    return Container(
       margin: EdgeInsets.only(top: 10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      padding: EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.grey.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Row(
         children: [
-          Row(
-            children: [
-              Container(
-                width: 35,
-                height: 35,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(100),
-                  color: Color(0xFFCDE2FB),
-                ),
-                child: Center(
-                  child: Icon(
-                    icon,
-                    color: color11,
-                    size: 20,
-                  ),
-                ),
+          Container(
+            width: 35,
+            height: 35,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(100),
+              color: Colors.grey.withOpacity(0.3),
+            ),
+            child: Center(
+              child: Icon(
+                icon,
+                color:primaryColor,
+                size: 20,
               ),
-              Padding(
-                padding: const EdgeInsets.only(left: 10),
-                child: Text(
+            ),
+          ),
+          SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
                   title,
                   style: TextStyle(
                     fontFamily: 'Poppins',
@@ -147,23 +232,21 @@ class _PermissionState extends State<PermissionScreen> {
                     fontSize: 17,
                   ),
                 ),
-              ),
-            ],
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 7),
-            child: Text(
-              description,
-              style: TextStyle(
-                  fontFamily: 'Inter',
-                  fontWeight: FontWeight.w300,
-                  fontSize: 13,
-                  color: color),
+                SizedBox(height: 5),
+                Text(
+                  description,
+                  style: TextStyle(
+                    fontFamily: 'Inter',
+                    fontWeight: FontWeight.w300,
+                    fontSize: 13,
+                    color: Colors.black54,
+                  ),
+                ),
+              ],
             ),
           ),
         ],
       ),
     );
   }
-
 }

@@ -39,16 +39,19 @@ class _OnBoardindScreenState extends State<OnBoardindScreen> {
             ),
           ),
           SizedBox(
-            height: 20,
+            height: 10,
           ),
-          text(
-              context,
-              'Efficiency Meets Effectiveness Revolutionize Your Telecalling Operations',
-              18,
-              fontfamily: 'Poppins',
-              color: color11,
-              textAlign: TextAlign.center,
-              fontWeight: FontWeight.w500),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: text(
+                context,
+                'Efficiency Meets Effectiveness Revolutionize Your Telecalling Operations',
+                18,
+                fontfamily: 'Poppins',
+                color: color11,
+                textAlign: TextAlign.center,
+                fontWeight: FontWeight.w500),
+          ),
           SizedBox(
             height: h * 0.2,
           ),

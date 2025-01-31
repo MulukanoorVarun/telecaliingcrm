@@ -45,8 +45,7 @@ class _HomescreenState extends State<Homescreen> {
   bool isPaused = false;
   bool isCallOngoing = false;
   late StreamSubscription<PhoneState> _phoneStateSubscription;
-  String Date =DateFormat('yyyy-MM-dd').format(DateTime.now());
-
+  String Date = DateFormat('yyyy-MM-dd').format(DateTime.now());
 
   @override
   void initState() {
@@ -327,8 +326,8 @@ class _HomescreenState extends State<Homescreen> {
                     print("Selected Status: $selectedStatus");
                     // Close the dialog
                     Navigator.of(context).pop();
-                    updateCallStatus(
-                        id.toString(), selectedStatus, callDuration.toString(),context);
+                    updateCallStatus(id.toString(), selectedStatus,
+                        callDuration.toString(), context);
                   } else {
                     // If no status is selected, show a message or do nothing
                     print("No status selected");
@@ -350,20 +349,29 @@ class _HomescreenState extends State<Homescreen> {
     );
   }
 
-  void updateCallStatus(id, callStatus, String callDuration,BuildContext context) async {
-    var result =
-        await Userapi.UpdateCallStatusApi(id, callStatus, callDuration,context);
-    if (result != null) {
-      print("Response: $result");
-      final dashboard_provider =
-          Provider.of<DashboardProvider>(context, listen: false);
-      dashboard_provider.fetchDashBoardDetails(context);
-      CustomSnackBar.show(context, "Call Staus Updated Successfully!");
-      Future.delayed(Duration(seconds: 3), () {
-        _scheduleNextCall(); // Start the next call if available
-      });
-    } else {
-      print("Failed to update the call status.");
+  void updateCallStatus(
+      id, callStatus, String callDuration, BuildContext context) async {
+    try {
+      var result = await Userapi.UpdateCallStatusApi(
+          id, callStatus, callDuration, context);
+
+      if (result != null) {
+        print("Response: $result");
+
+        final dashboardProvider =
+            Provider.of<DashboardProvider>(context, listen: false);
+        dashboardProvider.fetchDashBoardDetails(context);
+
+        CustomSnackBar.show(context, "Call Status Updated Successfully!");
+        // Continue processing even if context is unmounted
+        Future.delayed(Duration(seconds: 3), () {
+          _scheduleNextCall(); // Start the next call if available
+        });
+      } else {
+        print("Failed to update the call status.");
+      }
+    } catch (e) {
+      print("Error occurred: $e");
     }
   }
 
@@ -500,7 +508,10 @@ class _HomescreenState extends State<Homescreen> {
                                     Navigator.of(context).push(PageRouteBuilder(
                                       pageBuilder: (context, animation,
                                           secondaryAnimation) {
-                                        return Callhistoryscreen(type:'today',date: Date,);
+                                        return Callhistoryscreen(
+                                          type: 'today',
+                                          date: Date,
+                                        );
                                       },
                                       transitionsBuilder: (context, animation,
                                           secondaryAnimation, child) {
@@ -829,9 +840,9 @@ class _HomescreenState extends State<Homescreen> {
                                             fit: BoxFit.cover,
                                             width:
                                                 60, // Ensure it's sized to fit the CircleAvatar
-                                            height:
-                                                60,
-                                            errorWidget: (BuildContext context, String url, dynamic error){
+                                            height: 60,
+                                            errorWidget: (BuildContext context,
+                                                String url, dynamic error) {
                                               return Image.asset('assets/');
                                             },
                                           ),
