@@ -3,9 +3,10 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:telecaliingcrm/screens/dashboard.dart';
 import 'package:telecaliingcrm/utils/ColorConstants.dart';
-
 import '../Authentication/SignInScreen.dart';
+import '../utils/preferences.dart';
 
 class PermissionScreen extends StatefulWidget {
   @override
@@ -14,11 +15,21 @@ class PermissionScreen extends StatefulWidget {
 
 class _PermissionScreenState extends State<PermissionScreen> {
   bool allPermissionsGranted = false;
+  String token = "";
 
   @override
   void initState() {
     super.initState();
-    checkPermissions(); // Check permissions when screen loads
+    checkPermissions();
+    Fetchdetails(); // Check permissions when screen loads
+  }
+
+  // Fetch user token or details
+  Fetchdetails() async {
+    var Token = (await PreferenceService().getString('token')) ?? "";
+    setState(() {
+      token = Token;
+    });
   }
 
   Future<void> checkPermissions() async {
@@ -170,8 +181,13 @@ class _PermissionScreenState extends State<PermissionScreen> {
         child: ElevatedButton(
           onPressed: allPermissionsGranted
               ? () {
-            Navigator.pushReplacement(
-                context, MaterialPageRoute(builder: (context) => SignInScreen()));
+            if(token!=""){
+              Navigator.pushReplacement(
+                  context, MaterialPageRoute(builder: (context) => Dashboard()));
+            }else{
+              Navigator.pushReplacement(
+                  context, MaterialPageRoute(builder: (context) => SignInScreen()));
+            }
           }
               : null, // Disable button if permissions are not granted
           style: ElevatedButton.styleFrom(

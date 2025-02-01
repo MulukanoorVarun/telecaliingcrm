@@ -46,6 +46,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var w = MediaQuery.of(context).size.width;
     var connectiVityStatus = Provider.of<ConnectivityProviders>(context);
     return (connectiVityStatus.isDeviceConnected == "ConnectivityResult.wifi" ||
             connectiVityStatus.isDeviceConnected == "ConnectivityResult.mobile")
@@ -66,7 +67,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
             body: Consumer<LeaderBoardProvider>(
               builder: (context, leaderBoardProvider, child) {
                 return Padding(
-                  padding: const EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.all(10.0),
                   child: leaderBoardProvider.isLoading
                       ? _buildShimmerList()
                       : Column(
@@ -96,8 +97,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                                       String profile_image = leadboard.photo ?? '';
                                       return Card(
                                         child: Container(
-                                          margin: const EdgeInsets.symmetric(
-                                              vertical: 8.0),
+                                          margin: const EdgeInsets.symmetric(vertical: 8.0),
                                           padding: const EdgeInsets.all(12.0),
                                           decoration: BoxDecoration(
                                             color: Colors.white,
@@ -119,8 +119,8 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                                               ClipOval(
                                                 // borderRadius: BorderRadius.circular(8.0),
                                                 child: Container(
-                                                  width: 50.0,
-                                                  height: 50.0,
+                                                  width: 45.0,
+                                                  height: 45.0,
                                                   decoration: BoxDecoration(
                                                     color: primaryColor, // Background color for the container
                                                     shape: BoxShape.circle,
@@ -156,20 +156,25 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                                               ),
 
                                               const SizedBox(width: 16.0),
-                                              Text(
-                                                capitalizeFirstLetter(
-                                                    leadboard.name ?? ""),
-                                                style: const TextStyle(
-                                                  fontSize: 16.0,
-                                                  fontFamily: "Poppins",
-                                                  fontWeight: FontWeight.w500,
+                                              SizedBox(
+                                                width: w*0.38,
+                                                child: Text(
+                                                  overflow: TextOverflow.ellipsis,
+                                                  maxLines: 2,
+                                                  capitalizeFirstLetter(
+                                                      leadboard.name ?? ""),
+                                                  style: const TextStyle(
+                                                    fontSize: 15.0,
+                                                    fontFamily: "Poppins",
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
                                                 ),
                                               ),
 
                                               Spacer(),
                                               Text(
-                                                leadboard.count.toString(),
-                                                style: const TextStyle(
+                                               "${leadboard.count.toString()}235",
+                                                style: TextStyle(
                                                   fontSize: 22.0,
                                                   fontFamily: "Poppins",
                                                   fontWeight: FontWeight.w600,
