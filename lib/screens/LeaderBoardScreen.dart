@@ -173,7 +173,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
 
                                               Spacer(),
                                               Text(
-                                               "${leadboard.count.toString()}235",
+                                               "${leadboard.count.toString()}",
                                                 style: TextStyle(
                                                   fontSize: 22.0,
                                                   fontFamily: "Poppins",
