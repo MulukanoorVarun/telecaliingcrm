@@ -46,7 +46,7 @@ class MyApp extends StatelessWidget {
             child: child ?? Container(),
           );
         },
-        title: 'Telecalling CRM',
+        title: 'Tele Calling CRM',
         theme: ThemeData(
           visualDensity: VisualDensity.adaptivePlatformDensity,
           splashColor: Colors.transparent,

@@ -389,7 +389,6 @@ class _HomescreenState extends State<Homescreen> {
     }
   }
 
-  GlobalKey<CurvedNavigationBarState> _bottomNavigationKey = GlobalKey();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
@@ -399,8 +398,8 @@ class _HomescreenState extends State<Homescreen> {
     return (connectiVityStatus.isDeviceConnected == "ConnectivityResult.wifi" ||
             connectiVityStatus.isDeviceConnected == "ConnectivityResult.mobile")
         ? Scaffold(
-            key: _scaffoldKey,
             backgroundColor: Colors.white,
+            key: _scaffoldKey,
             appBar: PreferredSize(
               preferredSize:
                   Size.fromHeight(80), // Set the desired height of the AppBar
