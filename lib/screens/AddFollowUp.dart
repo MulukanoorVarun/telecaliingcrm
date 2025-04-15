@@ -65,7 +65,7 @@ class _AddFollowUpState extends State<AddFollowUp> {
       _validateRemarks =
       _remarksController.text.isEmpty ? "Please add some remarks" : "";
       if (_validateFullName.isEmpty && _validatedate.isEmpty && _validateRemarks.isEmpty) {
-        AddFollowUp(context);
+        AddFollowUp();
       } else {
         _loading = false;
 
@@ -73,10 +73,10 @@ class _AddFollowUpState extends State<AddFollowUp> {
     });
   }
 
-  Future<void> AddFollowUp(BuildContext context) async {
+  Future<void> AddFollowUp() async {
     try {
       final followupsProvider = Provider.of<FollowupProvider>(context, listen: false);
-      var res= await followupsProvider.AddFollowUp(context,widget.id, _nameController.text, formattedDate, _remarksController.text,);
+      var res= await followupsProvider.AddFollowUp(widget.id, _nameController.text, formattedDate, _remarksController.text);
     setState(() {
       if(res==true){
         _loading=false;

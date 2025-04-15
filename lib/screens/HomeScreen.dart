@@ -3,17 +3,12 @@ import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:call_log/call_log.dart';
-import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:phone_state/phone_state.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:telecaliingcrm/Authentication/SignInScreen.dart';
 import 'package:telecaliingcrm/Services/UserApi.dart';
 import 'package:telecaliingcrm/providers/DashBoardProvider.dart';
@@ -69,9 +64,9 @@ class _HomescreenState extends State<Homescreen> {
         Provider.of<DashboardProvider>(context, listen: false);
     final user_details_provider =
         Provider.of<UserDetailsProvider>(context, listen: false);
-    var res = await dashboard_provider.fetchDashBoardDetails(context);
+    var res = await dashboard_provider.fetchDashBoardDetails();
     if (res == true) {
-      user_details_provider.fetchUserDetails(context);
+      user_details_provider.fetchUserDetails();
     }
   }
 
@@ -326,7 +321,7 @@ class _HomescreenState extends State<Homescreen> {
                     // Save the selected status (you can store it in a variable or database)
                     print("Selected Status: $selectedStatus");
                     // Close the dialog
-                    updateCallStatus(id.toString(), selectedStatus, callDuration.toString(), context);
+                    updateCallStatus(id.toString(), selectedStatus, callDuration.toString());
 
                   } else {
                     // If no status is selected, show a message or do nothing
@@ -350,15 +345,15 @@ class _HomescreenState extends State<Homescreen> {
   }
 
   void updateCallStatus(
-      id, callStatus, String callDuration, BuildContext context) async {
+      id, callStatus, String callDuration) async {
     try {
-      var result = await Userapi.UpdateCallStatusApi(
-          id, callStatus, callDuration, context);
+      var result = await Userapi.updateCallStatusApi(
+          id, callStatus, callDuration);
 
       if (result != null) {
         print("Response: $result");
         final dashboardProvider = Provider.of<DashboardProvider>(context, listen: false);
-        dashboardProvider.fetchDashBoardDetails(context);
+        dashboardProvider.fetchDashBoardDetails();
         CustomSnackBar.show(context, "Call Status Updated Successfully!");
         Navigator.of(context).pop();
         // Continue processing even if context is unmounted
@@ -606,7 +601,7 @@ class _HomescreenState extends State<Homescreen> {
                                               context,
                                               listen: false);
                                       dashboard_provider
-                                          .fetchDashBoardDetails(context);
+                                          .fetchDashBoardDetails();
                                     }
                                   },
                                   child: container(
@@ -659,7 +654,7 @@ class _HomescreenState extends State<Homescreen> {
                                               context,
                                               listen: false);
                                       dashboard_provider
-                                          .fetchDashBoardDetails(context);
+                                          .fetchDashBoardDetails();
                                     }
                                   },
                                   child: container(

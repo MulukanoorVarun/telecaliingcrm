@@ -1,404 +1,168 @@
-import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
-import 'package:http/http.dart' as http;
 import 'package:telecaliingcrm/model/CallHistoryModel.dart';
 import 'package:telecaliingcrm/model/DashBoardModel.dart';
 import 'package:telecaliingcrm/model/LeadsModel.dart';
 import 'package:telecaliingcrm/model/LeadeBoardModel.dart';
 import 'package:telecaliingcrm/model/UserDetailsModel.dart';
-import 'package:telecaliingcrm/screens/SubscriptionExpiredScreen.dart';
-import 'package:telecaliingcrm/screens/TooManyRequestsScreen.dart';
-import 'package:telecaliingcrm/services/otherservices.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:mime/mime.dart';
 import 'package:telecaliingcrm/utils/constants.dart';
-import '../model/RegisterModel.dart';
 import '../model/ViewInfoModel.dart';
 import '../model/GetFollowUpModel.dart';
-import '../utils/preferences.dart';
+import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
+import './ApiClient.dart';
+
 
 class Userapi {
-  static String host = "https://api.telecallingcrm.com";
-
-  static Future<Map<String, dynamic>?> PostSignIn(
-      String email, String pwd, BuildContext context) async {
+  static Future<Map<String, dynamic>?> postSignIn(String email, String pwd) async {
     try {
-      // Prepare the request data
-      Map<String, String> data = {
+      final data = {
         "email": email,
         "password": pwd,
       };
-      final url = Uri.parse("${host}/api/login");
-      final response = await http.post(
-        url,
-        headers: {
-          HttpHeaders.contentTypeHeader: "application/json",
-        },
-        body: jsonEncode(data),
+      final response = await ApiClient.post(
+        "/api/login",
+        data: data,
       );
-      // Check if the response body is empty
-      if (response.body.isEmpty) {
+
+      if (response.data == null || response.data.isEmpty) {
         print("Empty response body.");
         return null;
       }
 
-      // Parse the response body
-      final jsonResponse = jsonDecode(response.body);
-
-      if (response.statusCode == 200) {
-        // Success: Return the parsed response
-        print("Request successful: $jsonResponse");
-        return jsonResponse;
-      } else if (response.statusCode == 403) {
-        {
-          Navigator.of(context).push(PageRouteBuilder(
-            pageBuilder: (context, animation, secondaryAnimation) {
-              return SubscriptionExpiredScreen();
-            },
-            transitionsBuilder:
-                (context, animation, secondaryAnimation, child) {
-              const begin = Offset(1.0, 0.0);
-              const end = Offset.zero;
-              const curve = Curves.easeInOut;
-              var tween =
-                  Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-              var offsetAnimation = animation.drive(tween);
-              return SlideTransition(position: offsetAnimation, child: child);
-            },
-          ));
-        }
-      } else {
-        print(
-            "Request failed with status: ${response.statusCode}, body: $jsonResponse");
-        return jsonResponse;
-      }
+      print("Request successful: ${response.data}");
+      return response.data;
     } catch (e) {
-      // Catch and log any errors
       print("Error occurred: $e");
       return null;
     }
   }
 
-  static Future<DashBoardModel?> DahsBoardApi(BuildContext context) async {
-    if (await checkHeaderValidity()) {
-      try {
-        final url = Uri.parse("${host}/api/dashboard");
-        final headers = await getheader1();
-        final response = await http.post(
-          url,
-          headers: headers,
-        );
-        if (response.statusCode == 200) {
-          final jsonResponse = jsonDecode(response.body);
-          print("DahsBoardApi response: ${response.body}");
-          return DashBoardModel.fromJson(jsonResponse);
-        } else if (response.statusCode == 429) {
+  static Future<DashBoardModel?> dashboardApi() async {
+    try {
+      final response = await ApiClient.post("/api/dashboard");
 
-            Navigator.of(context).push(PageRouteBuilder(
-              pageBuilder: (context, animation, secondaryAnimation) {
-                return TooManyRequestsScreen();
-              },
-              transitionsBuilder:
-                  (context, animation, secondaryAnimation, child) {
-                const begin = Offset(1.0, 0.0);
-                const end = Offset.zero;
-                const curve = Curves.easeInOut;
-                var tween =
-                Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-                var offsetAnimation = animation.drive(tween);
-                return SlideTransition(position: offsetAnimation, child: child);
-              },
-            ));}
-        else if (response.statusCode == 403) {
-
-            Navigator.of(context).push(PageRouteBuilder(
-              pageBuilder: (context, animation, secondaryAnimation) {
-                return SubscriptionExpiredScreen();
-              },
-              transitionsBuilder:
-                  (context, animation, secondaryAnimation, child) {
-                const begin = Offset(1.0, 0.0);
-                const end = Offset.zero;
-                const curve = Curves.easeInOut;
-                var tween =
-                Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-                var offsetAnimation = animation.drive(tween);
-                return SlideTransition(position: offsetAnimation, child: child);
-              },
-            ));
-
-        }else {
-          // Handle non-200 responses (e.g., 401, 404, etc.)
-          print("DahsBoardApi response: ${response.body}");
-          print("Request failed with status: ${response.statusCode}");
-          return null;
-        }
-      } catch (e) {
-        // Catch and log any errors
-        print("Error occurred: $e");
-        return null;
+      if (response.statusCode == 200) {
+        print("dashboardApi response: ${response.data}");
+        return DashBoardModel.fromJson(response.data);
       }
-    } else {
-      // Catch and log any errors
-      print("returned");
+      print("Request failed with status: ${response.statusCode}");
+      return null;
+    } catch (e) {
+      print("Error occurred: $e");
       return null;
     }
   }
 
-  static Future<UserDetailsModel?> getUserDetails(BuildContext context) async {
+  static Future<UserDetailsModel?> getUserDetails() async {
     try {
-      final url = Uri.parse("${host}/api/profile");
-      final headers = await getheader1();
-      final response = await http.post(
-        url,
-        headers: headers,
-      );
+      final response = await ApiClient.post("/api/profile");
+
       if (response.statusCode == 200) {
-        final jsonResponse = jsonDecode(response.body);
-        print("getUserDetails response: ${response.body}");
-
-        return UserDetailsModel.fromJson(jsonResponse);
-      }else if (response.statusCode == 403) {
-
-        Navigator.of(context).push(PageRouteBuilder(
-          pageBuilder: (context, animation, secondaryAnimation) {
-            return SubscriptionExpiredScreen();
-          },
-          transitionsBuilder:
-              (context, animation, secondaryAnimation, child) {
-            const begin = Offset(1.0, 0.0);
-            const end = Offset.zero;
-            const curve = Curves.easeInOut;
-            var tween =
-            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-            var offsetAnimation = animation.drive(tween);
-            return SlideTransition(position: offsetAnimation, child: child);
-          },
-        ));
-
-      } else {
-        print("Request failed with status: ${response.statusCode}");
-        return null;
+        print("getUserDetails response: ${response.data}");
+        return UserDetailsModel.fromJson(response.data);
       }
+      print("Request failed with status: ${response.statusCode}");
+      return null;
     } catch (e) {
-      // Log any errors
       print("Error occurred in getUserDetails: $e");
       return null;
     }
   }
 
-  static Future<Map<String, dynamic>?> UpdateCallStatusApi(
-      String id, String call_status, String call_duration, BuildContext context) async {
+  static Future<Map<String, dynamic>?> updateCallStatusApi(
+      String id, String callStatus, String callDuration) async {
     try {
-      // Prepare the request data
-      Map<String, String> data = {
+      final data = {
         "id": id,
-        "call_status": call_status,
-        "call_duration": call_duration
+        "call_status": callStatus,
+        "call_duration": callDuration,
       };
-      print("UpdateCallStatusApi data: $data");
-      final url = Uri.parse("${host}/api/update_call_status_api");
-      final headers =
-          await getheader1(); // Ensure this function returns the correct headers
-      final response = await http.post(
-        url,
-        headers: headers,
-        body: data,
+      print("updateCallStatusApi data: $data");
+      final response = await ApiClient.post(
+        "/api/update_call_status_api",
+        data: data,
       );
-      if (response.statusCode == 200) {
-        try {
-          final jsonResponse = jsonDecode(response.body);
-          print("Request successful: $jsonResponse");
-          return jsonResponse;
-        } catch (e) {
-          print("Error: Failed to decode response body. Response: ${response.body}");
-          return null;
-        }
-      }else if (response.statusCode == 403) {
-        Navigator.of(context).push(PageRouteBuilder(
-          pageBuilder: (context, animation, secondaryAnimation) {
-            return SubscriptionExpiredScreen();
-          },
-          transitionsBuilder:
-              (context, animation, secondaryAnimation, child) {
-            const begin = Offset(1.0, 0.0);
-            const end = Offset.zero;
-            const curve = Curves.easeInOut;
-            var tween =
-            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-            var offsetAnimation = animation.drive(tween);
-            return SlideTransition(position: offsetAnimation, child: child);
-          },
-        ));
 
-      } else {
-        print(
-            "Request failed with status: ${response.statusCode}, body: ${response.body}");
-        return null;
+      if (response.statusCode == 200) {
+        print("Request successful: ${response.data}");
+        return response.data;
       }
+      print(
+          "Request failed with status: ${response.statusCode}, body: ${response.data}");
+      return null;
     } catch (e) {
       print("Error occurred: $e");
       return null;
     }
   }
 
-  static Future<LeadsModel?> getLeads(type, page,BuildContext context) async {
+  static Future<LeadsModel?> getLeads(String type, int page) async {
     try {
-      final url = Uri.parse(
-          "${host}/api/get_lead_calls?stagename=${type}&page=${page}");
-      final headers = await getheader1();
-      final response = await http.get(url, headers: headers);
+      final response = await ApiClient.get(
+        "/api/get_lead_calls",
+        queryParameters: {
+          "stagename": type,
+          "page": page.toString(),
+        },
+      );
+
       if (response.statusCode == 200) {
-        final jsonResponse = jsonDecode(response.body);
-        print("getLeads response: ${response.body}");
-        return LeadsModel.fromJson(jsonResponse);
-      }else if (response.statusCode == 403) {
-
-        Navigator.of(context).push(PageRouteBuilder(
-          pageBuilder: (context, animation, secondaryAnimation) {
-            return SubscriptionExpiredScreen();
-          },
-          transitionsBuilder:
-              (context, animation, secondaryAnimation, child) {
-            const begin = Offset(1.0, 0.0);
-            const end = Offset.zero;
-            const curve = Curves.easeInOut;
-            var tween =
-            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-            var offsetAnimation = animation.drive(tween);
-            return SlideTransition(position: offsetAnimation, child: child);
-          },
-        ));
-
-      } else {
-        print("Request failed with status: ${response.statusCode}");
-        return null;
+        print("getLeads response: ${response.data}");
+        return LeadsModel.fromJson(response.data);
       }
+      print("Request failed with status: ${response.statusCode}");
+      return null;
     } catch (e) {
       print("Error occurred in getLeads: $e");
       return null;
     }
   }
 
-  static Future<LeaderBoardModel?> getLeaderboard(_currentPage,BuildContext context) async {
+  static Future<LeaderBoardModel?> getLeaderboard(int currentPage) async {
     try {
-      final url =
-          Uri.parse("${host}/api/get_leader_board?page=${_currentPage}");
-      final headers = await getheader1();
-      final response = await http.post(
-        url,
-        headers: headers,
+      final response = await ApiClient.post(
+        "/api/get_leader_board",
+        data: {"page": currentPage.toString()},
       );
+
       if (response.statusCode == 200) {
-        final jsonResponse = jsonDecode(response.body);
-        print("getLeaderboard response: ${response.body}");
-        return LeaderBoardModel.fromJson(jsonResponse);
-      }else if (response.statusCode == 429) {
-
-          Navigator.of(context).push(PageRouteBuilder(
-            pageBuilder: (context, animation, secondaryAnimation) {
-              return TooManyRequestsScreen();
-            },
-            transitionsBuilder:
-                (context, animation, secondaryAnimation, child) {
-              const begin = Offset(1.0, 0.0);
-              const end = Offset.zero;
-              const curve = Curves.easeInOut;
-              var tween =
-              Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-              var offsetAnimation = animation.drive(tween);
-              return SlideTransition(position: offsetAnimation, child: child);
-            },
-          ));
-
-      } else if (response.statusCode == 403) {
-
-          Navigator.of(context).push(PageRouteBuilder(
-            pageBuilder: (context, animation, secondaryAnimation) {
-              return SubscriptionExpiredScreen();
-            },
-            transitionsBuilder:
-                (context, animation, secondaryAnimation, child) {
-              const begin = Offset(1.0, 0.0);
-              const end = Offset.zero;
-              const curve = Curves.easeInOut;
-              var tween =
-              Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-              var offsetAnimation = animation.drive(tween);
-              return SlideTransition(position: offsetAnimation, child: child);
-            },
-          ));
-
-      } else {
-        print("Request failed with status: ${response.statusCode}");
-        return null;
+        print("getLeaderboard response: ${response.data}");
+        return LeaderBoardModel.fromJson(response.data);
       }
+      print("Request failed with status: ${response.statusCode}");
+      return null;
     } catch (e) {
       print("Error occurred: $e");
       return null;
     }
-    return null;
   }
 
   static Future<Map<String, dynamic>?> postAddLeads(
-    String name,
-    String num,
-    String followup_date,
-    String remarks,
-    String lead_id,BuildContext context
-  ) async {
+      String name, String num, String followupDate, String remarks, String leadId) async {
     try {
-      final Map<String, String> data = {
+      final data = {
         "name": name,
         "number": num,
-        "followup_date": followup_date,
+        "followup_date": followupDate,
         "remarks": remarks,
-        "lead_stage_id": lead_id,
+        "lead_stage_id": leadId,
       };
-      print("postAddLeads??${data}");
-      final url = Uri.parse("${host}/api/add-lead");
-      final headers = await getheader1();
-      final response = await http.post(
-        url,
-        headers: headers,
-        body: data,
+      print("postAddLeads??$data");
+      final response = await ApiClient.post(
+        "/api/add-lead",
+        data: data,
       );
 
-      if (response.body.isEmpty) {
+      if (response.data == null || response.data.isEmpty) {
         print("Empty response body.");
         return null;
       }
 
-      final jsonResponse = jsonDecode(response.body);
-
-      if (response.statusCode == 200) {
-        print("postAddLeads successful: $jsonResponse");
-        return jsonResponse;
-      }else if (response.statusCode == 403) {
-
-        Navigator.of(context).push(PageRouteBuilder(
-          pageBuilder: (context, animation, secondaryAnimation) {
-            return SubscriptionExpiredScreen();
-          },
-          transitionsBuilder:
-              (context, animation, secondaryAnimation, child) {
-            const begin = Offset(1.0, 0.0);
-            const end = Offset.zero;
-            const curve = Curves.easeInOut;
-            var tween =
-            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-            var offsetAnimation = animation.drive(tween);
-            return SlideTransition(position: offsetAnimation, child: child);
-          },
-        ));
-
-      } else {
-        print(
-          "Request failed with status: ${response.statusCode}, body: $jsonResponse",
-        );
-        return jsonResponse;
-      }
+      print("postAddLeads successful: ${response.data}");
+      return response.data;
     } catch (e) {
       print("Error occurred: $e");
       return null;
@@ -406,61 +170,27 @@ class Userapi {
   }
 
   static Future<Map<String, dynamic>?> postAddFollowUp(
-    String leadid,
-    String name,
-    String followup_date,
-    String remarks,BuildContext context
-  ) async {
+      String leadId, String name, String followupDate, String remarks) async {
     try {
-      final Map<String, String> data = {
-        "lead_id": leadid,
+      final data = {
+        "lead_id": leadId,
         "name": name,
-        "followup_date": followup_date,
+        "followup_date": followupDate,
         "remarks": remarks,
       };
-      print("postAddFollowUp??${data}");
-      final url = Uri.parse("${host}/api/add-follow-up");
-      final headers = await getheader1();
-      final response = await http.post(
-        url,
-        headers: headers,
-        body: data,
+      print("postAddFollowUp??$data");
+      final response = await ApiClient.post(
+        "/api/add-follow-up",
+        data: data,
       );
 
-      if (response.body.isEmpty) {
+      if (response.data == null || response.data.isEmpty) {
         print("Empty response body.");
         return null;
       }
 
-      final jsonResponse = jsonDecode(response.body);
-
-      if (response.statusCode == 200) {
-        print("postAddFollowUp successful: $jsonResponse");
-        return jsonResponse;
-      }else if (response.statusCode == 403) {
-
-        Navigator.of(context).push(PageRouteBuilder(
-          pageBuilder: (context, animation, secondaryAnimation) {
-            return SubscriptionExpiredScreen();
-          },
-          transitionsBuilder:
-              (context, animation, secondaryAnimation, child) {
-            const begin = Offset(1.0, 0.0);
-            const end = Offset.zero;
-            const curve = Curves.easeInOut;
-            var tween =
-            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-            var offsetAnimation = animation.drive(tween);
-            return SlideTransition(position: offsetAnimation, child: child);
-          },
-        ));
-
-      } else {
-        print(
-          "Request failed with status: ${response.statusCode}, body: $jsonResponse",
-        );
-        return jsonResponse;
-      }
+      print("postAddFollowUp successful: ${response.data}");
+      return response.data;
     } catch (e) {
       print("Error occurred: $e");
       return null;
@@ -468,440 +198,213 @@ class Userapi {
   }
 
   static Future<Map<String, dynamic>?> postUpdateLeads(
-    String name,
-    String lead_id,
-    String remarks,
-    String lead_stage_id,
-    String deal_stage,BuildContext context
-  ) async {
+      String name, String leadId, String remarks, String leadStageId, String dealStage) async {
     try {
-      final Map<String, String> data = {
+      final data = {
         "name": name,
-        "lead_id": lead_id,
+        "lead_id": leadId,
         "remarks": remarks,
-        "lead_stage_id": lead_stage_id,
-        "deal_stage": deal_stage,
+        "lead_stage_id": leadStageId,
+        "deal_stage": dealStage,
       };
-      print("postUpdateLeads??${data}");
-      final url = Uri.parse("${host}/api/update-info");
-      final headers = await getheader1();
-      final response = await http.post(
-        url,
-        headers: headers,
-        body: data,
+      print("postUpdateLeads??$data");
+      final response = await ApiClient.post(
+        "/api/update-info",
+        data: data,
       );
 
-      if (response.body.isEmpty) {
+      if (response.data == null || response.data.isEmpty) {
         print("Empty response body.");
         return null;
       }
 
-      final jsonResponse = jsonDecode(response.body);
-
-      if (response.statusCode == 200) {
-        print("postUpdateLeads successful: $jsonResponse");
-        return jsonResponse;
-      }else if (response.statusCode == 403) {
-
-        Navigator.of(context).push(PageRouteBuilder(
-          pageBuilder: (context, animation, secondaryAnimation) {
-            return SubscriptionExpiredScreen();
-          },
-          transitionsBuilder:
-              (context, animation, secondaryAnimation, child) {
-            const begin = Offset(1.0, 0.0);
-            const end = Offset.zero;
-            const curve = Curves.easeInOut;
-            var tween =
-            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-            var offsetAnimation = animation.drive(tween);
-            return SlideTransition(position: offsetAnimation, child: child);
-          },
-        ));
-
-      } else {
-        print(
-          "Request failed with status: ${response.statusCode}, body: $jsonResponse",
-        );
-        return jsonResponse;
-      }
+      print("postUpdateLeads successful: ${response.data}");
+      return response.data;
     } catch (e) {
       print("Error occurred: $e");
       return null;
     }
   }
 
-  static Future<ViewInfoModel?> getViewInfo(ID) async {
+  static Future<ViewInfoModel?> getViewInfo(String id) async {
     try {
-      final url = Uri.parse("${host}/api/view-info/$ID");
-      print(url);
-      final headers = await getheader1();
-      final response = await http.get(
-        url,
-        headers: headers,
-      );
+      final response = await ApiClient.get("/api/view-info/$id");
 
       if (response.statusCode == 200) {
-        final jsonResponse = jsonDecode(response.body);
-        print("getViewInfo response: ${response.body}");
-        return ViewInfoModel.fromJson(jsonResponse);
-      } else {
-        print("Request failed with status: ${response.statusCode}");
-        return null;
+        print("getViewInfo response: ${response.data}");
+        return ViewInfoModel.fromJson(response.data);
       }
+      print("Request failed with status: ${response.statusCode}");
+      return null;
     } catch (e) {
       print("Error occurred: $e");
       return null;
     }
   }
 
-  static Future<GetFollowUpModel?> getFollowup(page, BuildContext context) async {
+  static Future<GetFollowUpModel?> getFollowup(int page) async {
     try {
-      final url = Uri.parse("${host}/api/follow_up_list?page=$page");
-      final headers = await getheader1();
-      final response = await http.get(
-        url,
-        headers: headers,
+      final response = await ApiClient.get(
+        "/api/follow_up_list",
+        queryParameters: {"page": page.toString()},
       );
+
       if (response.statusCode == 200) {
-        final jsonResponse = jsonDecode(response.body);
-        print("getFollowup response: ${response.body}");
-        return GetFollowUpModel.fromJson(jsonResponse);
-      }else if (response.statusCode == 403) {
-
-        Navigator.of(context).push(PageRouteBuilder(
-          pageBuilder: (context, animation, secondaryAnimation) {
-            return SubscriptionExpiredScreen();
-          },
-          transitionsBuilder:
-              (context, animation, secondaryAnimation, child) {
-            const begin = Offset(1.0, 0.0);
-            const end = Offset.zero;
-            const curve = Curves.easeInOut;
-            var tween =
-            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-            var offsetAnimation = animation.drive(tween);
-            return SlideTransition(position: offsetAnimation, child: child);
-          },
-        ));
-
-      } else {
-        print("Request failed with status: ${response.statusCode}");
-        return null;
+        print("getFollowup response: ${response.data}");
+        return GetFollowUpModel.fromJson(response.data);
       }
+      print("Request failed with status: ${response.statusCode}");
+      return null;
     } catch (e) {
-      // Log any errors
-      print("Error occurred in getUserDetails: $e");
+      print("Error occurred in getFollowup: $e");
       return null;
     }
   }
 
   static Future<String?> updateProfile(
-      UserID, String fullname, String email, File? image,BuildContext context) async {
+      String userId, String fullname, String email, File? image) async {
     try {
-      final url = Uri.parse(
-          'https://api.telecallingcrm.com/api/update-profile/${UserID}');
-
-      // Create a MultipartRequest for a multipart form upload
-      final request = http.MultipartRequest('POST', url);
-      final sessionid = await PreferenceService().getString("token");
-      request.headers['Authorization'] = 'Bearer $sessionid';
-
-      request.fields['username'] = fullname;
-      request.fields['email'] = email;
+      final formData = FormData.fromMap({
+        "username": fullname,
+        "email": email,
+      });
 
       if (image != null) {
         final mimeType = lookupMimeType(image.path);
-        print("Image MIME type: $mimeType");
         if (mimeType != null && mimeType.startsWith('image/')) {
-          request.files.add(
-            await http.MultipartFile.fromPath(
-              'photo', // The name of the file field in your API
+          formData.files.add(MapEntry(
+            "photo",
+            await MultipartFile.fromFile(
               image.path,
               contentType: MediaType.parse(mimeType),
             ),
-          );
+          ));
         } else {
-          print('Invalid image file');
+          print("Invalid image file");
           return null;
         }
       }
-      print("Requested fields: ${request.fields}");
-      // Send the request and capture the response
-      final response = await request.send();
-      // Read the response body
-      final responseData = await response.stream.bytesToString();
-      print("Response Body: $responseData");
-      // Handle successful response
+
+      final response = await ApiClient.post(
+        "/api/update-profile/$userId",
+        data: formData,
+      );
+
       if (response.statusCode == 200) {
-        final jsonResponse = json.decode(responseData);
-        if (jsonResponse['message'] == 'User updated successfully') {
+        if (response.data['message'] == 'User updated successfully') {
           return 'Profile updated successfully.';
-        } else {
-          return 'Profile update failed: ${jsonResponse['message']}';
         }
-      }else if (response.statusCode == 403) {
-
-        Navigator.of(context).push(PageRouteBuilder(
-          pageBuilder: (context, animation, secondaryAnimation) {
-            return SubscriptionExpiredScreen();
-          },
-          transitionsBuilder:
-              (context, animation, secondaryAnimation, child) {
-            const begin = Offset(1.0, 0.0);
-            const end = Offset.zero;
-            const curve = Curves.easeInOut;
-            var tween =
-            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-            var offsetAnimation = animation.drive(tween);
-            return SlideTransition(position: offsetAnimation, child: child);
-          },
-        ));
-
-      } else {
-        return 'Error: ${response.statusCode}';
+        return 'Profile update failed: ${response.data['message']}';
       }
+      return 'Error: ${response.statusCode}';
     } catch (e) {
-      print('Error occurred: $e');
+      print("Error occurred: $e");
       return null;
     }
   }
 
-  static Future<Map<String, dynamic>?> UpdateRefreshToken() async {
+  static Future<Map<String, dynamic>?> updateRefreshToken() async {
     try {
-      final url = Uri.parse("${host}/api/refresh-token");
-      final headers = await getheader1();
-      final response = await http.post(
-        url,
-        headers: headers,
-      );
-      // Check if the response body is empty
-      if (response.body.isEmpty) {
+      final response = await ApiClient.post("/api/refresh-token");
+
+      if (response.data == null || response.data.isEmpty) {
         print("Empty response body.");
         return null;
       }
-      // Parse the response body
-      final jsonResponse = jsonDecode(response.body);
-      if (response.statusCode == 200) {
-        // Success: Return the parsed response
-        print("Request successful: $jsonResponse");
-        return jsonResponse;
-      } else {
-        // Handle other status codes and return the response
-        print(
-            "Request failed with status: ${response.statusCode}, body: $jsonResponse");
-        return jsonResponse;
-      }
+
+      print("Request successful: ${response.data}");
+      return response.data;
     } catch (e) {
-      debugPrint('hello bev=bug $e ');
+      print("Error occurred: $e");
       return null;
     }
   }
 
-  static Future<CallHistoryModel?> getCallHistory(date, page,BuildContext context) async {
+  static Future<CallHistoryModel?> getCallHistory(String date, int page) async {
     try {
-      final url = Uri.parse(
-          "${host}/api/today-called-history?latest_update=${date}&page=${page}");
-      final header = await getheader1();
-      final response = await http.get(url, headers: header);
-
-      if (response.statusCode == 200) {
-        final jsonResponse = json.decode(response.body);
-        print("getCallHistory response:${jsonResponse}");
-        return CallHistoryModel.fromJson(jsonResponse);
-      } else if (response.statusCode == 429) {
-
-          Navigator.of(context).push(PageRouteBuilder(
-            pageBuilder: (context, animation, secondaryAnimation) {
-              return TooManyRequestsScreen();
-            },
-            transitionsBuilder:
-                (context, animation, secondaryAnimation, child) {
-              const begin = Offset(1.0, 0.0);
-              const end = Offset.zero;
-              const curve = Curves.easeInOut;
-              var tween =
-              Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-              var offsetAnimation = animation.drive(tween);
-              return SlideTransition(position: offsetAnimation, child: child);
-            },
-          ));
-        }
-        else if (response.statusCode == 403) {
-
-          Navigator.of(context).push(PageRouteBuilder(
-            pageBuilder: (context, animation, secondaryAnimation) {
-              return SubscriptionExpiredScreen();
-            },
-            transitionsBuilder:
-                (context, animation, secondaryAnimation, child) {
-              const begin = Offset(1.0, 0.0);
-              const end = Offset.zero;
-              const curve = Curves.easeInOut;
-              var tween =
-              Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-              var offsetAnimation = animation.drive(tween);
-              return SlideTransition(position: offsetAnimation, child: child);
-            },
-          ));
-
-      }else {
-        return null;
-      }
-    } catch (e) {
-      debugPrint('Error occurred: $e');
-      return null;
-    }
-  }
-
-  static Future<bool?> updatePassword(
-      String email, String password, BuildContext context) async {
-    try {
-      final Uri url = Uri.parse('${host}/api/update_password');
-      final response = await http.post(
-        url,
-        body: {
-          'email': email,
-          'password': password,
-        },
-      );
-      if (response.statusCode == 200) {
-        final Map<String, dynamic> responseData = json.decode(response.body);
-        if (responseData['status']) {
-          final Map<String, dynamic> responseData = json.decode(response.body);
-          CustomSnackBar.show(context, responseData['message']);
-          return true;
-        } else {
-          final Map<String, dynamic> responseData = json.decode(response.body);
-          CustomSnackBar.show(context, responseData['message']);
-          return false;
-        }
-      }else if (response.statusCode == 403) {
-
-        Navigator.of(context).push(PageRouteBuilder(
-          pageBuilder: (context, animation, secondaryAnimation) {
-            return SubscriptionExpiredScreen();
-          },
-          transitionsBuilder:
-              (context, animation, secondaryAnimation, child) {
-            const begin = Offset(1.0, 0.0);
-            const end = Offset.zero;
-            const curve = Curves.easeInOut;
-            var tween =
-            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-            var offsetAnimation = animation.drive(tween);
-            return SlideTransition(position: offsetAnimation, child: child);
-          },
-        ));
-
-      } else {
-        return false;
-      }
-    } catch (e) {
-      debugPrint('Error occurred: $e');
-      return null;
-    }
-  }
-
-  static Future<bool?> forgetPassword(
-      String email, BuildContext context) async {
-    try {
-      final Uri url = Uri.parse('${host}/api/forget-password');
-      final response = await http.post(
-        url,
-        body: {
-          'email': email,
+      final response = await ApiClient.get(
+        "/api/today-called-history",
+        queryParameters: {
+          "latest_update": date,
+          "page": page.toString(),
         },
       );
 
-      final Map<String, dynamic> responseData = json.decode(response.body);
-
       if (response.statusCode == 200) {
-        // Handle successful response
-        CustomSnackBar.show(context, responseData['message']);
+        print("getCallHistory response: ${response.data}");
+        return CallHistoryModel.fromJson(response.data);
+      }
+      print("Request failed with status: ${response.statusCode}");
+      return null;
+    } catch (e) {
+      print("Error occurred: $e");
+      return null;
+    }
+  }
+
+  static Future<bool?> updatePassword(String email, String password, BuildContext context) async {
+    try {
+      final response = await ApiClient.post(
+        "/api/update_password",
+        data: {
+          "email": email,
+          "password": password,
+        },
+      );
+
+      if (response.statusCode == 200 && response.data['status']) {
+        CustomSnackBar.show(context, response.data['message']);
         return true;
-      }else if (response.statusCode == 403) {
+      }
+      CustomSnackBar.show(context, response.data['message'] ?? "Error updating password");
+      return false;
+    } catch (e) {
+      print("Error occurred: $e");
+      return null;
+    }
+  }
 
-        Navigator.of(context).push(PageRouteBuilder(
-          pageBuilder: (context, animation, secondaryAnimation) {
-            return SubscriptionExpiredScreen();
-          },
-          transitionsBuilder:
-              (context, animation, secondaryAnimation, child) {
-            const begin = Offset(1.0, 0.0);
-            const end = Offset.zero;
-            const curve = Curves.easeInOut;
-            var tween =
-            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-            var offsetAnimation = animation.drive(tween);
-            return SlideTransition(position: offsetAnimation, child: child);
-          },
-        ));
+  static Future<bool?> forgetPassword(String email, BuildContext context) async {
+    try {
+      final response = await ApiClient.post(
+        "/api/forget-password",
+        data: {"email": email},
+      );
 
+      if (response.statusCode == 200) {
+        CustomSnackBar.show(context, response.data['message']);
+        return true;
       } else if (response.statusCode == 400) {
-        // Handle invalid email scenario
-        if (responseData.containsKey('email')) {
-          // Email is not registered
-          CustomSnackBar.show(context, responseData['email'][0]);
-        } else {
-          // Other error messages
-          CustomSnackBar.show(context, "An error occurred.");
-        }
-        return false;
-      } else {
-        // Handle any other unsuccessful response
-        CustomSnackBar.show(
-            context, "Unexpected error: ${response.statusCode}");
+        CustomSnackBar.show(context, response.data['email']?[0] ?? "An error occurred.");
         return false;
       }
+      CustomSnackBar.show(context, "Unexpected error: ${response.statusCode}");
+      return false;
     } catch (e) {
-      debugPrint('Error occurred: $e');
+      print("Error occurred: $e");
       CustomSnackBar.show(context, "An error occurred. Please try again.");
-      return null; // In case of error (e.g., no network)
+      return null;
     }
   }
 
-  static Future<bool?> forgetPasswordOtpVerify(
-      String email, String otp, BuildContext context) async {
+  static Future<bool?> forgetPasswordOtpVerify(String email, String otp, BuildContext context) async {
     try {
-      final Uri url = Uri.parse('${host}/api/verify-otp');
-      final response = await http.post(
-        url,
-        body: {
-          'email': email,
-          'otp': otp,
+      final response = await ApiClient.post(
+        "/api/verify-otp",
+        data: {
+          "email": email,
+          "otp": otp,
         },
       );
 
       if (response.statusCode == 200) {
-        final Map<String, dynamic> responseData = json.decode(response.body);
-        CustomSnackBar.show(context, responseData['message']);
+        CustomSnackBar.show(context, response.data['message']);
         return true;
-      }else if (response.statusCode == 403) {
-
-        Navigator.of(context).push(PageRouteBuilder(
-          pageBuilder: (context, animation, secondaryAnimation) {
-            return SubscriptionExpiredScreen();
-          },
-          transitionsBuilder:
-              (context, animation, secondaryAnimation, child) {
-            const begin = Offset(1.0, 0.0);
-            const end = Offset.zero;
-            const curve = Curves.easeInOut;
-            var tween =
-            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-            var offsetAnimation = animation.drive(tween);
-            return SlideTransition(position: offsetAnimation, child: child);
-          },
-        ));
-
-      } else {
-        final Map<String, dynamic> responseData = json.decode(response.body);
-        CustomSnackBar.show(context, responseData['message']);
-        return false;
       }
+      CustomSnackBar.show(context, response.data['message'] ?? "Invalid OTP");
+      return false;
     } catch (e) {
-      debugPrint('Error occurred: $e');
+      print("Error occurred: $e");
       return null;
     }
   }

@@ -17,10 +17,10 @@ class DashboardProvider with ChangeNotifier {
   bool get isLoading => _isLoading;
 
   // Method to fetch user details asynchronously
-  Future<bool?> fetchDashBoardDetails(BuildContext context) async {
+  Future<bool?> fetchDashBoardDetails() async {
     try {
       // Fetching user details from the API
-      var response = await Userapi.DahsBoardApi(context);
+      var response = await Userapi.dashboardApi();
       if (response?.status==true) {
         todayCalls = response?.todayCalls?.toString(); // Convert to String
         pendingCalls = response?.pendingCalls?.toString(); // Convert to String

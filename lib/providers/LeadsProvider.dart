@@ -18,13 +18,13 @@ class LeadsProvider with ChangeNotifier {
   bool get pageLoading => _pageLoading;
 
 
-  Future<void> fetchLeadsList(type,BuildContext context) async {
+  Future<void> fetchLeadsList(type) async {
     _isLoading = true;
     _currentPage = 1;
     leadslist =[];
     notifyListeners();
     try {
-      var result = await Userapi.getLeads(type, _currentPage,context);
+      var result = await Userapi.getLeads(type, _currentPage);
       if (result?.status == true) {
         leadslist = result?.data?.leadslist ?? [];
         if(result?.data?.nextPageUrl!=null){
@@ -50,7 +50,7 @@ class LeadsProvider with ChangeNotifier {
       notifyListeners();
     }
   }
-  Future<void> fetchMoreLeadsList(String type, BuildContext context) async {
+  Future<void> fetchMoreLeadsList(String type) async {
     if (!_hasNextPage || _pageLoading) {
       return;
     }
@@ -58,7 +58,7 @@ class LeadsProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      var result = await Userapi.getLeads(type, _currentPage + 1,context);
+      var result = await Userapi.getLeads(type, _currentPage + 1);
 
       if (result?.status == true) {
         _currentPage++; // Increment the current page after a successful fetch.
@@ -78,14 +78,14 @@ class LeadsProvider with ChangeNotifier {
   }
 
 
-  Future<bool?> AddleadsApi(name, mobile, date, remarks, leadStatus,BuildContext context) async {
+  Future<bool?> AddleadsApi(name, mobile, date, remarks, leadStatus) async {
     try {
       // Fetching user details from the API
       var response =
-          await Userapi.postAddLeads(name, mobile, date, remarks, leadStatus,context);
+          await Userapi.postAddLeads(name, mobile, date, remarks, leadStatus);
       if (response != null) {
         if (response["status"] == true) {
-          fetchLeadsList('',context);
+          fetchLeadsList('');
           return response["status"];
         } else {
           return response["status"];
@@ -99,22 +99,20 @@ class LeadsProvider with ChangeNotifier {
     return null;
   }
 
-  Future<bool?> UpdateleadsApi(name, leadID, remarks, leadStatusID, leadStageID,BuildContext context) async {
+  Future<bool?> UpdateleadsApi(name, leadID, remarks, leadStatusID, leadStageID) async {
     try {
       var response = await Userapi.postUpdateLeads(
         name,
         leadID,
         remarks,
         leadStatusID,
-        leadStageID,context
+        leadStageID
       );
       if (response != null) {
         if (response["status"] == true) {
-          fetchLeadsList('',context);
-          CustomSnackBar.show(context, "Lead Updated Successfully!");
+          fetchLeadsList('');
           return response["status"];
         } else {
-          CustomSnackBar.show(context, response["message"]);
           return response["status"];
         }
       }

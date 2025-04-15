@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:telecaliingcrm/Authentication/ForgetPasswordEmail.dart';
 import 'package:telecaliingcrm/screens/dashboard.dart';
 import '../providers/ConnectivityProviders.dart';
+import '../services/AuthService.dart';
 import '../services/UserApi.dart';
 import '../services/otherservices.dart';
 import '../utils/PermissionHelper.dart';
@@ -52,7 +53,7 @@ class _SignInScreenState extends State<SignInScreen> {
       _loading = true;
     });
 
-    await Userapi.PostSignIn(_emailController.text, _pwdController.text,context)
+    await Userapi.postSignIn(_emailController.text, _pwdController.text)
         .then((data) {
       setState(() {
         _loading = false;
@@ -68,6 +69,11 @@ class _SignInScreenState extends State<SignInScreen> {
           // Successful login
           PreferenceService().saveString('token', data['access_token']);
           PreferenceService().saveInt('access_expiry_timestamp', expiryTimestamp);
+          AuthService.saveTokens(
+            data['access_token'],
+            data['access_token'],
+              expiryTimestamp
+          );
           Navigator.of(context)
               .pushReplacement(PageRouteBuilder(
             pageBuilder: (context, animation,

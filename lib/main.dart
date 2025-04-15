@@ -7,9 +7,16 @@ import 'package:telecaliingcrm/providers/FollowupProvider.dart';
 import 'package:telecaliingcrm/providers/LeadsProvider.dart';
 import 'package:telecaliingcrm/providers/UserDetailsProvider.dart';
 import 'package:telecaliingcrm/providers/leaderBoardprovider.dart';
+import 'package:telecaliingcrm/screens/SubscriptionExpiredScreen.dart';
+import 'package:telecaliingcrm/screens/TooManyRequestsScreen.dart';
+import 'package:telecaliingcrm/services/ApiClient.dart';
+import 'Authentication/SignInScreen.dart';
 import 'screens/SpalshScreen.dart';
 
+
+final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
 void main() async {
+  ApiClient.setupInterceptors(_navigatorKey);
   runApp(
     MultiProvider(
       providers: [
@@ -38,6 +45,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      navigatorKey: _navigatorKey,
         debugShowCheckedModeBanner: false,
         builder: (BuildContext context, Widget? child) {
           final MediaQueryData data = MediaQuery.of(context);
@@ -93,6 +101,11 @@ class MyApp extends StatelessWidget {
           colorScheme: const ColorScheme.light(background: Colors.white)
               .copyWith(background: Colors.white),
         ),
+        routes: {
+          '/signin': (context) => SignInScreen(),
+          '/subscribe': (context) => SubscriptionExpiredScreen(),
+          '/toomanyrequests': (context) => TooManyRequestsScreen(),
+        },
         home:Splash()
     );
   }

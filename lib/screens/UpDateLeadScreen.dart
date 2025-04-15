@@ -80,43 +80,45 @@ class _UpDateLeadScreenState extends State<UpDateLeadScreen> {
   }
 
   Future<void> UpdateLeads() async {
+    setState(() {
+      _loading = true;
+    });
+
     try {
-      setState(() {
-        _loading = true;
-      });
-      // Call the UpdateleadsApi from LeadsProvider
       final leadsProvider = Provider.of<LeadsProvider>(context, listen: false);
-      // Pass the parameters from your UI to the provider
+
       final response = await leadsProvider.UpdateleadsApi(
         _nameController.text,
         widget.ID,
         _remarksController.text,
         _leadStatus,
         _leadStage,
-          context
       );
-      if (response != null && response == true) {
-        setState(() {
-          _loading = false;
-        });
-        // If successful, pop the screen with a success message
-        Navigator.pop(context, true);
-      } else {
-        setState(() {
-          _loading = false;
-        });
-        // CustomSnackBar.show(context, "Lead Updated Failed!");
-        // Handle error, if response status is false
-        print("Failed to update lead");
-      }
-    } catch (e) {
+
       setState(() {
         _loading = false;
       });
-      // Handle error in case of failure
-      print("Error occurred while updating lead: $e");
+
+      if (response == true) {
+        CustomSnackBar.show(context, "Lead Updated Successfully!");
+        Navigator.pop(context, true); // Returning true as a success flag
+      } else {
+        final errorMessage = "Failed to update lead.";
+        CustomSnackBar.show(context, errorMessage);
+        print("Failed to update lead: $errorMessage");
+      }
+    } catch (e, stack) {
+      setState(() {
+        _loading = false;
+      });
+
+      print("Exception in UpdateLeads: $e");
+      print("Stack trace: $stack");
+
+      CustomSnackBar.show(context, "Something went wrong. Please try again.");
     }
   }
+
 
 
   @override

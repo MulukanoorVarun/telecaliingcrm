@@ -54,7 +54,7 @@ class _CallhistoryscreenState extends State<Callhistoryscreen> {
   Future<void> getCallHistoryApi() async {
     final callhistory =
         Provider.of<CallHistoryProvider>(context, listen: false);
-    callhistory.getCallHistoryApi(widget.date, context);
+    callhistory.getCallHistoryApi(widget.date);
   }
 
   @override
@@ -125,8 +125,7 @@ class _CallhistoryscreenState extends State<Callhistoryscreen> {
                                 scrollinfo.metrics.pixels ==
                                     scrollinfo.metrics.maxScrollExtent) {
                               if (callhistoryprovider.hasNext) {
-                                callhistoryprovider.getMoreCallHistoryApi(
-                                    '', context);
+                                callhistoryprovider.getMoreCallHistoryApi('');
                               }
                               return true;
                             }

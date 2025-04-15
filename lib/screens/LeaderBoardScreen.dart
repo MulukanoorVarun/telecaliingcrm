@@ -34,7 +34,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
   Future<void> fetchLeaderboardData() async {
     final leaderBoard =
         Provider.of<LeaderBoardProvider>(context, listen: false);
-    leaderBoard.fetchLeaderboardData(context);
+    leaderBoard.fetchLeaderboardData();
   }
 
   String capitalizeFirstLetter(String text) {
@@ -80,7 +80,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                                           scrollInfo.metrics.maxScrollExtent) {
                                     if (leaderBoardProvider.hasNext) {
                                       leaderBoardProvider
-                                          .fetchMoreLeaderboardData(context);
+                                          .fetchMoreLeaderboardData();
                                     }
                                     return true;
                                   }

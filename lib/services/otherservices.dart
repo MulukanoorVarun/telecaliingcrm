@@ -64,7 +64,7 @@ Future<bool> checkHeaderValidity() async {
 
   if (validityTimestampInMilliseconds == null || validityTimestampInMilliseconds <= currentTimestamp) {
     // Token has expired or no valid timestamp
-    final data = await Userapi.UpdateRefreshToken();
+    final data = await Userapi.updateRefreshToken();
     if (data != null) {
       // Check if the API response indicates success
       if (data["success"] == true) {

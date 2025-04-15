@@ -21,7 +21,7 @@ class _PermissionScreenState extends State<PermissionScreen> {
   void initState() {
     super.initState();
     checkPermissions();
-    Fetchdetails(); // Check permissions when screen loads
+    Fetchdetails();
   }
 
   // Fetch user token or details
@@ -33,21 +33,10 @@ class _PermissionScreenState extends State<PermissionScreen> {
   }
 
   Future<void> checkPermissions() async {
-    DeviceInfoPlugin plugin = DeviceInfoPlugin();
-    AndroidDeviceInfo android = await plugin.androidInfo;
     List<Permission> requiredPermissions = [
       Permission.phone,
       Permission.contacts,
-      Permission.camera,
     ];
-
-    if (android.version.sdkInt < 33) {
-      requiredPermissions.add(Permission.storage);  // Deprecated in Android 13+
-    }else{
-      print("isAndroid11orAbove");
-      requiredPermissions.add(Permission.photos);
-    }
-
     // Request permissions
     Map<Permission, PermissionStatus> statuses = {};
     for (var permission in requiredPermissions) {
@@ -161,16 +150,6 @@ class _PermissionScreenState extends State<PermissionScreen> {
                 icon: Icons.contacts,
                 title: "Contacts",
                 description: "Needed to access your contacts for seamless communication.",
-              ),
-              _buildPermissionItem(
-                icon: Icons.camera_alt,
-                title: "Camera",
-                description: "Allow access to your camera for capturing photos and videos.",
-              ),
-              _buildPermissionItem(
-                icon: Icons.folder,
-                title: "Storage",
-                description: "Grant access to store and retrieve media, documents, and files.",
               ),
             ],
           ),

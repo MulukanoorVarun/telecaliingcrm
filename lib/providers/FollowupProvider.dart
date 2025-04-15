@@ -20,12 +20,12 @@ class FollowupProvider extends ChangeNotifier {
   bool get isLoading => _isLoading;
   List<FollowUpModel> get followupList => _followuplist;
 
-  Future<void> getFollowUpApi(BuildContext context) async {
+  Future<void> getFollowUpApi() async {
     _isLoading = true;
     _currentPage = 1;
     notifyListeners();
     try {
-      var result = await Userapi.getFollowup(_currentPage,context);
+      var result = await Userapi.getFollowup(_currentPage);
       if (result?.status == true) {
         _followuplist = result?.data?.followup_list ?? [];
         if(result?.data?.nextPageUrl!=null){
@@ -45,7 +45,7 @@ class FollowupProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> fetchMoreFollowUpList(BuildContext context) async {
+  Future<void> fetchMoreFollowUpList() async {
     // Prevent redundant calls if no next page or a call is already in progress
     if (!_nextPage || _pageLoading) {
       debugPrint("No more pages to fetch or another fetch is in progress.");
@@ -57,7 +57,7 @@ class FollowupProvider extends ChangeNotifier {
 
     try {
       debugPrint("Fetching page $_currentPage...");
-      var result = await Userapi.getFollowup(_currentPage + 1,context); // Increment the page for API call
+      var result = await Userapi.getFollowup(_currentPage + 1); // Increment the page for API call
 
       if (result?.status == true) {
         _currentPage++; // Increment the current page only after a successful fetch
@@ -86,12 +86,12 @@ class FollowupProvider extends ChangeNotifier {
   }
 
 
-  Future<bool?> AddFollowUp(BuildContext context,id,name,date,remaks ) async {
+  Future<bool?> AddFollowUp(id,name,date,remaks ) async {
     try {
-      final res = await Userapi.postAddFollowUp(id,name,date,remaks,context);
+      final res = await Userapi.postAddFollowUp(id,name,date,remaks);
       if (res!= null) {
         if(res["status"]==true){
-          getFollowUpApi(context);
+          getFollowUpApi();
           return true;
         }else{
           return false;
