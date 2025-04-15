@@ -1,0 +1,2 @@
+C:/Users/muluk/OneDrive/Documents/Pixl Work space/telecaliingcrm/android/app/.cxx/RelWithDebInfo/3u5ms1gj/x86/CMakeFiles/edit_cache.dir
+C:/Users/muluk/OneDrive/Documents/Pixl Work space/telecaliingcrm/android/app/.cxx/RelWithDebInfo/3u5ms1gj/x86/CMakeFiles/rebuild_cache.dir
