@@ -151,12 +151,6 @@ class _SplashState extends State<Splash> {
   }
 
   @override
-  void dispose() {
-    Provider.of<ConnectivityProviders>(context, listen: false).dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     var connectiVityStatus = Provider.of<ConnectivityProviders>(context);
     return (connectiVityStatus.isDeviceConnected == "ConnectivityResult.wifi" ||

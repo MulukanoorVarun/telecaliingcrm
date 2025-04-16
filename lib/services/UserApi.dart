@@ -13,10 +13,11 @@ import '../model/GetFollowUpModel.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import './ApiClient.dart';
-
+import 'AuthService.dart';
 
 class Userapi {
-  static Future<Map<String, dynamic>?> postSignIn(String email, String pwd) async {
+  static Future<Map<String, dynamic>?> postSignIn(
+      String email, String pwd) async {
     try {
       final data = {
         "email": email,
@@ -42,16 +43,20 @@ class Userapi {
 
   static Future<DashBoardModel?> dashboardApi() async {
     try {
+      final token = await AuthService.getAccessToken();
+      ApiClient.logger.d("[dashboardApi] Using token: $token");
       final response = await ApiClient.post("/api/dashboard");
-
-      if (response.statusCode == 200) {
-        print("dashboardApi response: ${response.data}");
+      if (response.statusCode == 200 && response.data != null) {
+        ApiClient.logger.d("dashboardApi response: ${response.data}");
         return DashBoardModel.fromJson(response.data);
       }
-      print("Request failed with status: ${response.statusCode}");
+      ApiClient.logger.d("Request failed with status: ${response.statusCode}, data: ${response.data}");
       return null;
     } catch (e) {
-      print("Error occurred: $e");
+      ApiClient.logger.e("Error occurred in dashboardApi: $e");
+      if (e is DioException && e.response != null) {
+        ApiClient.logger.e("Response data: ${e.response?.data}");
+      }
       return null;
     }
   }
@@ -59,7 +64,6 @@ class Userapi {
   static Future<UserDetailsModel?> getUserDetails() async {
     try {
       final response = await ApiClient.post("/api/profile");
-
       if (response.statusCode == 200) {
         print("getUserDetails response: ${response.data}");
         return UserDetailsModel.fromJson(response.data);
@@ -140,8 +144,8 @@ class Userapi {
     }
   }
 
-  static Future<Map<String, dynamic>?> postAddLeads(
-      String name, String num, String followupDate, String remarks, String leadId) async {
+  static Future<Map<String, dynamic>?> postAddLeads(String name, String num,
+      String followupDate, String remarks, String leadId) async {
     try {
       final data = {
         "name": name,
@@ -198,7 +202,11 @@ class Userapi {
   }
 
   static Future<Map<String, dynamic>?> postUpdateLeads(
-      String name, String leadId, String remarks, String leadStageId, String dealStage) async {
+      String name,
+      String leadId,
+      String remarks,
+      String leadStageId,
+      String dealStage) async {
     try {
       final data = {
         "name": name,
@@ -342,7 +350,8 @@ class Userapi {
     }
   }
 
-  static Future<bool?> updatePassword(String email, String password, BuildContext context) async {
+  static Future<bool?> updatePassword(
+      String email, String password, BuildContext context) async {
     try {
       final response = await ApiClient.post(
         "/api/update_password",
@@ -356,7 +365,8 @@ class Userapi {
         CustomSnackBar.show(context, response.data['message']);
         return true;
       }
-      CustomSnackBar.show(context, response.data['message'] ?? "Error updating password");
+      CustomSnackBar.show(
+          context, response.data['message'] ?? "Error updating password");
       return false;
     } catch (e) {
       print("Error occurred: $e");
@@ -364,7 +374,8 @@ class Userapi {
     }
   }
 
-  static Future<bool?> forgetPassword(String email, BuildContext context) async {
+  static Future<bool?> forgetPassword(
+      String email, BuildContext context) async {
     try {
       final response = await ApiClient.post(
         "/api/forget-password",
@@ -375,7 +386,8 @@ class Userapi {
         CustomSnackBar.show(context, response.data['message']);
         return true;
       } else if (response.statusCode == 400) {
-        CustomSnackBar.show(context, response.data['email']?[0] ?? "An error occurred.");
+        CustomSnackBar.show(
+            context, response.data['email']?[0] ?? "An error occurred.");
         return false;
       }
       CustomSnackBar.show(context, "Unexpected error: ${response.statusCode}");
@@ -387,7 +399,8 @@ class Userapi {
     }
   }
 
-  static Future<bool?> forgetPasswordOtpVerify(String email, String otp, BuildContext context) async {
+  static Future<bool?> forgetPasswordOtpVerify(
+      String email, String otp, BuildContext context) async {
     try {
       final response = await ApiClient.post(
         "/api/verify-otp",

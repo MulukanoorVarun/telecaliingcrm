@@ -26,30 +26,6 @@ class CallHistoryProvider extends ChangeNotifier {
         // Update `_hasNext` based on the API response
         _hasNext = res?.data?.nextPageUrl != null;
       } else {
-        // Navigator.of(context)
-        //     .push(PageRouteBuilder(
-        //   pageBuilder: (context, animation,
-        //       secondaryAnimation) {
-        //     return SubscriptionExpiredScreen();
-        //   },
-        //   transitionsBuilder: (context,
-        //       animation,
-        //       secondaryAnimation,
-        //       child) {
-        //     const begin = Offset(1.0, 0.0);
-        //     const end = Offset.zero;
-        //     const curve = Curves.easeInOut;
-        //     var tween = Tween(
-        //         begin: begin, end: end)
-        //         .chain(CurveTween(
-        //         curve: curve));
-        //     var offsetAnimation =
-        //     animation.drive(tween);
-        //     return SlideTransition(
-        //         position: offsetAnimation,
-        //         child: child);
-        //   },
-        // ));
         debugPrint("No data received");
         _hasNext = false;
       }
@@ -87,30 +63,6 @@ class CallHistoryProvider extends ChangeNotifier {
             ? "Next page available, more data to fetch."
             : "No more pages to fetch.");
       } else {
-        // Navigator.of(context)
-        //     .push(PageRouteBuilder(
-        //   pageBuilder: (context, animation,
-        //       secondaryAnimation) {
-        //     return SubscriptionExpiredScreen();
-        //   },
-        //   transitionsBuilder: (context,
-        //       animation,
-        //       secondaryAnimation,
-        //       child) {
-        //     const begin = Offset(1.0, 0.0);
-        //     const end = Offset.zero;
-        //     const curve = Curves.easeInOut;
-        //     var tween = Tween(
-        //         begin: begin, end: end)
-        //         .chain(CurveTween(
-        //         curve: curve));
-        //     var offsetAnimation =
-        //     animation.drive(tween);
-        //     return SlideTransition(
-        //         position: offsetAnimation,
-        //         child: child);
-        //   },
-        // ));
         debugPrint("API returned failure status. No data received.");
       }
     } catch (e) {

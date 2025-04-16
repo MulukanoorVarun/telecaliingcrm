@@ -29,6 +29,13 @@ class _SignInScreenState extends State<SignInScreen> {
   bool _loading = false;
   bool _obscureText = true;
 
+  @override
+  void initState() {
+    Provider.of<ConnectivityProviders>(context, listen: false)
+        .initConnectivity();
+    super.initState();
+  }
+
   void _validateFields() {
     setState(() {
       _loading = true;
@@ -62,60 +69,47 @@ class _SignInScreenState extends State<SignInScreen> {
       if (data != null) {
         if (data['access_token'] != null) {
           // Get the current timestamp in seconds
-          int currentTimestampInSeconds = DateTime.now().millisecondsSinceEpoch ~/ 1000;
-
+          int currentTimestampInSeconds =
+              DateTime.now().millisecondsSinceEpoch ~/ 1000;
           // Calculate the expiry timestamp
-          int expiryTimestamp = (currentTimestampInSeconds + data['expires_in']).toInt();
+          int expiryTimestamp =
+              (currentTimestampInSeconds + data['expires_in']).toInt();
           // Successful login
           PreferenceService().saveString('token', data['access_token']);
-          PreferenceService().saveInt('access_expiry_timestamp', expiryTimestamp);
-          AuthService.saveTokens(
-            data['access_token'],
-            data['access_token'],
-              expiryTimestamp
-          );
-          Navigator.of(context)
-              .pushReplacement(PageRouteBuilder(
-            pageBuilder: (context, animation,
-                secondaryAnimation) {
+          PreferenceService()
+              .saveInt('access_expiry_timestamp', expiryTimestamp);
+          // AuthService.saveTokens(data['access_token'],data['access_token'], data['access_token'], expiryTimestamp);
+          AuthService.saveAccessToken(data['access_token']);
+          Navigator.of(context).pushReplacement(PageRouteBuilder(
+            pageBuilder: (context, animation, secondaryAnimation) {
               return Dashboard();
             },
-            transitionsBuilder: (context,
-                animation,
-                secondaryAnimation,
-                child) {
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
               const begin = Offset(1.0, 0.0);
               const end = Offset.zero;
               const curve = Curves.easeInOut;
-              var tween = Tween(
-                  begin: begin, end: end)
-                  .chain(CurveTween(
-                  curve: curve));
-              var offsetAnimation =
-              animation.drive(tween);
-              return SlideTransition(
-                  position: offsetAnimation,
-                  child: child);
+              var tween =
+                  Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+              var offsetAnimation = animation.drive(tween);
+              return SlideTransition(position: offsetAnimation, child: child);
             },
           ));
-        }
-        else if (data['error'] != null) {
+        } else if (data['error'] != null) {
           // Authentication error
           CustomSnackBar.show(context, data['error']);
-        } else if (data['email'] != null || data['password'] != null) { 
+        } else if (data['email'] != null || data['password'] != null) {
           // Validation error
           String emailError =
               (data['email'] != null) ? data['email'].join(", ") : "";
           String passwordError =
               (data['password'] != null) ? data['password'].join(", ") : "";
           CustomSnackBar.show(context, "$emailError $passwordError".trim());
-        }
-        else {
+        } else {
           // Unexpected response
           CustomSnackBar.show(context, "An unexpected error occurred.");
         }
-      }
-      else {
+      } else {
         // Null response
         CustomSnackBar.show(context, "Failed to sign in. Please try again.");
       }
@@ -126,18 +120,6 @@ class _SignInScreenState extends State<SignInScreen> {
       // Handle exceptions
       CustomSnackBar.show(context, "Error: $error");
     });
-  }
-
-  @override
-  void initState() {
-    Provider.of<ConnectivityProviders>(context, listen: false).initConnectivity();
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    Provider.of<ConnectivityProviders>(context, listen: false).dispose();
-    super.dispose();
   }
 
   Widget build(BuildContext context) {
@@ -205,19 +187,23 @@ class _SignInScreenState extends State<SignInScreen> {
                           fillColor: const Color(0xffFCFAFF),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(7),
-                            borderSide: BorderSide(width: 1, color: Color(0xffd0cbdb)),
+                            borderSide:
+                                BorderSide(width: 1, color: Color(0xffd0cbdb)),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(7),
-                            borderSide: BorderSide(width: 1,  color: Color(0xffd0cbdb)),
+                            borderSide:
+                                BorderSide(width: 1, color: Color(0xffd0cbdb)),
                           ),
                           errorBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(7),
-                            borderSide: BorderSide(width: 1, color: Color(0xffd0cbdb)),
+                            borderSide:
+                                BorderSide(width: 1, color: Color(0xffd0cbdb)),
                           ),
                           focusedErrorBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(7),
-                            borderSide: BorderSide(width: 1,  color: Color(0xffd0cbdb)),
+                            borderSide:
+                                BorderSide(width: 1, color: Color(0xffd0cbdb)),
                           ),
                         ),
                         style: TextStyle(
@@ -300,7 +286,8 @@ class _SignInScreenState extends State<SignInScreen> {
                           fillColor: const Color(0xffFCFAFF),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(7),
-                            borderSide: BorderSide(width: 1, color:Color(0xffd0cbdb)),
+                            borderSide:
+                                BorderSide(width: 1, color: Color(0xffd0cbdb)),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(7),
@@ -354,7 +341,11 @@ class _SignInScreenState extends State<SignInScreen> {
                       children: [
                         TextButton(
                             onPressed: () {
-                              Navigator.push(context, MaterialPageRoute(builder: (context)=>Forgotpasswordscreen()));
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          Forgotpasswordscreen()));
                             },
                             child: Text(
                               'Forget Password',
@@ -369,8 +360,9 @@ class _SignInScreenState extends State<SignInScreen> {
                       child: containertext(
                         context,
                         'LOGIN',
-                        width: MediaQuery.of(context).size.width * 0.9, // Avoid using 'w' unless it's well-defined
-                        color:Color(0xff7165E3),
+                        width: MediaQuery.of(context).size.width *
+                            0.9, // Avoid using 'w' unless it's well-defined
+                        color: Color(0xff7165E3),
                         isLoading: _loading,
                         onTap: () {
                           if (_loading) {
@@ -381,7 +373,6 @@ class _SignInScreenState extends State<SignInScreen> {
                         },
                       ),
                     ),
-
                   ],
                 ),
               ),

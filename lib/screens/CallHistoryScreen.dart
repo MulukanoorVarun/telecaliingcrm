@@ -41,14 +41,11 @@ class _CallhistoryscreenState extends State<Callhistoryscreen> {
   void initState() {
     Provider.of<ConnectivityProviders>(context, listen: false)
         .initConnectivity();
-    getCallHistoryApi();
+    // Delay the API call until after the first frame is rendered
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      getCallHistoryApi();
+    });
     super.initState();
-  }
-
-  @override
-  void dispose() {
-    Provider.of<ConnectivityProviders>(context, listen: false).dispose();
-    super.dispose();
   }
 
   Future<void> getCallHistoryApi() async {

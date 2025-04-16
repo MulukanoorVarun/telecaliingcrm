@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:call_log/call_log.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 import 'package:intl/intl.dart';
@@ -32,7 +33,7 @@ class Homescreen extends StatefulWidget {
 }
 
 class _HomescreenState extends State<Homescreen> {
-  bool isLoading = false; // Loading state
+  bool isLoading = false;
   int currentIndex = 0;
   bool isCalling = false;
   late Timer callDurationTimer;
@@ -40,22 +41,33 @@ class _HomescreenState extends State<Homescreen> {
   String mobile_nnumber = "";
   bool isPaused = false;
   bool isCallOngoing = false;
-  late StreamSubscription<PhoneState> _phoneStateSubscription;
   String Date = DateFormat('yyyy-MM-dd').format(DateTime.now());
 
   @override
   void initState() {
     GetDashBoardDetails();
+    getDashboardData();
     Provider.of<ConnectivityProviders>(context, listen: false)
         .initConnectivity();
-    _initializePhoneStateListener();
     super.initState();
   }
 
-  @override
-  void dispose() {
-    Provider.of<ConnectivityProviders>(context, listen: false).dispose();
-    super.dispose();
+  Future<void> getDashboardData() async {
+    try {
+      var dio = Dio();
+      dio.options.headers['Authorization'] = 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2FwaS50ZWxlY2FsbGluZ2NybS5jb20vYXBpL2xvZ2luIiwiaWF0IjoxNzQ0ODE5OTU1LCJleHAiOjE3NDQ4MjM1NTUsIm5iZiI6MTc0NDgxOTk1NSwianRpIjoiemRjT29nbVJ3SWVEdTNwViIsInN1YiI6IjExMyIsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjcifQ.s8FnkhdSN39hL1vrx73sWNYMTEV7lA-sYP7WnugdUnA'; // Ensure the token is set here
+      var response = await dio.post(
+        'https://api.telecallingcrm.com/api/dashboard',
+        data: {},
+      );
+      if (response.statusCode == 200) {
+        print('Dashboard Data: ${response.data}');
+      } else {
+        print('Error: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error occurred in getDashboardData: $e');
+    }
   }
 
   List<MobileNumbers>? phoneNumbers;
@@ -70,14 +82,6 @@ class _HomescreenState extends State<Homescreen> {
     }
   }
 
-  // Initialize the phone state listener
-  void _initializePhoneStateListener() {
-    if (Platform.isAndroid) {
-      _phoneStateSubscription = PhoneState.stream.listen((PhoneState state) {
-        _handlePhoneStateChange(state);
-      });
-    }
-  }
 
   // Handle different phone state changes
   void _handlePhoneStateChange(PhoneState state) {

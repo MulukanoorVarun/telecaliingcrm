@@ -19,16 +19,12 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
   bool isloading = true;
   @override
   void initState() {
-    fetchLeaderboardData();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      fetchLeaderboardData();
+    });
     Provider.of<ConnectivityProviders>(context, listen: false)
         .initConnectivity();
     super.initState();
-  }
-
-  @override
-  void dispose() {
-    Provider.of<ConnectivityProviders>(context, listen: false).dispose();
-    super.dispose();
   }
 
   Future<void> fetchLeaderboardData() async {
