@@ -84,6 +84,7 @@ class _SignInScreenState extends State<SignInScreen> {
             pageBuilder: (context, animation, secondaryAnimation) {
               return Dashboard();
             },
+
             transitionsBuilder:
                 (context, animation, secondaryAnimation, child) {
               const begin = Offset(1.0, 0.0);
