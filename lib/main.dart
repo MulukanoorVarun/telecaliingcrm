@@ -13,24 +13,29 @@ import 'package:telecaliingcrm/services/ApiClient.dart';
 import 'Authentication/SignInScreen.dart';
 import 'screens/SpalshScreen.dart';
 
-
 final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
-void main() async {
+Future<void> main() async {
   ApiClient.setupInterceptors(_navigatorKey);
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (context)=>ConnectivityProviders()),
+        ChangeNotifierProvider(create: (context) => ConnectivityProviders()),
         ChangeNotifierProvider(
           create: (_) => DashboardProvider(),
         ),
         ChangeNotifierProvider(
           create: (_) => UserDetailsProvider(),
-        ),ChangeNotifierProvider(
+        ),
+        ChangeNotifierProvider(
           create: (_) => CallHistoryProvider(),
         ),
-        ChangeNotifierProvider(create: (_) => LeadsProvider(),),
-        ChangeNotifierProvider(create: (_) => LeaderBoardProvider(),),
+        ChangeNotifierProvider(
+          create: (_) => LeadsProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => LeaderBoardProvider(),
+        ),
         ChangeNotifierProvider(
           create: (_) => FollowupProvider(),
         ),
@@ -45,7 +50,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      navigatorKey: _navigatorKey,
+        navigatorKey: _navigatorKey,
         debugShowCheckedModeBanner: false,
         builder: (BuildContext context, Widget? child) {
           final MediaQueryData data = MediaQuery.of(context);
@@ -93,8 +98,8 @@ class MyApp extends StatelessWidget {
           ),
           textButtonTheme: TextButtonThemeData(
             style: ButtonStyle(
-              // overlayColor: MaterialStateProperty.all(Colors.white),
-            ),
+                // overlayColor: MaterialStateProperty.all(Colors.white),
+                ),
           ),
           bottomSheetTheme: const BottomSheetThemeData(
               surfaceTintColor: Colors.white, backgroundColor: Colors.white),
@@ -106,10 +111,6 @@ class MyApp extends StatelessWidget {
           '/subscribe': (context) => SubscriptionExpiredScreen(),
           '/toomanyrequests': (context) => TooManyRequestsScreen(),
         },
-        home:Splash()
-    );
+        home: Splash());
   }
 }
-
-
-

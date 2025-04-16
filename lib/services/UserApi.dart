@@ -43,7 +43,6 @@ class Userapi {
   static Future<DashBoardModel?> dashboardApi() async {
     try {
       final response = await ApiClient.post("/api/dashboard");
-
       if (response.statusCode == 200) {
         print("dashboardApi response: ${response.data}");
         return DashBoardModel.fromJson(response.data);
