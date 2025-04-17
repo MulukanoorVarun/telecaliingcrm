@@ -23,7 +23,6 @@ class CallHistoryProvider extends ChangeNotifier {
       var res = await Userapi.getCallHistory(date,_currentPage);
       if (res?.status==true) {
         call_history = res?.data?.call_history??[];
-        // Update `_hasNext` based on the API response
         _hasNext = res?.data?.nextPageUrl != null;
       } else {
         debugPrint("No data received");

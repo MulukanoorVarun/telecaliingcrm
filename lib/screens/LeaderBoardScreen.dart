@@ -71,7 +71,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                           Expanded(
                               child: NotificationListener<ScrollNotification>(
                                 onNotification: (ScrollNotification scrollInfo) {
-                                  if (leaderBoardProvider.isLoading &&
+                                  if (!leaderBoardProvider.isLoading &&
                                       scrollInfo.metrics.pixels ==
                                           scrollInfo.metrics.maxScrollExtent) {
                                     if (leaderBoardProvider.hasNext) {

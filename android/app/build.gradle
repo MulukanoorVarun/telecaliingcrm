@@ -57,7 +57,7 @@ android {
         release {
             keyAlias 'upload'
             keyPassword 'telecaller'
-            storeFile file('C:/Users/muluk/OneDrive/Documents/Pixl Work space/telecaliingcrm/android/app/upload-keystore.jks')
+            storeFile file('C:\\Users\\Ozrit\\StudioProjects\\telecaliingcrm\\android\\app\\upload-keystore.jks')
             storePassword 'telecaller'
         }
     }

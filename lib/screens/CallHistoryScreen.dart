@@ -98,12 +98,11 @@ class _CallhistoryscreenState extends State<Callhistoryscreen> {
                       ),
                       Expanded(
                         child: NotificationListener<ScrollNotification>(
-                          onNotification: (ScrollNotification scrollinfo) {
-                            if (callhistoryprovider.loading &&
-                                scrollinfo.metrics.pixels ==
-                                    scrollinfo.metrics.maxScrollExtent) {
+                          onNotification: (ScrollNotification scrollInfo) {
+                            if (!callhistoryprovider.pageLoading &&
+                                scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
                               if (callhistoryprovider.hasNext) {
-                                callhistoryprovider.getMoreCallHistoryApi('');
+                                callhistoryprovider.getMoreCallHistoryApi(widget.date);
                               }
                               return true;
                             }
@@ -150,7 +149,7 @@ class _CallhistoryscreenState extends State<Callhistoryscreen> {
                                                       color: Colors.grey),
                                                   SizedBox(width: 8),
                                                   Text(
-                                                    call.dateAdded ?? "",
+                                                    call.latestUpdate ?? "",
                                                     style: TextStyle(
                                                       color: Colors.grey,
                                                       fontFamily: "Poppins",
