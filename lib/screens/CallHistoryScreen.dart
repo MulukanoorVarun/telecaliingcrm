@@ -18,30 +18,11 @@ class Callhistoryscreen extends StatefulWidget {
 }
 
 class _CallhistoryscreenState extends State<Callhistoryscreen> {
-  final List<Map<String, String>> callData = [
-    {
-      'number': '9440161007',
-      'dateAdded': 'Jan 21 2025 10:57 AM',
-      'callStatus': 'Not Interested',
-      'calledStatus': 'Called',
-      'callDuration': '21 sec',
-      'latestUpdate': 'Jan 24 2025 5:24 PM',
-    },
-    {
-      'number': '8919273834',
-      'dateAdded': 'Jan 24 2025 5:22 PM',
-      'callStatus': 'Not Lifting',
-      'calledStatus': 'Called',
-      'callDuration': '0 sec',
-      'latestUpdate': 'Jan 24 2025 5:25 PM',
-    },
-  ];
 
   @override
   void initState() {
     Provider.of<ConnectivityProviders>(context, listen: false)
         .initConnectivity();
-    // Delay the API call until after the first frame is rendered
     WidgetsBinding.instance.addPostFrameCallback((_) {
       getCallHistoryApi();
     });

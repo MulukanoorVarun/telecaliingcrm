@@ -9,15 +9,15 @@ import 'package:telecaliingcrm/providers/UserDetailsProvider.dart';
 import 'package:telecaliingcrm/providers/leaderBoardprovider.dart';
 import 'package:telecaliingcrm/screens/SubscriptionExpiredScreen.dart';
 import 'package:telecaliingcrm/screens/TooManyRequestsScreen.dart';
-import 'package:telecaliingcrm/services/ApiClient.dart';
 import 'Authentication/SignInScreen.dart';
+import 'Services/UserApi.dart';
 import 'screens/SpalshScreen.dart';
 
 final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized(); // ✅ Always first before anything async or platform-channel
 
-  ApiClient.setupInterceptors(_navigatorKey); // ✅ Now okay after binding
+  Userapi.setupInterceptors(_navigatorKey); // ✅ Now okay after binding
 
   runApp(
     MultiProvider(

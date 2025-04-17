@@ -1,5 +1,4 @@
-import 'dart:io';
-import 'package:device_info_plus/device_info_plus.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -36,6 +35,7 @@ class _PermissionScreenState extends State<PermissionScreen> {
     List<Permission> requiredPermissions = [
       Permission.phone,
       Permission.contacts,
+      Permission.ignoreBatteryOptimizations,
     ];
     // Request permissions
     Map<Permission, PermissionStatus> statuses = {};

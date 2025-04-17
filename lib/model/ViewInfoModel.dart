@@ -32,14 +32,14 @@ class ViewInfo {
   String? callStatus;
   String? calledStatus;
   String? name;
-  Null? followUpDate;
+  String? followUpDate;
   String? remarks;
   String? dealStatus;
-  Null? dealAmount;
+  dynamic dealAmount;
   int? totalCalls;
-  Null? lastCalledDate;
+  String? lastCalledDate;
   int? leadStageId;
-  Null? dealClosureDate;
+  String? dealClosureDate;
   int? callDuration;
   int? fId;
   StageName? stageName;
