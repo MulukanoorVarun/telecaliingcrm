@@ -150,14 +150,14 @@ class Userapi {
       final response = await post("/api/login", data: data);
 
       if (response.data == null || response.data.isEmpty) {
-        print("Empty response body.");
+        debugPrint("Empty response body.");
         return null;
       }
 
-      print("Request successful: ${response.data}");
+      debugPrint("Request successful: ${response.data}");
       return response.data;
     } catch (e) {
-      print("Error occurred: $e");
+      debugPrint("Error occurred: $e");
       return null;
     }
   }
@@ -171,12 +171,12 @@ class Userapi {
         logger.d("dashboardApi response: ${response.data}");
         return DashBoardModel.fromJson(response.data);
       }
-      logger.d("Request failed with status: ${response.statusCode}, data: ${response.data}");
+      logger.d("Request failed with status: ${response.statusCode}, bloc: ${response.data}");
       return null;
     } catch (e) {
       logger.e("Error occurred in dashboardApi: $e");
       if (e is DioException && e.response != null) {
-        logger.e("Response data: ${e.response?.data}");
+        logger.e("Response bloc: ${e.response?.data}");
       }
       return null;
     }
@@ -186,13 +186,13 @@ class Userapi {
     try {
       final response = await post("/api/profile");
       if (response.statusCode == 200) {
-        print("getUserDetails response: ${response.data}");
+        debugPrint("getUserDetails response: ${response.data}");
         return UserDetailsModel.fromJson(response.data);
       }
-      print("Request failed with status: ${response.statusCode}");
+      debugPrint("Request failed with status: ${response.statusCode}");
       return null;
     } catch (e) {
-      print("Error occurred in getUserDetails: $e");
+      debugPrint("Error occurred in getUserDetails: $e");
       return null;
     }
   }
@@ -205,17 +205,17 @@ class Userapi {
         "call_status": callStatus,
         "call_duration": callDuration,
       };
-      print("updateCallStatusApi data: $data");
+      debugPrint("updateCallStatusApi bloc: $data");
       final response = await post("/api/update_call_status_api", data: data);
 
       if (response.statusCode == 200) {
-        print("Request successful: ${response.data}");
+        debugPrint("Request successful: ${response.data}");
         return response.data;
       }
-      print("Request failed with status: ${response.statusCode}, body: ${response.data}");
+      debugPrint("Request failed with status: ${response.statusCode}, body: ${response.data}");
       return null;
     } catch (e) {
-      print("Error occurred: $e");
+      debugPrint("Error occurred: $e");
       return null;
     }
   }
@@ -229,15 +229,14 @@ class Userapi {
           "page": page.toString(),
         },
       );
-
       if (response.statusCode == 200) {
-        print("getLeads response: ${response.data}");
+        debugPrint("getLeads response: ${response.data}");
         return LeadsModel.fromJson(response.data);
       }
-      print("Request failed with status: ${response.statusCode}");
+      debugPrint("Request failed with status: ${response.statusCode}");
       return null;
     } catch (e) {
-      print("Error occurred in getLeads: $e");
+      debugPrint("Error occurred in getLeads: $e");
       return null;
     }
   }
@@ -246,7 +245,7 @@ class Userapi {
     try {
       final token = await AuthService.getAccessToken();
       if (token == null) {
-        print("Error: No access token available");
+        debugPrint("Error: No access token available");
         return null;
       }
 
@@ -262,13 +261,13 @@ class Userapi {
       );
 
       if (response.statusCode == 200) {
-        print("getCallHistory response: ${response.data}");
+        debugPrint("getCallHistory response: ${response.data}");
         return CallHistoryModel.fromJson(response.data);
       }
-      print("Request failed with status: ${response.statusCode}");
+      debugPrint("Request failed with status: ${response.statusCode}");
       return null;
     } catch (e) {
-      print("Error occurred: $e");
+      debugPrint("Error occurred: $e");
       return null;
     }
   }
@@ -277,7 +276,7 @@ class Userapi {
     try {
       final token = await AuthService.getAccessToken();
       if (token == null) {
-        print("Error: No access token available");
+        debugPrint("Error: No access token available");
         return null;
       }
 
@@ -290,13 +289,13 @@ class Userapi {
       );
 
       if (response.statusCode == 200) {
-        print("getLeaderboard response: ${response.data}");
+        debugPrint("getLeaderboard response: ${response.data}");
         return LeaderBoardModel.fromJson(response.data);
       }
-      print("Request failed with status: ${response.statusCode}");
+      debugPrint("Request failed with status: ${response.statusCode}");
       return null;
     } catch (e) {
-      print("Error occurred: $e");
+      debugPrint("Error occurred: $e");
       return null;
     }
   }
@@ -311,18 +310,18 @@ class Userapi {
         "remarks": remarks,
         "lead_stage_id": leadId,
       };
-      print("postAddLeads??$data");
+      debugPrint("postAddLeads??$data");
       final response = await post("/api/add-lead", data: data);
 
       if (response.data == null || response.data.isEmpty) {
-        print("Empty response body.");
+        debugPrint("Empty response body.");
         return null;
       }
 
-      print("postAddLeads successful: ${response.data}");
+      debugPrint("postAddLeads successful: ${response.data}");
       return response.data;
     } catch (e) {
-      print("Error occurred: $e");
+      debugPrint("Error occurred: $e");
       return null;
     }
   }
@@ -336,18 +335,18 @@ class Userapi {
         "followup_date": followupDate,
         "remarks": remarks,
       };
-      print("postAddFollowUp??$data");
+      debugPrint("postAddFollowUp??$data");
       final response = await post("/api/add-follow-up", data: data);
 
       if (response.data == null || response.data.isEmpty) {
-        print("Empty response body.");
+        debugPrint("Empty response body.");
         return null;
       }
 
-      print("postAddFollowUp successful: ${response.data}");
+      debugPrint("postAddFollowUp successful: ${response.data}");
       return response.data;
     } catch (e) {
-      print("Error occurred: $e");
+      debugPrint("Error occurred: $e");
       return null;
     }
   }
@@ -366,18 +365,18 @@ class Userapi {
         "lead_stage_id": leadStageId,
         "deal_stage": dealStage,
       };
-      print("postUpdateLeads??$data");
+      debugPrint("postUpdateLeads??$data");
       final response = await post("/api/update-info", data: data);
 
       if (response.data == null || response.data.isEmpty) {
-        print("Empty response body.");
+        debugPrint("Empty response body.");
         return null;
       }
 
-      print("postUpdateLeads successful: ${response.data}");
+      debugPrint("postUpdateLeads successful: ${response.data}");
       return response.data;
     } catch (e) {
-      print("Error occurred: $e");
+      debugPrint("Error occurred: $e");
       return null;
     }
   }
@@ -387,13 +386,13 @@ class Userapi {
       final response = await get("/api/view-info/$id");
 
       if (response.statusCode == 200) {
-        print("getViewInfo response: ${response.data}");
+        debugPrint("getViewInfo response: ${response.data}");
         return ViewInfoModel.fromJson(response.data);
       }
-      print("Request failed with status: ${response.statusCode}");
+      debugPrint("Request failed with status: ${response.statusCode}");
       return null;
     } catch (e) {
-      print("Error occurred: $e");
+      debugPrint("Error occurred: $e");
       return null;
     }
   }
@@ -406,13 +405,13 @@ class Userapi {
       );
 
       if (response.statusCode == 200) {
-        print("getFollowup response: ${response.data}");
+        debugPrint("getFollowup response: ${response.data}");
         return GetFollowUpModel.fromJson(response.data);
       }
-      print("Request failed with status: ${response.statusCode}");
+      debugPrint("Request failed with status: ${response.statusCode}");
       return null;
     } catch (e) {
-      print("Error occurred in getFollowup: $e");
+      debugPrint("Error occurred in getFollowup: $e");
       return null;
     }
   }
@@ -436,7 +435,7 @@ class Userapi {
             ),
           ));
         } else {
-          print("Invalid image file");
+          debugPrint("Invalid image file");
           return null;
         }
       }
@@ -451,7 +450,7 @@ class Userapi {
       }
       return 'Error: ${response.statusCode}';
     } catch (e) {
-      print("Error occurred: $e");
+      debugPrint("Error occurred: $e");
       return null;
     }
   }
@@ -461,14 +460,14 @@ class Userapi {
       final response = await post("/api/refresh-token");
 
       if (response.data == null || response.data.isEmpty) {
-        print("Empty response body.");
+        debugPrint("Empty response body.");
         return null;
       }
 
-      print("Request successful: ${response.data}");
+      debugPrint("Request successful: ${response.data}");
       return response.data;
     } catch (e) {
-      print("Error occurred: $e");
+      debugPrint("Error occurred: $e");
       return null;
     }
   }
@@ -492,13 +491,12 @@ class Userapi {
           context, response.data['message'] ?? "Error updating password");
       return false;
     } catch (e) {
-      print("Error occurred: $e");
+      debugPrint("Error occurred: $e");
       return null;
     }
   }
 
-  static Future<bool?> forgetPassword(
-      String email, BuildContext context) async {
+  static Future<bool?> forgetPassword(String email, BuildContext context) async {
     try {
       final response = await post(
         "/api/forget-password",
@@ -516,7 +514,7 @@ class Userapi {
       CustomSnackBar.show(context, "Unexpected error: ${response.statusCode}");
       return false;
     } catch (e) {
-      print("Error occurred: $e");
+      debugPrint("Error occurred: $e");
       CustomSnackBar.show(context, "An error occurred. Please try again.");
       return null;
     }
@@ -540,7 +538,7 @@ class Userapi {
       CustomSnackBar.show(context, response.data['message'] ?? "Invalid OTP");
       return false;
     } catch (e) {
-      print("Error occurred: $e");
+      debugPrint("Error occurred: $e");
       return null;
     }
   }

@@ -21,8 +21,6 @@ class _CallhistoryscreenState extends State<Callhistoryscreen> {
 
   @override
   void initState() {
-    Provider.of<ConnectivityProviders>(context, listen: false)
-        .initConnectivity();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       getCallHistoryApi();
     });
@@ -39,10 +37,7 @@ class _CallhistoryscreenState extends State<Callhistoryscreen> {
   Widget build(BuildContext context) {
     var w = MediaQuery.of(context).size.width;
     var h = MediaQuery.of(context).size.height;
-    var connectiVityStatus = Provider.of<ConnectivityProviders>(context);
-    return (connectiVityStatus.isDeviceConnected == "ConnectivityResult.wifi" ||
-            connectiVityStatus.isDeviceConnected == "ConnectivityResult.mobile")
-        ? Scaffold(
+    return  Scaffold(
             appBar: AppBar(
               title: Text(
                 'Call History',
@@ -60,8 +55,6 @@ class _CallhistoryscreenState extends State<Callhistoryscreen> {
                         color: Colors.white,
                       ),
                       onPressed: () {
-                        print('hihjh');
-
                         Navigator.pop(context, true);
                       },
                     )
@@ -209,8 +202,7 @@ class _CallhistoryscreenState extends State<Callhistoryscreen> {
                 }
               },
             ),
-          )
-        : NoInternetWidget();
+          );
   }
 
   Widget _buildShimmerList() {

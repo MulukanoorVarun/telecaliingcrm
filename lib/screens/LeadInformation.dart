@@ -29,7 +29,6 @@ class _LeadInformationState extends State<LeadInformation> {
 
   @override
   void initState() {
-    Provider.of<ConnectivityProviders>(context, listen: false).initConnectivity();
     getLeadsInformationApi();
     super.initState();
   }
@@ -41,7 +40,7 @@ class _LeadInformationState extends State<LeadInformation> {
       if (result?.status == true) {
         leadinfo = result?.data ?? [];
         is_loading = false;
-        print("Response: $result");
+        debugPrint("Response: $result");
       } else {
         Navigator.of(context)
             .push(PageRouteBuilder(
@@ -68,15 +67,9 @@ class _LeadInformationState extends State<LeadInformation> {
           },
         ));
         is_loading = false;
-        print("Failed to update the call status.");
+        debugPrint("Failed to update the call status.");
       }
     });
-  }
-
-  @override
-  void dispose() {
-    Provider.of<ConnectivityProviders>(context, listen: false).dispose();
-    super.dispose();
   }
 
   String formatDate(String dateTime) {
@@ -111,10 +104,7 @@ class _LeadInformationState extends State<LeadInformation> {
   Widget build(BuildContext context) {
     var w = MediaQuery.of(context).size.width;
     var h = MediaQuery.of(context).size.height;
-    var connectiVityStatus = Provider.of<ConnectivityProviders>(context);
-    return (connectiVityStatus.isDeviceConnected == "ConnectivityResult.wifi" ||
-            connectiVityStatus.isDeviceConnected == "ConnectivityResult.mobile")
-        ? Scaffold(
+    return Scaffold(
             backgroundColor: scaffoldbgColor,
             appBar: AppBar(
               title: Text(
@@ -399,8 +389,7 @@ class _LeadInformationState extends State<LeadInformation> {
                           ))
                     ],
                   ),
-          )
-        : NoInternetWidget();
+          );
   }
   Widget _buildShimmerList() {
     return ListView.builder(

@@ -1,184 +1,180 @@
+/// ─────────────────────────────────────────────────────────────────────────────
+/// view_info_model.dart
+/// ─────────────────────────────────────────────────────────────────────────────
+
 class ViewInfoModel {
-  bool? status;
-  List<ViewInfo>? data;
+  final bool? status;
+  final List<ViewInfo>? data;
 
-  ViewInfoModel({this.status, this.data});
+  const ViewInfoModel({this.status, this.data});
 
-  ViewInfoModel.fromJson(Map<String, dynamic> json) {
-    status = json['status'];
-    if (json['data'] != null) {
-      data = <ViewInfo>[];
-      json['data'].forEach((v) {
-        data!.add(new ViewInfo.fromJson(v));
-      });
-    }
-  }
+  factory ViewInfoModel.fromJson(Map<String, dynamic> json) => ViewInfoModel(
+    status: json['status'],
+    data: (json['data'] as List<dynamic>?)
+        ?.map((e) => ViewInfo.fromJson(e))
+        .toList(),
+  );
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['status'] = this.status;
-    if (this.data != null) {
-      data['data'] = this.data!.map((v) => v.toJson()).toList();
-    }
-    return data;
-  }
+  Map<String, dynamic> toJson() => {
+    'status': status,
+    if (data != null) 'data': data!.map((e) => e.toJson()).toList(),
+  };
 }
 
+/// ─────────────────────────────────────────────────────────────────────────────
+/// SINGLE RECORD
+/// ─────────────────────────────────────────────────────────────────────────────
 class ViewInfo {
-  int? id;
-  String? number;
-  int? staffId;
-  String? dateAdded;
-  String? callStatus;
-  String? calledStatus;
-  String? name;
-  String? followUpDate;
-  String? remarks;
-  String? dealStatus;
-  dynamic dealAmount;
-  int? totalCalls;
-  String? lastCalledDate;
-  int? leadStageId;
-  String? dealClosureDate;
-  int? callDuration;
-  int? fId;
-  StageName? stageName;
-  LatestFollowupDetail? latestFollowupDetail;
+  final int? id;
+  final String? number;
+  final int? staffId;
+  final String? dateAdded;
+  final String? callStatus;
+  final String? calledStatus;
+  final String? name;
+  final String? followUpDate;
+  final String? remarks;
+  final String? dealStatus;
+  final dynamic dealAmount;
+  final int? totalCalls;
+  final String? lastCalledDate;
+  final int? leadStageId;
+  final String? dealClosureDate;
+  final int? callDuration;
+  final int? fId;
+  final StageName? stageName;
+  final LatestFollowupDetail? latestFollowupDetail;
 
-  ViewInfo(
-      {this.id,
-        this.number,
-        this.staffId,
-        this.dateAdded,
-        this.callStatus,
-        this.calledStatus,
-        this.name,
-        this.followUpDate,
-        this.remarks,
-        this.dealStatus,
-        this.dealAmount,
-        this.totalCalls,
-        this.lastCalledDate,
-        this.leadStageId,
-        this.dealClosureDate,
-        this.callDuration,
-        this.fId,
-        this.stageName,
-        this.latestFollowupDetail});
+  const ViewInfo({
+    this.id,
+    this.number,
+    this.staffId,
+    this.dateAdded,
+    this.callStatus,
+    this.calledStatus,
+    this.name,
+    this.followUpDate,
+    this.remarks,
+    this.dealStatus,
+    this.dealAmount,
+    this.totalCalls,
+    this.lastCalledDate,
+    this.leadStageId,
+    this.dealClosureDate,
+    this.callDuration,
+    this.fId,
+    this.stageName,
+    this.latestFollowupDetail,
+  });
 
-  ViewInfo.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    number = json['number'];
-    staffId = json['staff_id'];
-    dateAdded = json['date_added'];
-    callStatus = json['call_status'];
-    calledStatus = json['called_status'];
-    name = json['name'];
-    followUpDate = json['follow_up_date'];
-    remarks = json['remarks'];
-    dealStatus = json['deal_status'];
-    dealAmount = json['deal_amount'];
-    totalCalls = json['total_calls'];
-    lastCalledDate = json['last_called_date'];
-    leadStageId = json['lead_stage_id'];
-    dealClosureDate = json['deal_closure_date'];
-    callDuration = json['call_duration'];
-    fId = json['f_id'];
-    stageName = json['stage_name'] != null
-        ? new StageName.fromJson(json['stage_name'])
-        : null;
-    latestFollowupDetail = json['latest_followup_detail'] != null
-        ? new LatestFollowupDetail.fromJson(json['latest_followup_detail'])
-        : null;
-  }
+  factory ViewInfo.fromJson(Map<String, dynamic> json) => ViewInfo(
+    id: json['id'],
+    number: json['number'],
+    staffId: json['staff_id'],
+    dateAdded: json['date_added'],
+    callStatus: json['call_status'],
+    calledStatus: json['called_status'],
+    name: json['name'],
+    followUpDate: json['follow_up_date'],
+    remarks: json['remarks'],
+    dealStatus: json['deal_status'],
+    dealAmount: json['deal_amount'],
+    totalCalls: json['total_calls'],
+    lastCalledDate: json['last_called_date'],
+    leadStageId: json['lead_stage_id'],
+    dealClosureDate: json['deal_closure_date'],
+    callDuration: json['call_duration'],
+    fId: json['f_id'],
+    stageName:
+    json['stage_name'] != null ? StageName.fromJson(json['stage_name']) : null,
+    latestFollowupDetail: json['latest_followup_detail'] != null
+        ? LatestFollowupDetail.fromJson(json['latest_followup_detail'])
+        : null,
+  );
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['number'] = this.number;
-    data['staff_id'] = this.staffId;
-    data['date_added'] = this.dateAdded;
-    data['call_status'] = this.callStatus;
-    data['called_status'] = this.calledStatus;
-    data['name'] = this.name;
-    data['follow_up_date'] = this.followUpDate;
-    data['remarks'] = this.remarks;
-    data['deal_status'] = this.dealStatus;
-    data['deal_amount'] = this.dealAmount;
-    data['total_calls'] = this.totalCalls;
-    data['last_called_date'] = this.lastCalledDate;
-    data['lead_stage_id'] = this.leadStageId;
-    data['deal_closure_date'] = this.dealClosureDate;
-    data['call_duration'] = this.callDuration;
-    data['f_id'] = this.fId;
-    if (this.stageName != null) {
-      data['stage_name'] = this.stageName!.toJson();
-    }
-    if (this.latestFollowupDetail != null) {
-      data['latest_followup_detail'] = this.latestFollowupDetail!.toJson();
-    }
-    return data;
-  }
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'number': number,
+    'staff_id': staffId,
+    'date_added': dateAdded,
+    'call_status': callStatus,
+    'called_status': calledStatus,
+    'name': name,
+    'follow_up_date': followUpDate,
+    'remarks': remarks,
+    'deal_status': dealStatus,
+    'deal_amount': dealAmount,
+    'total_calls': totalCalls,
+    'last_called_date': lastCalledDate,
+    'lead_stage_id': leadStageId,
+    'deal_closure_date': dealClosureDate,
+    'call_duration': callDuration,
+    'f_id': fId,
+    if (stageName != null) 'stage_name': stageName!.toJson(),
+    if (latestFollowupDetail != null)
+      'latest_followup_detail': latestFollowupDetail!.toJson(),
+  };
 }
 
+/// ─────────────────────────────────────────────────────────────────────────────
+/// NESTED OBJECTS
+/// ─────────────────────────────────────────────────────────────────────────────
 class StageName {
-  int? id;
-  String? stageName;
-  String? createdAt;
-  int? createdBy;
+  final int? id;
+  final String? stageName;
+  final String? createdAt;
+  final int? createdBy;
 
-  StageName({this.id, this.stageName, this.createdAt, this.createdBy});
+  const StageName({this.id, this.stageName, this.createdAt, this.createdBy});
 
-  StageName.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    stageName = json['stage_name'];
-    createdAt = json['created_at'];
-    createdBy = json['created_by'];
-  }
+  factory StageName.fromJson(Map<String, dynamic> json) => StageName(
+    id: json['id'],
+    stageName: json['stage_name'],
+    createdAt: json['created_at'],
+    createdBy: json['created_by'],
+  );
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['stage_name'] = this.stageName;
-    data['created_at'] = this.createdAt;
-    data['created_by'] = this.createdBy;
-    return data;
-  }
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'stage_name': stageName,
+    'created_at': createdAt,
+    'created_by': createdBy,
+  };
 }
 
 class LatestFollowupDetail {
-  int? id;
-  int? leadId;
-  String? followupDate;
-  String? name;
-  String? remarks;
-  int? status;
+  final int? id;
+  final int? leadId;
+  final String? followupDate;
+  final String? name;
+  final String? remarks;
+  final int? status;
 
-  LatestFollowupDetail(
-      {this.id,
-        this.leadId,
-        this.followupDate,
-        this.name,
-        this.remarks,
-        this.status});
+  const LatestFollowupDetail({
+    this.id,
+    this.leadId,
+    this.followupDate,
+    this.name,
+    this.remarks,
+    this.status,
+  });
 
-  LatestFollowupDetail.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    leadId = json['lead_id'];
-    followupDate = json['followup_date'];
-    name = json['name'];
-    remarks = json['remarks'];
-    status = json['status'];
-  }
+  factory LatestFollowupDetail.fromJson(Map<String, dynamic> json) =>
+      LatestFollowupDetail(
+        id: json['id'],
+        leadId: json['lead_id'],
+        followupDate: json['followup_date'],
+        name: json['name'],
+        remarks: json['remarks'],
+        status: json['status'],
+      );
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['lead_id'] = this.leadId;
-    data['followup_date'] = this.followupDate;
-    data['name'] = this.name;
-    data['remarks'] = this.remarks;
-    data['status'] = this.status;
-    return data;
-  }
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'lead_id': leadId,
+    'followup_date': followupDate,
+    'name': name,
+    'remarks': remarks,
+    'status': status,
+  };
 }

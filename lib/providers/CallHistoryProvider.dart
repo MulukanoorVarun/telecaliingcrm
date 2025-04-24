@@ -6,7 +6,7 @@ import '../screens/SubscriptionExpiredScreen.dart';
 
 class CallHistoryProvider extends ChangeNotifier {
   bool _loading = false;
-  List<CallHistory> call_history = [];
+  List<CallHistoryItem> call_history = [];
   bool get loading => _loading;
   int _currentPage = 1;
   int get currentPage => _currentPage;
@@ -22,10 +22,10 @@ class CallHistoryProvider extends ChangeNotifier {
     try {
       var res = await Userapi.getCallHistory(date,_currentPage);
       if (res?.status==true) {
-        call_history = res?.data?.call_history??[];
+        call_history = res?.data?.callHistory??[];
         _hasNext = res?.data?.nextPageUrl != null;
       } else {
-        debugPrint("No data received");
+        debugPrint("No bloc received");
         _hasNext = false;
       }
     } catch (e) {
@@ -53,16 +53,16 @@ class CallHistoryProvider extends ChangeNotifier {
       if (res?.status == true) {
         _currentPage++; // Increment page count after successful fetch
 
-        call_history.addAll(res?.data?.call_history ?? []); // Append new call history
+        call_history.addAll(res?.data?.callHistory ?? []); // Append new call history
 
         // Update `_hasNext` based on the API response
         _hasNext = res?.data?.nextPageUrl != null;
 
         debugPrint(_hasNext
-            ? "Next page available, more data to fetch."
+            ? "Next page available, more bloc to fetch."
             : "No more pages to fetch.");
       } else {
-        debugPrint("API returned failure status. No data received.");
+        debugPrint("API returned failure status. No bloc received.");
       }
     } catch (e) {
       // Log errors

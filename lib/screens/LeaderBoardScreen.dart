@@ -22,8 +22,6 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       fetchLeaderboardData();
     });
-    Provider.of<ConnectivityProviders>(context, listen: false)
-        .initConnectivity();
     super.initState();
   }
 
@@ -43,10 +41,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
   @override
   Widget build(BuildContext context) {
     var w = MediaQuery.of(context).size.width;
-    var connectiVityStatus = Provider.of<ConnectivityProviders>(context);
-    return (connectiVityStatus.isDeviceConnected == "ConnectivityResult.wifi" ||
-            connectiVityStatus.isDeviceConnected == "ConnectivityResult.mobile")
-        ? Scaffold(
+    return Scaffold(
             appBar: AppBar(
               title: Text(
                 'Leaderboard',
@@ -201,8 +196,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                 );
               },
             ),
-          )
-        : NoInternetWidget();
+          );
   }
 
   Widget _buildShimmerList() {

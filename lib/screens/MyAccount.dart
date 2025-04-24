@@ -14,26 +14,17 @@ class MyAccount extends StatefulWidget {
 }
 
 class _MyAccountState extends State<MyAccount> {
-  @override
-  void initState() {
-    Provider.of<ConnectivityProviders>(context,listen: false).initConnectivity();
-    super.initState();
-  }
 
   @override
-  void dispose() {
-    Provider.of<ConnectivityProviders>(context, listen: false).dispose();
-    super.dispose();
+  void initState() {
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     var w = MediaQuery.of(context).size.width;
     var h = MediaQuery.of(context).size.height;
-    var connectiVityStatus =Provider.of<ConnectivityProviders>(context);
-    return (connectiVityStatus.isDeviceConnected == "ConnectivityResult.wifi" ||
-        connectiVityStatus.isDeviceConnected == "ConnectivityResult.mobile")
-        ? Scaffold(
+    return Scaffold(
       backgroundColor: color36,
       appBar: CustomAppBar2(title: 'MyAccount', w: w),
       body: Column(
@@ -188,6 +179,6 @@ class _MyAccountState extends State<MyAccount> {
           )
         ],
       ),
-    ): NoInternetWidget();
+    );
   }
 }

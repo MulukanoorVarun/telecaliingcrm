@@ -1,10 +1,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:telecaliingcrm/screens/dashboard.dart';
 import 'package:telecaliingcrm/utils/ColorConstants.dart';
 import '../Authentication/SignInScreen.dart';
+import '../utils/PermissionManager.dart';
 import '../utils/preferences.dart';
 
 class PermissionScreen extends StatefulWidget {
@@ -19,7 +21,7 @@ class _PermissionScreenState extends State<PermissionScreen> {
   @override
   void initState() {
     super.initState();
-    checkPermissions();
+    _checkPermissions();
     Fetchdetails();
   }
 
@@ -31,88 +33,18 @@ class _PermissionScreenState extends State<PermissionScreen> {
     });
   }
 
-  Future<void> checkPermissions() async {
-    List<Permission> requiredPermissions = [
-      Permission.phone,
-      Permission.contacts,
-      Permission.ignoreBatteryOptimizations,
-    ];
-    // Request permissions
-    Map<Permission, PermissionStatus> statuses = {};
-    for (var permission in requiredPermissions) {
-      statuses[permission] = await permission.request();
-    }
-
-    // Check if all required permissions are granted
+  Future<void> _checkPermissions() async {
+    final granted = await PermissionManager.checkPermissions(
+      context,
+      onPermissionStatusChanged: (granted) {
+        setState(() {
+          allPermissionsGranted = granted;
+        });
+      },
+    );
     setState(() {
-      allPermissionsGranted = statuses.values.every((status) => status.isGranted);
+      allPermissionsGranted = granted;
     });
-
-    // Handle denied or permanently denied permissions
-    if (!allPermissionsGranted) {
-      _handleDeniedPermissions(statuses);
-    }
-  }
-
-  void _handleDeniedPermissions(Map<Permission, PermissionStatus> statuses) {
-    List<Permission> deniedPermissions = statuses.entries
-        .where((entry) => entry.value.isDenied)
-        .map((entry) => entry.key)
-        .toList();
-
-    List<Permission> permanentlyDeniedPermissions = statuses.entries
-        .where((entry) => entry.value.isPermanentlyDenied)
-        .map((entry) => entry.key)
-        .toList();
-
-    if (permanentlyDeniedPermissions.isNotEmpty) {
-      _showPermanentlyDeniedDialog();
-    } else if (deniedPermissions.isNotEmpty) {
-      _showPermissionDeniedDialog(deniedPermissions);
-    }
-  }
-
-  void _showPermissionDeniedDialog(List<Permission> deniedPermissions) {
-    showDialog(
-      barrierDismissible: false,
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text("Permissions Required"),
-        content: Text(
-            "The app needs the following permissions: ${deniedPermissions.join(", ")}. Please grant them to continue.",style: TextStyle(  fontFamily: 'Poppins',)),
-        actions: [
-          TextButton(
-            child: Text("Retry",style: TextStyle(  fontFamily: 'Poppins',)),
-            onPressed: () {
-              Navigator.of(context).pop();
-              checkPermissions(); // Retry permission request
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showPermanentlyDeniedDialog() {
-    showDialog(
-      barrierDismissible: false,
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text("Permissions Denied"),
-        content: Text(
-            "Some permissions have been permanently denied. Please enable them in Settings.",style: TextStyle(  fontFamily: 'Poppins',)),
-        actions: [
-          TextButton(
-            child: Text("Go to Settings",style: TextStyle(  fontFamily: 'Poppins',),),
-            onPressed: () {
-              Navigator.of(context).pop();
-              SystemNavigator.pop();
-              openAppSettings(); // Open app settings
-            },
-          ),
-        ],
-      ),
-    );
   }
 
   @override
@@ -161,11 +93,9 @@ class _PermissionScreenState extends State<PermissionScreen> {
           onPressed: allPermissionsGranted
               ? () {
             if(token!=""){
-              Navigator.pushReplacement(
-                  context, MaterialPageRoute(builder: (context) => Dashboard()));
+              context.pushReplacement("/dashboard");
             }else{
-              Navigator.pushReplacement(
-                  context, MaterialPageRoute(builder: (context) => SignInScreen()));
+              context.pushReplacement("/signin");
             }
           }
               : null, // Disable button if permissions are not granted

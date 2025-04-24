@@ -1,222 +1,211 @@
+/// ─────────────────────────────────────────────────────────────────────────────
+/// get_follow_up_model.dart
+/// ─────────────────────────────────────────────────────────────────────────────
+
 class GetFollowUpModel {
-  bool? status;
-  Data? data;
+  final bool? status;
+  final FollowUpPageData? data;
 
-  GetFollowUpModel({this.status, this.data});
+  const GetFollowUpModel({this.status, this.data});
 
-  GetFollowUpModel.fromJson(Map<String, dynamic> json) {
-    status = json['status'];
-    data = json['data'] != null ? new Data.fromJson(json['data']) : null;
-  }
+  factory GetFollowUpModel.fromJson(Map<String, dynamic> json) =>
+      GetFollowUpModel(
+        status: json['status'] as bool?,
+        data: json['data'] != null
+            ? FollowUpPageData.fromJson(json['data'])
+            : null,
+      );
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['status'] = this.status;
-    if (this.data != null) {
-      data['data'] = this.data!.toJson();
-    }
-    return data;
-  }
+  Map<String, dynamic> toJson() => {
+    'status': status,
+    if (data != null) 'data': data!.toJson(),
+  };
 }
 
-class Data {
-  int? currentPage;
-  List<FollowUpModel>? followup_list;
-  String? firstPageUrl;
-  int? from;
-  int? lastPage;
-  String? lastPageUrl;
-  List<Links>? links;
-  String? nextPageUrl;
-  String? path;
-  int? perPage;
-  String? prevPageUrl;
-  int? to;
-  int? total;
+/// ─────────────────────────────────────────────────────────────────────────────
+/// PAGINATED WRAPPER
+/// ─────────────────────────────────────────────────────────────────────────────
+class FollowUpPageData {
+  final int? currentPage;
+  final List<FollowUp>? followUps;
+  final String? firstPageUrl;
+  final int? from;
+  final int? lastPage;
+  final String? lastPageUrl;
+  final List<PageLink>? links;
+  final String? nextPageUrl;
+  final String? path;
+  final int? perPage;
+  final String? prevPageUrl;
+  final int? to;
+  final int? total;
 
-  Data(
-      {this.currentPage,
-        this.followup_list,
-        this.firstPageUrl,
-        this.from,
-        this.lastPage,
-        this.lastPageUrl,
-        this.links,
-        this.nextPageUrl,
-        this.path,
-        this.perPage,
-        this.prevPageUrl,
-        this.to,
-        this.total});
+  const FollowUpPageData({
+    this.currentPage,
+    this.followUps,
+    this.firstPageUrl,
+    this.from,
+    this.lastPage,
+    this.lastPageUrl,
+    this.links,
+    this.nextPageUrl,
+    this.path,
+    this.perPage,
+    this.prevPageUrl,
+    this.to,
+    this.total,
+  });
 
-  Data.fromJson(Map<String, dynamic> json) {
-    currentPage = json['current_page'];
-    if (json['data'] != null) {
-      followup_list = <FollowUpModel>[];
-      json['data'].forEach((v) {
-        followup_list!.add(new FollowUpModel.fromJson(v));
-      });
-    }
-    firstPageUrl = json['first_page_url'];
-    from = json['from'];
-    lastPage = json['last_page'];
-    lastPageUrl = json['last_page_url'];
-    if (json['links'] != null) {
-      links = <Links>[];
-      json['links'].forEach((v) {
-        links!.add(new Links.fromJson(v));
-      });
-    }
-    nextPageUrl = json['next_page_url'];
-    path = json['path'];
-    perPage = json['per_page'];
-    prevPageUrl = json['prev_page_url'];
-    to = json['to'];
-    total = json['total'];
-  }
+  factory FollowUpPageData.fromJson(Map<String, dynamic> json) =>
+      FollowUpPageData(
+        currentPage: json['current_page'],
+        followUps: (json['data'] as List<dynamic>?)
+            ?.map((e) => FollowUp.fromJson(e))
+            .toList(),
+        firstPageUrl: json['first_page_url'],
+        from: json['from'],
+        lastPage: json['last_page'],
+        lastPageUrl: json['last_page_url'],
+        links: (json['links'] as List<dynamic>?)
+            ?.map((e) => PageLink.fromJson(e))
+            .toList(),
+        nextPageUrl: json['next_page_url'],
+        path: json['path'],
+        perPage: json['per_page'],
+        prevPageUrl: json['prev_page_url'],
+        to: json['to'],
+        total: json['total'],
+      );
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['current_page'] = this.currentPage;
-    if (this.followup_list != null) {
-      data['data'] = this.followup_list!.map((v) => v.toJson()).toList();
-    }
-    data['first_page_url'] = this.firstPageUrl;
-    data['from'] = this.from;
-    data['last_page'] = this.lastPage;
-    data['last_page_url'] = this.lastPageUrl;
-    if (this.links != null) {
-      data['links'] = this.links!.map((v) => v.toJson()).toList();
-    }
-    data['next_page_url'] = this.nextPageUrl;
-    data['path'] = this.path;
-    data['per_page'] = this.perPage;
-    data['prev_page_url'] = this.prevPageUrl;
-    data['to'] = this.to;
-    data['total'] = this.total;
-    return data;
-  }
+  Map<String, dynamic> toJson() => {
+    'current_page': currentPage,
+    if (followUps != null) 'data': followUps!.map((e) => e.toJson()).toList(),
+    'first_page_url': firstPageUrl,
+    'from': from,
+    'last_page': lastPage,
+    'last_page_url': lastPageUrl,
+    if (links != null) 'links': links!.map((e) => e.toJson()).toList(),
+    'next_page_url': nextPageUrl,
+    'path': path,
+    'per_page': perPage,
+    'prev_page_url': prevPageUrl,
+    'to': to,
+    'total': total,
+  };
 }
 
-class FollowUpModel {
-  int? id;
-  int? leadId;
-  int? phone;
-  int? staffId;
-  String? followupDate;
-  String? name;
-  String? remarks;
-  int? status;
-  LeadType? leadType;
+/// ─────────────────────────────────────────────────────────────────────────────
+/// SINGLE FOLLOW‑UP
+/// ─────────────────────────────────────────────────────────────────────────────
+class FollowUp {
+  final int? id;
+  final int? leadId;
+  final int? phone;
+  final int? staffId;
+  final String? followupDate;
+  final String? name;
+  final String? remarks;
+  final int? status;
+  final LeadType? leadType;
 
-  FollowUpModel(
-      {this.id,
-        this.leadId,
-        this.phone,
-        this.staffId,
-        this.followupDate,
-        this.name,
-        this.remarks,
-        this.status,
-        this.leadType});
+  const FollowUp({
+    this.id,
+    this.leadId,
+    this.phone,
+    this.staffId,
+    this.followupDate,
+    this.name,
+    this.remarks,
+    this.status,
+    this.leadType,
+  });
 
-  FollowUpModel.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    leadId = json['lead_id'];
-    phone = json['phone'];
-    staffId = json['staff_id'];
-    followupDate = json['followup_date'];
-    name = json['name'];
-    remarks = json['remarks'];
-    status = json['status'];
-    leadType = json['lead_type'] != null
-        ? new LeadType.fromJson(json['lead_type'])
-        : null;
-  }
+  factory FollowUp.fromJson(Map<String, dynamic> json) => FollowUp(
+    id: json['id'],
+    leadId: json['lead_id'],
+    phone: json['phone'],
+    staffId: json['staff_id'],
+    followupDate: json['followup_date'],
+    name: json['name'],
+    remarks: json['remarks'],
+    status: json['status'],
+    leadType:
+    json['lead_type'] != null ? LeadType.fromJson(json['lead_type']) : null,
+  );
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['lead_id'] = this.leadId;
-    data['phone'] = this.phone;
-    data['staff_id'] = this.staffId;
-    data['followup_date'] = this.followupDate;
-    data['name'] = this.name;
-    data['remarks'] = this.remarks;
-    data['status'] = this.status;
-    if (this.leadType != null) {
-      data['lead_type'] = this.leadType!.toJson();
-    }
-    return data;
-  }
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'lead_id': leadId,
+    'phone': phone,
+    'staff_id': staffId,
+    'followup_date': followupDate,
+    'name': name,
+    'remarks': remarks,
+    'status': status,
+    if (leadType != null) 'lead_type': leadType!.toJson(),
+  };
 }
 
+/// ─────────────────────────────────────────────────────────────────────────────
+/// NESTED OBJECTS
+/// ─────────────────────────────────────────────────────────────────────────────
 class LeadType {
-  int? id;
-  int? leadStageId;
-  String? number;
-  StageName? stageName;
+  final int? id;
+  final int? leadStageId;
+  final String? number;
+  final StageName? stageName;
 
-  LeadType({this.id, this.leadStageId, this.number, this.stageName});
+  const LeadType({this.id, this.leadStageId, this.number, this.stageName});
 
-  LeadType.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    leadStageId = json['lead_stage_id'];
-    number = json['number'];
-    stageName = json['stage_name'] != null
-        ? new StageName.fromJson(json['stage_name'])
-        : null;
-  }
+  factory LeadType.fromJson(Map<String, dynamic> json) => LeadType(
+    id: json['id'],
+    leadStageId: json['lead_stage_id'],
+    number: json['number'],
+    stageName:
+    json['stage_name'] != null ? StageName.fromJson(json['stage_name']) : null,
+  );
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['lead_stage_id'] = this.leadStageId;
-    data['number'] = this.number;
-    if (this.stageName != null) {
-      data['stage_name'] = this.stageName!.toJson();
-    }
-    return data;
-  }
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'lead_stage_id': leadStageId,
+    'number': number,
+    if (stageName != null) 'stage_name': stageName!.toJson(),
+  };
 }
 
 class StageName {
-  int? id;
-  String? stageName;
+  final int? id;
+  final String? stageName;
 
-  StageName({this.id, this.stageName});
+  const StageName({this.id, this.stageName});
 
-  StageName.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    stageName = json['stage_name'];
-  }
+  factory StageName.fromJson(Map<String, dynamic> json) => StageName(
+    id: json['id'],
+    stageName: json['stage_name'],
+  );
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['stage_name'] = this.stageName;
-    return data;
-  }
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'stage_name': stageName,
+  };
 }
 
-class Links {
-  String? url;
-  String? label;
-  bool? active;
+class PageLink {
+  final String? url;
+  final String? label;
+  final bool? active;
 
-  Links({this.url, this.label, this.active});
+  const PageLink({this.url, this.label, this.active});
 
-  Links.fromJson(Map<String, dynamic> json) {
-    url = json['url'];
-    label = json['label'];
-    active = json['active'];
-  }
+  factory PageLink.fromJson(Map<String, dynamic> json) => PageLink(
+    url: json['url'],
+    label: json['label'],
+    active: json['active'],
+  );
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['url'] = this.url;
-    data['label'] = this.label;
-    data['active'] = this.active;
-    return data;
-  }
+  Map<String, dynamic> toJson() => {
+    'url': url,
+    'label': label,
+    'active': active,
+  };
 }

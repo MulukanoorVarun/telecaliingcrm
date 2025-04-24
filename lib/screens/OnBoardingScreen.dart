@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:telecaliingcrm/Authentication/SignInScreen.dart';
 import 'package:telecaliingcrm/screens/PermissionScreen.dart';
@@ -14,10 +15,9 @@ class OnBoardindScreen extends StatefulWidget {
 }
 
 class _OnBoardindScreenState extends State<OnBoardindScreen> {
-
   @override
   void initState() {
-    PreferenceService().saveString("onboard_status","1");
+    PreferenceService().saveString("onboard_status", "1");
     super.initState();
   }
 
@@ -55,27 +55,9 @@ class _OnBoardindScreenState extends State<OnBoardindScreen> {
           SizedBox(
             height: h * 0.2,
           ),
-          containertext(context, 'NEXT', color:Color(0xff7165E3), width: w * 0.9,
-              onTap: (){
-            Navigator.of(context).pushReplacement(
-                PageRouteBuilder(pageBuilder: (context, animation, secondaryAnimation) {
-                return PermissionScreen();
-              },
-              transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                const begin = Offset(1.0, 0.0);
-                const end = Offset.zero;
-                const curve = Curves.easeInOut;
-                var tween = Tween(
-                    begin: begin, end: end)
-                    .chain(CurveTween(
-                    curve: curve));
-                var offsetAnimation =
-                animation.drive(tween);
-                return SlideTransition(
-                    position: offsetAnimation,
-                    child: child);
-              },
-            ));
+          containertext(context, 'NEXT',
+              color: Color(0xff7165E3), width: w * 0.9, onTap: () {
+            context.pushReplacement("/permission");
           }),
         ],
       ),

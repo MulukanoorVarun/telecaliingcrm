@@ -14,7 +14,8 @@ class UpDateLeadScreen extends StatefulWidget {
   final String ID;
   final String name;
   final String remarks;
-  const UpDateLeadScreen({super.key,required this.ID,required this.name,required this.remarks});
+  const UpDateLeadScreen(
+      {super.key, required this.ID, required this.name, required this.remarks});
 
   @override
   State<UpDateLeadScreen> createState() => _UpDateLeadScreenState();
@@ -24,7 +25,7 @@ class _UpDateLeadScreenState extends State<UpDateLeadScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _remarksController = TextEditingController();
 
-  String formattedDate="";
+  String formattedDate = "";
   String? _leadStatus;
   String? _leadStage;
   bool _loading = false;
@@ -33,20 +34,11 @@ class _UpDateLeadScreenState extends State<UpDateLeadScreen> {
   String leadstatusError = "";
   String leadstageError = "";
 
-
   @override
   void initState() {
-    Provider.of<ConnectivityProviders>(context, listen: false)
-        .initConnectivity();
-    _nameController.text=widget.name;
+    _nameController.text = widget.name;
     _remarksController.text = widget.remarks;
     super.initState();
-  }
-
-  @override
-  void dispose() {
-    Provider.of<ConnectivityProviders>(context, listen: false).dispose();
-    super.dispose();
   }
 
   void _validateFields() {
@@ -55,23 +47,23 @@ class _UpDateLeadScreenState extends State<UpDateLeadScreen> {
 
       // Validate Full Name
       _validateFullName =
-      !_nameController.text.contains(RegExp(r"^[a-zA-Z\s]+$"))
-          ? "Please enter a valid name"
-          : "";
+          !_nameController.text.contains(RegExp(r"^[a-zA-Z\s]+$"))
+              ? "Please enter a valid name"
+              : "";
       // Validate Remarks
       _validateRemarks =
-      _remarksController.text.isEmpty ? "Please add some remarks" : "";
+          _remarksController.text.isEmpty ? "Please add some remarks" : "";
 
       // Validate Lead Status
-      leadstatusError = (_leadStatus == null) ? "Please select a lead status" : "";
+      leadstatusError =
+          (_leadStatus == null) ? "Please select a lead status" : "";
       leadstageError = (_leadStage == null) ? "Please select a lead stage" : "";
 
       // Proceed only if all fields are valid
       if (_validateFullName.isEmpty &&
           _validateRemarks.isEmpty &&
           leadstatusError.isEmpty &&
-          leadstageError.isEmpty
-      ) {
+          leadstageError.isEmpty) {
         UpdateLeads(); // Trigger the AddLeads function if validations pass
       } else {
         _loading = false;
@@ -105,30 +97,25 @@ class _UpDateLeadScreenState extends State<UpDateLeadScreen> {
       } else {
         final errorMessage = "Failed to update lead.";
         CustomSnackBar.show(context, errorMessage);
-        print("Failed to update lead: $errorMessage");
+        debugPrint("Failed to update lead: $errorMessage");
       }
     } catch (e, stack) {
       setState(() {
         _loading = false;
       });
 
-      print("Exception in UpdateLeads: $e");
-      print("Stack trace: $stack");
+      debugPrint("Exception in UpdateLeads: $e");
+      debugPrint("Stack trace: $stack");
 
       CustomSnackBar.show(context, "Something went wrong. Please try again.");
     }
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     var w = MediaQuery.of(context).size.width;
     var h = MediaQuery.of(context).size.height;
-    var connectiVityStatus = Provider.of<ConnectivityProviders>(context);
-    return (connectiVityStatus.isDeviceConnected == "ConnectivityResult.wifi" ||
-        connectiVityStatus.isDeviceConnected == "ConnectivityResult.mobile")
-        ? Scaffold(
+    return Scaffold(
       backgroundColor: scaffoldbgColor,
       appBar: AppBar(
         title: Text(
@@ -146,7 +133,7 @@ class _UpDateLeadScreenState extends State<UpDateLeadScreen> {
             color: Colors.white,
           ),
           onPressed: () {
-            Navigator.pop(context,true);
+            Navigator.pop(context, true);
           },
         ),
       ),
@@ -183,13 +170,13 @@ class _UpDateLeadScreenState extends State<UpDateLeadScreen> {
                   fillColor: const Color(0xffffffff),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(7),
-                    borderSide: const BorderSide(
-                        width: 1, color: Color(0xffCDE2FB)),
+                    borderSide:
+                        const BorderSide(width: 1, color: Color(0xffCDE2FB)),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(7),
-                    borderSide: const BorderSide(
-                        width: 1, color: Color(0xffCDE2FB)),
+                    borderSide:
+                        const BorderSide(width: 1, color: Color(0xffCDE2FB)),
                   ),
                 ),
               ),
@@ -236,13 +223,13 @@ class _UpDateLeadScreenState extends State<UpDateLeadScreen> {
                   fillColor: const Color(0xffffffff),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(7),
-                    borderSide: const BorderSide(
-                        width: 1, color: Color(0xffCDE2FB)),
+                    borderSide:
+                        const BorderSide(width: 1, color: Color(0xffCDE2FB)),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(7),
-                    borderSide: const BorderSide(
-                        width: 1, color: Color(0xffCDE2FB)),
+                    borderSide:
+                        const BorderSide(width: 1, color: Color(0xffCDE2FB)),
                   ),
                 ),
                 maxLines: 4,
@@ -269,7 +256,8 @@ class _UpDateLeadScreenState extends State<UpDateLeadScreen> {
               ] else ...[
                 SizedBox(height: 8),
               ],
-              text(context, "UPDATE LEAD STAGE", 16,fontWeight: FontWeight.w500),
+              text(context, "UPDATE LEAD STAGE", 16,
+                  fontWeight: FontWeight.w500),
               Column(
                 children: [
                   RadioListTile<String>(
@@ -301,8 +289,8 @@ class _UpDateLeadScreenState extends State<UpDateLeadScreen> {
                   RadioListTile<String>(
                     visualDensity: VisualDensity.compact,
                     contentPadding: EdgeInsets.all(0),
-                    title: text(context, "Cancel", 13,
-                        textAlign: TextAlign.start),
+                    title:
+                        text(context, "Cancel", 13, textAlign: TextAlign.start),
                     value: 'cancel',
                     groupValue: _leadStage,
                     onChanged: (value) {
@@ -335,7 +323,8 @@ class _UpDateLeadScreenState extends State<UpDateLeadScreen> {
               ] else ...[
                 SizedBox(height: 8),
               ],
-              text(context, "UPDATE LEAD STATUS", 16,fontWeight: FontWeight.w500),
+              text(context, "UPDATE LEAD STATUS", 16,
+                  fontWeight: FontWeight.w500),
               // Radio Buttons
               Row(
                 children: [
@@ -343,8 +332,8 @@ class _UpDateLeadScreenState extends State<UpDateLeadScreen> {
                     child: RadioListTile<String>(
                       visualDensity: VisualDensity.compact,
                       contentPadding: EdgeInsets.all(0),
-                      title: text(context, "Cold", 13,
-                          textAlign: TextAlign.start),
+                      title:
+                          text(context, "Cold", 13, textAlign: TextAlign.start),
                       value: '10',
                       groupValue: _leadStatus,
                       onChanged: (value) {
@@ -358,8 +347,8 @@ class _UpDateLeadScreenState extends State<UpDateLeadScreen> {
                     child: RadioListTile<String>(
                       visualDensity: VisualDensity.compact,
                       contentPadding: EdgeInsets.all(0),
-                      title: text(context, "Warm", 13,
-                          textAlign: TextAlign.start),
+                      title:
+                          text(context, "Warm", 13, textAlign: TextAlign.start),
                       value: '11',
                       groupValue: _leadStatus,
                       onChanged: (value) {
@@ -373,8 +362,8 @@ class _UpDateLeadScreenState extends State<UpDateLeadScreen> {
                     child: RadioListTile<String>(
                       visualDensity: VisualDensity.compact,
                       contentPadding: EdgeInsets.all(0),
-                      title: text(context, "Hot", 13,
-                          textAlign: TextAlign.start),
+                      title:
+                          text(context, "Hot", 13, textAlign: TextAlign.start),
                       value: '12',
                       groupValue: _leadStatus,
                       onChanged: (value) {
@@ -406,7 +395,8 @@ class _UpDateLeadScreenState extends State<UpDateLeadScreen> {
               SizedBox(
                 height: 50,
               ),
-              containertext(context, "Submit",color:primaryColor,isLoading: _loading, onTap: () {
+              containertext(context, "Submit",
+                  color: primaryColor, isLoading: _loading, onTap: () {
                 if (_loading) {
                 } else {
                   _validateFields();
@@ -419,9 +409,6 @@ class _UpDateLeadScreenState extends State<UpDateLeadScreen> {
           ),
         ),
       ),
-    )
-        : NoInternetWidget();
+    );
   }
-
-
 }

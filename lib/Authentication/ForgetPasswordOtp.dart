@@ -31,14 +31,7 @@ class _ForgotOTPscreenState extends State<ForgotOTPscreen> {
 
   @override
   void initState() {
-    Provider.of<ConnectivityProviders>(context, listen: false)
-        .initConnectivity();
     super.initState();
-  }
-  @override
-  void dispose() {
-    Provider.of<ConnectivityProviders>(context, listen: false).dispose();
-    super.dispose();
   }
 
   void _validateFields() {
@@ -55,22 +48,22 @@ class _ForgotOTPscreenState extends State<ForgotOTPscreen> {
   }
 
   Future<void> ForgotpasswordApi() async {
-    var res= await Userapi.forgetPassword(widget.email,context);
-    if(res!=null){
+    var res = await Userapi.forgetPassword(widget.email, context);
+    if (res != null) {
       setState(() {
         _loading = false;
-        if(res==true){
-        }else{
-        }
+        if (res == true) {
+        } else {}
       });
     }
   }
+
   Future<void> ForgotpasswordOtpVerifyApi() async {
-    var res =
-        await Userapi.forgetPasswordOtpVerify(widget.email, otpController.text,context);
+    var res = await Userapi.forgetPasswordOtpVerify(
+        widget.email, otpController.text, context);
     if (res != null) {
       setState(() {
-         _loading = false;
+        _loading = false;
         if (res == true) {
           Navigator.pushReplacement(
               context,
@@ -88,10 +81,7 @@ class _ForgotOTPscreenState extends State<ForgotOTPscreen> {
   Widget build(BuildContext context) {
     var h = MediaQuery.of(context).size.height;
     var w = MediaQuery.of(context).size.width;
-    var connectiVityStatus = Provider.of<ConnectivityProviders>(context);
-    return (connectiVityStatus.isDeviceConnected == "ConnectivityResult.wifi" ||
-        connectiVityStatus.isDeviceConnected == "ConnectivityResult.mobile")
-        ? Scaffold(
+    return Scaffold(
       appBar: AppBar(
         backgroundColor: primaryColor, // Set the background color of the AppBar
         leading: IconButton(
@@ -141,14 +131,10 @@ class _ForgotOTPscreenState extends State<ForgotOTPscreen> {
                       style: TextStyle(
                         color: color11,
                       ),
-                      recognizer: TapGestureRecognizer()
-                        ..onTap = () {
-                          print('Email clicked');
-                        },
+                      recognizer: TapGestureRecognizer()..onTap = () {},
                     ),
                     TextSpan(
-                      text:
-                          '\nEnter 5 digit code that mentioned in the email',
+                      text: '\nEnter 5 digit code that mentioned in the email',
                     ),
                   ],
                 ),
@@ -270,8 +256,7 @@ class _ForgotOTPscreenState extends State<ForgotOTPscreen> {
                   child: Container(
                     width: w,
                     height: 55,
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.all(
                           Radius.circular(8),
@@ -280,12 +265,12 @@ class _ForgotOTPscreenState extends State<ForgotOTPscreen> {
                     child: Center(
                       child: _loading
                           ? CircularProgressIndicator(
-                            color: color4,
-                          )
-                          :  text(context, 'RESET PASSWORD', 16,
-                          color: color4,
-                          fontfamily: "Inter",
-                          fontWeight: FontWeight.w500),
+                              color: color4,
+                            )
+                          : text(context, 'RESET PASSWORD', 16,
+                              color: color4,
+                              fontfamily: "Inter",
+                              fontWeight: FontWeight.w500),
                     ),
                   ),
                 ),
@@ -316,9 +301,10 @@ class _ForgotOTPscreenState extends State<ForgotOTPscreen> {
                         fontFamily: "Inter",
                         decoration: TextDecoration.underline,
                       ),
-                      recognizer: TapGestureRecognizer()..onTap = () {
-                        ForgotpasswordApi();
-                      },
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () {
+                          ForgotpasswordApi();
+                        },
                     ),
                   ],
                 ),
@@ -327,6 +313,6 @@ class _ForgotOTPscreenState extends State<ForgotOTPscreen> {
           ),
         ),
       ),
-    ): NoInternetWidget();
+    );
   }
 }

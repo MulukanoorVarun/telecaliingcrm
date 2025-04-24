@@ -30,7 +30,7 @@ class LeaderBoardProvider extends ChangeNotifier {
         // Update `_hasNext` based on the API response
         _hasNext = res.nextPageUrl != null;
       } else {
-        print("No leaderboard data found.");
+        debugPrint("No leaderboard bloc found.");
       }
     } catch (e) {
     } finally {
@@ -49,25 +49,25 @@ class LeaderBoardProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      debugPrint("Fetching leaderboard data for page $_currentPage...");
+      debugPrint("Fetching leaderboard bloc for page $_currentPage...");
       var res = await Userapi.getLeaderboard(_currentPage + 1); // Increment the page for the API call
       if (res != null) {
         _currentPage++; // Increment the page count on success
 
-        leaderboardData.addAll(res.leaderboardData ?? []); // Append new leaderboard data
+        leaderboardData.addAll(res.leaderboardData ?? []); // Append new leaderboard bloc
 
         // Update `_hasNext` based on the API response
         _hasNext = res.nextPageUrl != null;
 
         debugPrint(_hasNext
-            ? "More leaderboard data available, preparing for next page."
-            : "No more leaderboard data to fetch.");
+            ? "More leaderboard bloc available, preparing for next page."
+            : "No more leaderboard bloc to fetch.");
       } else {
-        debugPrint("No leaderboard data found.");
+        debugPrint("No leaderboard bloc found.");
       }
     } catch (e) {
       // Log errors for debugging
-      debugPrint("Error while fetching leaderboard data: $e");
+      debugPrint("Error while fetching leaderboard bloc: $e");
     } finally {
       _pageLoading = false; // Reset loading state
       notifyListeners();    // Notify listeners of state change

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:telecaliingcrm/providers/CallHistoryProvider.dart';
 import 'package:telecaliingcrm/providers/ConnectivityProviders.dart';
@@ -7,15 +8,18 @@ import 'package:telecaliingcrm/providers/FollowupProvider.dart';
 import 'package:telecaliingcrm/providers/LeadsProvider.dart';
 import 'package:telecaliingcrm/providers/UserDetailsProvider.dart';
 import 'package:telecaliingcrm/providers/leaderBoardprovider.dart';
+import 'package:telecaliingcrm/router.dart';
 import 'package:telecaliingcrm/screens/SubscriptionExpiredScreen.dart';
 import 'package:telecaliingcrm/screens/TooManyRequestsScreen.dart';
+import 'package:telecaliingcrm/state_injector.dart';
 import 'Authentication/SignInScreen.dart';
 import 'Services/UserApi.dart';
 import 'screens/SpalshScreen.dart';
 
 final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized(); // ✅ Always first before anything async or platform-channel
+  WidgetsFlutterBinding
+      .ensureInitialized(); // ✅ Always first before anything async or platform-channel
 
   Userapi.setupInterceptors(_navigatorKey); // ✅ Now okay after binding
 
@@ -35,73 +39,70 @@ Future<void> main() async {
   );
 }
 
-
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        navigatorKey: _navigatorKey,
-        debugShowCheckedModeBanner: false,
-        builder: (BuildContext context, Widget? child) {
-          final MediaQueryData data = MediaQuery.of(context);
-          return MediaQuery(
-            data: data.copyWith(textScaleFactor: 1.0),
-            child: child ?? Container(),
-          );
-        },
-        title: 'Tele Calling CRM',
-        theme: ThemeData(
-          visualDensity: VisualDensity.adaptivePlatformDensity,
-          splashColor: Colors.transparent,
-          highlightColor: Colors.transparent,
-          hoverColor: Colors.transparent,
-          scaffoldBackgroundColor: Colors.white,
-          dialogBackgroundColor: Colors.white,
-          cardColor: Colors.white,
-          searchBarTheme: const SearchBarThemeData(),
-          tabBarTheme: const TabBarTheme(),
-          dialogTheme: const DialogTheme(
-            shadowColor: Colors.white,
-            surfaceTintColor: Colors.white,
-            backgroundColor: Colors.white,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(
-                  Radius.circular(5.0)), // Set the border radius of the dialog
+    return MultiBlocProvider(
+      providers: StateInjector.blocProviders,
+      child: MaterialApp.router(
+          debugShowCheckedModeBanner: false,
+          builder: (BuildContext context, Widget? child) {
+            final MediaQueryData data = MediaQuery.of(context);
+            return MediaQuery(
+              data: data.copyWith(textScaleFactor: 1.0),
+              child: child ?? Container(),
+            );
+          },
+          title: 'Tele Calling CRM',
+          theme: ThemeData(
+            visualDensity: VisualDensity.adaptivePlatformDensity,
+            splashColor: Colors.transparent,
+            highlightColor: Colors.transparent,
+            hoverColor: Colors.transparent,
+            scaffoldBackgroundColor: Colors.white,
+            dialogBackgroundColor: Colors.white,
+            cardColor: Colors.white,
+            searchBarTheme: const SearchBarThemeData(),
+            tabBarTheme: const TabBarTheme(),
+            dialogTheme: const DialogTheme(
+              shadowColor: Colors.white,
+              surfaceTintColor: Colors.white,
+              backgroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(
+                    5.0)), // Set the border radius of the dialog
+              ),
             ),
-          ),
-          buttonTheme: const ButtonThemeData(),
-          popupMenuTheme: const PopupMenuThemeData(
-              color: Colors.white, shadowColor: Colors.white),
-          appBarTheme: const AppBarTheme(
-            surfaceTintColor: Colors.white,
-            shadowColor: Colors.transparent,
-          ),
-          cardTheme: const CardTheme(
-            shadowColor: Colors.white,
-            surfaceTintColor: Colors.white,
-            color: Colors.white,
-          ),
-          elevatedButtonTheme: ElevatedButtonThemeData(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Color(0xffECEBFB),
+            buttonTheme: const ButtonThemeData(),
+            popupMenuTheme: const PopupMenuThemeData(
+                color: Colors.white, shadowColor: Colors.white),
+            appBarTheme: const AppBarTheme(
+              surfaceTintColor: Colors.white,
+              shadowColor: Colors.transparent,
             ),
+            cardTheme: const CardTheme(
+              shadowColor: Colors.white,
+              surfaceTintColor: Colors.white,
+              color: Colors.white,
+            ),
+            elevatedButtonTheme: ElevatedButtonThemeData(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color(0xffECEBFB),
+              ),
+            ),
+            textButtonTheme: TextButtonThemeData(
+              style: ButtonStyle(
+                  // overlayColor: MaterialStateProperty.all(Colors.white),
+                  ),
+            ),
+            bottomSheetTheme: const BottomSheetThemeData(
+                surfaceTintColor: Colors.white,
+                backgroundColor: Colors.white),
+            colorScheme: const ColorScheme.light(background: Colors.white)
+                .copyWith(background: Colors.white),
           ),
-          textButtonTheme: TextButtonThemeData(
-            style: ButtonStyle(
-                // overlayColor: MaterialStateProperty.all(Colors.white),
-                ),
-          ),
-          bottomSheetTheme: const BottomSheetThemeData(
-              surfaceTintColor: Colors.white, backgroundColor: Colors.white),
-          colorScheme: const ColorScheme.light(background: Colors.white)
-              .copyWith(background: Colors.white),
-        ),
-        routes: {
-          '/signin': (context) => SignInScreen(),
-          '/subscribe': (context) => SubscriptionExpiredScreen(),
-          '/toomanyrequests': (context) => TooManyRequestsScreen(),
-        },
-        home: Splash());
+          routerConfig: goRouter),
+    );
   }
 }

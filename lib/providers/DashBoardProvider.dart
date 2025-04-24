@@ -36,10 +36,10 @@ class DashboardProvider with ChangeNotifier {
         notifyListeners();
         return false;
       }
-      // Notify listeners that the data has been updated
+      // Notify listeners that the bloc has been updated
     } catch (e) {
       // If an error occurs, log or rethrow an exception
-      print('Error fetching dashboard details: $e');
+      debugPrint('Error fetching dashboard details: $e');
       throw Exception('Failed to dashboard details: $e');
     }
   }

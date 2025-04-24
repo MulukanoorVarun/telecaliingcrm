@@ -6,10 +6,10 @@ import '../screens/SubscriptionExpiredScreen.dart';
 import '../utils/constants.dart';
 
 class LeadsProvider with ChangeNotifier {
-  List<Leads> leadslist=[];
+  List<Lead> leadslist=[];
   bool _isLoading = true;
   bool _hasNextPage = true;
-  List<Leads>? get leadsList => leadslist;
+  List<Lead>? get leadsList => leadslist;
   bool get isLoading => _isLoading;
   bool get hasNextPage => _hasNextPage;
   int _currentPage = 1; // Track the current page number
@@ -21,35 +21,32 @@ class LeadsProvider with ChangeNotifier {
   Future<void> fetchLeadsList(type) async {
     _isLoading = true;
     _currentPage = 1;
-    leadslist =[];
+    leadslist.clear();
     notifyListeners();
+
     try {
       var result = await Userapi.getLeads(type, _currentPage);
+      debugPrint('fetchLeadsList API Response: $result');
+      debugPrint('Status: ${result?.status}, LeadsList: ${result?.data?.leads}, NextPageUrl: ${result?.data?.nextPageUrl}');
+
       if (result?.status == true) {
-        leadslist = result?.data?.leadslist ?? [];
-        if(result?.data?.nextPageUrl!=null){
-          _hasNextPage = true;
-          notifyListeners();
-          print("fetchLeadsList Called  _hasNextPage = true;");
-        }else{
-          _hasNextPage = false;
-          notifyListeners();
-          print("fetchLeadsList Called  _hasNextPage = false");
-        }
-        notifyListeners();
+        leadslist = result?.data?.leads ?? [];
+        _hasNextPage = result?.data?.nextPageUrl != null;
+        debugPrint('fetchLeadsList Success - LeadsList Length: ${leadslist.length}, hasNextPage: $_hasNextPage');
       } else {
-        leadslist = result?.data?.leadslist ?? [];
+        leadslist = result?.data?.leads ?? [];
         _hasNextPage = false;
+        debugPrint('fetchLeadsList Failed - LeadsList Length: ${leadslist.length}, hasNextPage: $_hasNextPage');
       }
     } catch (e) {
-      // If an error occurs, log or rethrow an exception
-      print('Error fetching Leads list: $e');
-      throw Exception('Failed to Leads list: $e');
+      debugPrint('Error fetching Leads list: $e');
+      throw Exception('Failed to fetch Leads list: $e');
     } finally {
       _isLoading = false;
       notifyListeners();
     }
   }
+
   Future<void> fetchMoreLeadsList(String type) async {
     if (!_hasNextPage || _pageLoading) {
       return;
@@ -62,7 +59,7 @@ class LeadsProvider with ChangeNotifier {
 
       if (result?.status == true) {
         _currentPage++; // Increment the current page after a successful fetch.
-        leadslist.addAll(result?.data?.leadslist ?? []);
+        leadslist.addAll(result?.data?.leads ?? []);
 
         _hasNextPage = result?.data?.nextPageUrl != null; // Check for more pages.
       } else {
@@ -70,7 +67,7 @@ class LeadsProvider with ChangeNotifier {
 
       }
     } catch (e) {
-      print('Error fetching more leads: $e');
+      debugPrint('Error fetching more leads: $e');
     } finally {
       _pageLoading = false; // Reset loading state.
       notifyListeners();
@@ -93,7 +90,7 @@ class LeadsProvider with ChangeNotifier {
       }
     } catch (e) {
       // If an error occurs, log or rethrow an exception
-      print('Error adding lead: $e');
+      debugPrint('Error adding lead: $e');
       throw Exception('Failed to add lead: $e');
     }
     return null;
@@ -118,7 +115,7 @@ class LeadsProvider with ChangeNotifier {
       }
     } catch (e) {
       // If an error occurs, log or rethrow an exception
-      print('Error updating user details: $e');
+      debugPrint('Error updating user details: $e');
       throw Exception('Failed to updating user details: $e');
     }
     return null;

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:telecaliingcrm/providers/FollowupProvider.dart';
@@ -21,8 +22,6 @@ class FollowupsScreen extends StatefulWidget {
 class _FollowupsScreenState extends State<FollowupsScreen> {
   @override
   void initState() {
-    Provider.of<ConnectivityProviders>(context, listen: false)
-        .initConnectivity();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _fetchFollowups();
     });
@@ -32,12 +31,6 @@ class _FollowupsScreenState extends State<FollowupsScreen> {
   Future<void> _fetchFollowups() async {
     final leadsProvider = Provider.of<FollowupProvider>(context, listen: false);
     leadsProvider.getFollowUpApi();
-  }
-
-  @override
-  void dispose() {
-    Provider.of<ConnectivityProviders>(context, listen: false).dispose();
-    super.dispose();
   }
 
   String formatDate(String dateTime) {
@@ -58,359 +51,299 @@ class _FollowupsScreenState extends State<FollowupsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var connectiVityStatus = Provider.of<ConnectivityProviders>(context);
     var w = MediaQuery.of(context).size.width;
     var h = MediaQuery.of(context).size.height;
-    return (connectiVityStatus.isDeviceConnected == "ConnectivityResult.wifi" ||
-            connectiVityStatus.isDeviceConnected == "ConnectivityResult.mobile")
-        ? WillPopScope(
-            onWillPop: () async {
-              Navigator.pop(context, true);
-              return false; // Return true to allow the pop
+    return WillPopScope(
+      onWillPop: () async {
+        context.pop();
+        return false; // Return true to allow the pop
+      },
+      child: Scaffold(
+        backgroundColor: scaffoldbgColor,
+        appBar: AppBar(
+          title: Text(
+            'Followups',
+            style: TextStyle(
+                fontSize: 22,
+                fontFamily: "Poppins",
+                fontWeight: FontWeight.w600,
+                color: Colors.white),
+          ),
+          backgroundColor: primaryColor,
+          leading: IconButton(
+            icon: Icon(
+              Icons.arrow_back,
+              color: Colors.white,
+            ),
+            onPressed: () {
+              context.pop();
             },
-            child: Scaffold(
-              backgroundColor: scaffoldbgColor,
-              appBar: AppBar(
-                title: Text(
-                  'Followups',
-                  style: TextStyle(
-                      fontSize: 22,
-                      fontFamily: "Poppins",
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white),
+          ),
+        ),
+        body: Consumer<FollowupProvider>(
+            builder: (context, followupProvider, child) {
+          if (followupProvider.isLoading) {
+            return _buildShimmerList();
+          } else if (followupProvider.followupList.length > 0) {
+            return Column(
+              children: [
+                SizedBox(
+                  height: 10,
                 ),
-                backgroundColor: primaryColor,
-                leading: IconButton(
-                  icon: Icon(
-                    Icons.arrow_back,
-                    color: Colors.white,
-                  ),
-                  onPressed: () {
-                    Navigator.pop(context, true);
-                  },
-                ),
-              ),
-              body: Consumer<FollowupProvider>(
-                  builder: (context, followupProvider, child) {
-                if (followupProvider.isLoading) {
-                  return _buildShimmerList();
-                } else if (followupProvider.followupList.length > 0) {
-                  return Column(
-                    children: [
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Expanded(
-                        child: NotificationListener<ScrollNotification>(
-                          onNotification: (ScrollNotification scrollInfo) {
-                            if (!followupProvider.isLoading &&
-                                scrollInfo.metrics.pixels ==
-                                    scrollInfo.metrics.maxScrollExtent) {
-                              if (followupProvider.nextPage) {
-                                followupProvider.fetchMoreFollowUpList();
-                              }
-                              return true;
-                            }
-                            return false;
-                          },
-                          child: CustomScrollView(
-                            slivers: [
-                              SliverList(
-                                delegate: SliverChildBuilderDelegate(
-                                  (context, index) {
-                                    final followup_List =
-                                        followupProvider.followupList[index];
-                                    return container(
-                                      context,
-                                      margin: EdgeInsets.symmetric(
-                                          vertical: 5, horizontal: 16),
-                                      child: Column(
-                                        children: [
-                                          Row(
+                Expanded(
+                  child: NotificationListener<ScrollNotification>(
+                    onNotification: (ScrollNotification scrollInfo) {
+                      if (!followupProvider.isLoading &&
+                          scrollInfo.metrics.pixels ==
+                              scrollInfo.metrics.maxScrollExtent) {
+                        if (followupProvider.nextPage) {
+                          followupProvider.fetchMoreFollowUpList();
+                        }
+                        return true;
+                      }
+                      return false;
+                    },
+                    child: CustomScrollView(
+                      slivers: [
+                        SliverList(
+                          delegate: SliverChildBuilderDelegate(
+                            (context, index) {
+                              final followup_List =
+                                  followupProvider.followupList[index];
+                              return container(
+                                context,
+                                margin: EdgeInsets.symmetric(
+                                    vertical: 5, horizontal: 16),
+                                child: Column(
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        text(
+                                            context,
+                                            '${followup_List.leadType?.number ?? ""}',
+                                            20),
+                                        text(
+                                            context,
+                                            "Followup: ${formatDate(followup_List.followupDate ?? "")}",
+                                            15),
+                                      ],
+                                    ),
+                                    Divider(
+                                      height: 1.8,
+                                      thickness: 0.8,
+                                      color: Colors.black.withOpacity(0.25),
+                                    ),
+                                    SizedBox(height: 5),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
                                             mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
+                                                MainAxisAlignment.start,
                                             children: [
-                                              text(
-                                                  context,
-                                                  '${followup_List.leadType?.number ?? ""}',
-                                                  20),
-                                              text(
-                                                  context,
-                                                  "Followup: ${formatDate(followup_List.followupDate ?? "")}",
-                                                  15),
-                                            ],
-                                          ),
-                                          Divider(
-                                            height: 1.8,
-                                            thickness: 0.8,
-                                            color:
-                                                Colors.black.withOpacity(0.25),
-                                          ),
-                                          SizedBox(height: 5),
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Expanded(
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.start,
-                                                  children: [
-                                                    Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceBetween,
-                                                      children: [
-                                                        container(context,
-                                                            colors: (followup_List
-                                                                        .leadType
-                                                                        ?.stageName
-                                                                        ?.stageName ==
-                                                                    "Cold")
-                                                                ? coldbgColor
-                                                                : (followup_List.leadType?.stageName?.stageName ==
-                                                                        "Hot")
-                                                                    ? Color(
-                                                                        0xffFFA89C)
-                                                                    : Color(
-                                                                        0xff95F8B6),
-                                                            borderRadius:
-                                                                BorderRadius.all(
-                                                                    Radius.circular(
-                                                                        5)),
-                                                            padding: EdgeInsets.symmetric(
-                                                                vertical: 2,
-                                                                horizontal: 10),
-                                                            margin: EdgeInsets.only(
-                                                                bottom: 0,
-                                                                left: 0),
-                                                            child: text(
-                                                                context,
-                                                                followup_List.leadType?.stageName?.stageName ?? "",
-                                                                14,
-                                                                color: color11)),
-                                                        // SizedBox(
-                                                        //   width: 35,
-                                                        // ),
-                                                        InkWell(
-                                                          onTap: () {
-                                                            Navigator.of(
-                                                                    context)
-                                                                .push(
-                                                                    PageRouteBuilder(
-                                                              pageBuilder: (context,
-                                                                  animation,
-                                                                  secondaryAnimation) {
-                                                                return LeadInformation(
-                                                                  ID: followup_List
-                                                                      .leadId
-                                                                      .toString(),
-                                                                );
-                                                              },
-                                                              transitionsBuilder:
-                                                                  (context,
-                                                                      animation,
-                                                                      secondaryAnimation,
-                                                                      child) {
-                                                                const begin =
-                                                                    Offset(1.0,
-                                                                        0.0);
-                                                                const end =
-                                                                    Offset.zero;
-                                                                const curve =
-                                                                    Curves
-                                                                        .easeInOut;
-                                                                var tween = Tween(
-                                                                        begin:
-                                                                            begin,
-                                                                        end:
-                                                                            end)
-                                                                    .chain(CurveTween(
-                                                                        curve:
-                                                                            curve));
-                                                                var offsetAnimation =
-                                                                    animation
-                                                                        .drive(
-                                                                            tween);
-                                                                return SlideTransition(
-                                                                    position:
-                                                                        offsetAnimation,
-                                                                    child:
-                                                                        child);
-                                                              },
-                                                            ));
-                                                          },
-                                                          child: Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .all(8.0),
-                                                            child: text(
-                                                                context,
-                                                                "View Info>",
-                                                                14,
-                                                                color:
-                                                                    primaryColor,
-                                                                textdecoration:
-                                                                    TextDecoration
-                                                                        .underline,
-                                                                decorationcolor:
-                                                                    primaryColor),
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    text(
-                                                        context,
-                                                        '${followup_List.name}',
-                                                        18),
-                                                    Text.rich(
-                                                      TextSpan(
-                                                        children: [
-                                                          TextSpan(
-                                                              text:
-                                                                  'Remarks : ',
-                                                              style: TextStyle(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                  fontFamily:
-                                                                      "Poppins")),
-                                                          TextSpan(
-                                                              text: followup_List
-                                                                          .remarks !=
-                                                                      null
-                                                                  ? '${followup_List.remarks}'
-                                                                  : "NA",
-                                                              style: TextStyle(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .normal)),
-                                                        ],
-                                                      ),
-                                                      maxLines: 3,
-                                                      textAlign:
-                                                          TextAlign.start,
-                                                      overflow: TextOverflow
-                                                          .ellipsis, // Optional, to handle text overflow
-                                                    )
-                                                  ],
-                                                ),
-                                              ),
-                                              Column(
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
                                                 children: [
+                                                  container(context,
+                                                      colors: (followup_List
+                                                                  .leadType
+                                                                  ?.stageName
+                                                                  ?.stageName ==
+                                                              "Cold")
+                                                          ? coldbgColor
+                                                          : (followup_List.leadType?.stageName?.stageName ==
+                                                                  "Hot")
+                                                              ? Color(
+                                                                  0xffFFA89C)
+                                                              : Color(
+                                                                  0xff95F8B6),
+                                                      borderRadius: BorderRadius.all(
+                                                          Radius.circular(5)),
+                                                      padding: EdgeInsets.symmetric(
+                                                          vertical: 2,
+                                                          horizontal: 10),
+                                                      margin: EdgeInsets.only(
+                                                          bottom: 0, left: 0),
+                                                      child: text(
+                                                          context,
+                                                          followup_List
+                                                                  .leadType
+                                                                  ?.stageName
+                                                                  ?.stageName ??
+                                                              "",
+                                                          14,
+                                                          color: color11)),
+                                                  // SizedBox(
+                                                  //   width: 35,
+                                                  // ),
                                                   InkWell(
-                                                    onTap: () async {
-                                                      await FlutterPhoneDirectCaller
-                                                          .callNumber(followup_List
-                                                                  .phone
-                                                                  .toString() ??
-                                                              "");
-                                                    },
-                                                    child: container(context,
-                                                        colors: primaryColor,
-                                                        padding:
-                                                            EdgeInsets.all(10),
-                                                        margin: EdgeInsets
-                                                            .symmetric(
-                                                                vertical: 3,
-                                                                horizontal: 3),
-                                                        child: Image(
-                                                          image: AssetImage(
-                                                              "assets/call.png"),
-                                                          width: 30,
-                                                          height: 30,
-                                                        )),
-                                                  ),
-                                                  GestureDetector(
                                                     onTap: () {
-                                                      _launchWhatsApp(
-                                                          followup_List.phone
-                                                                  .toString() ??
-                                                              "");
+                                                      context.push("/lead_information?ID=${followup_List
+                                                          .leadId}");
                                                     },
-                                                    child: container(context,
-                                                        colors: primaryColor,
-                                                        padding:
-                                                            EdgeInsets.all(10),
-                                                        margin: EdgeInsets
-                                                            .symmetric(
-                                                                vertical: 3,
-                                                                horizontal: 3),
-                                                        child: Image(
-                                                          image: AssetImage(
-                                                              "assets/whatsapp.png"),
-                                                          width: 30,
-                                                          height: 30,
-                                                        )),
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              8.0),
+                                                      child: text(context,
+                                                          "View Info>", 14,
+                                                          color: primaryColor,
+                                                          textdecoration:
+                                                              TextDecoration
+                                                                  .underline,
+                                                          decorationcolor:
+                                                              primaryColor),
+                                                    ),
                                                   ),
                                                 ],
                                               ),
+                                              text(context,
+                                                  '${followup_List.name}', 18),
+                                              Text.rich(
+                                                TextSpan(
+                                                  children: [
+                                                    TextSpan(
+                                                        text: 'Remarks : ',
+                                                        style: TextStyle(
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            fontFamily:
+                                                                "Poppins")),
+                                                    TextSpan(
+                                                        text: followup_List
+                                                                    .remarks !=
+                                                                null
+                                                            ? '${followup_List.remarks}'
+                                                            : "NA",
+                                                        style: TextStyle(
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .normal)),
+                                                  ],
+                                                ),
+                                                maxLines: 3,
+                                                textAlign: TextAlign.start,
+                                                overflow: TextOverflow
+                                                    .ellipsis, // Optional, to handle text overflow
+                                              )
                                             ],
-                                          )
-                                        ],
-                                      ),
-                                    );
-                                    ;
-                                  },
-                                  childCount:
-                                      followupProvider.followupList.length,
+                                          ),
+                                        ),
+                                        Column(
+                                          children: [
+                                            InkWell(
+                                              onTap: () async {
+                                                await FlutterPhoneDirectCaller
+                                                    .callNumber(followup_List
+                                                            .phone
+                                                            .toString() ??
+                                                        "");
+                                              },
+                                              child: container(context,
+                                                  colors: primaryColor,
+                                                  padding: EdgeInsets.all(10),
+                                                  margin: EdgeInsets.symmetric(
+                                                      vertical: 3,
+                                                      horizontal: 3),
+                                                  child: Image(
+                                                    image: AssetImage(
+                                                        "assets/call.png"),
+                                                    width: 30,
+                                                    height: 30,
+                                                  )),
+                                            ),
+                                            GestureDetector(
+                                              onTap: () {
+                                                _launchWhatsApp(followup_List
+                                                        .phone
+                                                        .toString() ??
+                                                    "");
+                                              },
+                                              child: container(context,
+                                                  colors: primaryColor,
+                                                  padding: EdgeInsets.all(10),
+                                                  margin: EdgeInsets.symmetric(
+                                                      vertical: 3,
+                                                      horizontal: 3),
+                                                  child: Image(
+                                                    image: AssetImage(
+                                                        "assets/whatsapp.png"),
+                                                    width: 30,
+                                                    height: 30,
+                                                  )),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    )
+                                  ],
                                 ),
-                              ),
-                              SliverPadding(
-                                padding: EdgeInsets.only(bottom: 30),
-                                sliver: SliverToBoxAdapter(
-                                  child: SizedBox(
-                                    height: 10,
-                                  ),
-                                ),
-                              ),
-                              if (followupProvider.pageLoading)
-                                SliverToBoxAdapter(
-                                  child: Align(
-                                      alignment: Alignment.center,
-                                      child: CircularProgressIndicator(
-                                          strokeWidth: 1)),
-                                ),
-                              SliverPadding(
-                                padding: EdgeInsets.only(bottom: 20),
-                                sliver: SliverToBoxAdapter(
-                                  child: SizedBox(
-                                    height: 10,
-                                  ),
-                                ),
-                              ),
-                            ],
+                              );
+                              ;
+                            },
+                            childCount: followupProvider.followupList.length,
                           ),
                         ),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                    ],
-                  );
-                } else {
-                  return Center(
-                    child: Column(
-                      children: [
-                        SizedBox(
-                          height: w * 0.54,
+                        SliverPadding(
+                          padding: EdgeInsets.only(bottom: 30),
+                          sliver: SliverToBoxAdapter(
+                            child: SizedBox(
+                              height: 10,
+                            ),
+                          ),
                         ),
-                        Lottie.asset(
-                          'assets/animations/nodata1.json', // Your Lottie animation file
-                          width: 150, // Adjust the size as needed
-                          height: 150,
-                          fit: BoxFit.cover,
+                        if (followupProvider.pageLoading)
+                          SliverToBoxAdapter(
+                            child: Align(
+                                alignment: Alignment.center,
+                                child:
+                                    CircularProgressIndicator(strokeWidth: 1)),
+                          ),
+                        SliverPadding(
+                          padding: EdgeInsets.only(bottom: 20),
+                          sliver: SliverToBoxAdapter(
+                            child: SizedBox(
+                              height: 10,
+                            ),
+                          ),
                         ),
                       ],
                     ),
-                  );
-                }
-              }),
-            ),
-          )
-        : NoInternetWidget();
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+              ],
+            );
+          } else {
+            return Center(
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: w * 0.54,
+                  ),
+                  Lottie.asset(
+                    'assets/animations/nodata1.json', // Your Lottie animation file
+                    width: 150, // Adjust the size as needed
+                    height: 150,
+                    fit: BoxFit.cover,
+                  ),
+                ],
+              ),
+            );
+          }
+        }),
+      ),
+    );
   }
 
   Widget _buildShimmerList() {

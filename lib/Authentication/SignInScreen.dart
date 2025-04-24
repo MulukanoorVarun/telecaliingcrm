@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:telecaliingcrm/Authentication/ForgetPasswordEmail.dart';
 import 'package:telecaliingcrm/screens/dashboard.dart';
@@ -31,8 +32,6 @@ class _SignInScreenState extends State<SignInScreen> {
 
   @override
   void initState() {
-    Provider.of<ConnectivityProviders>(context, listen: false)
-        .initConnectivity();
     super.initState();
   }
 
@@ -78,23 +77,9 @@ class _SignInScreenState extends State<SignInScreen> {
           PreferenceService().saveString('token', data['access_token']);
           PreferenceService()
               .saveInt('access_expiry_timestamp', expiryTimestamp);
-          // AuthService.saveTokens(data['access_token'],data['access_token'], data['access_token'], expiryTimestamp);
+          // AuthService.saveTokens(bloc['access_token'],bloc['access_token'], bloc['access_token'], expiryTimestamp);
           AuthService.saveAccessToken(data['access_token']);
-          Navigator.of(context).pushReplacement(PageRouteBuilder(
-            pageBuilder: (context, animation, secondaryAnimation) {
-              return Dashboard();
-            },
-            transitionsBuilder:
-                (context, animation, secondaryAnimation, child) {
-              const begin = Offset(1.0, 0.0);
-              const end = Offset.zero;
-              const curve = Curves.easeInOut;
-              var tween =
-                  Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-              var offsetAnimation = animation.drive(tween);
-              return SlideTransition(position: offsetAnimation, child: child);
-            },
-          ));
+          context.pushReplacement("/dashboard");
         } else if (data['error'] != null) {
           // Authentication error
           CustomSnackBar.show(context, data['error']);
@@ -125,10 +110,7 @@ class _SignInScreenState extends State<SignInScreen> {
   Widget build(BuildContext context) {
     var w = MediaQuery.of(context).size.width;
     var h = MediaQuery.of(context).size.height;
-    var connectiVityStatus = Provider.of<ConnectivityProviders>(context);
-    return (connectiVityStatus.isDeviceConnected == "ConnectivityResult.wifi" ||
-            connectiVityStatus.isDeviceConnected == "ConnectivityResult.mobile")
-        ? Scaffold(
+    return  Scaffold(
             backgroundColor: Colors.white,
             body: SingleChildScrollView(
               physics: NeverScrollableScrollPhysics(),
@@ -377,7 +359,6 @@ class _SignInScreenState extends State<SignInScreen> {
                 ),
               ),
             ),
-          )
-        : NoInternetWidget();
+          );
   }
 }

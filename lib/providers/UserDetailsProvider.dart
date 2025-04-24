@@ -18,7 +18,7 @@ class UserDetailsProvider with ChangeNotifier {
       }
     } catch (e) {
       // Log error and notify listeners
-      print('Error fetching user details: $e');
+      debugPrint('Error fetching user details: $e');
       _userDetails = null;
       notifyListeners();
       return null; // Optionally return a specific code for errors
@@ -36,8 +36,7 @@ class UserDetailsProvider with ChangeNotifier {
         return response;
       }
     } catch (e) {
-      // If an error occurs, log or rethrow an exception
-      print('Error updating user details: $e');
+      debugPrint('Error updating user details: $e');
       throw Exception('Failed to updating user details: $e');
     }
   }

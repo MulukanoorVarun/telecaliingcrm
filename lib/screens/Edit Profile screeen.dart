@@ -36,15 +36,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   void initState() {
     super.initState();
-    Provider.of<ConnectivityProviders>(context, listen: false)
-        .initConnectivity();
     _fetchUserProfile();
-  }
-
-  @override
-  void dispose() {
-    Provider.of<ConnectivityProviders>(context, listen: false).dispose();
-    super.dispose();
   }
 
   void _validateFields() {
@@ -78,10 +70,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     if (pickedFile != null) {
       setState(() {
         _image = File(pickedFile.path); // Set the selected image file
-        print("Image: ${_image?.path}"); // Print the image path for debugging
       });
     } else {
-      print("No image selected.");
+      debugPrint("No image selected.");
     }
   }
 
@@ -99,7 +90,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         }
       });
     } catch (e) {
-      print('Error fetching user profile: $e');
+      debugPrint('Error fetching user profile: $e');
     }
   }
 
@@ -128,10 +119,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   Widget build(BuildContext context) {
     var w = MediaQuery.of(context).size.width;
     var h = MediaQuery.of(context).size.height;
-    var connectiVityStatus = Provider.of<ConnectivityProviders>(context);
-    return (connectiVityStatus.isDeviceConnected == "ConnectivityResult.wifi" ||
-            connectiVityStatus.isDeviceConnected == "ConnectivityResult.mobile")
-        ? Scaffold(
+    return Scaffold(
       appBar: AppBar(
         title: Text(
           'Edit Profile',
@@ -290,8 +278,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 ),
               ),
             ),
-          )
-        : NoInternetWidget();
+          );
   }
 
   Widget _buildTextField({

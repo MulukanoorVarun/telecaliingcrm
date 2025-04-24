@@ -36,17 +36,8 @@ class _AddleadsscreenState extends State<Addleadsscreen> {
 
   @override
   void initState() {
-    Provider.of<ConnectivityProviders>(context, listen: false)
-        .initConnectivity();
     super.initState();
   }
-
-  @override
-  void dispose() {
-    Provider.of<ConnectivityProviders>(context, listen: false).dispose();
-    super.dispose();
-  }
-
   void _validateFields() {
     setState(() {
       _loading = true;
@@ -113,15 +104,14 @@ class _AddleadsscreenState extends State<Addleadsscreen> {
         });
         CustomSnackBar.show(context, "Lead Added Failed!");
         // Handle error if response status is false
-        print("Failed to add lead");
+        debugPrint("Failed to add lead");
       }
     } catch (e) {
       setState(() {
         _loading = false;
       });
-
       // Handle error in case of failure
-      print("Error occurred while adding lead: $e");
+      debugPrint("Error occurred while adding lead: $e");
     }
   }
 
@@ -130,10 +120,7 @@ class _AddleadsscreenState extends State<Addleadsscreen> {
   Widget build(BuildContext context) {
     var w = MediaQuery.of(context).size.width;
     var h = MediaQuery.of(context).size.height;
-    var connectiVityStatus = Provider.of<ConnectivityProviders>(context);
-    return (connectiVityStatus.isDeviceConnected == "ConnectivityResult.wifi" ||
-            connectiVityStatus.isDeviceConnected == "ConnectivityResult.mobile")
-        ? Scaffold(
+    return Scaffold(
             backgroundColor: scaffoldbgColor,
             appBar: AppBar(
               title: Text(
@@ -337,7 +324,7 @@ class _AddleadsscreenState extends State<Addleadsscreen> {
                             formattedDate = DateFormat('yyyy-MM-dd').format(_selectedDate);
 
                             // Print the formatted date
-                            print("Formatted Date: $formattedDate");
+                            debugPrint("Formatted Date: $formattedDate");
                           });
                         }
                       },
@@ -489,8 +476,7 @@ class _AddleadsscreenState extends State<Addleadsscreen> {
                 ),
               ),
             ),
-          )
-        : NoInternetWidget();
+          );
   }
 
 

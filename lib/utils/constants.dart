@@ -228,6 +228,8 @@ Color color36 = Color(0xffECEBFB);
 Color color37 = Color(0xffF5F5F5);
 
 final spinkits=Spinkits1();
+// Shared navigator key for GoRouter
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 Widget containertext(BuildContext context, String buttonText,
     {Function()? onTap,
@@ -348,7 +350,7 @@ class DateTimeFormatter {
         return formattedTime;
       }
     } catch (e) {
-      print("Error parsing date: $e");
+      debugPrint("Error parsing date: $e");
       return "";
     }
 

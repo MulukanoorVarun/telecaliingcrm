@@ -6,7 +6,7 @@ import '../screens/SubscriptionExpiredScreen.dart';
 
 class FollowupProvider extends ChangeNotifier {
   bool _isLoading = true;
-  List<FollowUpModel> _followuplist = [];
+  List<FollowUp> _followuplist = [];
 
   bool _pageLoading = false;
   bool get pageLoading => _pageLoading;
@@ -18,7 +18,7 @@ class FollowupProvider extends ChangeNotifier {
   int get currentpage => _currentPage;
 
   bool get isLoading => _isLoading;
-  List<FollowUpModel> get followupList => _followuplist;
+  List<FollowUp> get followupList => _followuplist;
 
   Future<void> getFollowUpApi() async {
     _isLoading = true;
@@ -27,7 +27,7 @@ class FollowupProvider extends ChangeNotifier {
     try {
       var result = await Userapi.getFollowup(_currentPage);
       if (result?.status == true) {
-        _followuplist = result?.data?.followup_list ?? [];
+        _followuplist = result?.data?.followUps ?? [];
         if(result?.data?.nextPageUrl!=null){
           _nextPage = true;
         }else{
@@ -38,7 +38,7 @@ class FollowupProvider extends ChangeNotifier {
         debugPrint("Failed to update the call status.");
       }
     } catch (error) {
-      debugPrint("Error fetching follow-up data: $error");
+      debugPrint("Error fetching follow-up bloc: $error");
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -62,7 +62,7 @@ class FollowupProvider extends ChangeNotifier {
       if (result?.status == true) {
         _currentPage++; // Increment the current page only after a successful fetch
 
-        _followuplist.addAll(result?.data?.followup_list ?? []);
+        _followuplist.addAll(result?.data?.followUps ?? []);
 
         // Update nextPage flag based on the API response
         _nextPage = result?.data?.nextPageUrl != null;
@@ -78,7 +78,7 @@ class FollowupProvider extends ChangeNotifier {
       }
     } catch (error) {
       // Catch and log the error
-      debugPrint("Error fetching follow-up data: $error");
+      debugPrint("Error fetching follow-up bloc: $error");
     } finally {
       _pageLoading = false; // Reset the loading state
       notifyListeners();    // Notify listeners of the state change
@@ -97,11 +97,11 @@ class FollowupProvider extends ChangeNotifier {
           return false;
         }
       } else {
-        print("Failed to add Follow-up: Response is null.");
+        debugPrint("Failed to add Follow-up: Response is null.");
       }
     } catch (e) {
       // Handle any errors
-      print("Error occurred while adding Follow-up: $e");
+      debugPrint("Error occurred while adding Follow-up: $e");
     }
   }
 

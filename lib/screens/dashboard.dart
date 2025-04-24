@@ -23,18 +23,13 @@ class _DashboardState extends State<Dashboard> {
 
   @override
   void initState() {
-    Provider.of<ConnectivityProviders>(context, listen: false)
-        .initConnectivity();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     GlobalKey<CurvedNavigationBarState> _bottomNavigationKey = GlobalKey();
-    var connectiVityStatus = Provider.of<ConnectivityProviders>(context);
-    return (connectiVityStatus.isDeviceConnected == "ConnectivityResult.wifi" ||
-        connectiVityStatus.isDeviceConnected == "ConnectivityResult.mobile")
-        ?  Scaffold(
+    return Scaffold(
       body: Container(
         color: Colors.transparent,
         child: PageView(
@@ -99,6 +94,6 @@ class _DashboardState extends State<Dashboard> {
           _pageController.jumpToPage(index);
         },
       )
-    ): NoInternetWidget();
+    );
   }
 }

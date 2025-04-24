@@ -37,16 +37,8 @@ class _AddFollowUpState extends State<AddFollowUp> {
 
   @override
   void initState() {
-    Provider.of<ConnectivityProviders>(context, listen: false)
-        .initConnectivity();
     _nameController.text= widget.name;
     super.initState();
-  }
-
-  @override
-  void dispose() {
-    Provider.of<ConnectivityProviders>(context, listen: false).dispose();
-    super.dispose();
   }
 
   void _validateFields() {
@@ -112,7 +104,7 @@ class _AddFollowUpState extends State<AddFollowUp> {
     });
     } catch (e) {
       // Handle any errors
-      print("Error occurred while adding Follow-up: $e");
+      debugPrint("Error occurred while adding Follow-up: $e");
     }
   }
 
@@ -121,10 +113,7 @@ class _AddFollowUpState extends State<AddFollowUp> {
   Widget build(BuildContext context) {
     var w = MediaQuery.of(context).size.width;
     var h = MediaQuery.of(context).size.height;
-    var connectiVityStatus = Provider.of<ConnectivityProviders>(context);
-    return (connectiVityStatus.isDeviceConnected == "ConnectivityResult.wifi" ||
-        connectiVityStatus.isDeviceConnected == "ConnectivityResult.mobile")
-        ? Scaffold(
+    return Scaffold(
       backgroundColor: scaffoldbgColor,
       appBar: AppBar(
         title: Text(
@@ -268,9 +257,8 @@ class _AddFollowUpState extends State<AddFollowUp> {
 
                       // Format the date as a string (yyyy-MM-dd)
                       formattedDate = DateFormat('yyyy-MM-dd').format(_selectedDate);
-
                       // Print the formatted date
-                      print("Formatted Date: $formattedDate");
+                      debugPrint("Formatted Date: $formattedDate");
                     });
                   }
                 },
@@ -443,8 +431,7 @@ class _AddFollowUpState extends State<AddFollowUp> {
           ),
         ),
       ),
-    )
-        : NoInternetWidget();
+    );
   }
 
 

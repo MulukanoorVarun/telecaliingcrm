@@ -1,6 +1,7 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:go_router/go_router.dart';
 import 'package:in_app_update/in_app_update.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
@@ -9,6 +10,7 @@ import 'package:telecaliingcrm/screens/OnBoardingScreen.dart';
 import '../Services/otherservices.dart';
 import '../providers/ConnectivityProviders.dart';
 import '../utils/ColorConstants.dart';
+import '../utils/PermissionManager.dart';
 import '../utils/preferences.dart';
 import 'PermissionScreen.dart';
 import 'dashboard.dart';
@@ -24,12 +26,9 @@ class _SplashState extends State<Splash> {
   String token = "";
   String onboard_status = "";
 
-
   @override
   void initState() {
     super.initState();
-    Provider.of<ConnectivityProviders>(context, listen: false)
-        .initConnectivity();
     SchedulerBinding.instance.addPostFrameCallback((_) async {
       if (await isNetworkAvailable()) {
         await checkForUpdates();
@@ -56,19 +55,14 @@ class _SplashState extends State<Splash> {
     });
   }
 
-
   Future<void> _checkPermissions() async {
-    Map<Permission, PermissionStatus> statuses = {
-     Permission.phone: await Permission.phone.status,
-      Permission.contacts: await Permission.contacts.status,
-      Permission.ignoreBatteryOptimizations: await Permission.ignoreBatteryOptimizations.status,
-    };
-    bool allPermissionsGranted =
-    statuses.values.every((status) => status.isGranted);
+    final statuses = await PermissionManager.checkPermissionStatuses();
+    final allPermissionsGranted =
+        statuses.values.every((status) => status.isGranted);
 
     setState(() {
       permissions_granted = allPermissionsGranted;
-      print("permissions_granted:${permissions_granted}");
+      debugPrint("permissions_granted: $permissions_granted");
     });
   }
 
@@ -82,20 +76,20 @@ class _SplashState extends State<Splash> {
           // Force the immediate update before proceeding
           await InAppUpdate.performImmediateUpdate().then((result) {
             if (result == AppUpdateResult.success) {
-              print("Update completed successfully!");
+              debugPrint("Update completed successfully!");
             } else {
-              print("Update not completed. App cannot proceed.");
+              debugPrint("Update not completed. App cannot proceed.");
               _showUpdateRequiredDialog();
             }
           });
         } else {
-          print("Immediate update not allowed. Exiting.");
+          debugPrint("Immediate update not allowed. Exiting.");
         }
       } else {
-        print("No update available. Proceeding.");
+        debugPrint("No update available. Proceeding.");
       }
     } catch (e) {
-      print("Update check failed: $e");
+      debugPrint("Update check failed: $e");
     }
   }
 
@@ -120,43 +114,33 @@ class _SplashState extends State<Splash> {
     );
   }
 
-
   Future<void> handleNavigation() async {
     // Navigate after update and animation complete
     await Future.delayed(Duration(seconds: 3));
     if (onboard_status == '') {
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => OnBoardindScreen()));
-    } else if(!permissions_granted){
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => PermissionScreen()));
-    }
-    else if (token.isNotEmpty) {
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => Dashboard()));
+      context.pushReplacement("/on_board");
+    } else if (!permissions_granted) {
+      context.pushReplacement("/permission");
+    } else if (token.isNotEmpty) {
+      context.pushReplacement("/dashboard");
     } else {
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => SignInScreen()));
+      context.pushReplacement("/signin");
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    var connectiVityStatus = Provider.of<ConnectivityProviders>(context);
-    return (connectiVityStatus.isDeviceConnected == "ConnectivityResult.wifi" ||
-            connectiVityStatus.isDeviceConnected == "ConnectivityResult.mobile")
-        ? Scaffold(
-            backgroundColor: primaryColor,
-            body: Container(
-              child: Center(
-                child: Image.asset(
-                  "assets/telecalling_splash.png",
-                  width: 240,
-                  height: 200,
-                ),
-              ),
-            ),
-          )
-        : NoInternetWidget();
+    return Scaffold(
+      backgroundColor: primaryColor,
+      body: Container(
+        child: Center(
+          child: Image.asset(
+            "assets/telecalling_splash.png",
+            width: 240,
+            height: 200,
+          ),
+        ),
+      ),
+    );
   }
 }

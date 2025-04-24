@@ -40,9 +40,9 @@ class ConnectivityProviders with ChangeNotifier {
     for (int i = 0; i < _connectionStatus.length; i++) {
       isDeviceConnected = _connectionStatus[i].toString();
       notifyListeners(); // Notify listeners when the connection status changes
-      print("isDeviceConnected: $isDeviceConnected");
+      debugPrint("isDeviceConnected: $isDeviceConnected");
     }
-    print('Connectivity changed: $_connectionStatus');
+    debugPrint('Connectivity changed: $_connectionStatus');
     notifyListeners(); // Notify listeners when the connection status changes
   }
 
