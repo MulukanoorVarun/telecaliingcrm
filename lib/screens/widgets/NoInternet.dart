@@ -1,83 +1,87 @@
+import 'dart:io';
+
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../utils/ColorConstants.dart';
 import '../../utils/constants.dart';
+import 'CustomAppButton.dart';
 
-class NoInternetWidget extends StatelessWidget {
+class Nointernet extends StatelessWidget {
+  const Nointernet({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
+      body: SafeArea(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Image.asset(
-              "assets/no_internet.png",
-              width: 200,
-              height: 200,
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 48),
-              child: Text(
-                "Connect to the Internet",
-                style: TextStyle(
-                  color: Color(0xFF000000),
-                  fontSize: 20,
-                  fontFamily: 'RozhaOne',
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 13),
-              child: Text(
-                "You are Offline. Please Check Your Connection",
-                style: TextStyle(
-                  color: Color(0xFF000000),
-                  fontSize: 16,
-                  fontFamily: 'RozhaOne',
-                  fontWeight: FontWeight.w400,
-
-                ),
-              ),
-            ),
-            GestureDetector(
-              onTap: () async {
-                final connectivityResult = await Connectivity().checkConnectivity();
-                String message;
-                if (connectivityResult == ConnectivityResult.mobile) {
-                  message = "Connected to Mobile Network";
-                } else if (connectivityResult == ConnectivityResult.wifi) {
-                  message = "Connected to WiFi";
-                } else {
-                  message = "No Internet Connection";
-                }
-                CustomSnackBar.show(context, message);
-              },
-              child: Padding(
-                padding: const EdgeInsets.only(top: 38),
-                child: Container(
-                  width: 240,
-                  height: 46,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(7),
-                    color: const Color(0xff000000),
+            Center(
+              child: RichText(
+                textAlign: TextAlign.center,
+                text: TextSpan(
+                  text: "Whoops! ",
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w500,
+                    color: primaryColor, // Ensure `primary` is defined
+                    fontFamily: "lexend",
                   ),
-                  child: const Center(
-                    child: Text(
-                      "Retry",
+                  children: [
+                    TextSpan(
+                      text: "The internet took a break",
                       style: TextStyle(
-                        color: Color(0xFFFFFFFF),
                         fontSize: 20,
-                        fontFamily: 'RozhaOne',
                         fontWeight: FontWeight.w500,
+                        color: Color(0xff9E9E9E),
+                        fontFamily: "lexend",
                       ),
                     ),
-                  ),
+                  ],
                 ),
               ),
             ),
+            Image.asset("assets/no_internet.png"),
           ],
+        ),
+      ),
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CustomAppButton(
+                  text: "Retry",
+                  onPlusTap: () async {
+                    final connectivityResult =
+                        await Connectivity().checkConnectivity();
+
+                    if (connectivityResult != ConnectivityResult.none) {
+                      try {
+                        // Try to make an actual internet request
+                        final result =
+                            await InternetAddress.lookup('google.com');
+                        if (result.isNotEmpty &&
+                            result[0].rawAddress.isNotEmpty) {
+                          // Internet is definitely available
+                          context.pop();
+                          return;
+                        }
+                      } catch (e) {
+                        // Lookup failed — still no internet
+                      }
+                    }
+
+                    // If we reach here, still no internet
+                    CustomSnackBar.show(
+                        context, "Still no internet. Please try again.");
+                  }),
+            ],
+          ),
         ),
       ),
     );

@@ -1,6 +1,7 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:in_app_update/in_app_update.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -8,6 +9,7 @@ import 'package:provider/provider.dart';
 import 'package:telecaliingcrm/Authentication/SignInScreen.dart';
 import 'package:telecaliingcrm/screens/OnBoardingScreen.dart';
 import '../Services/otherservices.dart';
+import '../bloc/internet_status/internet_status_bloc.dart';
 import '../providers/ConnectivityProviders.dart';
 import '../utils/ColorConstants.dart';
 import '../utils/PermissionManager.dart';
@@ -25,7 +27,7 @@ class _SplashState extends State<Splash> {
 
   String token = "";
   String onboard_status = "";
-
+  bool hasSavedState = false;
   @override
   void initState() {
     super.initState();
@@ -66,7 +68,7 @@ class _SplashState extends State<Splash> {
     });
   }
 
-  // Method to check for mandatory updates
+
   Future<void> checkForUpdates() async {
     try {
       final info = await InAppUpdate.checkForUpdate();
@@ -121,7 +123,11 @@ class _SplashState extends State<Splash> {
       context.pushReplacement("/on_board");
     } else if (!permissions_granted) {
       context.pushReplacement("/permission");
-    } else if (token.isNotEmpty) {
+    }
+    else if (token.isNotEmpty && hasSavedState) {
+      context.pushReplacement("/dashboard");
+    }
+    else if (token.isNotEmpty) {
       context.pushReplacement("/dashboard");
     } else {
       context.pushReplacement("/signin");
@@ -130,14 +136,23 @@ class _SplashState extends State<Splash> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: primaryColor,
-      body: Container(
-        child: Center(
-          child: Image.asset(
-            "assets/telecalling_splash.png",
-            width: 240,
-            height: 200,
+    return BlocListener<InternetStatusBloc, InternetStatusState>(
+      listener: (context, state) {
+        if (state is InternetStatusLostState) {
+          context.push('/no_internet');
+        }else if(state is InternetStatusBackState){
+          context.pop();
+        }
+      },
+      child: Scaffold(
+        backgroundColor: primaryColor,
+        body: Container(
+          child: Center(
+            child: Image.asset(
+              "assets/telecalling_splash.png",
+              width: 240,
+              height: 200,
+            ),
           ),
         ),
       ),

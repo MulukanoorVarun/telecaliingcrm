@@ -14,6 +14,7 @@ import 'package:telecaliingcrm/screens/PermissionScreen.dart';
 import 'package:telecaliingcrm/screens/SpalshScreen.dart';
 import 'package:telecaliingcrm/screens/UpDateLeadScreen.dart';
 import 'package:telecaliingcrm/screens/dashboard.dart';
+import 'package:telecaliingcrm/screens/widgets/NoInternet.dart';
 import 'package:telecaliingcrm/utils/constants.dart';
 
 import 'Authentication/SignInScreen.dart';
@@ -96,6 +97,12 @@ final GoRouter goRouter =
         path: '/add_lead',
         pageBuilder: (context, state) {
           return buildSlideTransitionPage(Addleadsscreen(), state);
+        },
+      ),
+      GoRoute(
+        path: '/no_internet',
+        pageBuilder: (context, state) {
+          return buildSlideTransitionPage(Nointernet(), state);
         },
       ),
       GoRoute(

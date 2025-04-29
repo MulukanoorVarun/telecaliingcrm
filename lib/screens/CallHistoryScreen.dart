@@ -108,75 +108,91 @@ class _CallhistoryscreenState extends State<Callhistoryscreen> {
                                       (context, index) {
                                 final call =
                                     callhistoryprovider.call_history[index];
-                                return Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 12.0),
-                                  child: Card(
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(15.0),
-                                    ),
-                                    elevation: 4,
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(16.0),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          SizedBox(height: 8),
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Text(
-                                                call.number ?? "",
+                                return Card(elevation: 2,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
+                                  margin: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(20.0),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              call.number ?? "Unknown Number",
+                                              style: TextStyle(
+                                                fontSize: 20,
+                                                fontFamily: "Poppins",
+                                                fontWeight: FontWeight.w600,
+                                                color: Colors.black87,
+                                              ),
+                                            ),
+                                            Row(
+                                              children: [
+                                                Icon(Icons.calendar_today, size: 16, color: Colors.grey[600]),
+                                                SizedBox(width: 6),
+                                                Text(
+                                                  call.latestUpdate ?? "No Date",
+                                                  style: TextStyle(
+                                                    fontSize: 14,
+                                                    color: Colors.grey[700],
+                                                    fontFamily: "Poppins",
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+
+                                        SizedBox(height: 16),
+
+
+                                        Divider(color: Colors.grey[300],height: 0.5,thickness: 1,),
+
+                                        SizedBox(height: 10),
+                                        Row(
+                                          children: [
+                                            Icon(Icons.info_outline, size: 20, color: Colors.blueAccent),
+                                            SizedBox(width: 10),
+                                            Expanded(
+                                              child: Text(
+                                                'Call Status: ${call.callStatus}',
                                                 style: TextStyle(
-                                                  fontSize: 18,
+                                                  fontSize: 16,
                                                   fontFamily: "Poppins",
-                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.black87,
                                                 ),
                                               ),
-                                              Row(
-                                                children: [
-                                                  Icon(Icons.calendar_today,
-                                                      size: 16,
-                                                      color: Colors.grey),
-                                                  SizedBox(width: 8),
-                                                  Text(
-                                                    call.latestUpdate ?? "",
-                                                    style: TextStyle(
-                                                      color: Colors.grey,
-                                                      fontFamily: "Poppins",
-                                                    ),
-                                                  ),
-                                                ],
+                                            ),
+                                          ],
+                                        ),
+
+                                        SizedBox(height: 10),
+                                        Row(
+                                          children: [
+                                            Icon(Icons.access_time, size: 20, color: Colors.orangeAccent),
+                                            SizedBox(width: 10),
+                                            Expanded(
+                                              child: Text(
+                                                'Duration: ${call.callDuration}',
+                                                style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontFamily: "Poppins",
+                                                  color: Colors.black87,
+                                                ),
                                               ),
-                                            ],
-                                          ),
-                                          SizedBox(height: 8),
-                                          Text(
-                                            'Call Status: ${call.callStatus}',
-                                            style: TextStyle(
-                                                fontSize: 16,
-                                                fontFamily: "Poppins",
-                                                fontWeight: FontWeight.w400,
-                                                color: Colors.black),
-                                          ),
-                                          Text(
-                                            'Duration: ${call.callDuration}',
-                                            style: TextStyle(
-                                                fontSize: 16,
-                                                fontFamily: "Poppins",
-                                                fontWeight: FontWeight.w400,
-                                                color: Colors.black),
-                                          ),
-                                        ],
-                                      ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 );
                               },
-                                      childCount: callhistoryprovider
-                                          .call_history.length)),
+                                      childCount: callhistoryprovider.call_history.length)),
                               SliverPadding(
                                 padding: EdgeInsets.only(bottom: 30),
                                 sliver: SliverToBoxAdapter(
