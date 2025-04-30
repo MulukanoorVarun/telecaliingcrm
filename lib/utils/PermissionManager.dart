@@ -57,12 +57,21 @@ class PermissionManager {
   static Future<List<Permission>> _getRequiredPermissions() async {
     final permissions = <Permission>[];
 
-    // Core permissions for both platforms
-    permissions.addAll([
-      Permission.phone,
-      Permission.contacts,
-      Permission.ignoreBatteryOptimizations,
-    ]);
+    if (Platform.isAndroid) {
+      // Android-specific permissions
+      permissions.addAll([
+        Permission.phone, // For reading phone state
+        Permission.contacts, // For accessing contacts
+        Permission.ignoreBatteryOptimizations, // To prevent battery optimization restrictions
+      ]);
+    } else if (Platform.isIOS) {
+      // iOS-specific permissions
+      permissions.addAll([
+        Permission.contacts, // For accessing contacts
+        // Note: phone, callLog, and ignoreBatteryOptimizations are not supported on iOS
+      ]);
+    }
+
     return permissions;
   }
 
