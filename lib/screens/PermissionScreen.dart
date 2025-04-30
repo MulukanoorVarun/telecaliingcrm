@@ -18,6 +18,8 @@ class _PermissionScreenState extends State<PermissionScreen> {
   bool allPermissionsGranted = false;
   String token = "";
 
+
+
   @override
   void initState() {
     super.initState();

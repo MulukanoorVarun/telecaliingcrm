@@ -1,14 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
 import 'package:telecaliingcrm/Authentication/ForgetPasswordEmail.dart';
-import 'package:telecaliingcrm/screens/dashboard.dart';
-import '../providers/ConnectivityProviders.dart';
 import '../services/AuthService.dart';
 import '../services/UserApi.dart';
-import '../services/otherservices.dart';
-import '../utils/PermissionHelper.dart';
 import '../utils/ShakeWidget.dart';
 import '../utils/constants.dart';
 import '../utils/preferences.dart';
