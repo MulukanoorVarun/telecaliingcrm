@@ -43,6 +43,7 @@ class _HomescreenState extends State<Homescreen> {
   bool isCallOngoing = false;
   String Date = DateFormat('yyyy-MM-dd').format(DateTime.now());
   late StreamSubscription<PhoneState> _phoneStateSubscription;
+  String? _selectedFilter;
 
   @override
   void initState() {
@@ -175,8 +176,14 @@ class _HomescreenState extends State<Homescreen> {
     });
   }
 
-  void _showCallDurationDialog(mobile_nnumber, id) {
+  void _showCallDurationDialog(
+      String mobileNumber,
+      int id) {
     String? selectedStatus; // Variable to hold the selected status
+    String? remarks; // Variable to hold remarks
+    TextEditingController remarksController =
+        TextEditingController(); // Controller for remarks TextField
+
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -185,149 +192,229 @@ class _HomescreenState extends State<Homescreen> {
           title: Text(
             "Call Duration",
             style: TextStyle(
-                fontFamily: "Poppins",
-                fontSize: 18,
-                fontWeight: FontWeight.w500),
+              fontFamily: "Poppins",
+              fontSize: 18,
+              fontWeight: FontWeight.w500,
+            ),
           ),
-          content: StatefulBuilder(builder: (context, setState) {
-            return Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Show the call duration
-                Text(
-                  "Duration: $callDuration seconds",
-                  style: TextStyle(
-                      fontFamily: "Poppins",
-                      fontSize: 13,
-                      fontWeight: FontWeight.w500),
-                ),
-                Text(
-                  "Mobile Number: $mobile_nnumber",
-                  style: TextStyle(
-                      fontFamily: "Poppins",
-                      fontSize: 13,
-                      fontWeight: FontWeight.w500),
-                ),
-                // Radio buttons for selecting the status
-                ListTile(
-                  contentPadding: EdgeInsets.all(0),
-                  dense: true,
-                  title: Text(
-                    "NOT LIFTING",
-                    style: TextStyle(
+          content: StatefulBuilder(
+            builder: (context, setState) {
+              return SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Show the call duration
+                    Text(
+                      "Duration: $callDuration seconds",
+                      style: TextStyle(
                         fontFamily: "Poppins",
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500),
-                  ),
-                  leading: Radio<String>(
-                    value: "Not Lifting",
-                    visualDensity: VisualDensity.compact,
-                    groupValue: selectedStatus,
-                    onChanged: (value) {
-                      setState(() {
-                        selectedStatus = value;
-                      });
-                    },
-                  ),
-                ),
-                ListTile(
-                  contentPadding: EdgeInsets.all(0),
-                  dense: true,
-                  title: Text(
-                    "NOT INTERESTED",
-                    style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    SizedBox(height: 8),
+                    Text(
+                      "Mobile Number: $mobileNumber",
+                      style: TextStyle(
                         fontFamily: "Poppins",
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500),
-                  ),
-                  leading: Radio<String>(
-                    visualDensity: VisualDensity.compact,
-                    value: "Not Interested",
-                    groupValue: selectedStatus,
-                    onChanged: (value) {
-                      setState(() {
-                        selectedStatus = value;
-                      });
-                    },
-                  ),
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    SizedBox(height: 16),
+                    // Radio buttons for selecting the status
+                    ListTile(
+                      visualDensity: VisualDensity.compact,
+                      contentPadding: EdgeInsets.all(0),
+                      dense: true,
+                      title: Text(
+                        "NOT LIFTING",
+                        style: TextStyle(
+                          fontFamily: "Poppins",
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      leading: Radio<String>(
+                        value: "Not Lifting",
+                        visualDensity: VisualDensity.compact,
+                        groupValue: selectedStatus,
+                        onChanged: (value) {
+                          setState(() {
+                            selectedStatus = value;
+                          });
+                        },
+                      ),
+                    ),
+                    ListTile(
+                      visualDensity: VisualDensity.compact,
+                      contentPadding: EdgeInsets.all(0),
+                      dense: true,
+                      title: Text(
+                        "NOT INTERESTED",
+                        style: TextStyle(
+                          fontFamily: "Poppins",
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      leading: Radio<String>(
+                        value: "Not Interested",
+                        visualDensity: VisualDensity.compact,
+                        groupValue: selectedStatus,
+                        onChanged: (value) {
+                          setState(() {
+                            selectedStatus = value;
+                          });
+                        },
+                      ),
+                    ),
+                    ListTile(
+                      visualDensity: VisualDensity.compact,
+                      contentPadding: EdgeInsets.all(0),
+                      dense: true,
+                      title: Text(
+                        "INTERESTED",
+                        style: TextStyle(
+                          fontFamily: "Poppins",
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      leading: Radio<String>(
+                        value: "Interested",
+                        visualDensity: VisualDensity.compact,
+                        groupValue: selectedStatus,
+                        onChanged: (value) {
+                          setState(() {
+                            selectedStatus = value;
+                          });
+                        },
+                      ),
+                    ),
+                    ListTile(
+                      visualDensity: VisualDensity.compact,
+                      contentPadding: EdgeInsets.all(0),
+                      dense: true,
+                      title: Text(
+                        "NOT CORRECT NUMBER",
+                        style: TextStyle(
+                          fontFamily: "Poppins",
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      leading: Radio<String>(
+                        value: "Not Correct Number",
+                        visualDensity: VisualDensity.compact,
+                        groupValue: selectedStatus,
+                        onChanged: (value) {
+                          setState(() {
+                            selectedStatus = value;
+                          });
+                        },
+                      ),
+                    ),
+                    ListTile(
+                      visualDensity: VisualDensity.compact,
+                      contentPadding: EdgeInsets.all(0),
+                      dense: true,
+                      title: Text(
+                        "CALL BACK",
+                        style: TextStyle(
+                          fontFamily: "Poppins",
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      leading: Radio<String>(
+                        value: "Call Back",
+                        visualDensity: VisualDensity.compact,
+                        groupValue: selectedStatus,
+                        onChanged: (value) {
+                          setState(() {
+                            selectedStatus = value;
+                          });
+                        },
+                      ),
+                    ),
+                    // Remarks TextField (shown only for Call Back or Not Interested)
+                    if (selectedStatus == "Call Back" ||
+                        selectedStatus == "Not Interested") ...[
+                      SizedBox(height: 16),
+                      Text(
+                        "Remarks",
+                        style: TextStyle(
+                          fontFamily: "Poppins",
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      SizedBox(height: 8),
+                      TextField(
+                        controller: remarksController,
+                        maxLines: 2,
+                        decoration: InputDecoration(
+                          hintText: "Enter remarks",
+                          hintStyle: TextStyle(
+                            fontFamily: "Poppins",
+                            fontSize: 13,
+                            color: Colors.grey[500],
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          contentPadding: EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 10),
+                        ),
+                        style: TextStyle(
+                          fontFamily: "Poppins",
+                          fontSize: 13,
+                        ),
+                        onChanged: (value) {
+                          remarks = value;
+                        },
+                      ),
+                    ],
+                  ],
                 ),
-                ListTile(
-                  contentPadding: EdgeInsets.all(0),
-                  dense: true,
-                  title: Text(
-                    "INTERESTED",
-                    style: TextStyle(
-                        fontFamily: "Poppins",
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500),
-                  ),
-                  leading: Radio<String>(
-                    value: "Interested",
-                    visualDensity: VisualDensity.compact,
-                    groupValue: selectedStatus,
-                    onChanged: (value) {
-                      setState(() {
-                        selectedStatus = value;
-                      });
-                    },
-                  ),
-                ),
-                ListTile(
-                  contentPadding: EdgeInsets.all(0),
-                  dense: true,
-                  title: Text(
-                    "NOT CORRECT NUMBER",
-                    style: TextStyle(
-                        fontFamily: "Poppins",
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500),
-                  ),
-                  leading: Radio<String>(
-                    value: "Not Correct Number",
-                    visualDensity: VisualDensity.compact,
-                    groupValue: selectedStatus,
-                    onChanged: (value) {
-                      setState(() {
-                        selectedStatus = value;
-                      });
-                    },
-                  ),
-                ),
-              ],
-            );
-          }),
+              );
+            },
+          ),
           actions: <Widget>[
             // Centered ElevatedButton for submit action
             Center(
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: primaryColor, // Background color
+                  backgroundColor: primaryColor,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8), // Border radius
+                    borderRadius: BorderRadius.circular(8),
                   ),
-                  padding: EdgeInsets.symmetric(
-                      horizontal: 20, vertical: 10), // Button padding
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                 ),
                 onPressed: () {
                   if (selectedStatus != null) {
-                    // Save the selected status (you can store it in a variable or database)
-                    debugPrint("Selected Status: $selectedStatus");
-                    // Close the dialog
+                    debugPrint("Selected Status: $selectedStatus, Remarks: $remarks");
+                    // Pass remarks to updateCallStatus (null if not applicable)
                     updateCallStatus(
-                        id.toString(), selectedStatus, callDuration.toString());
+                      id.toString(),
+                      selectedStatus!,
+                      callDuration.toString(),
+                    );
+                    Navigator.pop(context); // Close the dialog
                   } else {
-                    // If no status is selected, show a message or do nothing
                     debugPrint("No status selected");
                   }
                 },
                 child: Text(
                   "Submit",
                   style: TextStyle(
-                      fontWeight: FontWeight.w500,
-                      fontSize: 16,
-                      fontFamily: "Poppins",
-                      color: Colors.white),
+                    fontWeight: FontWeight.w500,
+                    fontSize: 16,
+                    fontFamily: "Poppins",
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ),
@@ -588,22 +675,43 @@ class _HomescreenState extends State<Homescreen> {
                       ),
                       if (phoneNumbers?.length != 0) ...[
                         SizedBox(height: w * 0.07),
-                        containertext(
-                          context,
-                          onTap: () {
-                            if (!isCalling) {
-                              // Start the calling process
-                              _startCallingProcess();
-                            } else {
-                              // Toggle between Pause and Resume
-                              _togglePauseResume();
-                            }
-                          },
-                          color: color28,
-                          width: w * 0.5,
-                          isCalling
-                              ? (isPaused ? 'RESUME' : 'PAUSE')
-                              : 'START NOW',
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                                child: SizedBox()), // Equal space on the left
+                            containertext(
+                              context,
+                              onTap: () {
+                                if (!isCalling) {
+                                  _startCallingProcess();
+                                } else {
+                                  _togglePauseResume();
+                                }
+                              },
+                              color: color28,
+                              width: w * 0.5,
+                              isCalling
+                                  ? (isPaused ? 'RESUME' : 'PAUSE')
+                                  : 'START NOW',
+                            ),
+                            Expanded(
+                              child: Align(
+                                alignment: Alignment.centerRight,
+                                child: IconButton(
+                                  visualDensity: VisualDensity.compact,
+                                  padding: EdgeInsets.all(0),
+                                  onPressed: () {
+                                    _showFilterBottomSheet(context);
+                                  },
+                                  icon: Icon(
+                                    Icons.filter_alt_sharp,
+                                    color: primaryColor,
+                                  ),
+                                ),
+                              ),
+                            ), // Equal space on the right, with IconButton aligned to the end
+                          ],
                         ),
                         SizedBox(height: w * 0.05),
                         text(context, 'CALLS IN QUEUE', 20,
@@ -614,8 +722,7 @@ class _HomescreenState extends State<Homescreen> {
                             decorationcolor: color34),
                         SizedBox(height: w * 0.05),
                         Container(
-                          height:
-                              w * 0.55, // Ensure a fixed height for ListView
+                          height: w * 0.55,
                           child: ListView.builder(
                             itemCount: phoneNumbers?.length ?? 0,
                             itemBuilder: (context, index) {
@@ -1104,6 +1211,171 @@ class _HomescreenState extends State<Homescreen> {
           ],
         ),
       ),
+    );
+  }
+
+  void _showFilterBottomSheet(BuildContext context) {
+    String? tempFilter =
+        _selectedFilter; // Temporary state for the bottom sheet
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true, // Allows dynamic height
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+            top: Radius.circular(20)), // Rounded top corners
+      ),
+      backgroundColor: Colors.white,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return Container(
+              padding: EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min, // Wrap content height
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Drag handle
+                  Center(
+                    child: Container(
+                      width: 40,
+                      height: 5,
+                      margin: EdgeInsets.only(bottom: 16),
+                      decoration: BoxDecoration(
+                        color: Colors.grey[300],
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                  ),
+                  // Title
+                  Text(
+                    'Filter by',
+                    style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black87,
+                        fontFamily: "Poppins"),
+                  ),
+                  SizedBox(height: 15),
+                  // Radio buttons
+                  _buildRadioTile(
+                    title: 'Pending',
+                    value: 'Pending',
+                    groupValue: tempFilter,
+                    onChanged: (value) {
+                      setState(() {
+                        tempFilter = value;
+                      });
+                    },
+                  ),
+                  _buildRadioTile(
+                    title: 'Call Back',
+                    value: 'Call Back',
+                    groupValue: tempFilter,
+                    onChanged: (value) {
+                      setState(() {
+                        tempFilter = value;
+                      });
+                    },
+                  ),
+                  _buildRadioTile(
+                    title: 'Not Lifting',
+                    value: 'Not Lifting',
+                    groupValue: tempFilter,
+                    onChanged: (value) {
+                      setState(() {
+                        tempFilter = value;
+                      });
+                    },
+                  ),
+                  SizedBox(height: 24),
+                  // // Buttons
+                  // Row(
+                  //   mainAxisAlignment: MainAxisAlignment.end,
+                  //   children: [
+                  //     // Clear button
+                  //     TextButton(
+                  //       onPressed: () {
+                  //         setState(() {
+                  //           tempFilter = null; // Clear selection
+                  //         });
+                  //         setState(() {
+                  //           _selectedFilter = null; // Clear persistent state
+                  //         });
+                  //         Navigator.pop(context);
+                  //       },
+                  //       child: Text(
+                  //         'Clear',
+                  //         style: TextStyle(
+                  //           fontSize: 16,
+                  //           color: Colors.grey[600],
+                  //           fontWeight: FontWeight.w500,
+                  //         ),
+                  //       ),
+                  //     ),
+                  //     SizedBox(width: 16),
+                  //     // Apply button
+                  //     ElevatedButton(
+                  //       onPressed: () {
+                  //         setState(() {
+                  //           _selectedFilter = tempFilter; // Update persistent state
+                  //         });
+                  //         Navigator.pop(context);
+                  //       },
+                  //       style: ElevatedButton.styleFrom(
+                  //         backgroundColor: primaryColor,
+                  //         padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  //         shape: RoundedRectangleBorder(
+                  //           borderRadius: BorderRadius.circular(8),
+                  //         ),
+                  //       ),
+                  //       child: Text(
+                  //         'Apply',
+                  //         style: TextStyle(
+                  //           fontSize: 16,
+                  //           color: Colors.white,
+                  //           fontWeight: FontWeight.w500,
+                  //         ),
+                  //       ),
+                  //     ),
+                  //   ],
+                  // ),
+                  // SizedBox(height: 16), // Extra padding at the bottom
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  // Helper method to build styled radio tiles
+  Widget _buildRadioTile({
+    required String title,
+    required String value,
+    required String? groupValue,
+    required ValueChanged<String?> onChanged,
+  }) {
+    return RadioListTile<String>(
+      title: Text(
+        title,
+        style: TextStyle(
+            fontSize: 16,
+            color: Colors.black87,
+            fontWeight: FontWeight.w400,
+            fontFamily: "Poppins"),
+      ),
+      value: value,
+      groupValue: groupValue,
+      onChanged: onChanged,
+      activeColor: primaryColor, // Match radio button color to theme
+      contentPadding: EdgeInsets.symmetric(horizontal: 8),
+      visualDensity: VisualDensity.compact, // Slightly tighter spacing
     );
   }
 

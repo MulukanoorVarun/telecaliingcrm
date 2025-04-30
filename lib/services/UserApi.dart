@@ -17,7 +17,6 @@ import '../utils/preferences.dart';
 import 'AuthService.dart';
 import 'package:logger/logger.dart';
 
-
 class Userapi {
   static final Logger logger = Logger();
   static final Dio _dio = Dio(
@@ -29,12 +28,15 @@ class Userapi {
     ),
   );
 
-  static void setupInterceptors(GlobalKey<NavigatorState> navigatorKey) {
+  static void setupInterceptors() {
     try {
-      logger.d("[UserApi] Setting up interceptors... NavigatorKey: $navigatorKey");
-      logger.d("[UserApi] Existing interceptors: ${_dio.interceptors.map((i) => i.runtimeType).toList()}");
+      logger.d(
+          "[UserApi] Setting up interceptors... NavigatorKey: $navigatorKey");
+      logger.d(
+          "[UserApi] Existing interceptors: ${_dio.interceptors.map((i) => i.runtimeType).toList()}");
       _dio.interceptors.clear();
-      logger.d("[UserApi] Cleared interceptors. Count: ${_dio.interceptors.length}");
+      logger.d(
+          "[UserApi] Cleared interceptors. Count: ${_dio.interceptors.length}");
       _dio.interceptors.add(LogInterceptor(
         request: kDebugMode,
         requestHeader: kDebugMode,
@@ -52,7 +54,8 @@ class Userapi {
             logger.d("[Interceptor] Access Token: $accessToken");
             if (accessToken != null && accessToken.isNotEmpty) {
               options.headers["Authorization"] = "Bearer $accessToken";
-              logger.d("[Interceptor] Set Authorization: ${options.headers['Authorization']}");
+              logger.d(
+                  "[Interceptor] Set Authorization: ${options.headers['Authorization']}");
             } else {
               logger.w("[Interceptor] No access token found");
             }
@@ -64,14 +67,16 @@ class Userapi {
           return handler.next(options);
         },
         onResponse: (response, handler) {
-          logger.d("[Interceptor] Response from ${response.requestOptions.uri} - Status: ${response.statusCode}");
+          logger.d(
+              "[Interceptor] Response from ${response.requestOptions.uri} - Status: ${response.statusCode}");
           _handleNavigation(response.statusCode, navigatorKey);
           return handler.next(response);
         },
         onError: (DioException e, handler) {
           logger.e("[Interceptor] Error: ${e.message}");
           if (e.response != null) {
-            logger.e("[Interceptor] Status: ${e.response?.statusCode}, Data: ${e.response?.data}");
+            logger.e(
+                "[Interceptor] Status: ${e.response?.statusCode}, Data: ${e.response?.data}");
             _handleNavigation(e.response?.statusCode, navigatorKey);
           }
           return handler.next(e);
@@ -84,7 +89,8 @@ class Userapi {
     }
   }
 
-  static Future<Response> post(String path, {dynamic data, Options? options}) async {
+  static Future<Response> post(String path,
+      {dynamic data, Options? options}) async {
     logger.d("[API] POST $path");
     logger.d("[API] Interceptor count: ${_dio.interceptors.length}");
     try {
@@ -94,17 +100,20 @@ class Userapi {
     }
   }
 
-  static Future<Response> get(String path, {Map<String, dynamic>? queryParameters, Options? options}) async {
+  static Future<Response> get(String path,
+      {Map<String, dynamic>? queryParameters, Options? options}) async {
     logger.d("[API] GET $path");
     logger.d("[API] Interceptor count: ${_dio.interceptors.length}");
     try {
-      return await _dio.get(path, queryParameters: queryParameters, options: options);
+      return await _dio.get(path,
+          queryParameters: queryParameters, options: options);
     } catch (e) {
       return _handleError(e);
     }
   }
 
-  static void _handleNavigation(int? statusCode, GlobalKey<NavigatorState> navigatorKey) async {
+  static void _handleNavigation(
+      int? statusCode, GlobalKey<NavigatorState> navigatorKey) async {
     if (statusCode == null) return;
 
     switch (statusCode) {
@@ -112,21 +121,25 @@ class Userapi {
         logger.w("Unauthorized: Navigating to SignIn");
         PreferenceService().remove("token");
         Future.microtask(() {
-          navigatorKey.currentState?.pushNamedAndRemoveUntil('/signin', (route) => false);
+          navigatorKey.currentState
+              ?.pushNamedAndRemoveUntil('/signin', (route) => false);
         });
         break;
       case 403:
-        logger.w("Subscription expired: Navigating to SubscriptionExpiredScreen");
+        logger
+            .w("Subscription expired: Navigating to SubscriptionExpiredScreen");
         PreferenceService().remove("token");
         Future.microtask(() {
-          navigatorKey.currentState?.pushNamedAndRemoveUntil('/subscribe', (route) => false);
+          navigatorKey.currentState
+              ?.pushNamedAndRemoveUntil('/subscribe', (route) => false);
         });
         break;
 
       case 429:
         logger.w("Too many requests: Navigating to TooManyRequestsScreen");
         Future.microtask(() {
-          navigatorKey.currentState?.pushNamedAndRemoveUntil('/toomanyrequests', (route) => false);
+          navigatorKey.currentState
+              ?.pushNamedAndRemoveUntil('/toomanyrequests', (route) => false);
         });
         break;
 
@@ -135,13 +148,13 @@ class Userapi {
     }
   }
 
-
   static Future<Response> _handleError(dynamic e) async {
     logger.e("[API] Error: $e");
     return Future.error(e);
   }
 
-  static Future<Map<String, dynamic>?> postSignIn(String email, String pwd) async {
+  static Future<Map<String, dynamic>?> postSignIn(
+      String email, String pwd) async {
     try {
       final data = {
         "email": email,
@@ -171,7 +184,8 @@ class Userapi {
         logger.d("dashboardApi response: ${response.data}");
         return DashBoardModel.fromJson(response.data);
       }
-      logger.d("Request failed with status: ${response.statusCode}, bloc: ${response.data}");
+      logger.d(
+          "Request failed with status: ${response.statusCode}, bloc: ${response.data}");
       return null;
     } catch (e) {
       logger.e("Error occurred in dashboardApi: $e");
@@ -212,7 +226,8 @@ class Userapi {
         debugPrint("Request successful: ${response.data}");
         return response.data;
       }
-      debugPrint("Request failed with status: ${response.statusCode}, body: ${response.data}");
+      debugPrint(
+          "Request failed with status: ${response.statusCode}, body: ${response.data}");
       return null;
     } catch (e) {
       debugPrint("Error occurred: $e");
@@ -440,7 +455,8 @@ class Userapi {
         }
       }
 
-      final response = await post("/api/update-profile/$userId", data: formData);
+      final response =
+          await post("/api/update-profile/$userId", data: formData);
 
       if (response.statusCode == 200) {
         if (response.data['message'] == 'User updated successfully') {
@@ -496,7 +512,8 @@ class Userapi {
     }
   }
 
-  static Future<bool?> forgetPassword(String email, BuildContext context) async {
+  static Future<bool?> forgetPassword(
+      String email, BuildContext context) async {
     try {
       final response = await post(
         "/api/forget-password",
@@ -542,6 +559,4 @@ class Userapi {
       return null;
     }
   }
-
-
 }

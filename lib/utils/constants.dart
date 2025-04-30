@@ -1,155 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:telecaliingcrm/utils/ColorConstants.dart';
-
-const defaultPadding = 10.0;
-const defaultMargin = 10.0;
-const defaultHeight = 10.0;
-const defaultWidth = 10.0;
-const defaultButtonHeight = 50.0;
-const defaultRadius = 10.0;
-const connectionTimeOut = 60;
-double LargeTextSize = 18;
-double TextheaderSize = 16;
-double TextlabelSize = 12;
-double textSize = 12;
-double subtextSize = 10;
-double minisubtextSize = 8.0;
-double XLargeTextSize = 24;
-
-// // var PhonePeMerchantId="NUTSBYONLINE";//Production Key
-var PhonePeMerchantId = ""; //PGTESTPAYUAT
-// var PhonePeSaltKey="70508497-24ec-4372-bb9f-f7ea4b451f7d";//Production Key
-var PhonePeSaltKey = ""; //099eb0cd-02cf-4e2a-8aca-3e6c6aff0399
-var PhonePeSaltIndex = "1";
-var AppId = "ddeca623b5d548a486c0fcd062479880";
-//cce1254412334734990aa88f6a382b4a
-
-// var PhonePeMerchantId="SVINDOONLINE";//production
-// var PhonePeSaltKey="78a4f850-4cb2-467d-a5ca-fd8f04420518";//production
-// var PhonePeSaltIndex="1";
-// var AppId="in.webgrid.svindo";
-
-double screenSpace = 10;
-
-const fontfamilyName = "Ubuntu";
-const dreamBikeFont = "nasalization";
-const authorization = "Authorization";
-const imageQuality = 50;
-const dateFormat = "yy/MM/dd";
-const timeFormat = "HH:mm:ss";
-const sliderHeight = 180.0;
-const rupeeSymbol = "₹";
-const fav_icon = "assets/images/saveicon.svg";
-const mapsApiKey = "AIzaSyCA06NWEP5D-z8WpebENgd4mSOqV-uXIUE";
-const upiRegex = "[a-zA-Z0-9.-]{2,256}@[a-zA-Z][a-zA-Z]{2,64}";
-const vehicleNumberRegex =
-    "^[a-zA-Z]{2}[0-9]{1,2}(?:[a-zA-Z])?(?:[a-zA-Z]*)?[0-9]{4}";
-const panNumberRegex = "[A-Z]{5}[0-9]{4}[A-Z]{1}";
-const aadhaarRegex = "[0-9]{12}";
-const staticImage = "https://picsum.photos/250?image=9";
-String chat_socket_url = "wss://192.168.0.56:8000/ws/chat/";
-String notify_socket_url = "wss://192.168.0.56:8000/ws/notify/";
-
-String geminiApiKey = "AIzaSyCxSSwFx-2e7d8zrBOCdU23gs7pJv0poO4";
-
-const String NO_INTERNET = "No internet connection.";
-const String BAD_RESPONSE = "Received bad response from the server.";
-const String SOMETHING_WRONG = "Something went wrong. Please try again.";
-const String UNAUTHORIZED = "You are not authorized to access this resource.";
-
-/////////Colors
-var notification_val = 0;
-// var h = MediaQuery.of(BuildContext contex).size.height;
-// var w = MediaQuery.of(BuildContext context).size.width;
-// Define your themes
-final ThemeData lightTheme = ThemeData(
-  brightness: Brightness.light,
-  visualDensity: VisualDensity.adaptivePlatformDensity,
-  splashColor: Colors.transparent,
-  highlightColor: Colors.transparent,
-  hoverColor: Colors.transparent,
-  scaffoldBackgroundColor: Colors.white,
-  dialogBackgroundColor: Colors.white,
-  cardColor: Colors.white,
-  searchBarTheme: const SearchBarThemeData(),
-  tabBarTheme: const TabBarTheme(),
-  dialogTheme: const DialogTheme(
-    shadowColor: Colors.white,
-    surfaceTintColor: Colors.white,
-    backgroundColor: Colors.white,
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.all(
-          Radius.circular(5.0)), // Set the border radius of the dialog
-    ),
-  ),
-  buttonTheme: const ButtonThemeData(),
-  popupMenuTheme:
-      const PopupMenuThemeData(color: Colors.white, shadowColor: Colors.white),
-  appBarTheme: const AppBarTheme(
-    surfaceTintColor: Colors.white,
-  ),
-  cardTheme: const CardTheme(
-    shadowColor: Colors.white,
-    surfaceTintColor: Colors.white,
-    color: Colors.white,
-  ),
-  textButtonTheme: TextButtonThemeData(
-    style: ButtonStyle(),
-  ),
-  bottomSheetTheme: const BottomSheetThemeData(
-      surfaceTintColor: Colors.white, backgroundColor: Colors.white),
-  // colorScheme: const ColorScheme.light(background: Colors.white)
-  //     .copyWith(background: Colors.white),
-);
-
-final ThemeData darkTheme = ThemeData(
-  visualDensity: VisualDensity.adaptivePlatformDensity,
-  splashColor: Colors.transparent,
-  highlightColor: Colors.transparent,
-  hoverColor: Colors.transparent,
-  scaffoldBackgroundColor: Colors.white,
-  dialogBackgroundColor: Colors.white,
-  cardColor: Colors.white,
-  searchBarTheme: const SearchBarThemeData(),
-  tabBarTheme: const TabBarTheme(),
-  dialogTheme: const DialogTheme(
-    shadowColor: Colors.white,
-    surfaceTintColor: Colors.white,
-    backgroundColor: Colors.white,
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.all(
-          Radius.circular(5.0)), // Set the border radius of the dialog
-    ),
-  ),
-  buttonTheme: const ButtonThemeData(),
-  popupMenuTheme:
-      const PopupMenuThemeData(color: Colors.white, shadowColor: Colors.white),
-  appBarTheme: const AppBarTheme(
-    surfaceTintColor: Colors.white,
-  ),
-  cardTheme: const CardTheme(
-    shadowColor: Colors.white,
-    surfaceTintColor: Colors.white,
-    color: Colors.white,
-  ),
-  textButtonTheme: TextButtonThemeData(
-    style: ButtonStyle(),
-  ),
-  bottomSheetTheme: const BottomSheetThemeData(
-      surfaceTintColor: Colors.white, backgroundColor: Colors.white),
-);
-
-///Colors ..................................................................................................
-
-LinearGradient lineargradient = LinearGradient(
-  begin: Alignment.topCenter,
-  end: Alignment.bottomCenter,
-  colors: [
-    Color(0xFF22C6BF),
-    Color(0xFF04B4AC),
-  ],
-);
 
 Text text(
   BuildContext context,
@@ -187,7 +37,6 @@ Text text(
     textAlign: textAlign,
   );
 }
-
 
 Color color = Color(0xff617C9D);
 Color color2 = Color(0xff617C9D);
@@ -227,16 +76,16 @@ Color color35 = Color(0xff7165E3).withOpacity(0.6);
 Color color36 = Color(0xffECEBFB);
 Color color37 = Color(0xffF5F5F5);
 
-final spinkits=Spinkits1();
+final spinkits = Spinkits1();
 // Shared navigator key for GoRouter
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 Widget containertext(BuildContext context, String buttonText,
     {Function()? onTap,
-      Color? color,
-      double? width,
-      double? height,
-      bool isLoading = false}) {
+    Color? color,
+    double? width,
+    double? height,
+    bool isLoading = false}) {
   final buttonColor = color ?? const Color(0xffECEBFB);
   return SizedBox(
     width: width ?? MediaQuery.of(context).size.width,
@@ -252,66 +101,55 @@ Widget containertext(BuildContext context, String buttonText,
       ),
       child: isLoading
           ? CircularProgressIndicator(
-        strokeWidth: 1,
-        color: Colors.white,
-      )
+              strokeWidth: 1,
+              color: Colors.white,
+            )
           : Text(
-        buttonText,
-        style: const TextStyle(
-          color: Colors.white,
-          fontWeight: FontWeight.w700,
-          fontSize: 16,
-          height: 21.78 / 16,
-          letterSpacing: 1,
-          fontFamily: "Poppins",
-        ),
-      ),
+              buttonText,
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w700,
+                fontSize: 16,
+                height: 21.78 / 16,
+                letterSpacing: 1,
+                fontFamily: "Poppins",
+              ),
+            ),
     ),
   );
 }
 
-
- Container container(BuildContext context,
+Container container(BuildContext context,
     {required Widget child,
-      BorderRadius? borderRadius,
-      double? w,
-      h,
-      Border? border,
-      Color? colors,
-      EdgeInsets? padding,
-      EdgeInsets? margin}) {
+    BorderRadius? borderRadius,
+    double? w,
+    h,
+    Border? border,
+    Color? colors,
+    EdgeInsets? padding,
+    EdgeInsets? margin}) {
   return Container(
     width: w,
     height: h,
     padding: padding ?? EdgeInsets.all(12),
     margin: margin ?? EdgeInsets.all(12),
     decoration: BoxDecoration(
-        color: colors?? Colors.white,
+        color: colors ?? Colors.white,
         borderRadius: borderRadius ?? BorderRadius.circular(10),
         border: border),
     child: child,
   );
 }
 
-
-
-
-
-
-
-Widget Label({
-  required String text,
-  TextAlign? textalign
-}) {
+Widget Label({required String text, TextAlign? textalign}) {
   return Text(text,
       textAlign: textalign,
       style: TextStyle(
           color: Color(0xff110B0F),
           fontFamily: 'RozhaOne',
           fontSize: 15,
-          height: 21.3/ 15,
-          fontWeight: FontWeight.w400)
-  );
+          height: 21.3 / 15,
+          fontWeight: FontWeight.w400));
 }
 
 class DateTimeFormatter {
@@ -332,13 +170,13 @@ class DateTimeFormatter {
       String formattedDate = "";
       if (includeDate) {
         formattedDate =
-        "${dateTime.year.toString().padLeft(4, '0')}-${dateTime.month.toString().padLeft(2, '0')}-${dateTime.day.toString().padLeft(2, '0')}";
+            "${dateTime.year.toString().padLeft(4, '0')}-${dateTime.month.toString().padLeft(2, '0')}-${dateTime.day.toString().padLeft(2, '0')}";
       }
 
       String formattedTime = "";
       if (includeTime) {
         formattedTime =
-        "${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}";
+            "${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}";
       }
 
       // Combine date and time if both are requested
@@ -372,8 +210,6 @@ class CustomSnackBar {
     );
   }
 }
-
-
 
 class Spinkits1 {
   Widget getSpinningLinespinkit() {

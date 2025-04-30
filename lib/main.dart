@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:telecaliingcrm/providers/CallHistoryProvider.dart';
@@ -16,13 +17,12 @@ import 'Authentication/SignInScreen.dart';
 import 'Services/UserApi.dart';
 import 'screens/SpalshScreen.dart';
 
-final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
 Future<void> main() async {
-  WidgetsFlutterBinding
-      .ensureInitialized(); // ✅ Always first before anything async or platform-channel
-
-  Userapi.setupInterceptors(_navigatorKey); // ✅ Now okay after binding
-
+  WidgetsFlutterBinding.ensureInitialized();
+  Userapi.setupInterceptors();
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+  ]);
   runApp(
     MultiProvider(
       providers: [

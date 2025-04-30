@@ -76,11 +76,8 @@ class _AddleadsscreenState extends State<Addleadsscreen> {
 
   Future<void> AddLeads() async {
     try {
-
-
       // Call the AddleadsApi from LeadsProvider
       final leadsProvider = Provider.of<LeadsProvider>(context, listen: false);
-
       // Pass the parameters from your UI to the provider
       final response = await leadsProvider.AddleadsApi(
         _nameController.text,

@@ -178,11 +178,6 @@ class _LeadsScreenState extends State<LeadScreen>
                       height: w * 0.1,
                       child: ElevatedButton(
                         style: ButtonStyle(
-                          // padding: MaterialStateProperty.all(
-                          //   const EdgeInsets.symmetric(
-                          //       vertical: 0,
-                          //       horizontal: 18), // Adjust as needed
-                          // ),
                           shape: MaterialStateProperty.all(
                             RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(
@@ -219,15 +214,9 @@ class _LeadsScreenState extends State<LeadScreen>
                       height: w * 0.1,
                       child: ElevatedButton(
                         style: ButtonStyle(
-                          // padding: MaterialStateProperty.all(
-                          //   const EdgeInsets.symmetric(
-                          //       vertical: 0,
-                          //       horizontal: 18), // Adjust as needed
-                          // ),
                           shape: MaterialStateProperty.all(
                             RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(
-                                  8), // Adjust the value to your desired radius
+                              borderRadius: BorderRadius.circular(8),
                             ),
                           ),
                           backgroundColor: MaterialStateProperty.all(
@@ -260,11 +249,6 @@ class _LeadsScreenState extends State<LeadScreen>
                       height: w * 0.1,
                       child: ElevatedButton(
                         style: ButtonStyle(
-                          // padding: MaterialStateProperty.all(
-                          //   const EdgeInsets.symmetric(
-                          //       vertical: 0,
-                          //       horizontal: 18), // Adjust as needed
-                          // ),
                           shape: MaterialStateProperty.all(
                             RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(
@@ -435,7 +419,8 @@ class _LeadsScreenState extends State<LeadScreen>
                                                   ),
                                                   InkWell(
                                                     onTap: () {
-                                                      context.push("/lead_information?ID=${leads.id}");
+                                                      context.push(
+                                                          "/lead_information?ID=${leads.id}");
                                                     },
                                                     child: Padding(
                                                       padding:
