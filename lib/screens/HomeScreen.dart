@@ -1582,7 +1582,7 @@ class _HomescreenState extends State<Homescreen> {
   bool isCallOngoing = false;
   String Date = DateFormat('yyyy-MM-dd').format(DateTime.now());
   StreamSubscription<PhoneState>? _phoneStateSubscription;
-  String? _selectedFilter;
+  String? _selectedFilter="Pending";
   List<MobileNumbers>? phoneNumbers;
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -1603,7 +1603,6 @@ class _HomescreenState extends State<Homescreen> {
     }
   }
 
-
   Future<bool> requestPermissions() async {
     // Request phone permission for both Android and iOS
     Map<Permission, PermissionStatus> statuses = await [
@@ -1618,7 +1617,7 @@ class _HomescreenState extends State<Homescreen> {
   void _initializePhoneStateListener() {
     if (Platform.isAndroid) {
       _phoneStateSubscription = PhoneState.stream.listen(
-            (PhoneState state) {
+        (PhoneState state) {
           _handlePhoneStateChange(state);
         },
         onError: (error) {
@@ -1635,10 +1634,10 @@ class _HomescreenState extends State<Homescreen> {
 
   Future<void> GetDashBoardDetails() async {
     final dashboard_provider =
-    Provider.of<DashboardProvider>(context, listen: false);
+        Provider.of<DashboardProvider>(context, listen: false);
     final user_details_provider =
-    Provider.of<UserDetailsProvider>(context, listen: false);
-    var res = await dashboard_provider.fetchDashBoardDetails();
+        Provider.of<UserDetailsProvider>(context, listen: false);
+    var res = await dashboard_provider.fetchDashBoardDetails("Pending");
     if (res == true) {
       user_details_provider.fetchUserDetails();
     }
@@ -1672,8 +1671,8 @@ class _HomescreenState extends State<Homescreen> {
       String phoneNumber = phoneNumbers![currentIndex].number!;
       try {
         debugPrint("Dialing: $phoneNumber");
-        bool? callSuccess = await FlutterPhoneDirectCaller.callNumber(
-            phoneNumber);
+        bool? callSuccess =
+            await FlutterPhoneDirectCaller.callNumber(phoneNumber);
         if (callSuccess == true) {
           setState(() {
             currentIndex++;
@@ -1756,17 +1755,19 @@ class _HomescreenState extends State<Homescreen> {
     String? selectedStatus;
     String? remarks;
     TextEditingController remarksController = TextEditingController();
-    TextEditingController durationController = TextEditingController(
-        text: callDuration.toString());
+    TextEditingController durationController =
+        TextEditingController(text: callDuration.toString());
 
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("Call Duration", style: TextStyle(fontFamily: "Poppins",
-              fontSize: 18,
-              fontWeight: FontWeight.w500)),
+          title: Text("Call Duration",
+              style: TextStyle(
+                  fontFamily: "Poppins",
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500)),
           content: StatefulBuilder(
             builder: (context, setState) {
               return SingleChildScrollView(
@@ -1775,16 +1776,18 @@ class _HomescreenState extends State<Homescreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     if (Platform.isIOS) ...[
-                      Text("Duration (seconds):", style: TextStyle(
-                          fontFamily: "Poppins",
-                          fontSize: 13,
-                          fontWeight: FontWeight.w500)),
+                      Text("Duration (seconds):",
+                          style: TextStyle(
+                              fontFamily: "Poppins",
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500)),
                       TextField(
                         controller: durationController,
                         keyboardType: TextInputType.number,
                         decoration: InputDecoration(
                           hintText: "Enter duration",
-                          hintStyle: TextStyle(fontFamily: "Poppins",
+                          hintStyle: TextStyle(
+                              fontFamily: "Poppins",
                               fontSize: 13,
                               color: Colors.grey[500]),
                           border: OutlineInputBorder(
@@ -1795,27 +1798,28 @@ class _HomescreenState extends State<Homescreen> {
                         style: TextStyle(fontFamily: "Poppins", fontSize: 13),
                       ),
                       SizedBox(height: 8),
-                    ] else
-                      ...[
-                        Text(
-                            "Duration: $callDuration seconds", style: TextStyle(
+                    ] else ...[
+                      Text("Duration: $callDuration seconds",
+                          style: TextStyle(
+                              fontFamily: "Poppins",
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500)),
+                    ],
+                    Text("Mobile Number: $mobileNumber",
+                        style: TextStyle(
                             fontFamily: "Poppins",
                             fontSize: 13,
                             fontWeight: FontWeight.w500)),
-                      ],
-                    Text("Mobile Number: $mobileNumber", style: TextStyle(
-                        fontFamily: "Poppins",
-                        fontSize: 13,
-                        fontWeight: FontWeight.w500)),
                     SizedBox(height: 16),
                     ListTile(
                       visualDensity: VisualDensity.compact,
                       contentPadding: EdgeInsets.all(0),
                       dense: true,
-                      title: Text("NOT LIFTING", style: TextStyle(
-                          fontFamily: "Poppins",
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500)),
+                      title: Text("NOT LIFTING",
+                          style: TextStyle(
+                              fontFamily: "Poppins",
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500)),
                       leading: Radio<String>(
                         value: "Not Lifting",
                         visualDensity: VisualDensity.compact,
@@ -1831,10 +1835,11 @@ class _HomescreenState extends State<Homescreen> {
                       visualDensity: VisualDensity.compact,
                       contentPadding: EdgeInsets.all(0),
                       dense: true,
-                      title: Text("NOT INTERESTED", style: TextStyle(
-                          fontFamily: "Poppins",
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500)),
+                      title: Text("NOT INTERESTED",
+                          style: TextStyle(
+                              fontFamily: "Poppins",
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500)),
                       leading: Radio<String>(
                         value: "Not Interested",
                         visualDensity: VisualDensity.compact,
@@ -1850,10 +1855,11 @@ class _HomescreenState extends State<Homescreen> {
                       visualDensity: VisualDensity.compact,
                       contentPadding: EdgeInsets.all(0),
                       dense: true,
-                      title: Text("INTERESTED", style: TextStyle(
-                          fontFamily: "Poppins",
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500)),
+                      title: Text("INTERESTED",
+                          style: TextStyle(
+                              fontFamily: "Poppins",
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500)),
                       leading: Radio<String>(
                         value: "Interested",
                         visualDensity: VisualDensity.compact,
@@ -1869,10 +1875,11 @@ class _HomescreenState extends State<Homescreen> {
                       visualDensity: VisualDensity.compact,
                       contentPadding: EdgeInsets.all(0),
                       dense: true,
-                      title: Text("NOT CORRECT NUMBER", style: TextStyle(
-                          fontFamily: "Poppins",
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500)),
+                      title: Text("NOT CORRECT NUMBER",
+                          style: TextStyle(
+                              fontFamily: "Poppins",
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500)),
                       leading: Radio<String>(
                         value: "Not Correct Number",
                         visualDensity: VisualDensity.compact,
@@ -1888,10 +1895,11 @@ class _HomescreenState extends State<Homescreen> {
                       visualDensity: VisualDensity.compact,
                       contentPadding: EdgeInsets.all(0),
                       dense: true,
-                      title: Text("CALL BACK", style: TextStyle(
-                          fontFamily: "Poppins",
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500)),
+                      title: Text("CALL BACK",
+                          style: TextStyle(
+                              fontFamily: "Poppins",
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500)),
                       leading: Radio<String>(
                         value: "Call Back",
                         visualDensity: VisualDensity.compact,
@@ -1906,16 +1914,19 @@ class _HomescreenState extends State<Homescreen> {
                     if (selectedStatus == "Call Back" ||
                         selectedStatus == "Not Interested") ...[
                       SizedBox(height: 16),
-                      Text("Remarks", style: TextStyle(fontFamily: "Poppins",
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500)),
+                      Text("Remarks",
+                          style: TextStyle(
+                              fontFamily: "Poppins",
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500)),
                       SizedBox(height: 8),
                       TextField(
                         controller: remarksController,
                         maxLines: 2,
                         decoration: InputDecoration(
                           hintText: "Enter remarks",
-                          hintStyle: TextStyle(fontFamily: "Poppins",
+                          hintStyle: TextStyle(
+                              fontFamily: "Poppins",
                               fontSize: 13,
                               color: Colors.grey[500]),
                           border: OutlineInputBorder(
@@ -1947,7 +1958,7 @@ class _HomescreenState extends State<Homescreen> {
                   if (selectedStatus != null) {
                     int finalDuration = Platform.isIOS
                         ? (int.tryParse(durationController.text) ??
-                        callDuration)
+                            callDuration)
                         : callDuration;
                     updateCallStatus(id.toString(), selectedStatus!,
                         finalDuration.toString(), remarks);
@@ -1958,7 +1969,8 @@ class _HomescreenState extends State<Homescreen> {
                 },
                 child: Text(
                   "Submit",
-                  style: TextStyle(fontWeight: FontWeight.w500,
+                  style: TextStyle(
+                      fontWeight: FontWeight.w500,
                       fontSize: 16,
                       fontFamily: "Poppins",
                       color: Colors.white),
@@ -1974,13 +1986,13 @@ class _HomescreenState extends State<Homescreen> {
   void updateCallStatus(String id, String callStatus, String callDuration,
       [String? remarks]) async {
     try {
-      var result = await Userapi.updateCallStatusApi(
-          id, callStatus, callDuration);
+      var result =
+          await Userapi.updateCallStatusApi(id, callStatus, callDuration);
       if (result != null) {
         debugPrint("Response: $result");
-        final dashboardProvider = Provider.of<DashboardProvider>(
-            context, listen: false);
-        dashboardProvider.fetchDashBoardDetails();
+        final dashboardProvider =
+            Provider.of<DashboardProvider>(context, listen: false);
+        dashboardProvider.fetchDashBoardDetails("Pending");
         CustomSnackBar.show(context, "Call Status Updated Successfully!");
         context.pop();
         Future.delayed(Duration(seconds: 3), () {
@@ -2013,14 +2025,8 @@ class _HomescreenState extends State<Homescreen> {
 
   @override
   Widget build(BuildContext context) {
-    var w = MediaQuery
-        .of(context)
-        .size
-        .width;
-    var h = MediaQuery
-        .of(context)
-        .size
-        .height;
+    var w = MediaQuery.of(context).size.width;
+    var h = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: Colors.white,
       key: _scaffoldKey,
@@ -2059,13 +2065,14 @@ class _HomescreenState extends State<Homescreen> {
                       child: Text(
                         overflow: TextOverflow.ellipsis,
                         userDetailsProvider.userDetails?.username?.isNotEmpty ??
-                            false
+                                false
                             ? userDetailsProvider.userDetails!.username![0]
-                            .toUpperCase() +
-                            userDetailsProvider.userDetails!.username!
-                                .substring(1)
+                                    .toUpperCase() +
+                                userDetailsProvider.userDetails!.username!
+                                    .substring(1)
                             : "",
-                        style: TextStyle(fontSize: 20,
+                        style: TextStyle(
+                            fontSize: 20,
                             fontFamily: "Poppins",
                             fontWeight: FontWeight.w500),
                       ),
@@ -2075,8 +2082,8 @@ class _HomescreenState extends State<Homescreen> {
                       onTap: () async {
                         showLogoutDialog(context);
                       },
-                      child: Icon(
-                          Icons.power_settings_new, size: 26, color: color11),
+                      child: Icon(Icons.power_settings_new,
+                          size: 26, color: color11),
                     ),
                     SizedBox(width: 18),
                     InkResponse(
@@ -2146,7 +2153,7 @@ class _HomescreenState extends State<Homescreen> {
                                       dashboardProvider.pendingCalls ?? "0", 46,
                                       fontfamily: 'Poppins',
                                       fontWeight: FontWeight.w500),
-                                  text(context, 'Pending Calls', 18,
+                                  text(context, '${_selectedFilter} Calls', 18,
                                       fontfamily: 'Poppins',
                                       fontWeight: FontWeight.w500),
                                 ],
@@ -2193,7 +2200,8 @@ class _HomescreenState extends State<Homescreen> {
                                 colors: color30,
                                 child: Column(
                                   children: [
-                                    text(context,
+                                    text(
+                                        context,
                                         dashboardProvider.followup_count ?? "0",
                                         46,
                                         fontfamily: 'Poppins',
@@ -2268,25 +2276,26 @@ class _HomescreenState extends State<Homescreen> {
                                     children: [
                                       container(
                                         context,
-                                        borderRadius: BorderRadius.circular(
-                                            100),
+                                        borderRadius:
+                                            BorderRadius.circular(100),
                                         colors: color3,
-                                        child: Icon(Icons.call, size: 18,
-                                            color: color11),
+                                        child: Icon(Icons.call,
+                                            size: 18, color: color11),
                                       ),
                                       SizedBox(width: w * 0.02),
                                       Column(
-                                        mainAxisAlignment: MainAxisAlignment
-                                            .start,
-                                        crossAxisAlignment: CrossAxisAlignment
-                                            .start,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
                                           Container(
                                             width: w * 0.6,
                                             child: text(
                                               context,
-                                              (data.name != "") ? data.name ??
-                                                  "Unknown" : "Unknown",
+                                              (data.name != "")
+                                                  ? data.name ?? "Unknown"
+                                                  : "Unknown",
                                               16,
                                               fontfamily: 'Poppins',
                                               fontWeight: FontWeight.w600,
@@ -2308,20 +2317,19 @@ class _HomescreenState extends State<Homescreen> {
                               },
                             ),
                           ),
-                        ] else
-                          ...[
-                            Column(
-                              children: [
-                                SizedBox(height: w * 0.2),
-                                Lottie.asset(
-                                  'assets/animations/nodata1.json',
-                                  width: 150,
-                                  height: 150,
-                                  fit: BoxFit.fill,
-                                ),
-                              ],
-                            ),
-                          ],
+                        ] else ...[
+                          Column(
+                            children: [
+                              SizedBox(height: w * 0.2),
+                              Lottie.asset(
+                                'assets/animations/nodata1.json',
+                                width: 150,
+                                height: 150,
+                                fit: BoxFit.fill,
+                              ),
+                            ],
+                          ),
+                        ],
                       ],
                     ),
                   ),
@@ -2340,8 +2348,8 @@ class _HomescreenState extends State<Homescreen> {
               child: Consumer<UserDetailsProvider>(
                 builder: (context, userDetailsProvider, child) {
                   return Container(
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(0)),
+                    decoration:
+                        BoxDecoration(borderRadius: BorderRadius.circular(0)),
                     child: Center(
                       child: Row(
                         children: [
@@ -2350,38 +2358,39 @@ class _HomescreenState extends State<Homescreen> {
                             radius: 30,
                             backgroundColor: primaryColor.withOpacity(0.5),
                             child: userDetailsProvider.userDetails?.photo !=
-                                null
+                                    null
                                 ? ClipOval(
-                              child: CachedNetworkImage(
-                                imageUrl: userDetailsProvider.userDetails!
-                                    .photo!,
-                                fit: BoxFit.cover,
-                                width: 60,
-                                height: 60,
-                                errorWidget: (context, url, error) {
-                                  return Image.asset('assets/person.png');
-                                },
-                              ),
-                            )
+                                    child: CachedNetworkImage(
+                                      imageUrl: userDetailsProvider
+                                          .userDetails!.photo!,
+                                      fit: BoxFit.cover,
+                                      width: 60,
+                                      height: 60,
+                                      errorWidget: (context, url, error) {
+                                        return Image.asset('assets/person.png');
+                                      },
+                                    ),
+                                  )
                                 : userDetailsProvider.userDetails?.username !=
-                                null
-                                ? Text(
-                              userDetailsProvider.userDetails!.username![0]
-                                  .toUpperCase(),
-                              style: TextStyle(
-                                fontSize: 30,
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            )
-                                : ClipOval(
-                              child: Image.asset(
-                                'assets/person.png',
-                                fit: BoxFit.cover,
-                                width: 60,
-                                height: 60,
-                              ),
-                            ),
+                                        null
+                                    ? Text(
+                                        userDetailsProvider
+                                            .userDetails!.username![0]
+                                            .toUpperCase(),
+                                        style: TextStyle(
+                                          fontSize: 30,
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      )
+                                    : ClipOval(
+                                        child: Image.asset(
+                                          'assets/person.png',
+                                          fit: BoxFit.cover,
+                                          width: 60,
+                                          height: 60,
+                                        ),
+                                      ),
                           ),
                           SizedBox(width: w * 0.02),
                           Container(
@@ -2392,11 +2401,14 @@ class _HomescreenState extends State<Homescreen> {
                               children: [
                                 Text(
                                   userDetailsProvider.userDetails?.username
-                                      ?.isNotEmpty ?? false
-                                      ? userDetailsProvider.userDetails!
-                                      .username![0].toUpperCase() +
-                                      userDetailsProvider.userDetails!.username!
-                                          .substring(1)
+                                              ?.isNotEmpty ??
+                                          false
+                                      ? userDetailsProvider
+                                              .userDetails!.username![0]
+                                              .toUpperCase() +
+                                          userDetailsProvider
+                                              .userDetails!.username!
+                                              .substring(1)
                                       : "",
                                   style: TextStyle(
                                       fontSize: 17,
@@ -2455,10 +2467,13 @@ class _HomescreenState extends State<Homescreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Image.asset(
-                        'assets/add.png', width: w * 0.05, height: h * 0.05),
+                    Image.asset('assets/add.png',
+                        width: w * 0.05, height: h * 0.05),
                     SizedBox(width: w * 0.05),
-                    text(context, 'Leads', fontWeight: FontWeight.w500,
+                    text(
+                        context,
+                        'Leads',
+                        fontWeight: FontWeight.w500,
                         fontfamily: 'Poppins',
                         16),
                     Spacer(),
@@ -2477,10 +2492,13 @@ class _HomescreenState extends State<Homescreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Image.asset(
-                        'assets/add.png', width: w * 0.05, height: h * 0.05),
+                    Image.asset('assets/add.png',
+                        width: w * 0.05, height: h * 0.05),
                     SizedBox(width: w * 0.05),
-                    text(context, 'Follow Ups', fontWeight: FontWeight.w500,
+                    text(
+                        context,
+                        'Follow Ups',
+                        fontWeight: FontWeight.w500,
                         fontfamily: 'Poppins',
                         16),
                     Spacer(),
@@ -2496,8 +2514,6 @@ class _HomescreenState extends State<Homescreen> {
   }
 
   void _showFilterBottomSheet(BuildContext context) {
-    String? tempFilter = _selectedFilter;
-
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -2531,7 +2547,8 @@ class _HomescreenState extends State<Homescreen> {
                   ),
                   Text(
                     'Filter by',
-                    style: TextStyle(fontSize: 18,
+                    style: TextStyle(
+                        fontSize: 18,
                         fontWeight: FontWeight.w600,
                         color: Colors.black87,
                         fontFamily: "Poppins"),
@@ -2540,30 +2557,42 @@ class _HomescreenState extends State<Homescreen> {
                   _buildRadioTile(
                     title: 'Pending',
                     value: 'Pending',
-                    groupValue: tempFilter,
+                    groupValue: _selectedFilter,
                     onChanged: (value) {
-                      setState(() {
-                        tempFilter = value;
+                      setState(() async {
+                        _selectedFilter = value;
+                        var res = await Provider.of<DashboardProvider>(context, listen: false).fetchDashBoardDetails(_selectedFilter??"");
+                        if(res==true){
+                          context.pop();
+                        }
                       });
                     },
                   ),
                   _buildRadioTile(
                     title: 'Call Back',
                     value: 'Call Back',
-                    groupValue: tempFilter,
+                    groupValue: _selectedFilter,
                     onChanged: (value) {
-                      setState(() {
-                        tempFilter = value;
+                      setState(() async {
+                        _selectedFilter = value;
+                        var res = await Provider.of<DashboardProvider>(context, listen: false).fetchDashBoardDetails(_selectedFilter??"");
+                        if(res==true){
+                          context.pop();
+                        }
                       });
                     },
                   ),
                   _buildRadioTile(
                     title: 'Not Lifting',
                     value: 'Not Lifting',
-                    groupValue: tempFilter,
+                    groupValue: _selectedFilter,
                     onChanged: (value) {
-                      setState(() {
-                        tempFilter = value;
+                      setState(() async {
+                        _selectedFilter = value;
+                        var res = await Provider.of<DashboardProvider>(context, listen: false).fetchDashBoardDetails(_selectedFilter??"");
+                        if(res==true){
+                          context.pop();
+                        }
                       });
                     },
                   ),
@@ -2584,10 +2613,12 @@ class _HomescreenState extends State<Homescreen> {
     required ValueChanged<String?> onChanged,
   }) {
     return RadioListTile<String>(
-      title: Text(title, style: TextStyle(fontSize: 16,
-          color: Colors.black87,
-          fontWeight: FontWeight.w400,
-          fontFamily: "Poppins")),
+      title: Text(title,
+          style: TextStyle(
+              fontSize: 16,
+              color: Colors.black87,
+              fontWeight: FontWeight.w400,
+              fontFamily: "Poppins")),
       value: value,
       groupValue: groupValue,
       onChanged: onChanged,
@@ -2604,8 +2635,8 @@ class _HomescreenState extends State<Homescreen> {
         return Dialog(
           elevation: 4.0,
           insetPadding: EdgeInsets.symmetric(horizontal: 14.0),
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16.0)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
           child: SizedBox(
             width: 300.0,
             height: 200.0,
@@ -2625,8 +2656,8 @@ class _HomescreenState extends State<Homescreen> {
                       shape: BoxShape.circle,
                       color: Colors.red.shade100,
                     ),
-                    child: Icon(Icons.power_settings_new, size: 40.0,
-                        color: Colors.red),
+                    child: Icon(Icons.power_settings_new,
+                        size: 40.0, color: Colors.red),
                   ),
                 ),
                 Positioned.fill(
@@ -2639,7 +2670,8 @@ class _HomescreenState extends State<Homescreen> {
                         SizedBox(height: 15.0),
                         Text(
                           "Logout",
-                          style: TextStyle(fontSize: 24.0,
+                          style: TextStyle(
+                              fontSize: 24.0,
                               fontWeight: FontWeight.w700,
                               color: primaryColor),
                         ),
@@ -2647,8 +2679,8 @@ class _HomescreenState extends State<Homescreen> {
                         Text(
                           "Are you sure you want to logout?",
                           textAlign: TextAlign.center,
-                          style: TextStyle(fontSize: 16.0,
-                              color: Colors.black54),
+                          style:
+                              TextStyle(fontSize: 16.0, color: Colors.black54),
                         ),
                         SizedBox(height: 20.0),
                         Row(
@@ -2680,8 +2712,9 @@ class _HomescreenState extends State<Homescreen> {
                                   padding: EdgeInsets.symmetric(
                                       horizontal: 20, vertical: 10),
                                 ),
-                                child: Text("Yes", style: TextStyle(
-                                    fontWeight: FontWeight.bold)),
+                                child: Text("Yes",
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold)),
                               ),
                             ),
                           ],
@@ -2699,14 +2732,8 @@ class _HomescreenState extends State<Homescreen> {
   }
 
   Widget _buildShimmerBody() {
-    var w = MediaQuery
-        .of(context)
-        .size
-        .width;
-    var h = MediaQuery
-        .of(context)
-        .size
-        .height;
+    var w = MediaQuery.of(context).size.width;
+    var h = MediaQuery.of(context).size.height;
     return Column(
       children: [
         Padding(
@@ -2773,4 +2800,3 @@ class _HomescreenState extends State<Homescreen> {
     );
   }
 }
-

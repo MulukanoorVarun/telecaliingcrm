@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:telecaliingcrm/screens/AddLeadsScreen.dart';
@@ -10,6 +11,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../Services/UserApi.dart';
 import '../model/ViewInfoModel.dart';
 import '../providers/ConnectivityProviders.dart';
+import '../providers/FollowupProvider.dart';
 import '../services/Shimmers.dart';
 import '../services/otherservices.dart';
 import 'SubscriptionExpiredScreen.dart';
@@ -26,7 +28,6 @@ class LeadInformation extends StatefulWidget {
 class _LeadInformationState extends State<LeadInformation> {
   bool is_loading = true;
 
-
   @override
   void initState() {
     getLeadsInformationApi();
@@ -42,28 +43,18 @@ class _LeadInformationState extends State<LeadInformation> {
         is_loading = false;
         debugPrint("Response: $result");
       } else {
-        Navigator.of(context)
-            .push(PageRouteBuilder(
-          pageBuilder: (context, animation,
-              secondaryAnimation) {
+        Navigator.of(context).push(PageRouteBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) {
             return SubscriptionExpiredScreen();
           },
-          transitionsBuilder: (context,
-              animation,
-              secondaryAnimation,
-              child) {
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
             const begin = Offset(1.0, 0.0);
             const end = Offset.zero;
             const curve = Curves.easeInOut;
-            var tween = Tween(
-                begin: begin, end: end)
-                .chain(CurveTween(
-                curve: curve));
-            var offsetAnimation =
-            animation.drive(tween);
-            return SlideTransition(
-                position: offsetAnimation,
-                child: child);
+            var tween =
+                Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+            var offsetAnimation = animation.drive(tween);
+            return SlideTransition(position: offsetAnimation, child: child);
           },
         ));
         is_loading = false;
@@ -104,293 +95,511 @@ class _LeadInformationState extends State<LeadInformation> {
   Widget build(BuildContext context) {
     var w = MediaQuery.of(context).size.width;
     var h = MediaQuery.of(context).size.height;
+    final followupProvider =
+        Provider.of<FollowupProvider>(context, listen: false);
     return Scaffold(
-            backgroundColor: scaffoldbgColor,
-            appBar: AppBar(
-              title: Text(
-                'Lead Information',
-                style: TextStyle(
-                    fontSize: 22,
-                    fontFamily: "Poppins",
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white),
-              ),
-              backgroundColor: primaryColor,
-              leading: IconButton(
-                icon: Icon(
-                  Icons.arrow_back,
-                  color: Colors.white,
+      backgroundColor: scaffoldbgColor,
+      appBar: AppBar(
+        title: Text(
+          'Lead Information',
+          style: TextStyle(
+              fontSize: 22,
+              fontFamily: "Poppins",
+              fontWeight: FontWeight.w600,
+              color: Colors.white),
+        ),
+        backgroundColor: primaryColor,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back,
+            color: Colors.white,
+          ),
+          onPressed: () {
+            Navigator.pop(context, true);
+          },
+        ),
+      ),
+      body: is_loading
+          ? _buildShimmerList()
+          : Column(
+              children: [
+                SizedBox(
+                  height: 10,
                 ),
-                onPressed: () {
-                  Navigator.pop(context,true);
-                },
-              ),
-            ),
-            body: is_loading
-                ? _buildShimmerList()
-                : Column(
+                container(
+                  context,
+                  margin: EdgeInsets.symmetric(vertical: 5, horizontal: 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SizedBox(
-                        height: 10,
-                      ),
-                      container(
-                        context,
-                        margin:
-                            EdgeInsets.symmetric(vertical: 5, horizontal: 16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(height: 5),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      SizedBox(height: 5),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
                               children: [
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              text(
-                                                  context,
-                                                  leadinfo[0].name != ""
-                                                      ? leadinfo[0].name ?? ""
-                                                      : "Unknown",
-                                                  17,
-                                                  fontWeight: FontWeight.w600),
-                                              text(context,
-                                                  leadinfo[0].number ?? "", 20,
-                                                  fontWeight: FontWeight.w500,
-                                                  color: Color(0xff949494)),
-                                            ],
-                                          ),
-                                          Container(
-                                            padding: EdgeInsets.all(0.0),
-                                            decoration: BoxDecoration(
-                                              color: primaryColor, // background color of the container
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                      10), // rounded corners
-                                            ),
-                                            child: IconButton(
-                                              visualDensity: VisualDensity.compact,
-                                              padding: EdgeInsets.all(0),
-                                              icon: Icon(
-                                                Icons.edit,
-                                                color:
-                                                    Colors.white, // Icon color
-                                              ),
-                                              onPressed: () async {
-                                                // Action when the edit button is pressed
-                                                var res = await Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          UpDateLeadScreen(
-                                                        ID: leadinfo[0]
-                                                                .id
-                                                                .toString() ??
-                                                            "",
-                                                        name:
-                                                            leadinfo[0].name ??
-                                                                "",
-                                                        remarks: leadinfo[0]
-                                                                .remarks ??
-                                                            "",
-                                                      ),
-                                                    ));
-                                                if (res == true) {
-                                                  is_loading = true;
-                                                  getLeadsInformationApi();
-                                                }
-                                              },
-                                              tooltip: 'Edit',
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      Divider(
-                                        height: 1.8,
-                                        thickness: 0.8,
-                                        color: Colors.black.withOpacity(0.25),
-                                      ),
-                                      SizedBox(height: 5),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          text(
-                                              context,
-                                              "Created on\n${formatDate(leadinfo[0].dateAdded ?? "")}",
-                                              16,
-                                              fontWeight: FontWeight.w400,
-                                              color: Color(0xff949494),
-                                              textAlign: TextAlign.start),
-                                          if (leadinfo[0].followUpDate !=
-                                              null) ...[
-                                            text(
-                                                context,
-                                                "Next Followup\n${formatDate(leadinfo[0].followUpDate ?? "")}",
-                                                16,
-                                                fontWeight: FontWeight.w400,
-                                                color: Color(0xff949494),
-                                                textAlign: TextAlign.end),
-                                          ]
-                                        ],
-                                      ),
-                                      SizedBox(
-                                        height: 5,
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          text(context, "Remarks", 16,
-                                              fontWeight: FontWeight.w500,
-                                              color: Colors.black),
-                                          container(context,
-                                              colors: (leadinfo[0]
-                                                  .stageName
-                                                  ?.stageName ==
-                                                  "Cold")
-                                                  ? coldbgColor
-                                                  : (leadinfo[0]
-                                                  .stageName
-                                                  ?.stageName ==
-                                                  "Hot")
-                                                  ? Color(
-                                                  0xffFFA89C)
-                                                  : Color(
-                                                  0xff95F8B6),
-                                              borderRadius: BorderRadius.all(
-                                                  Radius.circular(5)),
-                                              padding: EdgeInsets.symmetric(
-                                                  vertical: 2, horizontal: 10),
-                                              margin: EdgeInsets.only(bottom: 0, left: 0),
-                                              child: text(
-                                                  context,
-                                                  leadinfo[0]
-                                                          .stageName
-                                                          ?.stageName ??
-                                                      "",
-                                                  14,
-                                                  color: color11)),
-                                        ],
-                                      ),
-                                      SizedBox(
-                                        height: 2,
-                                      ),
-                                      text(
-                                          context,
-                                          leadinfo[0].remarks != null
-                                              ? leadinfo[0].remarks ?? ""
-                                              : "No remarks found",
-                                          16,
-                                          fontWeight: FontWeight.w400,
-                                          textAlign: TextAlign.start,
-                                          color: Color(0xff736D6D)),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            )
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      container(context,
-                          w: w,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              text(context, "Quick Connect", 18,
-                                  fontWeight: FontWeight.w500),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 20.0),
-                                child: Row(
+                                Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
-                                    // Call Icon
-                                    Column(
-                                      children: [
-                                        GestureDetector(
-                                          onTap: () async {
-                                            await FlutterPhoneDirectCaller
-                                                .callNumber(
-                                                    leadinfo[0].number ?? "");
-                                          },
-                                          child: Image(
-                                            image:
-                                                AssetImage("assets/call.png"),
-                                            color: primaryColor,
-                                            width: 25,
-                                            height: 25,
-                                          ),
-                                        ),
-                                        Text("Call",
-                                            style: TextStyle(fontSize: 14))
-                                      ],
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          text(
+                                              context,
+                                              leadinfo[0].name != ""
+                                                  ? leadinfo[0].name ?? ""
+                                                  : "Unknown",
+                                              17,
+                                              fontWeight: FontWeight.w600),
+                                          text(context, leadinfo[0].number ?? "",
+                                              17,
+                                              fontWeight: FontWeight.w500,
+                                              color: Color(0xff949494)),
+                                        ],
+                                      ),
                                     ),
-                                    // SMS Icon
-                                    Column(
-                                      children: [
-                                        GestureDetector(
-                                          onTap: () => launchSMS(leadinfo[0]
-                                                  .number ??
-                                              ""), // Replace with actual phone number
-                                          child: Image(
-                                            image: AssetImage("assets/sms.png"),
-                                            color: primaryColor,
-                                            width: 25,
-                                            height: 25,
+                                    SizedBox(
+                                      width: 35, // Square size
+                                      height: 35,
+                                      child: FilledButton(
+                                        style: FilledButton.styleFrom(
+                                          backgroundColor: primaryColor,
+                                          padding: EdgeInsets.zero,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(8),
                                           ),
+                                          visualDensity: VisualDensity.compact,
                                         ),
-                                        Text("SMS",
-                                            style: TextStyle(fontSize: 14))
-                                      ],
+                                        onPressed: () {
+                                          context.push(
+                                              "/update_lead?id=${leadinfo[0].id}&name=${leadinfo[0].name}&remarks=${leadinfo[0].remarks}");
+                                        },
+                                        child: const Icon(
+                                          Icons.edit,
+                                          color: Colors.white,
+                                          size: 20,
+                                        ),
+                                      ),
                                     ),
-                                    // WhatsApp Icon
-                                    Column(
-                                      children: [
-                                        GestureDetector(
-                                          onTap: () => launchWhatsApp(
-                                              leadinfo[0].number ?? "",
-                                              'Hello!'), // Replace with actual phone number and message
-                                          child: Image(
-                                            image: AssetImage(
-                                                "assets/whatsapp.png"),
-                                            color: primaryColor,
-                                            width: 25,
-                                            height: 25,
+                                    SizedBox(width: 10,),
+                                    FilledButton(
+                                        style: FilledButton.styleFrom(
+                                          backgroundColor: primaryColor,
+                                          padding: EdgeInsets.zero,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(8),
                                           ),
+                                          visualDensity: VisualDensity.compact,
                                         ),
-                                        Text("Whatsapp",
-                                            style: TextStyle(fontSize: 14))
-                                      ],
-                                    ),
+                                        onPressed: () {
+                                          context.push(
+                                              "/lost_lead?id=${leadinfo[0].id}&name=${leadinfo[0].name}&remarks=${leadinfo[0].remarks}");
+                                        },
+                                        child: const Text(
+                                          "Lost",
+                                          style:
+                                              TextStyle(fontFamily: "Poppins"),
+                                        )),
                                   ],
                                 ),
-                              )
-                            ],
-                          ))
+                                Divider(
+                                  height: 1.8,
+                                  thickness: 0.8,
+                                  color: Colors.black.withOpacity(0.25),
+                                ),
+                                SizedBox(height: 5),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    text(
+                                        context,
+                                        "Created on\n${formatDate(leadinfo[0].dateAdded ?? "")}",
+                                        16,
+                                        fontWeight: FontWeight.w400,
+                                        color: Color(0xff949494),
+                                        textAlign: TextAlign.start),
+                                    if (leadinfo[0].followUpDate != null) ...[
+                                      text(
+                                          context,
+                                          "Next Followup\n${formatDate(leadinfo[0].followUpDate ?? "")}",
+                                          16,
+                                          fontWeight: FontWeight.w400,
+                                          color: Color(0xff949494),
+                                          textAlign: TextAlign.end),
+                                    ]
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 5,
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    text(context, "Remarks", 16,
+                                        fontWeight: FontWeight.w500,
+                                        color: Colors.black),
+                                    container(context,
+                                        colors:
+                                            (leadinfo[0].stageName?.stageName ==
+                                                    "Cold")
+                                                ? coldbgColor
+                                                : (leadinfo[0]
+                                                            .stageName
+                                                            ?.stageName ==
+                                                        "Hot")
+                                                    ? Color(0xffFFA89C)
+                                                    : Color(0xff95F8B6),
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(5)),
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 2, horizontal: 10),
+                                        margin:
+                                            EdgeInsets.only(bottom: 0, left: 0),
+                                        child: text(
+                                            context,
+                                            leadinfo[0].stageName?.stageName ??
+                                                "",
+                                            14,
+                                            color: color11)),
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 2,
+                                ),
+                                text(
+                                    context,
+                                    leadinfo[0].remarks != null
+                                        ? leadinfo[0].remarks ?? ""
+                                        : "No remarks found",
+                                    16,
+                                    fontWeight: FontWeight.w400,
+                                    textAlign: TextAlign.start,
+                                    color: Color(0xff736D6D)),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ],
                   ),
-          );
+                ),
+                container(context,
+                    w: w,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        text(context, "Quick Connect", 18,
+                            fontWeight: FontWeight.w500),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              // Call Icon
+                              Column(
+                                children: [
+                                  GestureDetector(
+                                    onTap: () async {
+                                      await FlutterPhoneDirectCaller.callNumber(
+                                          leadinfo[0].number ?? "");
+                                    },
+                                    child: Image(
+                                      image: AssetImage("assets/call.png"),
+                                      color: primaryColor,
+                                      width: 25,
+                                      height: 25,
+                                    ),
+                                  ),
+                                  Text("Call", style: TextStyle(fontSize: 14))
+                                ],
+                              ),
+                              // SMS Icon
+                              Column(
+                                children: [
+                                  GestureDetector(
+                                    onTap: () => launchSMS(leadinfo[0].number ??
+                                        ""), // Replace with actual phone number
+                                    child: Image(
+                                      image: AssetImage("assets/sms.png"),
+                                      color: primaryColor,
+                                      width: 25,
+                                      height: 25,
+                                    ),
+                                  ),
+                                  Text("SMS", style: TextStyle(fontSize: 14))
+                                ],
+                              ),
+                              // WhatsApp Icon
+                              Column(
+                                children: [
+                                  GestureDetector(
+                                    onTap: () => launchWhatsApp(
+                                        leadinfo[0].number ?? "",
+                                        'Hello!'), // Replace with actual phone number and message
+                                    child: Image(
+                                      image: AssetImage("assets/whatsapp.png"),
+                                      color: primaryColor,
+                                      width: 25,
+                                      height: 25,
+                                    ),
+                                  ),
+                                  Text("Whatsapp",
+                                      style: TextStyle(fontSize: 14))
+                                ],
+                              ),
+                            ],
+                          ),
+                        )
+                      ],
+                    )),
+                Expanded(
+                  child: NotificationListener<ScrollNotification>(
+                    onNotification: (ScrollNotification scrollInfo) {
+                      if (!followupProvider.isLoading &&
+                          scrollInfo.metrics.pixels ==
+                              scrollInfo.metrics.maxScrollExtent) {
+                        if (followupProvider.nextPage) {
+                          followupProvider.fetchMoreFollowUpList("Open");
+                        }
+                        return true;
+                      }
+                      return false;
+                    },
+                    child: CustomScrollView(
+                      slivers: [
+                        SliverList(
+                          delegate: SliverChildBuilderDelegate(
+                            (context, index) {
+                              final followup_List =
+                                  followupProvider.followupList[index];
+                              return container(
+                                context,
+                                margin: EdgeInsets.symmetric(
+                                    vertical: 5, horizontal: 16),
+                                child: Column(
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        text(
+                                            context,
+                                            '${followup_List.leadType?.number ?? ""}',
+                                            20),
+                                        text(
+                                            context,
+                                            "Followup: ${formatDate(followup_List.followupDate ?? "")}",
+                                            15),
+                                      ],
+                                    ),
+                                    Divider(
+                                      height: 1.8,
+                                      thickness: 0.8,
+                                      color: Colors.black.withOpacity(0.25),
+                                    ),
+                                    SizedBox(height: 5),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            children: [
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  container(context,
+                                                      colors: (followup_List
+                                                                  .leadType
+                                                                  ?.stageName
+                                                                  ?.stageName ==
+                                                              "Cold")
+                                                          ? coldbgColor
+                                                          : (followup_List.leadType?.stageName?.stageName ==
+                                                                  "Hot")
+                                                              ? Color(
+                                                                  0xffFFA89C)
+                                                              : Color(
+                                                                  0xff95F8B6),
+                                                      borderRadius: BorderRadius.all(
+                                                          Radius.circular(5)),
+                                                      padding: EdgeInsets.symmetric(
+                                                          vertical: 2,
+                                                          horizontal: 10),
+                                                      margin: EdgeInsets.only(
+                                                          bottom: 0, left: 0),
+                                                      child: text(
+                                                          context,
+                                                          followup_List
+                                                                  .leadType
+                                                                  ?.stageName
+                                                                  ?.stageName ??
+                                                              "",
+                                                          14,
+                                                          color: color11)),
+                                                  // SizedBox(
+                                                  //   width: 35,
+                                                  // ),
+                                                  InkWell(
+                                                    onTap: () {
+                                                      context.push(
+                                                          "/lead_information?ID=${followup_List.leadId}");
+                                                    },
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              8.0),
+                                                      child: text(context,
+                                                          "View Info>", 14,
+                                                          color: primaryColor,
+                                                          textdecoration:
+                                                              TextDecoration
+                                                                  .underline,
+                                                          decorationcolor:
+                                                              primaryColor),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              text(context,
+                                                  '${followup_List.name}', 18),
+                                              Text.rich(
+                                                TextSpan(
+                                                  children: [
+                                                    TextSpan(
+                                                        text: 'Remarks : ',
+                                                        style: TextStyle(
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            fontFamily:
+                                                                "Poppins")),
+                                                    TextSpan(
+                                                        text: followup_List
+                                                                    .remarks !=
+                                                                null
+                                                            ? '${followup_List.remarks}'
+                                                            : "NA",
+                                                        style: TextStyle(
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .normal)),
+                                                  ],
+                                                ),
+                                                maxLines: 3,
+                                                textAlign: TextAlign.start,
+                                                overflow: TextOverflow
+                                                    .ellipsis, // Optional, to handle text overflow
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                        Column(
+                                          children: [
+                                            InkWell(
+                                              onTap: () async {
+                                                await FlutterPhoneDirectCaller
+                                                    .callNumber(followup_List
+                                                            .phone
+                                                            .toString() ??
+                                                        "");
+                                              },
+                                              child: container(context,
+                                                  colors: primaryColor,
+                                                  padding: EdgeInsets.all(10),
+                                                  margin: EdgeInsets.symmetric(
+                                                      vertical: 3,
+                                                      horizontal: 3),
+                                                  child: Image(
+                                                    image: AssetImage(
+                                                        "assets/call.png"),
+                                                    width: 30,
+                                                    height: 30,
+                                                  )),
+                                            ),
+                                            GestureDetector(
+                                              onTap: () {
+                                                launchWhatsApp(
+                                                    followup_List.phone
+                                                            .toString() ??
+                                                        "",
+                                                    "Hello!");
+                                              },
+                                              child: container(context,
+                                                  colors: primaryColor,
+                                                  padding: EdgeInsets.all(10),
+                                                  margin: EdgeInsets.symmetric(
+                                                      vertical: 3,
+                                                      horizontal: 3),
+                                                  child: Image(
+                                                    image: AssetImage(
+                                                        "assets/whatsapp.png"),
+                                                    width: 30,
+                                                    height: 30,
+                                                  )),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    )
+                                  ],
+                                ),
+                              );
+                              ;
+                            },
+                            childCount: followupProvider.followupList.length,
+                          ),
+                        ),
+                        SliverPadding(
+                          padding: EdgeInsets.only(bottom: 30),
+                          sliver: SliverToBoxAdapter(
+                            child: SizedBox(
+                              height: 10,
+                            ),
+                          ),
+                        ),
+                        if (followupProvider.pageLoading)
+                          SliverToBoxAdapter(
+                            child: Align(
+                                alignment: Alignment.center,
+                                child:
+                                    CircularProgressIndicator(strokeWidth: 1)),
+                          ),
+                        SliverPadding(
+                          padding: EdgeInsets.only(bottom: 20),
+                          sliver: SliverToBoxAdapter(
+                            child: SizedBox(
+                              height: 10,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+    );
   }
+
   Widget _buildShimmerList() {
     return ListView.builder(
       itemCount: 2, // Adjust the number of shimmer items as needed
@@ -398,7 +607,7 @@ class _LeadInformationState extends State<LeadInformation> {
       physics: const AlwaysScrollableScrollPhysics(),
       itemBuilder: (context, index) {
         return Container(
-          margin: const EdgeInsets.symmetric(vertical: 8,horizontal: 16),
+          margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: Colors.white,

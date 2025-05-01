@@ -10,15 +10,17 @@ class DashboardProvider with ChangeNotifier {
   String? pendingCalls;
   String? leadCount;
   String? followup_count;
-  bool _isLoading = true;
+  bool _isLoading = false;
 
   // Getter for userDetails that ensures null safety
   List<MobileNumbers>? get phoneNumbers => phone_numbers;
   bool get isLoading => _isLoading;
 
   // Method to fetch user details asynchronously
-  Future<bool?> fetchDashBoardDetails() async {
+  Future<bool?> fetchDashBoardDetails(String filter) async {
     try {
+      _isLoading = true;
+      notifyListeners();
       // Fetching user details from the API
       var response = await Userapi.dashboardApi();
       if (response?.status==true) {
@@ -43,7 +45,6 @@ class DashboardProvider with ChangeNotifier {
       throw Exception('Failed to dashboard details: $e');
     }
   }
-
 
 }
 

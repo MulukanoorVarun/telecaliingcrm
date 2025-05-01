@@ -31,6 +31,7 @@ Text text(
       decoration: textdecoration,
       decorationColor: decorationcolor,
       overflow: overflow,
+      letterSpacing: 0,
       fontFamily:
           fontfamily ?? "Poppins", // Ensure the font is added in pubspec.yaml
     ),

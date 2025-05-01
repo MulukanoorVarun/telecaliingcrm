@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 
 import '../Services/UserApi.dart';
+import '../model/FollowUpTypesModel.dart';
 import '../model/GetFollowUpModel.dart';
 import '../screens/SubscriptionExpiredScreen.dart';
 
 class FollowupProvider extends ChangeNotifier {
   bool _isLoading = true;
   List<FollowUp> _followuplist = [];
+  List<FollowUpTypes> _followuptypes = [];
 
   bool _pageLoading = false;
   bool get pageLoading => _pageLoading;
@@ -19,33 +21,37 @@ class FollowupProvider extends ChangeNotifier {
 
   bool get isLoading => _isLoading;
   List<FollowUp> get followupList => _followuplist;
+  List<FollowUpTypes> get followupTypes => _followuptypes;
 
-  Future<void> getFollowUpApi() async {
+  Future<bool> getFollowUpApi(String filter) async {
     _isLoading = true;
     _currentPage = 1;
     notifyListeners();
     try {
-      var result = await Userapi.getFollowup(_currentPage);
+      var result = await Userapi.getFollowup(_currentPage, filter);
       if (result?.status == true) {
         _followuplist = result?.data?.followUps ?? [];
-        if(result?.data?.nextPageUrl!=null){
+        if (result?.data?.nextPageUrl != null) {
           _nextPage = true;
-        }else{
+        } else {
           _nextPage = false;
         }
+        return true;
       } else {
         _followuplist = [];
         debugPrint("Failed to update the call status.");
+        return false;
       }
     } catch (error) {
       debugPrint("Error fetching follow-up bloc: $error");
+      return false;
     } finally {
       _isLoading = false;
       notifyListeners();
     }
   }
 
-  Future<void> fetchMoreFollowUpList() async {
+  Future<void> fetchMoreFollowUpList(String filter) async {
     // Prevent redundant calls if no next page or a call is already in progress
     if (!_nextPage || _pageLoading) {
       debugPrint("No more pages to fetch or another fetch is in progress.");
@@ -57,7 +63,8 @@ class FollowupProvider extends ChangeNotifier {
 
     try {
       debugPrint("Fetching page $_currentPage...");
-      var result = await Userapi.getFollowup(_currentPage + 1); // Increment the page for API call
+      var result = await Userapi.getFollowup(
+          _currentPage + 1, filter); // Increment the page for API call
 
       if (result?.status == true) {
         _currentPage++; // Increment the current page only after a successful fetch
@@ -72,28 +79,28 @@ class FollowupProvider extends ChangeNotifier {
             : "No more pages to fetch.");
       } else {
         // Handle API failure, e.g., show a subscription expired page
-        debugPrint("API returned failure status, redirecting to subscription screen...");
+        debugPrint(
+            "API returned failure status, redirecting to subscription screen...");
         _followuplist = []; // Clear the list on failure
-        _nextPage = false;  // Stop fetching more
+        _nextPage = false; // Stop fetching more
       }
     } catch (error) {
       // Catch and log the error
       debugPrint("Error fetching follow-up bloc: $error");
     } finally {
       _pageLoading = false; // Reset the loading state
-      notifyListeners();    // Notify listeners of the state change
+      notifyListeners(); // Notify listeners of the state change
     }
   }
 
-
-  Future<bool?> AddFollowUp(id,name,date,remaks ) async {
+  Future<bool?> AddFollowUp(id, name, date, remaks) async {
     try {
-      final res = await Userapi.postAddFollowUp(id,name,date,remaks);
-      if (res!= null) {
-        if(res["status"]==true){
-          getFollowUpApi();
+      final res = await Userapi.postAddFollowUp(id, name, date, remaks);
+      if (res != null) {
+        if (res["status"] == true) {
+          getFollowUpApi("Open");
           return true;
-        }else{
+        } else {
           return false;
         }
       } else {
@@ -103,8 +110,46 @@ class FollowupProvider extends ChangeNotifier {
       // Handle any errors
       debugPrint("Error occurred while adding Follow-up: $e");
     }
+    return false;
   }
 
+  Future<bool?> deleteFollowUp(id) async {
+    try {
+      final res = await Userapi.deleteFollowUp(id);
+      if (res != null) {
+        if (res["status"] == true) {
+          getFollowUpApi("Open");
+          return true;
+        } else {
+          return false;
+        }
+      } else {
+        debugPrint("Failed to add Follow-up: Response is null.");
+      }
+    } catch (e) {
+      // Handle any errors
+      debugPrint("Error occurred while adding Follow-up: $e");
+      return false;
+    }
+    return false;
+  }
 
-
+  Future<bool> getFollowUpTypes() async {
+    try {
+      var result = await Userapi.getFollowupTypes();
+      if (result?.status == true) {
+        _followuptypes = result?.followuptypes ?? [];
+        return true;
+      } else {
+        _followuptypes = [];
+        debugPrint("Failed to update the call status.");
+        return false;
+      }
+    } catch (error) {
+      debugPrint("Error fetching getFollowUpTypes: $error");
+      return false;
+    } finally {
+      notifyListeners();
+    }
+  }
 }

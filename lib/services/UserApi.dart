@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:telecaliingcrm/model/CallHistoryModel.dart';
 import 'package:telecaliingcrm/model/DashBoardModel.dart';
+import 'package:telecaliingcrm/model/FollowUpTypesModel.dart';
 import 'package:telecaliingcrm/model/LeadsModel.dart';
 import 'package:telecaliingcrm/model/LeadeBoardModel.dart';
 import 'package:telecaliingcrm/model/UserDetailsModel.dart';
@@ -21,7 +22,8 @@ class Userapi {
   static final Logger logger = Logger();
   static final Dio _dio = Dio(
     BaseOptions(
-      baseUrl: "https://api.telecallingcrm.com",
+      baseUrl: "http://192.168.80.77:8000",
+      // baseUrl: "https://api.telecallingcrm.com",
       connectTimeout: const Duration(seconds: 60),
       receiveTimeout: const Duration(seconds: 60),
       headers: {"Content-Type": "application/json"},
@@ -179,7 +181,7 @@ class Userapi {
     try {
       final token = await AuthService.getAccessToken();
       logger.d("[dashboardApi] Using token: $token");
-      final response = await post("/api/dashboard");
+      final response = await get("/api/dashboard");
       if (response.statusCode == 200 && response.data != null) {
         logger.d("dashboardApi response: ${response.data}");
         return DashBoardModel.fromJson(response.data);
@@ -366,6 +368,21 @@ class Userapi {
     }
   }
 
+  static Future<Map<String, dynamic>?> deleteFollowUp(String Id) async {
+    try {
+      final response = await _dio.delete("/api/add-follow-up/${Id}");
+      if (response.data == null || response.data.isEmpty) {
+        debugPrint("Empty response body.");
+        return null;
+      }
+      debugPrint("deleteFollowUp successful: ${response.data}");
+      return response.data;
+    } catch (e) {
+      debugPrint("Error occurred: $e");
+      return null;
+    }
+  }
+
   static Future<Map<String, dynamic>?> postUpdateLeads(
       String name,
       String leadId,
@@ -399,7 +416,6 @@ class Userapi {
   static Future<ViewInfoModel?> getViewInfo(String id) async {
     try {
       final response = await get("/api/view-info/$id");
-
       if (response.statusCode == 200) {
         debugPrint("getViewInfo response: ${response.data}");
         return ViewInfoModel.fromJson(response.data);
@@ -412,11 +428,11 @@ class Userapi {
     }
   }
 
-  static Future<GetFollowUpModel?> getFollowup(int page) async {
+  static Future<GetFollowUpModel?> getFollowup(int page, String filter) async {
     try {
       final response = await get(
         "/api/follow_up_list",
-        queryParameters: {"page": page.toString()},
+        queryParameters: {"page": page.toString(), "status": filter},
       );
 
       if (response.statusCode == 200) {
@@ -427,6 +443,24 @@ class Userapi {
       return null;
     } catch (e) {
       debugPrint("Error occurred in getFollowup: $e");
+      return null;
+    }
+  }
+
+  static Future<FollowUpTypesModel?> getFollowupTypes() async {
+    try {
+      final response = await get(
+        "/api/get-follow-up-types"
+      );
+
+      if (response.statusCode == 200) {
+        debugPrint("getFollowupTypes response: ${response.data}");
+        return FollowUpTypesModel.fromJson(response.data);
+      }
+      debugPrint("Request failed with status: ${response.statusCode}");
+      return null;
+    } catch (e) {
+      debugPrint("Error occurred in getFollowupTypes: $e");
       return null;
     }
   }

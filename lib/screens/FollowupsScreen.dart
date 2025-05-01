@@ -20,6 +20,7 @@ class FollowupsScreen extends StatefulWidget {
 }
 
 class _FollowupsScreenState extends State<FollowupsScreen> {
+  String _selectedFilter = "open";
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -30,7 +31,7 @@ class _FollowupsScreenState extends State<FollowupsScreen> {
 
   Future<void> _fetchFollowups() async {
     final leadsProvider = Provider.of<FollowupProvider>(context, listen: false);
-    leadsProvider.getFollowUpApi();
+    leadsProvider.getFollowUpApi(_selectedFilter);
   }
 
   String formatDate(String dateTime) {
@@ -79,6 +80,16 @@ class _FollowupsScreenState extends State<FollowupsScreen> {
               context.pop();
             },
           ),
+          actions: [
+            IconButton(
+              visualDensity: VisualDensity.compact,
+              padding: EdgeInsets.all(0),
+              onPressed: () {
+                _showFilterBottomSheet(context);
+              },
+              icon: Icon(Icons.filter_alt_sharp, color: Colors.white),
+            ),
+          ],
         ),
         body: Consumer<FollowupProvider>(
             builder: (context, followupProvider, child) {
@@ -97,7 +108,8 @@ class _FollowupsScreenState extends State<FollowupsScreen> {
                           scrollInfo.metrics.pixels ==
                               scrollInfo.metrics.maxScrollExtent) {
                         if (followupProvider.nextPage) {
-                          followupProvider.fetchMoreFollowUpList();
+                          followupProvider
+                              .fetchMoreFollowUpList(_selectedFilter);
                         }
                         return true;
                       }
@@ -181,13 +193,10 @@ class _FollowupsScreenState extends State<FollowupsScreen> {
                                                               "",
                                                           14,
                                                           color: color11)),
-                                                  // SizedBox(
-                                                  //   width: 35,
-                                                  // ),
                                                   InkWell(
                                                     onTap: () {
-                                                      context.push("/lead_information?ID=${followup_List
-                                                          .leadId}");
+                                                      context.push(
+                                                          "/followup_information?leadId=${followup_List.leadId}&followupId=${followup_List.id}");
                                                     },
                                                     child: Padding(
                                                       padding:
@@ -343,6 +352,121 @@ class _FollowupsScreenState extends State<FollowupsScreen> {
           }
         }),
       ),
+    );
+  }
+
+  void _showFilterBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      backgroundColor: Colors.white,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return Container(
+              padding: EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(
+                    child: Container(
+                      width: 40,
+                      height: 5,
+                      margin: EdgeInsets.only(bottom: 16),
+                      decoration: BoxDecoration(
+                        color: Colors.grey[300],
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                  ),
+                  Text(
+                    'Filter by',
+                    style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black87,
+                        fontFamily: "Poppins"),
+                  ),
+                  SizedBox(height: 15),
+                  _buildRadioTile(
+                    title: 'Open',
+                    value: 'open',
+                    groupValue: _selectedFilter,
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedFilter = value ?? "";
+                      });
+                    },
+                  ),
+                  _buildRadioTile(
+                    title: 'Pending',
+                    value: 'pending',
+                    groupValue: _selectedFilter,
+                    onChanged: (value) {
+                      setState(() async {
+                        _selectedFilter = value ?? "";
+                        var res = await Provider.of<FollowupProvider>(context,
+                                listen: false)
+                            .getFollowUpApi(_selectedFilter ?? "");
+                        if (res == true) {
+                          context.pop();
+                        }
+                      });
+                    },
+                  ),
+                  _buildRadioTile(
+                    title: 'Completed',
+                    value: 'completed',
+                    groupValue: _selectedFilter,
+                    onChanged: (value) {
+                      setState(() async {
+                        _selectedFilter = value ?? "";
+                        var res = await Provider.of<FollowupProvider>(context,
+                                listen: false)
+                            .getFollowUpApi(_selectedFilter ?? "");
+                        if (res == true) {
+                          context.pop();
+                        }
+                      });
+                    },
+                  ),
+                  SizedBox(height: 24),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildRadioTile({
+    required String title,
+    required String value,
+    required String? groupValue,
+    required ValueChanged<String?> onChanged,
+  }) {
+    return RadioListTile<String>(
+      title: Text(title,
+          style: TextStyle(
+              fontSize: 16,
+              color: Colors.black87,
+              fontWeight: FontWeight.w400,
+              fontFamily: "Poppins")),
+      value: value,
+      groupValue: groupValue,
+      onChanged: onChanged,
+      activeColor: primaryColor,
+      contentPadding: EdgeInsets.symmetric(horizontal: 8),
+      visualDensity: VisualDensity.compact,
     );
   }
 
