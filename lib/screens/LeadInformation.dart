@@ -157,8 +157,8 @@ class _LeadInformationState extends State<LeadInformation> {
                                                   : "Unknown",
                                               17,
                                               fontWeight: FontWeight.w600),
-                                          text(context, leadinfo[0].number ?? "",
-                                              17,
+                                          text(context,
+                                              leadinfo[0].number.toString(), 17,
                                               fontWeight: FontWeight.w500,
                                               color: Color(0xff949494)),
                                         ],
@@ -188,7 +188,9 @@ class _LeadInformationState extends State<LeadInformation> {
                                         ),
                                       ),
                                     ),
-                                    SizedBox(width: 10,),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
                                     FilledButton(
                                         style: FilledButton.styleFrom(
                                           backgroundColor: primaryColor,
@@ -314,7 +316,7 @@ class _LeadInformationState extends State<LeadInformation> {
                                   GestureDetector(
                                     onTap: () async {
                                       await FlutterPhoneDirectCaller.callNumber(
-                                          leadinfo[0].number ?? "");
+                                          leadinfo[0].number.toString());
                                     },
                                     child: Image(
                                       image: AssetImage("assets/call.png"),
@@ -330,8 +332,9 @@ class _LeadInformationState extends State<LeadInformation> {
                               Column(
                                 children: [
                                   GestureDetector(
-                                    onTap: () => launchSMS(leadinfo[0].number ??
-                                        ""), // Replace with actual phone number
+                                    onTap: () => launchSMS(leadinfo[0]
+                                        .number
+                                        .toString()), // Replace with actual phone number
                                     child: Image(
                                       image: AssetImage("assets/sms.png"),
                                       color: primaryColor,
@@ -347,7 +350,7 @@ class _LeadInformationState extends State<LeadInformation> {
                                 children: [
                                   GestureDetector(
                                     onTap: () => launchWhatsApp(
-                                        leadinfo[0].number ?? "",
+                                        leadinfo[0].number.toString(),
                                         'Hello!'), // Replace with actual phone number and message
                                     child: Image(
                                       image: AssetImage("assets/whatsapp.png"),

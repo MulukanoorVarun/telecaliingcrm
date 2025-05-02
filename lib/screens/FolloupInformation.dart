@@ -139,7 +139,7 @@ class _FollowupInformationState extends State<FollowupInformation> {
                                             : "Unknown",
                                         17,
                                         fontWeight: FontWeight.w600),
-                                    text(context, leadinfo[0].number ?? "",
+                                    text(context, leadinfo[0].number.toString(),
                                         17,
                                         fontWeight: FontWeight.w500,
                                         color: Color(0xff949494)),
@@ -300,7 +300,7 @@ class _FollowupInformationState extends State<FollowupInformation> {
                             GestureDetector(
                               onTap: () async {
                                 await FlutterPhoneDirectCaller.callNumber(
-                                    leadinfo[0].number ?? "");
+                                    leadinfo[0].number.toString());
                               },
                               child: Image(
                                 image: AssetImage("assets/call.png"),
@@ -316,8 +316,7 @@ class _FollowupInformationState extends State<FollowupInformation> {
                         Column(
                           children: [
                             GestureDetector(
-                              onTap: () => launchSMS(leadinfo[0].number ??
-                                  ""), // Replace with actual phone number
+                              onTap: () => launchSMS(leadinfo[0].number.toString()), // Replace with actual phone number
                               child: Image(
                                 image: AssetImage("assets/sms.png"),
                                 color: primaryColor,
@@ -333,7 +332,7 @@ class _FollowupInformationState extends State<FollowupInformation> {
                           children: [
                             GestureDetector(
                               onTap: () => launchWhatsApp(
-                                  leadinfo[0].number ?? "",
+                                  leadinfo[0].number.toString(),
                                   'Hello!'), // Replace with actual phone number and message
                               child: Image(
                                 image: AssetImage("assets/whatsapp.png"),

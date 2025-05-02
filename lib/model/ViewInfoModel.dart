@@ -9,9 +9,9 @@ class ViewInfoModel {
   const ViewInfoModel({this.status, this.data});
 
   factory ViewInfoModel.fromJson(Map<String, dynamic> json) => ViewInfoModel(
-    status: json['status'],
+    status: json['status'] as bool?,
     data: (json['data'] as List<dynamic>?)
-        ?.map((e) => ViewInfo.fromJson(e))
+        ?.map((e) => ViewInfo.fromJson(e as Map<String, dynamic>))
         .toList(),
   );
 
@@ -26,24 +26,37 @@ class ViewInfoModel {
 /// ─────────────────────────────────────────────────────────────────────────────
 class ViewInfo {
   final int? id;
-  final String? number;
+  final int? number; // Changed from String? to int? to match JSON
   final int? staffId;
   final String? dateAdded;
   final String? callStatus;
   final String? calledStatus;
   final String? name;
   final String? followUpDate;
+  final String? serviceType;
+  final String? stageType;
+  final String? industryType;
   final String? remarks;
   final String? dealStatus;
-  final dynamic dealAmount;
+  final String? dealAmount; // Changed from dynamic to String? to match JSON
   final int? totalCalls;
   final String? lastCalledDate;
   final int? leadStageId;
   final String? dealClosureDate;
   final int? callDuration;
-  final int? fId;
+  final int? activeStatus; // Added to match JSON
+  final int? companyId; // Added to match JSON
+  final String? leadStage; // Added to match JSON
+  final String? leadType; // Added to match JSON
+  final String? leadSource; // Added to match JSON
+  final String? leadIndustry; // Added to match JSON
+  final String? email; // Added to match JSON
+  final String? createdAt; // Added to match JSON
+  final String? updatedAt; // Added to match JSON
+  final String? description; // Added to match JSON
   final StageName? stageName;
   final LatestFollowupDetail? latestFollowupDetail;
+  final int? fId; // Kept as it exists in the model but not in this JSON
 
   const ViewInfo({
     this.id,
@@ -54,6 +67,9 @@ class ViewInfo {
     this.calledStatus,
     this.name,
     this.followUpDate,
+    this.serviceType,
+    this.stageType,
+    this.industryType,
     this.remarks,
     this.dealStatus,
     this.dealAmount,
@@ -62,34 +78,59 @@ class ViewInfo {
     this.leadStageId,
     this.dealClosureDate,
     this.callDuration,
-    this.fId,
+    this.activeStatus,
+    this.companyId,
+    this.leadStage,
+    this.leadType,
+    this.leadSource,
+    this.leadIndustry,
+    this.email,
+    this.createdAt,
+    this.updatedAt,
+    this.description,
     this.stageName,
     this.latestFollowupDetail,
+    this.fId,
   });
 
   factory ViewInfo.fromJson(Map<String, dynamic> json) => ViewInfo(
-    id: json['id'],
-    number: json['number'],
-    staffId: json['staff_id'],
-    dateAdded: json['date_added'],
-    callStatus: json['call_status'],
-    calledStatus: json['called_status'],
-    name: json['name'],
-    followUpDate: json['follow_up_date'],
-    remarks: json['remarks'],
-    dealStatus: json['deal_status'],
-    dealAmount: json['deal_amount'],
-    totalCalls: json['total_calls'],
-    lastCalledDate: json['last_called_date'],
-    leadStageId: json['lead_stage_id'],
-    dealClosureDate: json['deal_closure_date'],
-    callDuration: json['call_duration'],
-    fId: json['f_id'],
-    stageName:
-    json['stage_name'] != null ? StageName.fromJson(json['stage_name']) : null,
-    latestFollowupDetail: json['latest_followup_detail'] != null
-        ? LatestFollowupDetail.fromJson(json['latest_followup_detail'])
+    id: json['id'] as int?,
+    number: json['number'] as int?, // Changed to int? to match JSON
+    staffId: json['staff_id'] as int?,
+    dateAdded: json['date_added'] as String?,
+    callStatus: json['call_status'] as String?,
+    calledStatus: json['called_status'] as String?,
+    name: json['name'] as String?,
+    followUpDate: json['follow_up_date'] as String?,
+    serviceType: json['service_type'] as String?,
+    stageType: json['stage_type'] as String?,
+    industryType: json['industry_type'] as String?,
+    remarks: json['remarks'] as String?,
+    dealStatus: json['deal_status'] as String?,
+    dealAmount: json['deal_amount'] as String?, // Changed to String?
+    totalCalls: json['total_calls'] as int?,
+    lastCalledDate: json['last_called_date'] as String?,
+    leadStageId: json['lead_stage_id'] as int?,
+    dealClosureDate: json['deal_closure_date'] as String?,
+    callDuration: json['call_duration'] as int?,
+    activeStatus: json['active_status'] as int?,
+    companyId: json['company_id'] as int?,
+    leadStage: json['lead_stage'] as String?,
+    leadType: json['lead_type'] as String?,
+    leadSource: json['lead_source'] as String?,
+    leadIndustry: json['lead_industry'] as String?,
+    email: json['email'] as String?,
+    createdAt: json['created_at'] as String?,
+    updatedAt: json['updated_at'] as String?,
+    description: json['description'] as String?,
+    stageName: json['stage_name'] != null
+        ? StageName.fromJson(json['stage_name'] as Map<String, dynamic>)
         : null,
+    latestFollowupDetail: json['latest_followup_detail'] != null
+        ? LatestFollowupDetail.fromJson(
+        json['latest_followup_detail'] as Map<String, dynamic>)
+        : null,
+    fId: json['f_id'] as int?,
   );
 
   Map<String, dynamic> toJson() => {
@@ -101,6 +142,9 @@ class ViewInfo {
     'called_status': calledStatus,
     'name': name,
     'follow_up_date': followUpDate,
+    'service_type': serviceType,
+    'stage_type': stageType,
+    'industry_type': industryType,
     'remarks': remarks,
     'deal_status': dealStatus,
     'deal_amount': dealAmount,
@@ -109,10 +153,20 @@ class ViewInfo {
     'lead_stage_id': leadStageId,
     'deal_closure_date': dealClosureDate,
     'call_duration': callDuration,
-    'f_id': fId,
+    'active_status': activeStatus,
+    'company_id': companyId,
+    'lead_stage': leadStage,
+    'lead_type': leadType,
+    'lead_source': leadSource,
+    'lead_industry': leadIndustry,
+    'email': email,
+    'created_at': createdAt,
+    'updated_at': updatedAt,
+    'description': description,
     if (stageName != null) 'stage_name': stageName!.toJson(),
     if (latestFollowupDetail != null)
       'latest_followup_detail': latestFollowupDetail!.toJson(),
+    'f_id': fId,
   };
 }
 
@@ -128,10 +182,10 @@ class StageName {
   const StageName({this.id, this.stageName, this.createdAt, this.createdBy});
 
   factory StageName.fromJson(Map<String, dynamic> json) => StageName(
-    id: json['id'],
-    stageName: json['stage_name'],
-    createdAt: json['created_at'],
-    createdBy: json['created_by'],
+    id: json['id'] as int?,
+    stageName: json['stage_name'] as String?,
+    createdAt: json['created_at'] as String?,
+    createdBy: json['created_by'] as int?,
   );
 
   Map<String, dynamic> toJson() => {
@@ -161,12 +215,12 @@ class LatestFollowupDetail {
 
   factory LatestFollowupDetail.fromJson(Map<String, dynamic> json) =>
       LatestFollowupDetail(
-        id: json['id'],
-        leadId: json['lead_id'],
-        followupDate: json['followup_date'],
-        name: json['name'],
-        remarks: json['remarks'],
-        status: json['status'],
+        id: json['id'] as int?,
+        leadId: json['lead_id'] as int?,
+        followupDate: json['followup_date'] as String?,
+        name: json['name'] as String?,
+        remarks: json['remarks'] as String?,
+        status: json['status'] as int?,
       );
 
   Map<String, dynamic> toJson() => {

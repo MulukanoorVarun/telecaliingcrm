@@ -352,7 +352,7 @@ class _LeadsScreenState extends State<LeadScreen>
                                               ),
                                               text(
                                                 context,
-                                                leads.number ?? "unknown",
+                                                "${leads.number.toString()}",
                                                 20,
                                                 fontWeight: FontWeight.w500,
                                                 color: Color(0xff949494),
@@ -444,9 +444,7 @@ class _LeadsScreenState extends State<LeadScreen>
                                           children: [
                                             InkWell(
                                               onTap: () async {
-                                                await FlutterPhoneDirectCaller
-                                                    .callNumber(
-                                                        leads.number ?? "");
+                                                await FlutterPhoneDirectCaller.callNumber(leads.number.toString());
                                               },
                                               child: container(
                                                 context,

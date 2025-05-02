@@ -83,7 +83,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       var res = await profile_provider.userDetails;
       setState(() {
         if (res != null) {
-          fullnameController.text = res.username ?? "";
+          fullnameController.text = res.name ?? "";
           emailController.text = res.email ?? '';
           profile_image = res.photo ?? "";
           UserID = res.id.toString() ?? "";

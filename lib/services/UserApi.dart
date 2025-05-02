@@ -200,7 +200,7 @@ class Userapi {
 
   static Future<UserDetailsModel?> getUserDetails() async {
     try {
-      final response = await post("/api/profile");
+      final response = await get("/api/profile");
       if (response.statusCode == 200) {
         debugPrint("getUserDetails response: ${response.data}");
         return UserDetailsModel.fromJson(response.data);
@@ -297,9 +297,8 @@ class Userapi {
         return null;
       }
 
-      final response = await post(
-        "/api/get_leader_board",
-        data: {"page": currentPage.toString()},
+      final response = await get(
+        "/api/get_leader_board?page=${currentPage}",
         options: Options(
           headers: {'Authorization': 'Bearer $token'},
         ),

@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../model/FollowUpTypesModel.dart';
+import '../providers/FollowupProvider.dart';
 import '../providers/LeadsProvider.dart';
 import '../utils/ColorConstants.dart';
 import '../utils/ShakeWidget.dart';
@@ -12,7 +13,7 @@ import '../utils/constants.dart';
 class UpdateFollowupScreen extends StatefulWidget {
   final String id;
   final String type;
-  const UpdateFollowupScreen({super.key,required this.id, required this.type});
+  const UpdateFollowupScreen({super.key, required this.id, required this.type});
 
   @override
   State<UpdateFollowupScreen> createState() => _UpdateFollowupScreenState();
@@ -25,6 +26,7 @@ class _UpdateFollowupScreenState extends State<UpdateFollowupScreen> {
   String formattedDate = "";
   String formattedTime = ''; // Initialize as needed
   String? _leadStatus;
+  FollowUpTypes? _selectedFollowUpType;
   String? _leadStage;
   bool _loading = false;
   String _validateFullName = "";
@@ -35,6 +37,9 @@ class _UpdateFollowupScreenState extends State<UpdateFollowupScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<FollowupProvider>(context, listen: false).getFollowUpTypes();
+    });
   }
 
   void _validateFields() {
@@ -43,16 +48,16 @@ class _UpdateFollowupScreenState extends State<UpdateFollowupScreen> {
 
       // Validate Full Name
       _validateFullName =
-      !_nameController.text.contains(RegExp(r"^[a-zA-Z\s]+$"))
-          ? "Please enter a valid name"
-          : "";
+          !_nameController.text.contains(RegExp(r"^[a-zA-Z\s]+$"))
+              ? "Please enter a valid name"
+              : "";
       // Validate Remarks
       _validateRemarks =
-      _remarksController.text.isEmpty ? "Please add some remarks" : "";
+          _remarksController.text.isEmpty ? "Please add some remarks" : "";
 
       // Validate Lead Status
       leadstatusError =
-      (_leadStatus == null) ? "Please select a lead status" : "";
+          (_leadStatus == null) ? "Please select a lead status" : "";
       leadstageError = (_leadStage == null) ? "Please select a lead stage" : "";
 
       // Proceed only if all fields are valid
@@ -166,12 +171,12 @@ class _UpdateFollowupScreenState extends State<UpdateFollowupScreen> {
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(7),
                     borderSide:
-                    const BorderSide(width: 1, color: Color(0xffCDE2FB)),
+                        const BorderSide(width: 1, color: Color(0xffCDE2FB)),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(7),
                     borderSide:
-                    const BorderSide(width: 1, color: Color(0xffCDE2FB)),
+                        const BorderSide(width: 1, color: Color(0xffCDE2FB)),
                   ),
                 ),
               ),
@@ -199,9 +204,7 @@ class _UpdateFollowupScreenState extends State<UpdateFollowupScreen> {
               ],
               // Date Field
               TextFormField(
-                controller: TextEditingController(
-                    text: formattedDate
-                ),
+                controller: TextEditingController(text: formattedDate),
                 decoration: InputDecoration(
                   contentPadding: const EdgeInsets.symmetric(
                     vertical: 0,
@@ -249,9 +252,11 @@ class _UpdateFollowupScreenState extends State<UpdateFollowupScreen> {
                   if (picked != null) {
                     setState(() {
                       // Strip the time part by creating a new DateTime with only the date
-                      DateTime _selectedDate = DateTime(picked.year, picked.month, picked.day);
+                      DateTime _selectedDate =
+                          DateTime(picked.year, picked.month, picked.day);
                       // Format the date as a string (yyyy-MM-dd)
-                      formattedDate = DateFormat('yyyy-MM-dd').format(_selectedDate);
+                      formattedDate =
+                          DateFormat('yyyy-MM-dd').format(_selectedDate);
                       // Print the formatted date
                       debugPrint("Formatted Date: $formattedDate");
                     });
@@ -267,7 +272,7 @@ class _UpdateFollowupScreenState extends State<UpdateFollowupScreen> {
               const SizedBox(height: 16),
               TextFormField(
                 controller: TextEditingController(
-                  text: formattedTime, // Assume formattedTime is a String variable like 'HH:mm'
+                  text: formattedTime,
                 ),
                 decoration: InputDecoration(
                   contentPadding: const EdgeInsets.symmetric(
@@ -314,7 +319,8 @@ class _UpdateFollowupScreenState extends State<UpdateFollowupScreen> {
                   if (picked != null) {
                     setState(() {
                       // Format the time as a string (HH:mm)
-                      formattedTime = picked.format(context); // e.g., '2:30 PM' or '14:30' based on device settings
+                      formattedTime = picked.format(
+                          context); // e.g., '2:30 PM' or '14:30' based on device settings
                       // Optionally, force 24-hour format
                       // formattedTime = '${picked.hour.toString().padLeft(2, '0')}:${picked.minute.toString().padLeft(2, '0')}';
                       debugPrint("Formatted Time: $formattedTime");
@@ -329,37 +335,39 @@ class _UpdateFollowupScreenState extends State<UpdateFollowupScreen> {
                 },
               ),
               const SizedBox(height: 16),
-              // DropdownSearch<FollowUpTypes>(
-              //   popupProps: PopupProps.menu(
-              //     showSearchBox: true, // Enable search
-              //     searchFieldProps: TextFieldProps(
-              //       decoration: InputDecoration(
-              //         labelText: 'Search Follow-Up Type',
-              //         border: OutlineInputBorder(),
-              //         prefixIcon: Icon(Icons.search),
-              //       ),
-              //     ),
-              //     fit: FlexFit.loose,
-              //     constraints: BoxConstraints(maxHeight: 300),
-              //   ),
-              //   items: followuptypes ?? [],
-              //   itemAsString: (FollowUpTypes? type) => type?.type ?? 'Unknown',
-              //   onChanged: (FollowUpTypes? newValue) {
-              //     setState(() {
-              //       _selectedFollowUpType = newValue;
-              //     });
-              //   },
-              //   selectedItem: _selectedFollowUpType,
-              //   filterFn: (item, filter) => item.type?.toLowerCase().contains(filter.toLowerCase()) ?? false, // Search by type
-              //   enabled: widget.followuptypes != null && widget.followuptypes!.isNotEmpty, // Disable if empty
-              //   dropdownBuilder: (context, selectedItem) {
-              //     return Text(
-              //       selectedItem?.type ?? 'Select Follow-Up Type',
-              //       style: TextStyle(fontSize: 16),
-              //     );
-              //   },
-              // ),
-              // Remarks Field
+              Consumer<FollowupProvider>(
+                builder: (context, provider, child) {
+                  return provider.isLoading
+                      ? Center(child: CircularProgressIndicator())
+                      : provider.followupTypes.isEmpty
+                          ? Center(child: Text('No Follow-Up Types Available'))
+                          : DropdownButtonFormField<FollowUpTypes>(
+                              decoration: InputDecoration(
+                                labelText: 'Select Follow-Up Type',
+                                border: OutlineInputBorder(),
+                                prefixIcon: Icon(Icons.arrow_drop_down),
+                              ),
+                              value: _selectedFollowUpType,
+                              items: provider.followupTypes
+                                  .map((FollowUpTypes type) {
+                                return DropdownMenuItem<FollowUpTypes>(
+                                  value: type,
+                                  child: Text(type.type ?? 'Unknown'),
+                                );
+                              }).toList(),
+                              onChanged: provider.followupTypes.isNotEmpty
+                                  ? (FollowUpTypes? newValue) {
+                                      setState(() {
+                                        _selectedFollowUpType = newValue;
+                                      });
+                                    }
+                                  : null, // Disable dropdown if empty
+                              isExpanded:
+                                  true, // Makes dropdown take full width
+                              hint: Text('Select Follow-Up Type'),
+                            );
+                },
+              ),
               TextFormField(
                 controller: _remarksController,
                 decoration: InputDecoration(
@@ -381,12 +389,12 @@ class _UpdateFollowupScreenState extends State<UpdateFollowupScreen> {
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(7),
                     borderSide:
-                    const BorderSide(width: 1, color: Color(0xffCDE2FB)),
+                        const BorderSide(width: 1, color: Color(0xffCDE2FB)),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(7),
                     borderSide:
-                    const BorderSide(width: 1, color: Color(0xffCDE2FB)),
+                        const BorderSide(width: 1, color: Color(0xffCDE2FB)),
                   ),
                 ),
                 maxLines: 4,
@@ -417,14 +425,17 @@ class _UpdateFollowupScreenState extends State<UpdateFollowupScreen> {
                   fontWeight: FontWeight.w500),
               // Radio Buttons
               Column(
-                mainAxisAlignment: MainAxisAlignment.start, // Align items to start or adjust as needed
+                mainAxisAlignment: MainAxisAlignment
+                    .start, // Align items to start or adjust as needed
                 children: [
                   RadioListTile<String>(
                     visualDensity: VisualDensity.compact,
                     contentPadding: EdgeInsets.zero,
                     title: Transform.translate(
-                      offset: Offset(-8, 0), // Slightly reduced offset for better alignment
-                      child: text(context, "Open", 13, textAlign: TextAlign.start),
+                      offset: Offset(-8,
+                          0), // Slightly reduced offset for better alignment
+                      child:
+                          text(context, "Open", 13, textAlign: TextAlign.start),
                     ),
                     value: 'open',
                     groupValue: _leadStatus,
@@ -439,7 +450,8 @@ class _UpdateFollowupScreenState extends State<UpdateFollowupScreen> {
                     contentPadding: EdgeInsets.zero,
                     title: Transform.translate(
                       offset: Offset(-8, 0),
-                      child: text(context, "Pending", 13, textAlign: TextAlign.start),
+                      child: text(context, "Pending", 13,
+                          textAlign: TextAlign.start),
                     ),
                     value: 'pending',
                     groupValue: _leadStatus,
@@ -454,7 +466,8 @@ class _UpdateFollowupScreenState extends State<UpdateFollowupScreen> {
                     contentPadding: EdgeInsets.zero,
                     title: Transform.translate(
                       offset: Offset(-8, 0),
-                      child: text(context, "Completed", 13, textAlign: TextAlign.start),
+                      child: text(context, "Completed", 13,
+                          textAlign: TextAlign.start),
                     ),
                     value: 'completed',
                     groupValue: _leadStatus,
@@ -488,11 +501,11 @@ class _UpdateFollowupScreenState extends State<UpdateFollowupScreen> {
               ),
               containertext(context, "Submit",
                   color: primaryColor, isLoading: _loading, onTap: () {
-                    if (_loading) {
-                    } else {
-                      _validateFields();
-                    }
-                  }),
+                if (_loading) {
+                } else {
+                  _validateFields();
+                }
+              }),
               SizedBox(
                 height: 20,
               ),

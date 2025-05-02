@@ -92,22 +92,35 @@ class LeadsPageData {
 /// ─────────────────────────────────────────────────────────────────────────────
 class Lead {
   final int? id;
-  final String? number;
+  final int? number; // Changed from String? to int? to match JSON
   final int? staffId;
   final String? dateAdded;
   final String? callStatus;
   final String? calledStatus;
   final String? name;
   final String? followUpDate;
+  final String? serviceType;
+  final String? stageType;
+  final String? industryType;
   final String? remarks;
   final String? dealStatus;
-  final String? dealAmount;
+  final String? dealAmount; // Kept as String? since it's null in JSON
   final int? totalCalls;
   final String? lastCalledDate;
   final int? leadStageId;
   final String? dealClosureDate;
   final int? callDuration;
   final String? latestUpdate;
+  final int? activeStatus;
+  final int? companyId;
+  final String? leadStage;
+  final String? leadType;
+  final String? leadSource;
+  final String? leadIndustry;
+  final String? email;
+  final String? createdAt;
+  final String? updatedAt;
+  final String? description;
   final StageName? stageName;
   final LatestFollowupDetail? latestFollowupDetail;
 
@@ -120,6 +133,9 @@ class Lead {
     this.calledStatus,
     this.name,
     this.followUpDate,
+    this.serviceType,
+    this.stageType,
+    this.industryType,
     this.remarks,
     this.dealStatus,
     this.dealAmount,
@@ -129,33 +145,57 @@ class Lead {
     this.dealClosureDate,
     this.callDuration,
     this.latestUpdate,
+    this.activeStatus,
+    this.companyId,
+    this.leadStage,
+    this.leadType,
+    this.leadSource,
+    this.leadIndustry,
+    this.email,
+    this.createdAt,
+    this.updatedAt,
+    this.description,
     this.stageName,
     this.latestFollowupDetail,
   });
 
   factory Lead.fromJson(Map<String, dynamic> json) => Lead(
-    id: json['id'],
-    number: json['number'],
-    staffId: json['staff_id'],
-    dateAdded: json['date_added'],
-    callStatus: json['call_status'],
-    calledStatus: json['called_status'],
-    name: json['name'],
-    followUpDate: json['follow_up_date'],
-    remarks: json['remarks'],
-    dealStatus: json['deal_status'],
-    dealAmount: json['deal_amount'],
-    totalCalls: json['total_calls'],
-    lastCalledDate: json['last_called_date'],
-    leadStageId: json['lead_stage_id'],
-    dealClosureDate: json['deal_closure_date'],
-    callDuration: json['call_duration'],
-    latestUpdate: json['latest_update'],
+    id: json['id'] as int?,
+    number: json['number'] as int?, // Changed to int?
+    staffId: json['staff_id'] as int?,
+    dateAdded: json['date_added'] as String?,
+    callStatus: json['call_status'] as String?,
+    calledStatus: json['called_status'] as String?,
+    name: json['name'] as String?,
+    followUpDate: json['follow_up_date'] as String?,
+    serviceType: json['service_type'] as String?,
+    stageType: json['stage_type'] as String?,
+    industryType: json['industry_type'] as String?,
+    remarks: json['remarks'] as String?,
+    dealStatus: json['deal_status'] as String?,
+    dealAmount: json['deal_amount'] as String?, // Kept as String?
+    totalCalls: json['total_calls'] as int?,
+    lastCalledDate: json['last_called_date'] as String?,
+    leadStageId: json['lead_stage_id'] as int?,
+    dealClosureDate: json['deal_closure_date'] as String?,
+    callDuration: json['call_duration'] as int?,
+    latestUpdate: json['latest_update'] as String?,
+    activeStatus: json['active_status'] as int?,
+    companyId: json['company_id'] as int?,
+    leadStage: json['lead_stage'] as String?,
+    leadType: json['lead_type'] as String?,
+    leadSource: json['lead_source'] as String?,
+    leadIndustry: json['lead_industry'] as String?,
+    email: json['email'] as String?,
+    createdAt: json['created_at'] as String?,
+    updatedAt: json['updated_at'] as String?,
+    description: json['description'] as String?,
     stageName: json['stage_name'] != null
-        ? StageName.fromJson(json['stage_name'])
+        ? StageName.fromJson(json['stage_name'] as Map<String, dynamic>)
         : null,
     latestFollowupDetail: json['latest_followup_detail'] != null
-        ? LatestFollowupDetail.fromJson(json['latest_followup_detail'])
+        ? LatestFollowupDetail.fromJson(
+        json['latest_followup_detail'] as Map<String, dynamic>)
         : null,
   );
 
@@ -168,6 +208,9 @@ class Lead {
     'called_status': calledStatus,
     'name': name,
     'follow_up_date': followUpDate,
+    'service_type': serviceType,
+    'stage_type': stageType,
+    'industry_type': industryType,
     'remarks': remarks,
     'deal_status': dealStatus,
     'deal_amount': dealAmount,
@@ -177,6 +220,16 @@ class Lead {
     'deal_closure_date': dealClosureDate,
     'call_duration': callDuration,
     'latest_update': latestUpdate,
+    'active_status': activeStatus,
+    'company_id': companyId,
+    'lead_stage': leadStage,
+    'lead_type': leadType,
+    'lead_source': leadSource,
+    'lead_industry': leadIndustry,
+    'email': email,
+    'created_at': createdAt,
+    'updated_at': updatedAt,
+    'description': description,
     if (stageName != null) 'stage_name': stageName!.toJson(),
     if (latestFollowupDetail != null)
       'latest_followup_detail': latestFollowupDetail!.toJson(),

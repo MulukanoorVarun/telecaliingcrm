@@ -2064,11 +2064,11 @@ class _HomescreenState extends State<Homescreen> {
                       width: w * 0.52,
                       child: Text(
                         overflow: TextOverflow.ellipsis,
-                        userDetailsProvider.userDetails?.username?.isNotEmpty ??
+                        userDetailsProvider.userDetails?.name?.isNotEmpty ??
                                 false
-                            ? userDetailsProvider.userDetails!.username![0]
+                            ? userDetailsProvider.userDetails!.name![0]
                                     .toUpperCase() +
-                                userDetailsProvider.userDetails!.username!
+                                userDetailsProvider.userDetails!.name!
                                     .substring(1)
                             : "",
                         style: TextStyle(
@@ -2371,11 +2371,11 @@ class _HomescreenState extends State<Homescreen> {
                                       },
                                     ),
                                   )
-                                : userDetailsProvider.userDetails?.username !=
+                                : userDetailsProvider.userDetails?.name !=
                                         null
                                     ? Text(
                                         userDetailsProvider
-                                            .userDetails!.username![0]
+                                            .userDetails!.name![0]
                                             .toUpperCase(),
                                         style: TextStyle(
                                           fontSize: 30,
@@ -2400,14 +2400,14 @@ class _HomescreenState extends State<Homescreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  userDetailsProvider.userDetails?.username
+                                  userDetailsProvider.userDetails?.name
                                               ?.isNotEmpty ??
                                           false
                                       ? userDetailsProvider
-                                              .userDetails!.username![0]
+                                              .userDetails!.name![0]
                                               .toUpperCase() +
                                           userDetailsProvider
-                                              .userDetails!.username!
+                                              .userDetails!.name!
                                               .substring(1)
                                       : "",
                                   style: TextStyle(

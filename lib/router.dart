@@ -133,38 +133,42 @@ final GoRouter goRouter =
     },
   ),
   GoRoute(
-        path: '/lost_lead',
-        pageBuilder: (context, state) {
-          final id = state.uri.queryParameters['id'] ?? '';
-          final name = state.uri.queryParameters['name'] ?? '';
-          final remarks = state.uri.queryParameters['remarks'] ?? '';
-          return buildSlideTransitionPage(
-              LostLeadScreen(
-                ID: id,
-                name: name,
-                remarks: remarks,
-              ),
-              state);
-        },
-      ),
-      GoRoute(
-        path: '/update_followup',
-        pageBuilder: (context, state) {
-          final type = state.uri.queryParameters['type'] ?? '';
-          final id = state.uri.queryParameters['id'] ?? '';
-          return buildSlideTransitionPage(
-              UpdateFollowupScreen(id: id,type: type,),
-              state);
-        },
-      ),
-      GoRoute(
-        path: '/followup_information',
-        pageBuilder: (context, state) {
-          final leadId = state.uri.queryParameters['leadId'] ?? '';
-          final followupId = state.uri.queryParameters['followupId'] ?? '';
-          return buildSlideTransitionPage(FollowupInformation(leadId: leadId,followupId: followupId), state);
-        },
-      ),
+    path: '/lost_lead',
+    pageBuilder: (context, state) {
+      final id = state.uri.queryParameters['id'] ?? '';
+      final name = state.uri.queryParameters['name'] ?? '';
+      final remarks = state.uri.queryParameters['remarks'] ?? '';
+      return buildSlideTransitionPage(
+          LostLeadScreen(
+            ID: id,
+            name: name,
+            remarks: remarks,
+          ),
+          state);
+    },
+  ),
+  GoRoute(
+    path: '/update_followup',
+    pageBuilder: (context, state) {
+      final type = state.uri.queryParameters['type'] ?? '';
+      final id = state.uri.queryParameters['id'] ?? '';
+      return buildSlideTransitionPage(
+          UpdateFollowupScreen(
+            id: id,
+            type: type,
+          ),
+          state);
+    },
+  ),
+  GoRoute(
+    path: '/followup_information',
+    pageBuilder: (context, state) {
+      final leadId = state.uri.queryParameters['leadId'] ?? '';
+      final followupId = state.uri.queryParameters['followupId'] ?? '';
+      return buildSlideTransitionPage(
+          FollowupInformation(leadId: leadId, followupId: followupId), state);
+    },
+  ),
 ]);
 
 Page<dynamic> buildSlideTransitionPage(Widget child, GoRouterState state) {
