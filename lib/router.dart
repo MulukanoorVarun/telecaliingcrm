@@ -120,7 +120,7 @@ final GoRouter goRouter =
   GoRoute(
     path: '/update_lead',
     pageBuilder: (context, state) {
-      final id = state.uri.queryParameters['id'] ?? '';
+      final id = state.uri.queryParameters['ID'] ?? '';
       final name = state.uri.queryParameters['name'] ?? '';
       final remarks = state.uri.queryParameters['remarks'] ?? '';
       return buildSlideTransitionPage(
@@ -138,11 +138,13 @@ final GoRouter goRouter =
       final id = state.uri.queryParameters['id'] ?? '';
       final name = state.uri.queryParameters['name'] ?? '';
       final remarks = state.uri.queryParameters['remarks'] ?? '';
+      final dealStage = state.uri.queryParameters['dealStage'] ?? '';
+      final leadsStage = state.uri.queryParameters['leadsStage'] ?? '';
       return buildSlideTransitionPage(
           LostLeadScreen(
             ID: id,
             name: name,
-            remarks: remarks,
+            remarks: remarks,dealStage:dealStage ,leadsStage: leadsStage,
           ),
           state);
     },

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart'; // For ChangeNotifier
 import '../Services/UserApi.dart';
 import '../model/LeadsModel.dart';
+import '../model/ViewInfoModel.dart';
 import '../screens/SubscriptionExpiredScreen.dart';
 import '../utils/constants.dart';
 
@@ -10,8 +11,10 @@ class LeadsProvider with ChangeNotifier {
   bool _isLoading = true;
   bool _hasNextPage = true;
   List<Lead>? get leadsList => leadslist;
+  List<ViewInfo> _leadinfo = [];
   bool get isLoading => _isLoading;
   bool get hasNextPage => _hasNextPage;
+  List<ViewInfo> get leadinfo => _leadinfo;
   int _currentPage = 1;
   int get currentPage => _currentPage;
   bool _pageLoading = false;
@@ -26,15 +29,15 @@ class LeadsProvider with ChangeNotifier {
       var result = await Userapi.getLeads(type, _currentPage);
       debugPrint('fetchLeadsList API Response: $result');
       debugPrint(
-          'Status: ${result?.status}, LeadsList: ${result?.data?.leads}, NextPageUrl: ${result?.data?.nextPageUrl}');
+          'Status: ${result?.status}, LeadsList: ${result?.data.data}, NextPageUrl: ${result?.data.nextPageUrl}');
 
       if (result?.status == true) {
-        leadslist = result?.data?.leads ?? [];
-        _hasNextPage = result?.data?.nextPageUrl != null;
+        leadslist = result?.data.data ?? [];
+        _hasNextPage = result?.data.nextPageUrl != null;
         debugPrint(
             'fetchLeadsList Success - LeadsList Length: ${leadslist.length}, hasNextPage: $_hasNextPage');
       } else {
-        leadslist = result?.data?.leads ?? [];
+        leadslist = result?.data.data ?? [];
         _hasNextPage = false;
         debugPrint(
             'fetchLeadsList Failed - LeadsList Length: ${leadslist.length}, hasNextPage: $_hasNextPage');
@@ -59,11 +62,11 @@ class LeadsProvider with ChangeNotifier {
       var result = await Userapi.getLeads(type, _currentPage + 1);
 
       if (result?.status == true) {
-        _currentPage++; // Increment the current page after a successful fetch.
-        leadslist.addAll(result?.data?.leads ?? []);
+        _currentPage++;
+        leadslist.addAll(result?.data.data ?? []);
 
         _hasNextPage =
-            result?.data?.nextPageUrl != null; // Check for more pages.
+            result?.data.nextPageUrl != null; // Check for more pages.
       } else {
         _hasNextPage = false; // No more pages.
       }
@@ -96,11 +99,9 @@ class LeadsProvider with ChangeNotifier {
     return null;
   }
 
-  Future<bool?> UpdateleadsApi(
-      name, leadID, remarks, leadStatusID, leadStageID) async {
+  Future<bool?> UpdateleadsApi(Map<String,dynamic> data) async {
     try {
-      var response = await Userapi.postUpdateLeads(
-          name, leadID, remarks, leadStatusID, leadStageID);
+      var response = await Userapi.postUpdateLeads(data);
       if (response != null) {
         if (response["status"] == true) {
           fetchLeadsList('');
@@ -115,5 +116,23 @@ class LeadsProvider with ChangeNotifier {
       throw Exception('Failed to updating user details: $e');
     }
     return null;
+  }
+
+  void getLeadsInformationApi(id) async {
+    _isLoading = true;
+    notifyListeners();
+    try {
+      var result = await Userapi.getViewInfo(id);
+      if (result?.status == true) {
+        _leadinfo = result?.data ?? [];
+        debugPrint("Response: $result");
+      } else {
+        debugPrint("Failed to fetch leads information");
+      }
+    } catch (e) {
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
   }
 }

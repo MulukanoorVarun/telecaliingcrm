@@ -1,328 +1,250 @@
-
 class LeadsModel {
-  final bool? status;
-  final LeadsPageData? data;
+  final bool status;
+  final LeadData data;
 
-  const LeadsModel({this.status, this.data});
+  LeadsModel({required this.status, required this.data});
 
-  factory LeadsModel.fromJson(Map<String, dynamic> json) => LeadsModel(
-    status: json['status'] as bool?,
-    data: json['data'] != null
-        ? LeadsPageData.fromJson(json['data'] as Map<String, dynamic>)
-        : null,
-  );
-
-  Map<String, dynamic> toJson() => {
-    'status': status,
-    if (data != null) 'data': data!.toJson(),
-  };
+  factory LeadsModel.fromJson(Map<String, dynamic> json) {
+    return LeadsModel(
+      status: json['status'],
+      data: LeadData.fromJson(json['data']),
+    );
+  }
 }
 
-
-class LeadsPageData {
-  final int? currentPage;
-  final List<Lead>? leads;              // ← list renamed
+class LeadData {
+  final int currentPage;
+  final List<Lead> data;
   final String? firstPageUrl;
-  final int? from;
-  final int? lastPage;
+  final int from;
+  final int lastPage;
   final String? lastPageUrl;
-  final List<PageLink>? links;
+  final List<Link> links;
   final String? nextPageUrl;
   final String? path;
-  final int? perPage;
+  final int perPage;
   final String? prevPageUrl;
-  final int? to;
-  final int? total;
+  final int to;
+  final int total;
 
-  const LeadsPageData({
-    this.currentPage,
-    this.leads,
-    this.firstPageUrl,
-    this.from,
-    this.lastPage,
-    this.lastPageUrl,
-    this.links,
-    this.nextPageUrl,
-    this.path,
-    this.perPage,
-    this.prevPageUrl,
-    this.to,
-    this.total,
+  LeadData({
+    required this.currentPage,
+    required this.data,
+    required this.firstPageUrl,
+    required this.from,
+    required this.lastPage,
+    required this.lastPageUrl,
+    required this.links,
+    required this.nextPageUrl,
+    required this.path,
+    required this.perPage,
+    required this.prevPageUrl,
+    required this.to,
+    required this.total,
   });
 
-  factory LeadsPageData.fromJson(Map<String, dynamic> json) => LeadsPageData(
-    currentPage: json['current_page'],
-    leads: (json['data'] as List<dynamic>?)
-        ?.map((e) => Lead.fromJson(e as Map<String, dynamic>))
-        .toList(),
-    firstPageUrl: json['first_page_url'],
-    from: json['from'],
-    lastPage: json['last_page'],
-    lastPageUrl: json['last_page_url'],
-    links: (json['links'] as List<dynamic>?)
-        ?.map((e) => PageLink.fromJson(e as Map<String, dynamic>))
-        .toList(),
-    nextPageUrl: json['next_page_url'],
-    path: json['path'],
-    perPage: json['per_page'],
-    prevPageUrl: json['prev_page_url'],
-    to: json['to'],
-    total: json['total'],
-  );
-
-  Map<String, dynamic> toJson() => {
-    'current_page': currentPage,
-    if (leads != null) 'data': leads!.map((e) => e.toJson()).toList(),
-    'first_page_url': firstPageUrl,
-    'from': from,
-    'last_page': lastPage,
-    'last_page_url': lastPageUrl,
-    if (links != null) 'links': links!.map((e) => e.toJson()).toList(),
-    'next_page_url': nextPageUrl,
-    'path': path,
-    'per_page': perPage,
-    'prev_page_url': prevPageUrl,
-    'to': to,
-    'total': total,
-  };
+  factory LeadData.fromJson(Map<String, dynamic> json) {
+    return LeadData(
+      currentPage: json['current_page'],
+      data: List<Lead>.from(json['data'].map((x) => Lead.fromJson(x))),
+      firstPageUrl: json['first_page_url'],
+      from: json['from'],
+      lastPage: json['last_page'],
+      lastPageUrl: json['last_page_url'],
+      links: List<Link>.from(json['links'].map((x) => Link.fromJson(x))),
+      nextPageUrl: json['next_page_url'],
+      path: json['path'],
+      perPage: json['per_page'],
+      prevPageUrl: json['prev_page_url'],
+      to: json['to'],
+      total: json['total'],
+    );
+  }
 }
 
-/// ─────────────────────────────────────────────────────────────────────────────
-/// SINGLE LEAD
-/// ─────────────────────────────────────────────────────────────────────────────
 class Lead {
-  final int? id;
-  final int? number; // Changed from String? to int? to match JSON
-  final int? staffId;
-  final String? dateAdded;
-  final String? callStatus;
-  final String? calledStatus;
-  final String? name;
+  final int id;
+  final int number;
+  final int staffId;
+  final String dateAdded;
+  final String callStatus;
+  final String calledStatus;
+  final String name;
   final String? followUpDate;
-  final String? serviceType;
-  final String? stageType;
-  final String? industryType;
+  final int? serviceType;
+  final int? stageType;
+  final int? industryType;
   final String? remarks;
-  final String? dealStatus;
-  final String? dealAmount; // Kept as String? since it's null in JSON
-  final int? totalCalls;
+  final String dealStatus;
+  final dynamic dealAmount;
+  final int totalCalls;
   final String? lastCalledDate;
-  final int? leadStageId;
+  final int leadStageId;
   final String? dealClosureDate;
   final int? callDuration;
-  final String? latestUpdate;
-  final int? activeStatus;
-  final int? companyId;
-  final String? leadStage;
-  final String? leadType;
+  final String latestUpdate;
+  final int activeStatus;
+  final String companyId;
+  final String leadStage;
+  final String leadType;
   final String? leadSource;
   final String? leadIndustry;
   final String? email;
-  final String? createdAt;
-  final String? updatedAt;
+  final String createdAt;
+  final String updatedAt;
   final String? description;
-  final StageName? stageName;
+  final StageName stageName;
   final LatestFollowupDetail? latestFollowupDetail;
 
-  const Lead({
-    this.id,
-    this.number,
-    this.staffId,
-    this.dateAdded,
-    this.callStatus,
-    this.calledStatus,
-    this.name,
-    this.followUpDate,
-    this.serviceType,
-    this.stageType,
-    this.industryType,
-    this.remarks,
-    this.dealStatus,
-    this.dealAmount,
-    this.totalCalls,
-    this.lastCalledDate,
-    this.leadStageId,
-    this.dealClosureDate,
-    this.callDuration,
-    this.latestUpdate,
-    this.activeStatus,
-    this.companyId,
-    this.leadStage,
-    this.leadType,
-    this.leadSource,
-    this.leadIndustry,
-    this.email,
-    this.createdAt,
-    this.updatedAt,
-    this.description,
-    this.stageName,
-    this.latestFollowupDetail,
+  Lead({
+    required this.id,
+    required this.number,
+    required this.staffId,
+    required this.dateAdded,
+    required this.callStatus,
+    required this.calledStatus,
+    required this.name,
+    required this.followUpDate,
+    required this.serviceType,
+    required this.stageType,
+    required this.industryType,
+    required this.remarks,
+    required this.dealStatus,
+    required this.dealAmount,
+    required this.totalCalls,
+    required this.lastCalledDate,
+    required this.leadStageId,
+    required this.dealClosureDate,
+    required this.callDuration,
+    required this.latestUpdate,
+    required this.activeStatus,
+    required this.companyId,
+    required this.leadStage,
+    required this.leadType,
+    required this.leadSource,
+    required this.leadIndustry,
+    required this.email,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.description,
+    required this.stageName,
+    required this.latestFollowupDetail,
   });
 
-  factory Lead.fromJson(Map<String, dynamic> json) => Lead(
-    id: json['id'] as int?,
-    number: json['number'] as int?, // Changed to int?
-    staffId: json['staff_id'] as int?,
-    dateAdded: json['date_added'] as String?,
-    callStatus: json['call_status'] as String?,
-    calledStatus: json['called_status'] as String?,
-    name: json['name'] as String?,
-    followUpDate: json['follow_up_date'] as String?,
-    serviceType: json['service_type'] as String?,
-    stageType: json['stage_type'] as String?,
-    industryType: json['industry_type'] as String?,
-    remarks: json['remarks'] as String?,
-    dealStatus: json['deal_status'] as String?,
-    dealAmount: json['deal_amount'] as String?, // Kept as String?
-    totalCalls: json['total_calls'] as int?,
-    lastCalledDate: json['last_called_date'] as String?,
-    leadStageId: json['lead_stage_id'] as int?,
-    dealClosureDate: json['deal_closure_date'] as String?,
-    callDuration: json['call_duration'] as int?,
-    latestUpdate: json['latest_update'] as String?,
-    activeStatus: json['active_status'] as int?,
-    companyId: json['company_id'] as int?,
-    leadStage: json['lead_stage'] as String?,
-    leadType: json['lead_type'] as String?,
-    leadSource: json['lead_source'] as String?,
-    leadIndustry: json['lead_industry'] as String?,
-    email: json['email'] as String?,
-    createdAt: json['created_at'] as String?,
-    updatedAt: json['updated_at'] as String?,
-    description: json['description'] as String?,
-    stageName: json['stage_name'] != null
-        ? StageName.fromJson(json['stage_name'] as Map<String, dynamic>)
-        : null,
-    latestFollowupDetail: json['latest_followup_detail'] != null
-        ? LatestFollowupDetail.fromJson(
-        json['latest_followup_detail'] as Map<String, dynamic>)
-        : null,
-  );
-
-  Map<String, dynamic> toJson() => {
-    'id': id,
-    'number': number,
-    'staff_id': staffId,
-    'date_added': dateAdded,
-    'call_status': callStatus,
-    'called_status': calledStatus,
-    'name': name,
-    'follow_up_date': followUpDate,
-    'service_type': serviceType,
-    'stage_type': stageType,
-    'industry_type': industryType,
-    'remarks': remarks,
-    'deal_status': dealStatus,
-    'deal_amount': dealAmount,
-    'total_calls': totalCalls,
-    'last_called_date': lastCalledDate,
-    'lead_stage_id': leadStageId,
-    'deal_closure_date': dealClosureDate,
-    'call_duration': callDuration,
-    'latest_update': latestUpdate,
-    'active_status': activeStatus,
-    'company_id': companyId,
-    'lead_stage': leadStage,
-    'lead_type': leadType,
-    'lead_source': leadSource,
-    'lead_industry': leadIndustry,
-    'email': email,
-    'created_at': createdAt,
-    'updated_at': updatedAt,
-    'description': description,
-    if (stageName != null) 'stage_name': stageName!.toJson(),
-    if (latestFollowupDetail != null)
-      'latest_followup_detail': latestFollowupDetail!.toJson(),
-  };
+  factory Lead.fromJson(Map<String, dynamic> json) {
+    return Lead(
+      id: json['id'],
+      number: json['number'],
+      staffId: json['staff_id'],
+      dateAdded: json['date_added'],
+      callStatus: json['call_status'],
+      calledStatus: json['called_status'],
+      name: json['name'],
+      followUpDate: json['follow_up_date'],
+      serviceType: json['service_type'],
+      stageType: json['stage_type'],
+      industryType: json['industry_type'],
+      remarks: json['remarks'],
+      dealStatus: json['deal_status'],
+      dealAmount: json['deal_amount'],
+      totalCalls: json['total_calls'],
+      lastCalledDate: json['last_called_date'],
+      leadStageId: json['lead_stage_id'],
+      dealClosureDate: json['deal_closure_date'],
+      callDuration: json['call_duration'],
+      latestUpdate: json['latest_update'],
+      activeStatus: json['active_status'],
+      companyId: json['company_id'],
+      leadStage: json['lead_stage'],
+      leadType: json['lead_type'],
+      leadSource: json['lead_source'],
+      leadIndustry: json['lead_industry'],
+      email: json['email'],
+      createdAt: json['created_at'],
+      updatedAt: json['updated_at'],
+      description: json['description'],
+      stageName: StageName.fromJson(json['stage_name']),
+      latestFollowupDetail: json['latest_followup_detail'] != null
+          ? LatestFollowupDetail.fromJson(json['latest_followup_detail'])
+          : null,
+    );
+  }
 }
 
-/// ─────────────────────────────────────────────────────────────────────────────
-/// NESTED OBJECTS
-/// ─────────────────────────────────────────────────────────────────────────────
 class StageName {
-  final int? id;
-  final String? stageName;
-  final String? createdAt;
-  final int? createdBy;
+  final int id;
+  final String stageName;
+  final String createdAt;
+  final int createdBy;
 
-  const StageName({this.id, this.stageName, this.createdAt, this.createdBy});
+  StageName({
+    required this.id,
+    required this.stageName,
+    required this.createdAt,
+    required this.createdBy,
+  });
 
-  factory StageName.fromJson(Map<String, dynamic> json) => StageName(
-    id: json['id'],
-    stageName: json['stage_name'],
-    createdAt: json['created_at'],
-    createdBy: json['created_by'],
-  );
-
-  Map<String, dynamic> toJson() => {
-    'id': id,
-    'stage_name': stageName,
-    'created_at': createdAt,
-    'created_by': createdBy,
-  };
+  factory StageName.fromJson(Map<String, dynamic> json) {
+    return StageName(
+      id: json['id'],
+      stageName: json['stage_name'],
+      createdAt: json['created_at'],
+      createdBy: json['created_by'],
+    );
+  }
 }
 
 class LatestFollowupDetail {
-  final int? id;
-  final int? leadId;
-  final int? phone;
-  final int? staffId;
-  final String? followupDate;
-  final String? name;
+  final int id;
+  final int leadId;
+  final int phone;
+  final int staffId;
+  final String followupDate;
+  final String name;
   final String? remarks;
-  final int? status;
+  final int status;
 
-  const LatestFollowupDetail({
-    this.id,
-    this.leadId,
-    this.phone,
-    this.staffId,
-    this.followupDate,
-    this.name,
+  LatestFollowupDetail({
+    required this.id,
+    required this.leadId,
+    required this.phone,
+    required this.staffId,
+    required this.followupDate,
+    required this.name,
     this.remarks,
-    this.status,
+    required this.status,
   });
 
-  factory LatestFollowupDetail.fromJson(Map<String, dynamic> json) =>
-      LatestFollowupDetail(
-        id: json['id'],
-        leadId: json['lead_id'],
-        phone: json['phone'],
-        staffId: json['staff_id'],
-        followupDate: json['followup_date'],
-        name: json['name'],
-        remarks: (json['remarks'] ?? '') as String,
-        status: json['status'],
-      );
-
-  Map<String, dynamic> toJson() => {
-    'id': id,
-    'lead_id': leadId,
-    'phone': phone,
-    'staff_id': staffId,
-    'followup_date': followupDate,
-    'name': name,
-    'remarks': remarks,
-    'status': status,
-  };
+  factory LatestFollowupDetail.fromJson(Map<String, dynamic> json) {
+    return LatestFollowupDetail(
+      id: json['id'],
+      leadId: json['lead_id'],
+      phone: json['phone'],
+      staffId: json['staff_id'],
+      followupDate: json['followup_date'],
+      name: json['name'],
+      remarks: json['remarks'],
+      status: json['status'],
+    );
+  }
 }
 
-class PageLink {
+class Link {
   final String? url;
-  final String? label;
-  final bool? active;
+  final String label;
+  final bool active;
 
-  const PageLink({this.url, this.label, this.active});
+  Link({
+    required this.url,
+    required this.label,
+    required this.active,
+  });
 
-  factory PageLink.fromJson(Map<String, dynamic> json) => PageLink(
-    url: json['url'],
-    label: json['label'],
-    active: json['active'],
-  );
-
-  Map<String, dynamic> toJson() => {
-    'url': url,
-    'label': label,
-    'active': active,
-  };
+  factory Link.fromJson(Map<String, dynamic> json) {
+    return Link(
+      url: json['url'],
+      label: json['label'],
+      active: json['active'],
+    );
+  }
 }

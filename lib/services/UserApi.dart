@@ -10,6 +10,9 @@ import 'package:telecaliingcrm/model/UserDetailsModel.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:mime/mime.dart';
 import 'package:telecaliingcrm/utils/constants.dart';
+import '../model/GetIndustriesModel.dart';
+import '../model/GetServicesModel.dart';
+import '../model/GetStagesModel.dart';
 import '../model/ViewInfoModel.dart';
 import '../model/GetFollowUpModel.dart';
 import 'package:dio/dio.dart';
@@ -382,22 +385,10 @@ class Userapi {
     }
   }
 
-  static Future<Map<String, dynamic>?> postUpdateLeads(
-      String name,
-      String leadId,
-      String remarks,
-      String leadStageId,
-      String dealStage) async {
+  static Future<Map<String, dynamic>?> postUpdateLeads(data) async {
     try {
-      final data = {
-        "name": name,
-        "lead_id": leadId,
-        "remarks": remarks,
-        "lead_stage_id": leadStageId,
-        "deal_stage": dealStage,
-      };
       debugPrint("postUpdateLeads??$data");
-      final response = await post("/api/update-info", data: data);
+      final response = await post("/api/update-lead", data: data);
 
       if (response.data == null || response.data.isEmpty) {
         debugPrint("Empty response body.");
@@ -414,7 +405,14 @@ class Userapi {
 
   static Future<ViewInfoModel?> getViewInfo(String id) async {
     try {
-      final response = await get("/api/view-info/$id");
+      final token = await AuthService.getAccessToken();
+      if (token == null) {
+        debugPrint("Error: No access token available");
+        return null;
+      }
+      final response = await get("/api/view-info/$id", options: Options(
+        headers: {'Authorization': 'Bearer $token'},
+      ));
       if (response.statusCode == 200) {
         debugPrint("getViewInfo response: ${response.data}");
         return ViewInfoModel.fromJson(response.data);
@@ -448,9 +446,7 @@ class Userapi {
 
   static Future<FollowUpTypesModel?> getFollowupTypes() async {
     try {
-      final response = await get(
-        "/api/get-follow-up-types"
-      );
+      final response = await get("/api/get-follow-up-types");
 
       if (response.statusCode == 200) {
         debugPrint("getFollowupTypes response: ${response.data}");
@@ -460,6 +456,76 @@ class Userapi {
       return null;
     } catch (e) {
       debugPrint("Error occurred in getFollowupTypes: $e");
+      return null;
+    }
+  }
+
+  static Future<GetIndustriesModel?> getIndustires() async {
+    try {
+      final token = await AuthService.getAccessToken();
+      if (token == null) {
+        debugPrint("Error: No access token available");
+        return null;
+      }
+      final response = await get("/api/getIndustries",
+          options: Options(
+            headers: {'Authorization': 'Bearer $token'},
+          ));
+      if (response.statusCode == 200) {
+        debugPrint("getIndustires response: ${response.data}");
+        return GetIndustriesModel.fromJson(response.data);
+      }
+      debugPrint("Request failed with status: ${response.statusCode}");
+      return null;
+    } catch (e) {
+      debugPrint("Error occurred in getIndustires: $e");
+      return null;
+    }
+  }
+
+  static Future<GetServicesModel?> getServices() async {
+    try {
+      final token = await AuthService.getAccessToken();
+      if (token == null) {
+        debugPrint("Error: No access token available");
+        return null;
+      }
+      final response = await get("/api/getServices",
+          options: Options(
+            headers: {'Authorization': 'Bearer $token'},
+          ));
+
+      if (response.statusCode == 200) {
+        debugPrint("getServices response: ${response.data}");
+        return GetServicesModel.fromJson(response.data);
+      }
+      debugPrint("Request failed with status: ${response.statusCode}");
+      return null;
+    } catch (e) {
+      debugPrint("Error occurred in getServices: $e");
+      return null;
+    }
+  }
+
+  static Future<GetStagesModel?> getStages() async {
+    try {
+      final token = await AuthService.getAccessToken();
+      if (token == null) {
+        debugPrint("Error: No access token available");
+        return null;
+      }
+      final response = await get("/api/getStages",
+          options: Options(
+            headers: {'Authorization': 'Bearer $token'},
+          ));
+      if (response.statusCode == 200) {
+        debugPrint("getStages response: ${response.data}");
+        return GetStagesModel.fromJson(response.data);
+      }
+      debugPrint("Request failed with status: ${response.statusCode}");
+      return null;
+    } catch (e) {
+      debugPrint("Error occurred in getStages: $e");
       return null;
     }
   }

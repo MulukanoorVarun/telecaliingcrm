@@ -1,7 +1,3 @@
-/// ─────────────────────────────────────────────────────────────────────────────
-/// view_info_model.dart
-/// ─────────────────────────────────────────────────────────────────────────────
-
 class ViewInfoModel {
   final bool? status;
   final List<ViewInfo>? data;
@@ -21,42 +17,39 @@ class ViewInfoModel {
   };
 }
 
-/// ─────────────────────────────────────────────────────────────────────────────
-/// SINGLE RECORD
-/// ─────────────────────────────────────────────────────────────────────────────
 class ViewInfo {
   final int? id;
-  final int? number; // Changed from String? to int? to match JSON
+  final int? number;
   final int? staffId;
   final String? dateAdded;
   final String? callStatus;
   final String? calledStatus;
   final String? name;
   final String? followUpDate;
-  final String? serviceType;
-  final String? stageType;
-  final String? industryType;
+  final int? serviceType;
+  final int? stageType;
+  final int? industryType;
   final String? remarks;
   final String? dealStatus;
-  final String? dealAmount; // Changed from dynamic to String? to match JSON
+  final num? dealAmount;
   final int? totalCalls;
   final String? lastCalledDate;
   final int? leadStageId;
   final String? dealClosureDate;
   final int? callDuration;
-  final int? activeStatus; // Added to match JSON
-  final int? companyId; // Added to match JSON
-  final String? leadStage; // Added to match JSON
-  final String? leadType; // Added to match JSON
-  final String? leadSource; // Added to match JSON
-  final String? leadIndustry; // Added to match JSON
-  final String? email; // Added to match JSON
-  final String? createdAt; // Added to match JSON
-  final String? updatedAt; // Added to match JSON
-  final String? description; // Added to match JSON
+  final int? activeStatus;
+  final String? companyId;
+  final String? leadStage;
+  final String? leadType;
+  final String? leadSource;
+  final String? leadIndustry;
+  final String? email;
+  final String? createdAt;
+  final String? updatedAt;
+  final String? description;
   final StageName? stageName;
   final LatestFollowupDetail? latestFollowupDetail;
-  final int? fId; // Kept as it exists in the model but not in this JSON
+  final int? fId;
 
   const ViewInfo({
     this.id,
@@ -95,26 +88,26 @@ class ViewInfo {
 
   factory ViewInfo.fromJson(Map<String, dynamic> json) => ViewInfo(
     id: json['id'] as int?,
-    number: json['number'] as int?, // Changed to int? to match JSON
+    number: json['number'] as int?,
     staffId: json['staff_id'] as int?,
     dateAdded: json['date_added'] as String?,
     callStatus: json['call_status'] as String?,
     calledStatus: json['called_status'] as String?,
     name: json['name'] as String?,
     followUpDate: json['follow_up_date'] as String?,
-    serviceType: json['service_type'] as String?,
-    stageType: json['stage_type'] as String?,
-    industryType: json['industry_type'] as String?,
+    serviceType: json['service_type'] as int?,
+    stageType: json['stage_type'] as int?,
+    industryType: json['industry_type'] as int?,
     remarks: json['remarks'] as String?,
     dealStatus: json['deal_status'] as String?,
-    dealAmount: json['deal_amount'] as String?, // Changed to String?
+    dealAmount: json['deal_amount'] as num?,
     totalCalls: json['total_calls'] as int?,
     lastCalledDate: json['last_called_date'] as String?,
     leadStageId: json['lead_stage_id'] as int?,
     dealClosureDate: json['deal_closure_date'] as String?,
     callDuration: json['call_duration'] as int?,
     activeStatus: json['active_status'] as int?,
-    companyId: json['company_id'] as int?,
+    companyId: json['company_id'] as String?,
     leadStage: json['lead_stage'] as String?,
     leadType: json['lead_type'] as String?,
     leadSource: json['lead_source'] as String?,
@@ -170,16 +163,18 @@ class ViewInfo {
   };
 }
 
-/// ─────────────────────────────────────────────────────────────────────────────
-/// NESTED OBJECTS
-/// ─────────────────────────────────────────────────────────────────────────────
 class StageName {
   final int? id;
   final String? stageName;
   final String? createdAt;
   final int? createdBy;
 
-  const StageName({this.id, this.stageName, this.createdAt, this.createdBy});
+  const StageName({
+    this.id,
+    this.stageName,
+    this.createdAt,
+    this.createdBy,
+  });
 
   factory StageName.fromJson(Map<String, dynamic> json) => StageName(
     id: json['id'] as int?,

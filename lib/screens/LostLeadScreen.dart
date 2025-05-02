@@ -10,8 +10,10 @@ class LostLeadScreen extends StatefulWidget {
   final String ID;
   final String name;
   final String remarks;
+  final String dealStage;
+  final String leadsStage;
   const LostLeadScreen(
-      {super.key, required this.ID, required this.name, required this.remarks});
+      {super.key, required this.ID, required this.name, required this.remarks,required this.dealStage,required this.leadsStage});
 
   @override
   State<LostLeadScreen> createState() => _LostLeadScreenState();
@@ -66,13 +68,15 @@ class _LostLeadScreenState extends State<LostLeadScreen> {
 
     try {
       final leadsProvider = Provider.of<LeadsProvider>(context, listen: false);
-      final response = await leadsProvider.UpdateleadsApi(
-        _nameController.text,
-        widget.ID,
-        _remarksController.text,
-        _leadStatus,
-        _leadStage,
-      );
+      final Map<String,dynamic> data={
+        "name": _nameController.text,
+        "lead_id":  widget.ID,
+        "remarks": _remarksController.text,
+        "lead_stage_id": widget.leadsStage,
+        "deal_stage": widget.dealStage,
+      };
+
+      final response = await leadsProvider.UpdateleadsApi(data);
       setState(() {
         _loading = false;
       });
