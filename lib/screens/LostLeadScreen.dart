@@ -12,8 +12,19 @@ class LostLeadScreen extends StatefulWidget {
   final String remarks;
   final String dealStage;
   final String leadsStage;
+  final String stage_type;
+  final String service_type;
+  final String industry_type;
   const LostLeadScreen(
-      {super.key, required this.ID, required this.name, required this.remarks,required this.dealStage,required this.leadsStage});
+      {super.key,
+      required this.ID,
+      required this.name,
+      required this.remarks,
+      required this.dealStage,
+      required this.leadsStage,
+      required this.stage_type,
+      required this.service_type,
+      required this.industry_type});
 
   @override
   State<LostLeadScreen> createState() => _LostLeadScreenState();
@@ -52,8 +63,7 @@ class _LostLeadScreenState extends State<LostLeadScreen> {
           _remarksController.text.isEmpty ? "Please add some remarks" : "";
 
       // Proceed only if all fields are valid
-      if (_validateFullName.isEmpty &&
-          _validateRemarks.isEmpty) {
+      if (_validateFullName.isEmpty && _validateRemarks.isEmpty) {
         UpdateLeads(); // Trigger the AddLeads function if validations pass
       } else {
         _loading = false;
@@ -68,12 +78,16 @@ class _LostLeadScreenState extends State<LostLeadScreen> {
 
     try {
       final leadsProvider = Provider.of<LeadsProvider>(context, listen: false);
-      final Map<String,dynamic> data={
+      final Map<String, dynamic> data = {
         "name": _nameController.text,
-        "lead_id":  widget.ID,
+        "lead_id": widget.ID,
         "remarks": _remarksController.text,
         "lead_stage_id": widget.leadsStage,
         "deal_stage": widget.dealStage,
+        "active_status": "0",
+        "stage_type": widget.stage_type,
+        "service_type": widget.service_type,
+        "industry_type": widget.industry_type,
       };
 
       final response = await leadsProvider.UpdateleadsApi(data);

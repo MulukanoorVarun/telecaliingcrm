@@ -176,7 +176,7 @@ class _LeadInformationState extends State<LeadInformation> {
                                           ),
                                           onPressed: () {
                                             context.push(
-                                                "/lost_lead?id=${ leadsInfo.leadinfo[0].id}&name=${leadsInfo.leadinfo[0].name}&remarks=${ leadsInfo.leadinfo[0].remarks}&dealStage=${leadsInfo.leadinfo[0].dealStatus}&leadsStage=${leadsInfo.leadinfo[0].leadStageId}");
+                                                "/lost_lead?id=${ leadsInfo.leadinfo[0].id}&name=${leadsInfo.leadinfo[0].name}&remarks=${ leadsInfo.leadinfo[0].remarks}&dealStage=${leadsInfo.leadinfo[0].dealStatus}&leadsStage=${leadsInfo.leadinfo[0].leadStageId}&stage_type=${leadsInfo.leadinfo[0].leadStageId}&service_type=${leadsInfo.leadinfo[0].serviceType}&industry_type=${leadsInfo.leadinfo[0].industryType}");
                                           },
                                           child: const Text(
                                             "Lost",

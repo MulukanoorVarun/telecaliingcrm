@@ -140,11 +140,19 @@ final GoRouter goRouter =
       final remarks = state.uri.queryParameters['remarks'] ?? '';
       final dealStage = state.uri.queryParameters['dealStage'] ?? '';
       final leadsStage = state.uri.queryParameters['leadsStage'] ?? '';
+      final stage_type = state.uri.queryParameters['stage_type'] ?? '';
+      final industry_type = state.uri.queryParameters['industry_type'] ?? '';
+      final service_type = state.uri.queryParameters['service_type'] ?? '';
       return buildSlideTransitionPage(
           LostLeadScreen(
             ID: id,
             name: name,
-            remarks: remarks,dealStage:dealStage ,leadsStage: leadsStage,
+            remarks: remarks,
+            dealStage: dealStage,
+            leadsStage: leadsStage,
+            stage_type: stage_type,
+            industry_type: industry_type,
+            service_type: service_type,
           ),
           state);
     },
