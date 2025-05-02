@@ -57,7 +57,7 @@ class _AddFollowUpState extends State<AddFollowUp> {
       _validateRemarks =
       _remarksController.text.isEmpty ? "Please add some remarks" : "";
       if (_validateFullName.isEmpty && _validatedate.isEmpty && _validateRemarks.isEmpty) {
-        AddFollowUp();
+        // AddFollowUp();
       } else {
         _loading = false;
 
@@ -65,48 +65,26 @@ class _AddFollowUpState extends State<AddFollowUp> {
     });
   }
 
-  Future<void> AddFollowUp() async {
-    try {
-      final followupsProvider = Provider.of<FollowupProvider>(context, listen: false);
-      var res= await followupsProvider.AddFollowUp(widget.id, _nameController.text, formattedDate, _remarksController.text);
-    setState(() {
-      if(res==true){
-        _loading=false;
-        Navigator.of(context)
-            .pushReplacement(PageRouteBuilder(
-          pageBuilder: (context, animation,
-              secondaryAnimation) {
-            return FollowupsScreen();
-          },
-          transitionsBuilder: (context,
-              animation,
-              secondaryAnimation,
-              child) {
-            const begin = Offset(1.0, 0.0);
-            const end = Offset.zero;
-            const curve = Curves.easeInOut;
-            var tween = Tween(
-                begin: begin, end: end)
-                .chain(CurveTween(
-                curve: curve));
-            var offsetAnimation =
-            animation.drive(tween);
-            return SlideTransition(
-                position: offsetAnimation,
-                child: child);
-          },
-        ));
-        CustomSnackBar.show(context, "Followup Added Successfully!");
-      }else{
-        _loading=false;
-        CustomSnackBar.show(context, "Followup Added Failed!");
-      }
-    });
-    } catch (e) {
-      // Handle any errors
-      debugPrint("Error occurred while adding Follow-up: $e");
-    }
-  }
+  // Future<void> AddFollowUp() async {
+  //   try {
+  //     final followupsProvider = Provider.of<FollowupProvider>(context, listen: false);
+  //     var res;
+  //     if(widget.ty)
+  //     res= await followupsProvider.AddFollowUp();
+  //   setState(() {
+  //     if(res==true){
+  //       _loading=false;
+  //       CustomSnackBar.show(context, "Followup Added Successfully!");
+  //     }else{
+  //       _loading=false;
+  //       CustomSnackBar.show(context, "Followup Added Failed!");
+  //     }
+  //   });
+  //   } catch (e) {
+  //     // Handle any errors
+  //     debugPrint("Error occurred while adding Follow-up: $e");
+  //   }
+  // }
 
 
   @override

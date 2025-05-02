@@ -153,11 +153,15 @@ final GoRouter goRouter =
     path: '/update_followup',
     pageBuilder: (context, state) {
       final type = state.uri.queryParameters['type'] ?? '';
-      final id = state.uri.queryParameters['id'] ?? '';
+      final folloupId = state.uri.queryParameters['folloupId'] ?? '';
+      final leadId = state.uri.queryParameters['leadId'] ?? '';
+      final staffId = state.uri.queryParameters['staffId'] ?? '';
       return buildSlideTransitionPage(
           UpdateFollowupScreen(
-            id: id,
+            folloupId: folloupId,
+            leadId: leadId,
             type: type,
+            staffId: staffId,
           ),
           state);
     },

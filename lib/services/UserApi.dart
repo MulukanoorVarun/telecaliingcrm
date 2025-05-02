@@ -345,15 +345,24 @@ class Userapi {
     }
   }
 
-  static Future<Map<String, dynamic>?> postAddFollowUp(
-      String leadId, String name, String followupDate, String remarks) async {
+  static Future<Map<String, dynamic>?> postAddFollowUp(Map<String,dynamic> data) async {
     try {
-      final data = {
-        "lead_id": leadId,
-        "name": name,
-        "followup_date": followupDate,
-        "remarks": remarks,
-      };
+      debugPrint("postAddFollowUp??$data");
+      final response = await post("/api/add-follow-up", data: data);
+      if (response.data == null || response.data.isEmpty) {
+        debugPrint("Empty response body.");
+        return null;
+      }
+      debugPrint("postAddFollowUp successful: ${response.data}");
+      return response.data;
+    } catch (e) {
+      debugPrint("Error occurred: $e");
+      return null;
+    }
+  }
+
+  static Future<Map<String, dynamic>?> updateFollowUp(Map<String,dynamic> data) async {
+    try {
       debugPrint("postAddFollowUp??$data");
       final response = await post("/api/add-follow-up", data: data);
 
@@ -372,7 +381,7 @@ class Userapi {
 
   static Future<Map<String, dynamic>?> deleteFollowUp(String Id) async {
     try {
-      final response = await _dio.delete("/api/add-follow-up/${Id}");
+      final response = await _dio.delete("/api/delete-follow-ups/${Id}");
       if (response.data == null || response.data.isEmpty) {
         debugPrint("Empty response body.");
         return null;

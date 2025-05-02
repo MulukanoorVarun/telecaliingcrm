@@ -405,7 +405,7 @@ class _LeadsScreenState extends State<LeadScreen>
                                                   InkResponse(
                                                     onTap: () {
                                                       context.push(
-                                                          "/add_followup?id=${leads.id}&name=${leads.name}");
+                                                          "/update_followup?folloupId=''&staffId=${leads.staffId}&leadId=${leads.id}");
                                                     },
                                                     child: text(
                                                       context,
@@ -444,7 +444,9 @@ class _LeadsScreenState extends State<LeadScreen>
                                           children: [
                                             InkWell(
                                               onTap: () async {
-                                                await FlutterPhoneDirectCaller.callNumber(leads.number.toString());
+                                                await FlutterPhoneDirectCaller
+                                                    .callNumber(leads.number
+                                                        .toString());
                                               },
                                               child: container(
                                                 context,

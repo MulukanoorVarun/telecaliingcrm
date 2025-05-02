@@ -1,19 +1,19 @@
-import 'package:dropdown_search/dropdown_search.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-
 import '../model/FollowUpTypesModel.dart';
 import '../providers/FollowupProvider.dart';
-import '../providers/LeadsProvider.dart';
 import '../utils/ColorConstants.dart';
 import '../utils/ShakeWidget.dart';
 import '../utils/constants.dart';
 
 class UpdateFollowupScreen extends StatefulWidget {
-  final String id;
+  final String folloupId;
+  final String leadId;
+  final String staffId;
   final String type;
-  const UpdateFollowupScreen({super.key, required this.id, required this.type});
+  const UpdateFollowupScreen({super.key, required this.folloupId, required this.type,required this.staffId,required this.leadId});
 
   @override
   State<UpdateFollowupScreen> createState() => _UpdateFollowupScreenState();
@@ -27,6 +27,10 @@ class _UpdateFollowupScreenState extends State<UpdateFollowupScreen> {
   String formattedTime = ''; // Initialize as needed
   String? _leadStatus;
   FollowUpTypes? _selectedFollowUpType;
+  String? _selectedFollowUpTypeName;
+  int? _selectedFollowUpTypeId;
+  final TextEditingController _searchController = TextEditingController();
+  final FocusNode _focusNode = FocusNode();
   String? _leadStage;
   bool _loading = false;
   String _validateFullName = "";
@@ -40,12 +44,25 @@ class _UpdateFollowupScreenState extends State<UpdateFollowupScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<FollowupProvider>(context, listen: false).getFollowUpTypes();
     });
+    _focusNode.addListener(() {
+      if (!_focusNode.hasFocus && _selectedFollowUpType == null) {
+        _searchController.clear();
+      } else if (!_focusNode.hasFocus && _selectedFollowUpType != null) {
+        _searchController.text = _selectedFollowUpType!.type ?? 'Unknown';
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    _focusNode.dispose();
+    super.dispose();
   }
 
   void _validateFields() {
     setState(() {
       _loading = true;
-
       // Validate Full Name
       _validateFullName =
           !_nameController.text.contains(RegExp(r"^[a-zA-Z\s]+$"))
@@ -65,51 +82,48 @@ class _UpdateFollowupScreenState extends State<UpdateFollowupScreen> {
           _validateRemarks.isEmpty &&
           leadstatusError.isEmpty &&
           leadstageError.isEmpty) {
-        // UpdateLeads(); // Trigger the AddLeads function if validations pass
+        submitData();
       } else {
         _loading = false;
       }
     });
   }
-  //
-  // Future<void> UpdateLeads() async {
-  //   setState(() {
-  //     _loading = true;
-  //   });
-  //   try {
-  //     final leadsProvider = Provider.of<LeadsProvider>(context, listen: false);
-  //
-  //     final response = await leadsProvider.UpdateleadsApi(
-  //       _nameController.text,
-  //       widget.ID,
-  //       _remarksController.text,
-  //       _leadStatus,
-  //       _leadStage,
-  //     );
-  //
-  //     setState(() {
-  //       _loading = false;
-  //     });
-  //
-  //     if (response == true) {
-  //       CustomSnackBar.show(context, "Lead Updated Successfully!");
-  //       Navigator.pop(context, true); // Returning true as a success flag
-  //     } else {
-  //       final errorMessage = "Failed to update lead.";
-  //       CustomSnackBar.show(context, errorMessage);
-  //       debugPrint("Failed to update lead: $errorMessage");
-  //     }
-  //   } catch (e, stack) {
-  //     setState(() {
-  //       _loading = false;
-  //     });
-  //
-  //     debugPrint("Exception in UpdateLeads: $e");
-  //     debugPrint("Stack trace: $stack");
-  //
-  //     CustomSnackBar.show(context, "Something went wrong. Please try again.");
-  //   }
-  // }
+
+  Future<void> submitData() async {
+    try {
+      final followupsProvider = Provider.of<FollowupProvider>(context, listen: false);
+      var res;
+      Map<String,dynamic> data={
+        "staff_id":widget.staffId,
+        "name":widget.staffId,
+        "date":widget.staffId,
+        "time":widget.staffId,
+        "type_of_follow_up":widget.staffId,
+        "remarks":widget.staffId,
+        "status":widget.staffId,
+        "lead_id":widget.staffId,
+
+
+      };
+      if(widget.type=="add"){
+        res= await followupsProvider.AddFollowUp(data);
+      }else{
+        res= await followupsProvider.updateFollowUp(data);
+      }
+    setState(() {
+      if(res==true){
+        _loading=false;
+        CustomSnackBar.show(context, "Followup Added Successfully!");
+      }else{
+        _loading=false;
+        CustomSnackBar.show(context, "Followup Added Failed!");
+      }
+    });
+    } catch (e) {
+      // Handle any errors
+      debugPrint("Error occurred while adding Follow-up: $e");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -202,7 +216,140 @@ class _UpdateFollowupScreenState extends State<UpdateFollowupScreen> {
               ] else ...[
                 SizedBox(height: 16),
               ],
-              // Date Field
+              Consumer<FollowupProvider>(
+                builder: (context, provider, child) {
+                  return DropdownButtonHideUnderline(
+                    child: DropdownButton2<FollowUpTypes>(
+                      isExpanded: true,
+                      hint: Text(
+                        'Select Follow-Up Type',
+                        style: TextStyle(
+                          fontSize: 14,
+                            fontFamily: "Poppins",
+                          color: Colors.grey,
+                        ),
+                      ),
+                      items: provider.followupTypes.isNotEmpty
+                          ? provider.followupTypes.map((item) {
+                        return DropdownMenuItem<FollowUpTypes>(
+                          value: item,
+                          child: Text(
+                            item.type ?? 'Unknown',
+                            style: const TextStyle(
+                                fontSize: 14, fontFamily: "Poppins"),
+                          ),
+                        );
+                      }).toList()
+                          : [
+                        const DropdownMenuItem<FollowUpTypes>(
+                          enabled: false,
+                          child: Text(
+                            'No data found',
+                            style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.grey,
+                                fontFamily: "Poppins"),
+                          ),
+                        )
+                      ],
+                      value: _selectedFollowUpType,
+                      onChanged: (value) {
+                        setState(() {
+                          _selectedFollowUpType = value;
+                          _selectedFollowUpTypeName = value?.type ?? '';
+                          _selectedFollowUpTypeId = value?.id;
+                        });
+                        // If you want to print or use it immediately:
+                        print("Selected Follow-Up Type: $_selectedFollowUpTypeName");
+                        print("Selected Follow-Up ID: $_selectedFollowUpTypeId");
+                      },
+
+                      buttonStyleData: const ButtonStyleData(
+                        padding: EdgeInsets.symmetric(horizontal: 16),
+                        height: 50,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.all(Radius.circular(10)),
+                          border: Border.fromBorderSide(
+                            BorderSide( width: 1,
+                              color: Color(0xffCDE2FB),),
+                          ),
+                        ),
+                      ),
+                      dropdownStyleData: const DropdownStyleData(
+                        maxHeight: 250,
+                        padding: EdgeInsets.zero,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.all(Radius.circular(10)),
+                        ),
+                        scrollbarTheme: ScrollbarThemeData(
+                          thumbVisibility: MaterialStatePropertyAll(
+                              false), // disables scrollbar
+                        ),
+                      ),
+                      menuItemStyleData: const MenuItemStyleData(
+                        height: 45,
+                        padding: EdgeInsets.symmetric(horizontal: 16),
+                      ),
+                      dropdownSearchData: DropdownSearchData(
+                        searchController: _searchController,
+                        searchInnerWidgetHeight: 50,
+                        searchInnerWidget: Container(
+                          height: 50,
+                          padding: const EdgeInsets.all(5),
+                          child: TextFormField(
+                            controller: _searchController,
+                            expands: true,
+                            maxLines: null,
+                            decoration: InputDecoration(
+                              isDense: true,
+                              contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 8),
+                              hintText: 'Search Follow-Up Type',
+                              hintStyle: const TextStyle(
+                                  fontSize: 12, fontFamily: "Poppins"),
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: BorderSide(
+                                    width: 1,
+                                    color: Color(0xffCDE2FB),
+                                  )),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(7),
+                                borderSide: const BorderSide(
+                                  width: 1,
+                                  color: Color(0xffCDE2FB),
+                                ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(7),
+                                borderSide: const BorderSide(
+                                  width: 1,
+                                  color: Color(0xffCDE2FB),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        searchMatchFn: (item, searchValue) {
+                          return item.value?.type
+                              ?.toLowerCase()
+                              .contains(searchValue.toLowerCase()) ??
+                              false;
+                        },
+                      ),
+                      onMenuStateChange: (isOpen) {
+                        if (!isOpen) {
+                          _searchController.clear();
+                        }
+                      },
+                    ),
+                  );
+                },
+              ),
+              const SizedBox(height: 16),
               TextFormField(
                 controller: TextEditingController(text: formattedDate),
                 decoration: InputDecoration(
@@ -335,39 +482,6 @@ class _UpdateFollowupScreenState extends State<UpdateFollowupScreen> {
                 },
               ),
               const SizedBox(height: 16),
-              Consumer<FollowupProvider>(
-                builder: (context, provider, child) {
-                  return provider.isLoading
-                      ? Center(child: CircularProgressIndicator())
-                      : provider.followupTypes.isEmpty
-                          ? Center(child: Text('No Follow-Up Types Available'))
-                          : DropdownButtonFormField<FollowUpTypes>(
-                              decoration: InputDecoration(
-                                labelText: 'Select Follow-Up Type',
-                                border: OutlineInputBorder(),
-                                prefixIcon: Icon(Icons.arrow_drop_down),
-                              ),
-                              value: _selectedFollowUpType,
-                              items: provider.followupTypes
-                                  .map((FollowUpTypes type) {
-                                return DropdownMenuItem<FollowUpTypes>(
-                                  value: type,
-                                  child: Text(type.type ?? 'Unknown'),
-                                );
-                              }).toList(),
-                              onChanged: provider.followupTypes.isNotEmpty
-                                  ? (FollowUpTypes? newValue) {
-                                      setState(() {
-                                        _selectedFollowUpType = newValue;
-                                      });
-                                    }
-                                  : null, // Disable dropdown if empty
-                              isExpanded:
-                                  true, // Makes dropdown take full width
-                              hint: Text('Select Follow-Up Type'),
-                            );
-                },
-              ),
               TextFormField(
                 controller: _remarksController,
                 decoration: InputDecoration(

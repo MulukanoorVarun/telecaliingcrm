@@ -93,9 +93,9 @@ class FollowupProvider extends ChangeNotifier {
     }
   }
 
-  Future<bool?> AddFollowUp(id, name, date, remaks) async {
+  Future<bool?> AddFollowUp(Map<String,dynamic> data) async {
     try {
-      final res = await Userapi.postAddFollowUp(id, name, date, remaks);
+      final res = await Userapi.postAddFollowUp(data);
       if (res != null) {
         if (res["status"] == true) {
           getFollowUpApi("Open");
@@ -109,6 +109,26 @@ class FollowupProvider extends ChangeNotifier {
     } catch (e) {
       // Handle any errors
       debugPrint("Error occurred while adding Follow-up: $e");
+    }
+    return false;
+  }
+
+  Future<bool?> updateFollowUp(Map<String,dynamic> data) async {
+    try {
+      final res = await Userapi.updateFollowUp(data);
+      if (res != null) {
+        if (res["status"] == true) {
+          getFollowUpApi("Open");
+          return true;
+        } else {
+          return false;
+        }
+      } else {
+        debugPrint("Failed to updateFollowUp : Response is null.");
+      }
+    } catch (e) {
+      // Handle any errors
+      debugPrint("Error occurred while updateFollowUp: $e");
     }
     return false;
   }
