@@ -395,9 +395,7 @@ class _LeadsScreenState extends State<LeadScreen>
                                                         bottom: 10, left: 0),
                                                     child: text(
                                                       context,
-                                                      leads.stageName
-                                                              ?.stageName ??
-                                                          "",
+                                                      leads.stageName.stageName ?? "",
                                                       14,
                                                       color: color11,
                                                     ),
@@ -405,7 +403,7 @@ class _LeadsScreenState extends State<LeadScreen>
                                                   InkResponse(
                                                     onTap: () {
                                                       context.push(
-                                                          "/update_followup?followupId=''&staffId=${leads.staffId}&leadId=${leads.id}");
+                                                          "/update_followup?followupId=${""}&staffId=${leads.staffId}&leadId=${leads.id}");
                                                     },
                                                     child: text(
                                                       context,

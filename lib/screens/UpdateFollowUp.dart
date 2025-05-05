@@ -1,5 +1,6 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../model/FollowUpTypesModel.dart';
@@ -12,7 +13,11 @@ class UpdateFollowupScreen extends StatefulWidget {
   final String followupId;
   final String leadId;
   final String staffId;
-  const UpdateFollowupScreen({super.key, required this.followupId,required this.staffId,required this.leadId});
+  const UpdateFollowupScreen(
+      {super.key,
+      required this.followupId,
+      required this.staffId,
+      required this.leadId});
 
   @override
   State<UpdateFollowupScreen> createState() => _UpdateFollowupScreenState();
@@ -20,7 +25,10 @@ class UpdateFollowupScreen extends StatefulWidget {
 
 class _UpdateFollowupScreenState extends State<UpdateFollowupScreen> {
   final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _mobileController = TextEditingController();
   final TextEditingController _remarksController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
+  final FocusNode _focusNode = FocusNode();
 
   String formattedDate = "";
   String formattedTime = '';
@@ -28,10 +36,9 @@ class _UpdateFollowupScreenState extends State<UpdateFollowupScreen> {
   FollowUpTypes? _selectedFollowUpType;
   String? _selectedFollowUpTypeName;
   int? _selectedFollowUpTypeId;
-  final TextEditingController _searchController = TextEditingController();
-  final FocusNode _focusNode = FocusNode();
   bool _loading = false;
   String _validateFullName = "";
+  String _validateMobile = "";
   String _validateRemarks = "";
   String followupstatusError = "";
   String leadstageError = "";
@@ -40,8 +47,21 @@ class _UpdateFollowupScreenState extends State<UpdateFollowupScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<FollowupProvider>(context, listen: false).getFollowUpTypes();
+      final provider = Provider.of<FollowupProvider>(context, listen: false);
+      // Fetch follow-up types
+      provider.getFollowUpTypes();
+      // Fetch follow-up details if editing (followupId is provided)
+      if (widget.followupId.isNotEmpty) {
+        provider.getFollowUpByID(widget.followupId).then((success) {
+          if (success) {
+            // Data is populated via Consumer, no need to set state here
+          } else {
+            CustomSnackBar.show(context, "Failed to load follow-up details!");
+          }
+        });
+      }
     });
+
     _focusNode.addListener(() {
       if (!_focusNode.hasFocus && _selectedFollowUpType == null) {
         _searchController.clear();
@@ -53,6 +73,8 @@ class _UpdateFollowupScreenState extends State<UpdateFollowupScreen> {
 
   @override
   void dispose() {
+    _nameController.dispose();
+    _remarksController.dispose();
     _searchController.dispose();
     _focusNode.dispose();
     super.dispose();
@@ -69,15 +91,22 @@ class _UpdateFollowupScreenState extends State<UpdateFollowupScreen> {
       // Validate Remarks
       _validateRemarks =
           _remarksController.text.isEmpty ? "Please add some remarks" : "";
-
+      _validateMobile =
+          _mobileController.text.isEmpty || _mobileController.text.length<10 ? "Please Enter A Valid Mobile Number." : "";
       // Validate Lead Status
       followupstatusError =
           (_followupStatus == null) ? "Please select a lead status" : "";
+      // Validate Follow-Up Type
+      leadstageError = (_selectedFollowUpTypeId == null)
+          ? "Please select a follow-up type"
+          : "";
 
       // Proceed only if all fields are valid
       if (_validateFullName.isEmpty &&
           _validateRemarks.isEmpty &&
-          followupstatusError.isEmpty) {
+          _validateMobile.isEmpty &&
+          followupstatusError.isEmpty &&
+          leadstageError.isEmpty) {
         submitData();
       } else {
         _loading = false;
@@ -87,47 +116,64 @@ class _UpdateFollowupScreenState extends State<UpdateFollowupScreen> {
 
   Future<void> submitData() async {
     try {
-      final followupsProvider = Provider.of<FollowupProvider>(context, listen: false);
-      var res;
-      Map<String,dynamic> data={
-        "staff_id":widget.staffId,
-        "name":_nameController.text,
-        "date":formattedDate,
-        "time":formattedTime,
-        "type_of_follow_up":_selectedFollowUpTypeId,
-        "remarks":_remarksController.text,
-        "status":_followupStatus,
-        "lead_id":widget.leadId
+      final followupsProvider =
+          Provider.of<FollowupProvider>(context, listen: false);
+      Map<String, dynamic> data = {
+        "staff_id": widget.staffId,
+        "name": _nameController.text,
+        "phone": _mobileController.text,
+        "date": formattedDate,
+        "time": formattedTime,
+        "type_of_follow_up": _selectedFollowUpTypeId,
+        "remarks": _remarksController.text,
+        "status": _followupStatus,
+        "lead_id": widget.leadId,
+        if (widget.followupId.isNotEmpty)
+          "id": widget.followupId, // Include ID for update
       };
-      if(widget.followupId==""){
-        res= await followupsProvider.AddFollowUp(data);
-      }else{
-        res= await followupsProvider.updateFollowUp(data);
+
+      bool? res;
+      if (widget.followupId.isEmpty) {
+        res = await followupsProvider.AddFollowUp(data);
+      } else {
+        res = await followupsProvider.updateFollowUp(data);
       }
-    setState(() {
-      if(res==true){
-        _loading=false;
-        CustomSnackBar.show(context, "Followup Added Successfully!");
-      }else{
-        _loading=false;
-        CustomSnackBar.show(context, "Followup Added Failed!");
-      }
-    });
+
+      setState(() {
+        if (res == true) {
+          _loading = false;
+          CustomSnackBar.show(
+              context,
+              widget.followupId.isEmpty
+                  ? "Followup Added Successfully!"
+                  : "Followup Updated Successfully!");
+          Navigator.pop(context, true); // Navigate back after success
+        } else {
+          _loading = false;
+          CustomSnackBar.show(
+              context,
+              widget.followupId.isEmpty
+                  ? "Followup Added Failed!"
+                  : "Followup Updated Failed!");
+        }
+      });
     } catch (e) {
-      // Handle any errors
-      debugPrint("Error occurred while adding Follow-up: $e");
+      setState(() {
+        _loading = false;
+      });
+      debugPrint("Error occurred while submitting follow-up: $e");
+      CustomSnackBar.show(context, "An error occurred. Please try again.");
     }
   }
 
   @override
   Widget build(BuildContext context) {
     var w = MediaQuery.of(context).size.width;
-    var h = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: scaffoldbgColor,
       appBar: AppBar(
         title: Text(
-          'Update FollowUp',
+          widget.followupId.isEmpty ? 'Add FollowUp' : 'Update FollowUp',
           style: TextStyle(
               fontSize: 22,
               fontFamily: "Poppins",
@@ -136,129 +182,199 @@ class _UpdateFollowupScreenState extends State<UpdateFollowupScreen> {
         ),
         backgroundColor: primaryColor,
         leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back,
-            color: Colors.white,
-          ),
+          icon: Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
-            Navigator.pop(context, true);
+            Navigator.pop(context);
           },
         ),
       ),
-      body: container(
-        context,
-        w: w,
-        margin: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(
-                height: 20,
-              ),
-              // Name Field
-              TextFormField(
-                controller: _nameController,
-                keyboardType: TextInputType.text,
-                decoration: InputDecoration(
-                  contentPadding: const EdgeInsets.symmetric(
-                    vertical: 0,
-                    horizontal: 10,
-                  ),
-                  labelText: "Name",
-                  labelStyle: const TextStyle(
-                    fontSize: 14,
-                    letterSpacing: 0,
-                    height: 25.73 / 14,
-                    color: Colors.grey,
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w400,
-                  ),
-                  filled: true,
-                  fillColor: const Color(0xffffffff),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(7),
-                    borderSide:
-                        const BorderSide(width: 1, color: Color(0xffCDE2FB)),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(7),
-                    borderSide:
-                        const BorderSide(width: 1, color: Color(0xffCDE2FB)),
-                  ),
-                ),
-              ),
-              if (_validateFullName.isNotEmpty) ...[
-                Container(
-                  alignment: Alignment.topLeft,
-                  margin: EdgeInsets.only(left: 8, bottom: 10, top: 5),
-                  width: MediaQuery.of(context).size.width * 0.6,
-                  child: ShakeWidget(
-                    key: Key("value"),
-                    duration: Duration(milliseconds: 700),
-                    child: Text(
-                      _validateFullName,
-                      style: TextStyle(
-                        fontFamily: "Poppins",
-                        fontSize: 12,
-                        color: Colors.red,
-                        fontWeight: FontWeight.w500,
+      body: Consumer<FollowupProvider>(
+        builder: (context, provider, child) {
+          // Populate fields when selectedFollowUp is available (for editing)
+          if (widget.followupId.isNotEmpty &&
+              provider.selectedFollowUp != null &&
+              _nameController.text.isEmpty) {
+            final followUp = provider.selectedFollowUp!;
+            _nameController.text = followUp.name ?? '';
+            _remarksController.text = followUp.remarks ?? '';
+            formattedDate = followUp.date ?? '';
+            formattedTime = followUp.time ?? '';
+            _followupStatus = followUp.status?.toLowerCase();
+            // Set the follow-up type
+            if (followUp.typeOfFollowUp != null) {
+              _selectedFollowUpType = provider.followupTypes.firstWhere(
+                (type) => type.id == followUp.typeOfFollowUp,
+                orElse: () => FollowUpTypes(id: null, type: null),
+              );
+              _selectedFollowUpTypeId = _selectedFollowUpType?.id;
+              _selectedFollowUpTypeName = _selectedFollowUpType?.type;
+              _searchController.text = _selectedFollowUpTypeName ?? '';
+            }
+          }
+
+          return container(
+            context,
+            w: w,
+            margin: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: 20),
+                  // Name Field
+                  TextFormField(
+                    controller: _nameController,
+                    keyboardType: TextInputType.text,
+                    decoration: InputDecoration(
+                      contentPadding:
+                          EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+                      labelText: "Name",
+                      labelStyle: TextStyle(
+                        fontSize: 14,
+                        letterSpacing: 0,
+                        height: 25.73 / 14,
+                        color: Colors.grey,
+                        fontFamily: 'Poppins',
+                        fontWeight: FontWeight.w400,
+                      ),
+                      filled: true,
+                      fillColor: Color(0xffffffff),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(7),
+                        borderSide:
+                            BorderSide(width: 1, color: Color(0xffCDE2FB)),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(7),
+                        borderSide:
+                            BorderSide(width: 1, color: Color(0xffCDE2FB)),
                       ),
                     ),
                   ),
-                ),
-              ] else ...[
-                SizedBox(height: 16),
-              ],
-              Consumer<FollowupProvider>(
-                builder: (context, provider, child) {
-                  return DropdownButtonHideUnderline(
+                  if (_validateFullName.isNotEmpty) ...[
+                    Container(
+                      alignment: Alignment.topLeft,
+                      margin: EdgeInsets.only(left: 8, bottom: 10, top: 5),
+                      width: MediaQuery.of(context).size.width * 0.6,
+                      child: ShakeWidget(
+                        key: Key("name"),
+                        duration: Duration(milliseconds: 700),
+                        child: Text(
+                          _validateFullName,
+                          style: TextStyle(
+                            fontFamily: "Poppins",
+                            fontSize: 12,
+                            color: Colors.red,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ] else ...[
+                    SizedBox(height: 16),
+                  ],
+
+                  // Name Field
+                  TextFormField(
+                    controller: _mobileController,
+                    keyboardType: TextInputType.phone,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                      LengthLimitingTextInputFormatter(10)
+                    ],
+                    decoration: InputDecoration(
+                      contentPadding:
+                          EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+                      labelText: "Mobile Number",
+                      labelStyle: TextStyle(
+                        fontSize: 14,
+                        letterSpacing: 0,
+                        height: 25.73 / 14,
+                        color: Colors.grey,
+                        fontFamily: 'Poppins',
+                        fontWeight: FontWeight.w400,
+                      ),
+                      filled: true,
+                      fillColor: Color(0xffffffff),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(7),
+                        borderSide:
+                            BorderSide(width: 1, color: Color(0xffCDE2FB)),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(7),
+                        borderSide:
+                            BorderSide(width: 1, color: Color(0xffCDE2FB)),
+                      ),
+                    ),
+                  ),
+                  if (_validateMobile.isNotEmpty) ...[
+                    Container(
+                      alignment: Alignment.topLeft,
+                      margin: EdgeInsets.only(left: 8, bottom: 10, top: 5),
+                      width: MediaQuery.of(context).size.width * 0.6,
+                      child: ShakeWidget(
+                        key: Key("mobile"),
+                        duration: Duration(milliseconds: 700),
+                        child: Text(
+                          _validateMobile,
+                          style: TextStyle(
+                            fontFamily: "Poppins",
+                            fontSize: 12,
+                            color: Colors.red,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ] else ...[
+                    SizedBox(height: 16),
+                  ],
+                  // Follow-Up Type Dropdown
+                  DropdownButtonHideUnderline(
                     child: DropdownButton2<FollowUpTypes>(
                       isExpanded: true,
                       hint: Text(
                         'Select Follow-Up Type',
                         style: TextStyle(
-                          fontSize: 14,
+                            fontSize: 14,
                             fontFamily: "Poppins",
-                          color: Colors.grey,
-                        ),
+                            color: Colors.grey),
                       ),
                       items: provider.followupTypes.isNotEmpty
                           ? provider.followupTypes.map((item) {
-                        return DropdownMenuItem<FollowUpTypes>(
-                          value: item,
-                          child: Text(
-                            item.type ?? 'Unknown',
-                            style: const TextStyle(
-                                fontSize: 14, fontFamily: "Poppins"),
-                          ),
-                        );
-                      }).toList()
+                              return DropdownMenuItem<FollowUpTypes>(
+                                value: item,
+                                child: Text(
+                                  item.type ?? 'Unknown',
+                                  style: TextStyle(
+                                      fontSize: 14, fontFamily: "Poppins"),
+                                ),
+                              );
+                            }).toList()
                           : [
-                        const DropdownMenuItem<FollowUpTypes>(
-                          enabled: false,
-                          child: Text(
-                            'No data found',
-                            style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.grey,
-                                fontFamily: "Poppins"),
-                          ),
-                        )
-                      ],
+                              DropdownMenuItem<FollowUpTypes>(
+                                enabled: false,
+                                child: Text(
+                                  'No data found',
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.grey,
+                                      fontFamily: "Poppins"),
+                                ),
+                              )
+                            ],
                       value: _selectedFollowUpType,
                       onChanged: (value) {
                         setState(() {
                           _selectedFollowUpType = value;
                           _selectedFollowUpTypeName = value?.type ?? '';
                           _selectedFollowUpTypeId = value?.id;
+                          _searchController.text =
+                              _selectedFollowUpTypeName ?? '';
                         });
-                        // If you want to print or use it immediately:
-                        print("Selected Follow-Up Type: $_selectedFollowUpTypeName");
-                        print("Selected Follow-Up ID: $_selectedFollowUpTypeId");
                       },
-
-                      buttonStyleData: const ButtonStyleData(
+                      buttonStyleData: ButtonStyleData(
                         padding: EdgeInsets.symmetric(horizontal: 16),
                         height: 50,
                         width: double.infinity,
@@ -266,12 +382,11 @@ class _UpdateFollowupScreenState extends State<UpdateFollowupScreen> {
                           color: Colors.white,
                           borderRadius: BorderRadius.all(Radius.circular(10)),
                           border: Border.fromBorderSide(
-                            BorderSide( width: 1,
-                              color: Color(0xffCDE2FB),),
+                            BorderSide(width: 1, color: Color(0xffCDE2FB)),
                           ),
                         ),
                       ),
-                      dropdownStyleData: const DropdownStyleData(
+                      dropdownStyleData: DropdownStyleData(
                         maxHeight: 250,
                         padding: EdgeInsets.zero,
                         decoration: BoxDecoration(
@@ -279,11 +394,10 @@ class _UpdateFollowupScreenState extends State<UpdateFollowupScreen> {
                           borderRadius: BorderRadius.all(Radius.circular(10)),
                         ),
                         scrollbarTheme: ScrollbarThemeData(
-                          thumbVisibility: MaterialStatePropertyAll(
-                              false), // disables scrollbar
+                          thumbVisibility: MaterialStatePropertyAll(false),
                         ),
                       ),
-                      menuItemStyleData: const MenuItemStyleData(
+                      menuItemStyleData: MenuItemStyleData(
                         height: 45,
                         padding: EdgeInsets.symmetric(horizontal: 16),
                       ),
@@ -292,45 +406,41 @@ class _UpdateFollowupScreenState extends State<UpdateFollowupScreen> {
                         searchInnerWidgetHeight: 50,
                         searchInnerWidget: Container(
                           height: 50,
-                          padding: const EdgeInsets.all(5),
+                          padding: EdgeInsets.all(5),
                           child: TextFormField(
                             controller: _searchController,
+                            focusNode: _focusNode,
                             expands: true,
                             maxLines: null,
                             decoration: InputDecoration(
                               isDense: true,
-                              contentPadding: const EdgeInsets.symmetric(
+                              contentPadding: EdgeInsets.symmetric(
                                   horizontal: 10, vertical: 8),
                               hintText: 'Search Follow-Up Type',
-                              hintStyle: const TextStyle(
+                              hintStyle: TextStyle(
                                   fontSize: 12, fontFamily: "Poppins"),
                               border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                  borderSide: BorderSide(
-                                    width: 1,
-                                    color: Color(0xffCDE2FB),
-                                  )),
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide(
+                                    width: 1, color: Color(0xffCDE2FB)),
+                              ),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(7),
-                                borderSide: const BorderSide(
-                                  width: 1,
-                                  color: Color(0xffCDE2FB),
-                                ),
+                                borderSide: BorderSide(
+                                    width: 1, color: Color(0xffCDE2FB)),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(7),
-                                borderSide: const BorderSide(
-                                  width: 1,
-                                  color: Color(0xffCDE2FB),
-                                ),
+                                borderSide: BorderSide(
+                                    width: 1, color: Color(0xffCDE2FB)),
                               ),
                             ),
                           ),
                         ),
                         searchMatchFn: (item, searchValue) {
                           return item.value?.type
-                              ?.toLowerCase()
-                              .contains(searchValue.toLowerCase()) ??
+                                  ?.toLowerCase()
+                                  .contains(searchValue.toLowerCase()) ??
                               false;
                         },
                       ),
@@ -340,286 +450,272 @@ class _UpdateFollowupScreenState extends State<UpdateFollowupScreen> {
                         }
                       },
                     ),
-                  );
-                },
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: TextEditingController(text: formattedDate),
-                decoration: InputDecoration(
-                  contentPadding: const EdgeInsets.symmetric(
-                    vertical: 0,
-                    horizontal: 10,
                   ),
-                  labelText: 'Date',
-                  labelStyle: const TextStyle(
-                    fontSize: 14,
-                    letterSpacing: 0,
-                    height: 25.73 / 14,
-                    color: Colors.grey,
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w400,
-                  ),
-                  hintText: 'Choose Date',
-                  filled: true,
-                  fillColor: const Color(0xffffffff),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(7),
-                    borderSide: const BorderSide(
-                      width: 1,
-                      color: Color(0xffCDE2FB),
-                    ),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(7),
-                    borderSide: const BorderSide(
-                      width: 1,
-                      color: Color(0xffCDE2FB),
-                    ),
-                  ),
-                  suffixIcon: const Icon(
-                    Icons.calendar_today,
-                    color: primaryColor, // Replace with primaryColor if defined
-                  ),
-                ),
-                readOnly: true,
-                onTap: () async {
-                  final DateTime? picked = await showDatePicker(
-                    context: context,
-                    initialDate: DateTime.now(),
-                    firstDate: DateTime.now(),
-                    lastDate: DateTime(2101),
-                  );
-                  if (picked != null) {
-                    setState(() {
-                      // Strip the time part by creating a new DateTime with only the date
-                      DateTime _selectedDate =
-                          DateTime(picked.year, picked.month, picked.day);
-                      // Format the date as a string (yyyy-MM-dd)
-                      formattedDate =
-                          DateFormat('yyyy-MM-dd').format(_selectedDate);
-                      // Print the formatted date
-                      debugPrint("Formatted Date: $formattedDate");
-                    });
-                  }
-                },
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please select a date';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: TextEditingController(
-                  text: formattedTime,
-                ),
-                decoration: InputDecoration(
-                  contentPadding: const EdgeInsets.symmetric(
-                    vertical: 0,
-                    horizontal: 10,
-                  ),
-                  labelText: 'Time',
-                  labelStyle: const TextStyle(
-                    fontSize: 14,
-                    letterSpacing: 0,
-                    height: 25.73 / 14,
-                    color: Colors.grey,
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w400,
-                  ),
-                  hintText: 'Choose Time',
-                  filled: true,
-                  fillColor: const Color(0xffffffff),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(7),
-                    borderSide: const BorderSide(
-                      width: 1,
-                      color: Color(0xffCDE2FB),
-                    ),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(7),
-                    borderSide: const BorderSide(
-                      width: 1,
-                      color: Color(0xffCDE2FB),
-                    ),
-                  ),
-                  suffixIcon: const Icon(
-                    Icons.access_time,
-                    color: primaryColor, // Replace with primaryColor if defined
-                  ),
-                ),
-                readOnly: true,
-                onTap: () async {
-                  final TimeOfDay? picked = await showTimePicker(
-                    context: context,
-                    initialTime: TimeOfDay.now(),
-                  );
-                  if (picked != null) {
-                    setState(() {
-                      // Format the time as a string (HH:mm)
-                      formattedTime = picked.format(
-                          context); // e.g., '2:30 PM' or '14:30' based on device settings
-                      // Optionally, force 24-hour format
-                      // formattedTime = '${picked.hour.toString().padLeft(2, '0')}:${picked.minute.toString().padLeft(2, '0')}';
-                      debugPrint("Formatted Time: $formattedTime");
-                    });
-                  }
-                },
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please select a time';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _remarksController,
-                decoration: InputDecoration(
-                  contentPadding: const EdgeInsets.symmetric(
-                    vertical: 10,
-                    horizontal: 10,
-                  ),
-                  labelText: "Remarks",
-                  labelStyle: const TextStyle(
-                    fontSize: 14,
-                    letterSpacing: 0,
-                    height: 25.73 / 14,
-                    color: Colors.grey,
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w400,
-                  ),
-                  filled: true,
-                  fillColor: const Color(0xffffffff),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(7),
-                    borderSide:
-                        const BorderSide(width: 1, color: Color(0xffCDE2FB)),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(7),
-                    borderSide:
-                        const BorderSide(width: 1, color: Color(0xffCDE2FB)),
-                  ),
-                ),
-                maxLines: 4,
-              ),
-              if (_validateRemarks.isNotEmpty) ...[
-                Container(
-                  alignment: Alignment.topLeft,
-                  margin: EdgeInsets.only(left: 8, bottom: 10, top: 5),
-                  width: MediaQuery.of(context).size.width * 0.6,
-                  child: ShakeWidget(
-                    key: Key("value"),
-                    duration: Duration(milliseconds: 700),
-                    child: Text(
-                      _validateRemarks,
-                      style: TextStyle(
-                        fontFamily: "Poppins",
-                        fontSize: 12,
-                        color: Colors.red,
-                        fontWeight: FontWeight.w500,
+                  if (leadstageError.isNotEmpty) ...[
+                    Container(
+                      alignment: Alignment.topLeft,
+                      margin: EdgeInsets.only(left: 8, bottom: 10, top: 5),
+                      child: Text(
+                        leadstageError,
+                        style: TextStyle(
+                          fontFamily: "Poppins",
+                          fontSize: 12,
+                          color: Colors.red,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ),
-                  ),
-                ),
-              ] else ...[
-                SizedBox(height: 10),
-              ],
-              text(context, "UPDATE FOLLOWUP STATUS", 16,
-                  fontWeight: FontWeight.w500),
-              // Radio Buttons
-              Column(
-                mainAxisAlignment: MainAxisAlignment
-                    .start, // Align items to start or adjust as needed
-                children: [
-                  RadioListTile<String>(
-                    visualDensity: VisualDensity.compact,
-                    contentPadding: EdgeInsets.zero,
-                    title: Transform.translate(
-                      offset: Offset(-8,
-                          0), // Slightly reduced offset for better alignment
-                      child:
-                          text(context, "Open", 13, textAlign: TextAlign.start),
+                  ] else ...[
+                    SizedBox(height: 16),
+                  ],
+                  // Date Field
+                  TextFormField(
+                    controller: TextEditingController(text: formattedDate),
+                    decoration: InputDecoration(
+                      contentPadding:
+                          EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+                      labelText: 'Date',
+                      labelStyle: TextStyle(
+                        fontSize: 14,
+                        letterSpacing: 0,
+                        height: 25.73 / 14,
+                        color: Colors.grey,
+                        fontFamily: 'Poppins',
+                        fontWeight: FontWeight.w400,
+                      ),
+                      hintText: 'Choose Date',
+                      filled: true,
+                      fillColor: Color(0xffffffff),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(7),
+                        borderSide:
+                            BorderSide(width: 1, color: Color(0xffCDE2FB)),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(7),
+                        borderSide:
+                            BorderSide(width: 1, color: Color(0xffCDE2FB)),
+                      ),
+                      suffixIcon:
+                          Icon(Icons.calendar_today, color: primaryColor),
                     ),
-                    value: 'open',
-                    groupValue: _followupStatus,
-                    onChanged: (value) {
-                      setState(() {
-                        _followupStatus = value;
-                      });
+                    readOnly: true,
+                    onTap: () async {
+                      final DateTime? picked = await showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime.now(),
+                        lastDate: DateTime(2101),
+                      );
+                      if (picked != null) {
+                        setState(() {
+                          formattedDate =
+                              DateFormat('yyyy-MM-dd').format(picked);
+                          debugPrint("Formatted Date: $formattedDate");
+                        });
+                      }
+                    },
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please select a date';
+                      }
+                      return null;
                     },
                   ),
-                  RadioListTile<String>(
-                    visualDensity: VisualDensity.compact,
-                    contentPadding: EdgeInsets.zero,
-                    title: Transform.translate(
-                      offset: Offset(-8, 0),
-                      child: text(context, "Pending", 13,
-                          textAlign: TextAlign.start),
+                  SizedBox(height: 16),
+                  // Time Field
+                  TextFormField(
+                    controller: TextEditingController(text: formattedTime),
+                    decoration: InputDecoration(
+                      contentPadding:
+                          EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+                      labelText: 'Time',
+                      labelStyle: TextStyle(
+                        fontSize: 14,
+                        letterSpacing: 0,
+                        height: 25.73 / 14,
+                        color: Colors.grey,
+                        fontFamily: 'Poppins',
+                        fontWeight: FontWeight.w400,
+                      ),
+                      hintText: 'Choose Time',
+                      filled: true,
+                      fillColor: Color(0xffffffff),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(7),
+                        borderSide:
+                            BorderSide(width: 1, color: Color(0xffCDE2FB)),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(7),
+                        borderSide:
+                            BorderSide(width: 1, color: Color(0xffCDE2FB)),
+                      ),
+                      suffixIcon: Icon(Icons.access_time, color: primaryColor),
                     ),
-                    value: 'pending',
-                    groupValue: _followupStatus,
-                    onChanged: (value) {
-                      setState(() {
-                        _followupStatus = value;
-                      });
+                    readOnly: true,
+                    onTap: () async {
+                      final TimeOfDay? picked = await showTimePicker(
+                        context: context,
+                        initialTime: TimeOfDay.now(),
+                      );
+                      if (picked != null) {
+                        setState(() {
+                          formattedTime = picked.format(context);
+                          debugPrint("Formatted Time: $formattedTime");
+                        });
+                      }
+                    },
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please select a time';
+                      }
+                      return null;
                     },
                   ),
-                  RadioListTile<String>(
-                    visualDensity: VisualDensity.compact,
-                    contentPadding: EdgeInsets.zero,
-                    title: Transform.translate(
-                      offset: Offset(-8, 0),
-                      child: text(context, "Completed", 13,
-                          textAlign: TextAlign.start),
+                  SizedBox(height: 16),
+                  // Remarks Field
+                  TextFormField(
+                    controller: _remarksController,
+                    decoration: InputDecoration(
+                      contentPadding:
+                          EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                      labelText: "Remarks",
+                      labelStyle: TextStyle(
+                        fontSize: 14,
+                        letterSpacing: 0,
+                        height: 25.73 / 14,
+                        color: Colors.grey,
+                        fontFamily: 'Poppins',
+                        fontWeight: FontWeight.w400,
+                      ),
+                      filled: true,
+                      fillColor: Color(0xffffffff),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(7),
+                        borderSide:
+                            BorderSide(width: 1, color: Color(0xffCDE2FB)),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(7),
+                        borderSide:
+                            BorderSide(width: 1, color: Color(0xffCDE2FB)),
+                      ),
                     ),
-                    value: 'completed',
-                    groupValue: _followupStatus,
-                    onChanged: (value) {
-                      setState(() {
-                        _followupStatus = value;
-                      });
+                    maxLines: 4,
+                  ),
+                  if (_validateRemarks.isNotEmpty) ...[
+                    Container(
+                      alignment: Alignment.topLeft,
+                      margin: EdgeInsets.only(left: 8, bottom: 10, top: 5),
+                      child: ShakeWidget(
+                        key: Key("remarks"),
+                        duration: Duration(milliseconds: 700),
+                        child: Text(
+                          _validateRemarks,
+                          style: TextStyle(
+                            fontFamily: "Poppins",
+                            fontSize: 12,
+                            color: Colors.red,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ] else ...[
+                    SizedBox(height: 10),
+                  ],
+                  text(context, "UPDATE FOLLOWUP STATUS", 16,
+                      fontWeight: FontWeight.w500),
+                  // Radio Buttons
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      RadioListTile<String>(
+                        visualDensity: VisualDensity.compact,
+                        contentPadding: EdgeInsets.zero,
+                        title: Transform.translate(
+                          offset: Offset(-8, 0),
+                          child: text(context, "Open", 13,
+                              textAlign: TextAlign.start),
+                        ),
+                        value: 'open',
+                        groupValue: _followupStatus,
+                        onChanged: (value) {
+                          setState(() {
+                            _followupStatus = value;
+                          });
+                        },
+                      ),
+                      RadioListTile<String>(
+                        visualDensity: VisualDensity.compact,
+                        contentPadding: EdgeInsets.zero,
+                        title: Transform.translate(
+                          offset: Offset(-8, 0),
+                          child: text(context, "Pending", 13,
+                              textAlign: TextAlign.start),
+                        ),
+                        value: 'pending',
+                        groupValue: _followupStatus,
+                        onChanged: (value) {
+                          setState(() {
+                            _followupStatus = value;
+                          });
+                        },
+                      ),
+                      RadioListTile<String>(
+                        visualDensity: VisualDensity.compact,
+                        contentPadding: EdgeInsets.zero,
+                        title: Transform.translate(
+                          offset: Offset(-8, 0),
+                          child: text(context, "Completed", 13,
+                              textAlign: TextAlign.start),
+                        ),
+                        value: 'completed',
+                        groupValue: _followupStatus,
+                        onChanged: (value) {
+                          setState(() {
+                            _followupStatus = value;
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                  if (followupstatusError.isNotEmpty) ...[
+                    Container(
+                      alignment: Alignment.topLeft,
+                      margin: EdgeInsets.only(left: 8, bottom: 10, top: 5),
+                      child: Text(
+                        followupstatusError,
+                        style: TextStyle(
+                          fontFamily: "Poppins",
+                          fontSize: 12,
+                          color: Colors.red,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ] else ...[
+                    SizedBox(height: 8),
+                  ],
+                  SizedBox(height: 50),
+                  containertext(
+                    context,
+                    widget.followupId.isEmpty ? "Submit" : "Update",
+                    color: primaryColor,
+                    isLoading: _loading,
+                    onTap: () {
+                      if (!_loading) {
+                        _validateFields();
+                      }
                     },
                   ),
+                  SizedBox(height: 20),
                 ],
               ),
-              if (followupstatusError.isNotEmpty) ...[
-                Container(
-                  alignment: Alignment.topLeft,
-                  margin: EdgeInsets.only(left: 8, bottom: 10, top: 5),
-                  child: Text(
-                    followupstatusError,
-                    style: TextStyle(
-                      fontFamily: "Poppins",
-                      fontSize: 12,
-                      color: Colors.red,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-              ] else ...[
-                SizedBox(height: 8),
-              ],
-              SizedBox(
-                height: 50,
-              ),
-              containertext(context, "Submit",
-                  color: primaryColor, isLoading: _loading, onTap: () {
-                if (_loading) {
-                } else {
-                  _validateFields();
-                }
-              }),
-              SizedBox(
-                height: 20,
-              ),
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       ),
     );
   }

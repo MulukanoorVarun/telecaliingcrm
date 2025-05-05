@@ -134,11 +134,11 @@ class _FollowupsScreenState extends State<FollowupsScreen> {
                                       children: [
                                         text(
                                             context,
-                                            '${followup_List.leadType?.number ?? ""}',
+                                            '${followup_List.phone ?? ""}',
                                             20),
                                         text(
                                             context,
-                                            "Followup: ${formatDate(followup_List.followupDate ?? "")}",
+                                            "Followup: ${formatDate(followup_List.createdAt ?? "")}",
                                             15),
                                       ],
                                     ),
@@ -147,7 +147,6 @@ class _FollowupsScreenState extends State<FollowupsScreen> {
                                       thickness: 0.8,
                                       color: Colors.black.withOpacity(0.25),
                                     ),
-                                    SizedBox(height: 5),
                                     Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
@@ -160,39 +159,39 @@ class _FollowupsScreenState extends State<FollowupsScreen> {
                                                 MainAxisAlignment.start,
                                             children: [
                                               Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                 children: [
-                                                  container(context,
-                                                      colors: (followup_List
-                                                                  .leadType
-                                                                  ?.stageName
-                                                                  ?.stageName ==
-                                                              "Cold")
-                                                          ? coldbgColor
-                                                          : (followup_List.leadType?.stageName?.stageName ==
-                                                                  "Hot")
-                                                              ? Color(
-                                                                  0xffFFA89C)
-                                                              : Color(
-                                                                  0xff95F8B6),
-                                                      borderRadius: BorderRadius.all(
-                                                          Radius.circular(5)),
-                                                      padding: EdgeInsets.symmetric(
-                                                          vertical: 2,
-                                                          horizontal: 10),
-                                                      margin: EdgeInsets.only(
-                                                          bottom: 0, left: 0),
-                                                      child: text(
-                                                          context,
-                                                          followup_List
-                                                                  .leadType
-                                                                  ?.stageName
-                                                                  ?.stageName ??
-                                                              "",
-                                                          14,
-                                                          color: color11)),
+                                                  // container(context,
+                                                  //     colors: (followup_List
+                                                  //                 .leadType
+                                                  //                 ?.stageName
+                                                  //                 ?.stageName ==
+                                                  //             "Cold")
+                                                  //         ? coldbgColor
+                                                  //         : (followup_List.leadType?.stageName?.stageName ==
+                                                  //                 "Hot")
+                                                  //             ? Color(
+                                                  //                 0xffFFA89C)
+                                                  //             : Color(
+                                                  //                 0xff95F8B6),
+                                                  //     borderRadius: BorderRadius.all(
+                                                  //         Radius.circular(5)),
+                                                  //     padding: EdgeInsets.symmetric(
+                                                  //         vertical: 2,
+                                                  //         horizontal: 10),
+                                                  //     margin: EdgeInsets.only(
+                                                  //         bottom: 0, left: 0),
+                                                  //     child: text(
+                                                  //         context,
+                                                  //         followup_List
+                                                  //                 .leadType
+                                                  //                 ?.stageName
+                                                  //                 ?.stageName ??
+                                                  //             "",
+                                                  //         14,
+                                                  //         color: color11)),
+                                                  text(context,
+                                                      '${followup_List.name}', 18),
                                                   InkWell(
                                                     onTap: () {
                                                       context.push(
@@ -214,8 +213,6 @@ class _FollowupsScreenState extends State<FollowupsScreen> {
                                                   ),
                                                 ],
                                               ),
-                                              text(context,
-                                                  '${followup_List.name}', 18),
                                               Text.rich(
                                                 TextSpan(
                                                   children: [

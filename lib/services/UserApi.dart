@@ -10,6 +10,7 @@ import 'package:telecaliingcrm/model/UserDetailsModel.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:mime/mime.dart';
 import 'package:telecaliingcrm/utils/constants.dart';
+import '../model/GetFollowupByIDModel.dart';
 import '../model/GetIndustriesModel.dart';
 import '../model/GetServicesModel.dart';
 import '../model/GetStagesModel.dart';
@@ -437,7 +438,7 @@ class Userapi {
   static Future<GetFollowUpModel?> getFollowup(int page, String filter) async {
     try {
       final response = await get(
-        "/api/follow_up_list",
+        "/api/get-follow-ups",
         queryParameters: {"page": page.toString(), "status": filter},
       );
 
@@ -465,6 +466,22 @@ class Userapi {
       return null;
     } catch (e) {
       debugPrint("Error occurred in getFollowupTypes: $e");
+      return null;
+    }
+  }
+
+  static Future<GetFollowupByIDModel?> getFollowupByID(String id) async {
+    try {
+      final response = await get("/api/get-follow-up-by-id/${id}");
+
+      if (response.statusCode == 200) {
+        debugPrint("getFollowupByID response: ${response.data}");
+        return GetFollowupByIDModel.fromJson(response.data);
+      }
+      debugPrint("Request failed with status: ${response.statusCode}");
+      return null;
+    } catch (e) {
+      debugPrint("Error occurred in getFollowupByID: $e");
       return null;
     }
   }

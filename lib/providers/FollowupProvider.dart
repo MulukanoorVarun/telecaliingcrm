@@ -3,12 +3,14 @@ import 'package:flutter/material.dart';
 import '../Services/UserApi.dart';
 import '../model/FollowUpTypesModel.dart';
 import '../model/GetFollowUpModel.dart';
+import '../model/GetFollowupByIDModel.dart';
 import '../screens/SubscriptionExpiredScreen.dart';
 
 class FollowupProvider extends ChangeNotifier {
   bool _isLoading = true;
   List<FollowUp> _followuplist = [];
   List<FollowUpTypes> _followuptypes = [];
+  GetFollowupByIDModel? _selectedFollowUp; // Store the fetched follow-up
 
   bool _pageLoading = false;
   bool get pageLoading => _pageLoading;
@@ -22,6 +24,7 @@ class FollowupProvider extends ChangeNotifier {
   bool get isLoading => _isLoading;
   List<FollowUp> get followupList => _followuplist;
   List<FollowUpTypes> get followupTypes => _followuptypes;
+  GetFollowupByIDModel? get selectedFollowUp => _selectedFollowUp; // Getter
 
   Future<bool> getFollowUpApi(String filter) async {
     _isLoading = true;
@@ -172,4 +175,27 @@ class FollowupProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  Future<bool> getFollowUpByID(String id) async {
+    try {
+      var result = await Userapi.getFollowupByID(id);
+      if (result != null) {
+        _selectedFollowUp = result; // Store the GetFollowupByIDModel
+        notifyListeners();
+        return true;
+      } else {
+        _selectedFollowUp = null;
+        debugPrint("Failed to fetch follow-up by ID: Response is null");
+        return false;
+      }
+    } catch (error) {
+      _selectedFollowUp = null;
+      debugPrint("Error fetching getFollowUpByID: $error");
+      return false;
+    } finally {
+      notifyListeners();
+    }
+  }
+
+
 }
