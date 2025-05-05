@@ -348,7 +348,7 @@ class Userapi {
   static Future<Map<String, dynamic>?> postAddFollowUp(Map<String,dynamic> data) async {
     try {
       debugPrint("postAddFollowUp??$data");
-      final response = await post("/api/add-follow-up", data: data);
+      final response = await post("/api/add-follow-ups", data: data);
       if (response.data == null || response.data.isEmpty) {
         debugPrint("Empty response body.");
         return null;
@@ -364,7 +364,7 @@ class Userapi {
   static Future<Map<String, dynamic>?> updateFollowUp(Map<String,dynamic> data) async {
     try {
       debugPrint("postAddFollowUp??$data");
-      final response = await post("/api/add-follow-up", data: data);
+      final response = await _dio.put("/api/edit-follow-ups", data: data);
 
       if (response.data == null || response.data.isEmpty) {
         debugPrint("Empty response body.");

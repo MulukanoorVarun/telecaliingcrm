@@ -96,7 +96,7 @@ class _LostLeadScreenState extends State<LostLeadScreen> {
       });
       if (response == true) {
         CustomSnackBar.show(context, "Lead Updated Successfully!");
-        Navigator.pop(context, true); // Returning true as a success flag
+        Navigator.pop(context, true);
       } else {
         final errorMessage = "Failed to update lead.";
         CustomSnackBar.show(context, errorMessage);

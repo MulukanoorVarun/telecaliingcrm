@@ -9,11 +9,10 @@ import '../utils/ShakeWidget.dart';
 import '../utils/constants.dart';
 
 class UpdateFollowupScreen extends StatefulWidget {
-  final String folloupId;
+  final String followupId;
   final String leadId;
   final String staffId;
-  final String type;
-  const UpdateFollowupScreen({super.key, required this.folloupId, required this.type,required this.staffId,required this.leadId});
+  const UpdateFollowupScreen({super.key, required this.followupId,required this.staffId,required this.leadId});
 
   @override
   State<UpdateFollowupScreen> createState() => _UpdateFollowupScreenState();
@@ -24,18 +23,17 @@ class _UpdateFollowupScreenState extends State<UpdateFollowupScreen> {
   final TextEditingController _remarksController = TextEditingController();
 
   String formattedDate = "";
-  String formattedTime = ''; // Initialize as needed
-  String? _leadStatus;
+  String formattedTime = '';
+  String? _followupStatus;
   FollowUpTypes? _selectedFollowUpType;
   String? _selectedFollowUpTypeName;
   int? _selectedFollowUpTypeId;
   final TextEditingController _searchController = TextEditingController();
   final FocusNode _focusNode = FocusNode();
-  String? _leadStage;
   bool _loading = false;
   String _validateFullName = "";
   String _validateRemarks = "";
-  String leadstatusError = "";
+  String followupstatusError = "";
   String leadstageError = "";
 
   @override
@@ -73,15 +71,13 @@ class _UpdateFollowupScreenState extends State<UpdateFollowupScreen> {
           _remarksController.text.isEmpty ? "Please add some remarks" : "";
 
       // Validate Lead Status
-      leadstatusError =
-          (_leadStatus == null) ? "Please select a lead status" : "";
-      leadstageError = (_leadStage == null) ? "Please select a lead stage" : "";
+      followupstatusError =
+          (_followupStatus == null) ? "Please select a lead status" : "";
 
       // Proceed only if all fields are valid
       if (_validateFullName.isEmpty &&
           _validateRemarks.isEmpty &&
-          leadstatusError.isEmpty &&
-          leadstageError.isEmpty) {
+          followupstatusError.isEmpty) {
         submitData();
       } else {
         _loading = false;
@@ -95,17 +91,15 @@ class _UpdateFollowupScreenState extends State<UpdateFollowupScreen> {
       var res;
       Map<String,dynamic> data={
         "staff_id":widget.staffId,
-        "name":widget.staffId,
-        "date":widget.staffId,
-        "time":widget.staffId,
-        "type_of_follow_up":widget.staffId,
-        "remarks":widget.staffId,
-        "status":widget.staffId,
-        "lead_id":widget.staffId,
-
-
+        "name":_nameController.text,
+        "date":formattedDate,
+        "time":formattedTime,
+        "type_of_follow_up":_selectedFollowUpTypeId,
+        "remarks":_remarksController.text,
+        "status":_followupStatus,
+        "lead_id":widget.leadId
       };
-      if(widget.type=="add"){
+      if(widget.followupId==""){
         res= await followupsProvider.AddFollowUp(data);
       }else{
         res= await followupsProvider.updateFollowUp(data);
@@ -552,10 +546,10 @@ class _UpdateFollowupScreenState extends State<UpdateFollowupScreen> {
                           text(context, "Open", 13, textAlign: TextAlign.start),
                     ),
                     value: 'open',
-                    groupValue: _leadStatus,
+                    groupValue: _followupStatus,
                     onChanged: (value) {
                       setState(() {
-                        _leadStatus = value;
+                        _followupStatus = value;
                       });
                     },
                   ),
@@ -568,10 +562,10 @@ class _UpdateFollowupScreenState extends State<UpdateFollowupScreen> {
                           textAlign: TextAlign.start),
                     ),
                     value: 'pending',
-                    groupValue: _leadStatus,
+                    groupValue: _followupStatus,
                     onChanged: (value) {
                       setState(() {
-                        _leadStatus = value;
+                        _followupStatus = value;
                       });
                     },
                   ),
@@ -584,21 +578,21 @@ class _UpdateFollowupScreenState extends State<UpdateFollowupScreen> {
                           textAlign: TextAlign.start),
                     ),
                     value: 'completed',
-                    groupValue: _leadStatus,
+                    groupValue: _followupStatus,
                     onChanged: (value) {
                       setState(() {
-                        _leadStatus = value;
+                        _followupStatus = value;
                       });
                     },
                   ),
                 ],
               ),
-              if (leadstatusError.isNotEmpty) ...[
+              if (followupstatusError.isNotEmpty) ...[
                 Container(
                   alignment: Alignment.topLeft,
                   margin: EdgeInsets.only(left: 8, bottom: 10, top: 5),
                   child: Text(
-                    leadstatusError,
+                    followupstatusError,
                     style: TextStyle(
                       fontFamily: "Poppins",
                       fontSize: 12,

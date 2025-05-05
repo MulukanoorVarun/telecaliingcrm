@@ -344,9 +344,9 @@ class _LeadsScreenState extends State<LeadScreen>
                                             children: [
                                               text(
                                                 context,
-                                                leads.name?.isEmpty ?? true
+                                                leads.name.isEmpty ?? true
                                                     ? "unknown"
-                                                    : leads.name!,
+                                                    : leads.name,
                                                 17,
                                                 fontWeight: FontWeight.w600,
                                               ),
@@ -405,7 +405,7 @@ class _LeadsScreenState extends State<LeadScreen>
                                                   InkResponse(
                                                     onTap: () {
                                                       context.push(
-                                                          "/update_followup?folloupId=''&staffId=${leads.staffId}&leadId=${leads.id}");
+                                                          "/update_followup?followupId=''&staffId=${leads.staffId}&leadId=${leads.id}");
                                                     },
                                                     child: text(
                                                       context,
