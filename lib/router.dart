@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
-import 'package:telecaliingcrm/screens/AddFollowUp.dart';
 import 'package:telecaliingcrm/screens/AddLeadsScreen.dart';
 import 'package:telecaliingcrm/screens/CallHistoryScreen.dart';
 import 'package:telecaliingcrm/screens/Edit%20Profile%20screeen.dart';
@@ -109,14 +108,7 @@ final GoRouter goRouter =
       return buildSlideTransitionPage(Nointernet(), state);
     },
   ),
-  GoRoute(
-    path: '/add_followup',
-    pageBuilder: (context, state) {
-      final id = state.uri.queryParameters['id'] ?? '';
-      final name = state.uri.queryParameters['name'] ?? '';
-      return buildSlideTransitionPage(AddFollowUp(id: id, name: name), state);
-    },
-  ),
+
   GoRoute(
     path: '/update_lead',
     pageBuilder: (context, state) {

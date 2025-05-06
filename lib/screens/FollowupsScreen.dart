@@ -158,7 +158,8 @@ class _FollowupsScreenState extends State<FollowupsScreen> {
                                             mainAxisAlignment:
                                                 MainAxisAlignment.start,
                                             children: [
-                                              text(context,
+                                              text(textAlign: TextAlign.start,maxLines: 2,overflow: TextOverflow.ellipsis,
+                                                  context,
                                                   '${followup_List.name}', 18),
                                               Row(
                                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -315,7 +316,6 @@ class _FollowupsScreenState extends State<FollowupsScreen> {
                                   ],
                                 ),
                               );
-                              ;
                             },
                             childCount: followupProvider.followupList.length,
                           ),

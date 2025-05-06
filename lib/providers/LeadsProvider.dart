@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart'; // For ChangeNotifier
 import '../Services/UserApi.dart';
+import '../model/GetFollowupByIDModel.dart';
+import '../model/GetFollowupByLeadIDModel.dart';
 import '../model/LeadsModel.dart';
 import '../model/ViewInfoModel.dart';
 import '../screens/SubscriptionExpiredScreen.dart';
@@ -11,6 +13,7 @@ class LeadsProvider with ChangeNotifier {
   bool _isLoading = true;
   bool _hasNextPage = true;
   List<Lead>? get leadsList => leadslist;
+  List<Data> _selectedFollowUpByLead=[];
   List<ViewInfo> _leadinfo = [];
   bool get isLoading => _isLoading;
   bool get hasNextPage => _hasNextPage;
@@ -19,7 +22,7 @@ class LeadsProvider with ChangeNotifier {
   int get currentPage => _currentPage;
   bool _pageLoading = false;
   bool get pageLoading => _pageLoading;
-
+  List<Data> get selectedFollowUpByLead =>_selectedFollowUpByLead ;
   Future<void> fetchLeadsList(type) async {
     _isLoading = true;
     _currentPage = 1;
@@ -118,7 +121,7 @@ class LeadsProvider with ChangeNotifier {
     return null;
   }
 
-  void getLeadsInformationApi(id) async {
+  Future<void> getLeadsInformationApi(id) async {
     _isLoading = true;
     notifyListeners();
     try {
@@ -130,6 +133,29 @@ class LeadsProvider with ChangeNotifier {
         debugPrint("Failed to fetch leads information");
       }
     } catch (e) {
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+  Future<bool> getFollowUpByLeadID(String id) async {
+    _isLoading = true;
+    notifyListeners();
+    try {
+      var result = await Userapi.getFollowupByLeadID(id);
+      if (result != null) {
+        _selectedFollowUpByLead = result.data??[];
+        notifyListeners();
+        return true;
+      } else {
+        _selectedFollowUpByLead = [];
+        debugPrint("Failed to fetch follow-up by ID: Response is null");
+        return false;
+      }
+    } catch (error) {
+      _selectedFollowUpByLead = [];
+      debugPrint("Error fetching getFollowUpByID: $error");
+      return false;
     } finally {
       _isLoading = false;
       notifyListeners();

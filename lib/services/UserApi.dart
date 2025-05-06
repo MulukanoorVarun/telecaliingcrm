@@ -11,6 +11,7 @@ import 'package:http_parser/http_parser.dart';
 import 'package:mime/mime.dart';
 import 'package:telecaliingcrm/utils/constants.dart';
 import '../model/GetFollowupByIDModel.dart';
+import '../model/GetFollowupByLeadIDModel.dart';
 import '../model/GetIndustriesModel.dart';
 import '../model/GetServicesModel.dart';
 import '../model/GetStagesModel.dart';
@@ -484,6 +485,33 @@ class Userapi {
         } else if (response.data is Map<String, dynamic>) {
           // Handle case where response is already a single object
           return GetFollowupByIDModel.fromJson(response.data);
+        } else {
+          debugPrint("Invalid response format: Expected a List or Map");
+          return null;
+        }
+      } else {
+        debugPrint("Request failed with status: ${response.statusCode}");
+        return null;
+      }
+    } catch (e, stackTrace) {
+      debugPrint("Error occurred in getFollowupByID: $e");
+      debugPrint("Stack trace: $stackTrace");
+      return null;
+    }
+  }
+  static Future<GetFollowupByLeadIDModel?> getFollowupByLeadID(String id) async {
+    try {
+      final response = await get("/api/get-all-follow-ups-for-selected/${id}");
+      debugPrint("getFollowupByLeadID URL: /api/get-all-follow-ups-for-selected/${id}");
+      debugPrint("getFollowupByLeadID statusCode: ${response.statusCode}");
+      debugPrint("getFollowupByLeadID response: ${response.data}");
+
+      if (response.statusCode == 200) {
+        if (response.data is List && response.data.isNotEmpty) {
+          return GetFollowupByLeadIDModel.fromJson(response.data[0]);
+        } else if (response.data is Map<String, dynamic>) {
+          // Handle case where response is already a single object
+          return GetFollowupByLeadIDModel.fromJson(response.data);
         } else {
           debugPrint("Invalid response format: Expected a List or Map");
           return null;

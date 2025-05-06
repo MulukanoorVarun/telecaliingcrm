@@ -1,10 +1,14 @@
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_searchable_dropdown/flutter_searchable_dropdown.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:telecaliingcrm/Services/UserApi.dart';
+import 'package:telecaliingcrm/model/GetIndustriesModel.dart';
+import 'package:telecaliingcrm/model/GetStagesModel.dart';
 import 'package:telecaliingcrm/utils/constants.dart';
 
+import '../model/GetServicesModel.dart';
 import '../providers/ConnectivityProviders.dart';
 import '../providers/LeadsProvider.dart';
 import '../providers/leaderBoardprovider.dart';
@@ -26,6 +30,14 @@ class UpDateLeadScreen extends StatefulWidget {
 class _UpDateLeadScreenState extends State<UpDateLeadScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _remarksController = TextEditingController();
+  final TextEditingController _industriessearchController =
+      TextEditingController();
+  final FocusNode _industriesfocusNode = FocusNode();
+  final TextEditingController _servicesSearchController =
+      TextEditingController();
+  final FocusNode _servicesfocusNode = FocusNode();
+  final TextEditingController _stagesSearchController = TextEditingController();
+  final FocusNode _stagesfocusNode = FocusNode();
   int? selectedIndustryId;
   int? selectservicesId;
   int? selectStageId;
@@ -41,43 +53,200 @@ class _UpDateLeadScreenState extends State<UpDateLeadScreen> {
   String leadstatusError = "";
   String leadstageError = "";
 
-  // @override
-  // void initState() {
-  //   print('idgfshgdgh:${widget.ID}');
-  //   WidgetsBinding.instance.addPostFrameCallback((_) {
-  //     Provider.of<LeaderBoardProvider>(context, listen: false).getData(widget.ID);
-  //   });
-  //
-  //   super.initState();
-  // }
+  Industires? _selectedIndustryType;
+  Services? _selectedServicesType;
+  Stages? _selectedStagesType;
+
   @override
   void initState() {
     super.initState();
     print('Lead ID: ${widget.ID}');
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final leaderBoardProvider =
-          Provider.of<LeaderBoardProvider>(context, listen: false);
+      Provider.of<LeaderBoardProvider>(context, listen: false);
+      print('Fetching data for Lead ID: ${widget.ID}');
       leaderBoardProvider.getData(widget.ID).then((_) {
-        // Update state with fetched data only if the widget is still mounted
         if (mounted) {
+          print('Data fetched. LeadInfo: ${leaderBoardProvider.leadinfo.length} items');
+          print('Industries: ${leaderBoardProvider.industires.map((i) => i.id).toList()}');
+          print('Stages: ${leaderBoardProvider.stages.map((s) => s.id).toList()}');
+          print('Services: ${leaderBoardProvider.services.map((s) => s.id).toList()}');
+          if (leaderBoardProvider.leadinfo.isNotEmpty) {
+            // Manually log ViewInfo fields since toString() is not overridden
+            final viewInfo = leaderBoardProvider.leadinfo[0];
+            print('ViewInfo Fields: {'
+                'name: ${viewInfo.name}, '
+                'remarks: ${viewInfo.remarks}, '
+                'leadStageId: ${viewInfo.leadStageId}, '
+                'dealStatus: ${viewInfo.dealStatus}, '
+                'industryType: ${viewInfo.industryType}, '
+                'stageType: ${viewInfo.stageType}, '
+                'serviceType: ${viewInfo.serviceType}, '
+                'industryId: ${viewInfo.industryType}, '
+                'stageId: ${viewInfo.staffId}, '
+                'serviceId: ${viewInfo.serviceType}}');
+          }
           setState(() {
             if (leaderBoardProvider.leadinfo.isNotEmpty) {
-              _nameController.text =
-                  leaderBoardProvider.leadinfo[0].name ?? widget.name;
-              _remarksController.text =
-                  leaderBoardProvider.leadinfo[0].remarks ?? widget.remarks;
-              selectedIndustryId = leaderBoardProvider.leadinfo[0].industryType;
-              selectStageId = leaderBoardProvider.leadinfo[0].stageType;
-              selectservicesId = leaderBoardProvider.leadinfo[0].serviceType;
-              _leadStatus =
-                  leaderBoardProvider.leadinfo[0].leadStageId.toString();
-              _leadStage = leaderBoardProvider.leadinfo[0].dealStatus;
+              final viewInfo = leaderBoardProvider.leadinfo[0];
+              // Set text controllers
+              _nameController.text = viewInfo.name ?? widget.name;
+              _remarksController.text = viewInfo.remarks ?? widget.remarks;
+              _leadStatus = viewInfo.leadStageId?.toString() ?? '';
+              _leadStage = viewInfo.dealStatus ?? '';
+
+              // Industries
+              // Try industryId or industryType
+              final industryId = viewInfo.industryType ?? viewInfo.industryType;
+              print('Industry ID: $industryId');
+              if (leaderBoardProvider.industires.isNotEmpty && industryId != null) {
+                try {
+                  _selectedIndustryType = leaderBoardProvider.industires.firstWhere(
+                        (item) => item.id == industryId,
+                    orElse: () {
+                      print('No matching industry found for ID: $industryId');
+                      return leaderBoardProvider.industires.first; // Default to first
+                    },
+                  );
+                  selectedIndustryId = _selectedIndustryType?.id;
+                  print('Selected Industry ID: $selectedIndustryId');
+                } catch (e) {
+                  print('Error setting industry: $e');
+                  _selectedIndustryType = leaderBoardProvider.industires.first;
+                  selectedIndustryId = _selectedIndustryType?.id;
+                }
+              } else {
+                print('Industries empty or industryId null');
+                _selectedIndustryType = leaderBoardProvider.industires.isNotEmpty
+                    ? leaderBoardProvider.industires.first
+                    : null;
+                selectedIndustryId = _selectedIndustryType?.id;
+                print('Default/Fallback Industry ID: $selectedIndustryId');
+              }
+
+              // Stages
+              // Try stageId or stageType
+              final stageId = viewInfo.stageType ?? viewInfo.stageType;
+              print('Stage ID: $stageId');
+              if (leaderBoardProvider.stages.isNotEmpty && stageId != null) {
+                try {
+                  _selectedStagesType = leaderBoardProvider.stages.firstWhere(
+                        (item) => item.id == stageId,
+                    orElse: () {
+                      print('No matching stage found for ID: $stageId');
+                      return leaderBoardProvider.stages.first; // Default to first
+                    },
+                  );
+                  selectStageId = _selectedStagesType?.id;
+                  print('Selected Stage ID: $selectStageId');
+                } catch (e) {
+                  print('Error setting stage: $e');
+                  _selectedStagesType = leaderBoardProvider.stages.first;
+                  selectStageId = _selectedStagesType?.id;
+                }
+              } else {
+                print('Stages empty or stageId null');
+                _selectedStagesType = leaderBoardProvider.stages.isNotEmpty
+                    ? leaderBoardProvider.stages.first
+                    : null;
+                selectStageId = _selectedStagesType?.id;
+                print('Default/Fallback Stage ID: $selectStageId');
+              }
+
+              // Services
+              // Try serviceId or serviceType
+              final serviceId = viewInfo.serviceType ?? viewInfo.serviceType;
+              print('Service ID: $serviceId');
+              if (leaderBoardProvider.services.isNotEmpty && serviceId != null) {
+                try {
+                  _selectedServicesType = leaderBoardProvider.services.firstWhere(
+                        (item) => item.id == serviceId,
+                    orElse: () {
+                      print('No matching service found for ID: $serviceId');
+                      return leaderBoardProvider.services.first; // Default to first
+                    },
+                  );
+                  selectservicesId = _selectedServicesType?.id;
+                  print('Selected Services ID: $selectservicesId');
+                } catch (e) {
+                  print('Error setting service: $e');
+                  _selectedServicesType = leaderBoardProvider.services.first;
+                  selectservicesId = _selectedServicesType?.id;
+                }
+              } else {
+                print('Services empty or serviceId null');
+                _selectedServicesType = leaderBoardProvider.services.isNotEmpty
+                    ? leaderBoardProvider.services.first
+                    : null;
+                selectservicesId = _selectedServicesType?.id;
+                print('Default/Fallback Services ID: $selectservicesId');
+              }
+            } else {
+              print('LeadInfo is empty');
+              // Set defaults if leadinfo is empty
+              _selectedIndustryType = leaderBoardProvider.industires.isNotEmpty
+                  ? leaderBoardProvider.industires.first
+                  : null;
+              _selectedStagesType = leaderBoardProvider.stages.isNotEmpty
+                  ? leaderBoardProvider.stages.first
+                  : null;
+              _selectedServicesType = leaderBoardProvider.services.isNotEmpty
+                  ? leaderBoardProvider.services.first
+                  : null;
+              selectedIndustryId = _selectedIndustryType?.id;
+              selectStageId = _selectedStagesType?.id;
+              selectservicesId = _selectedServicesType?.id;
+              print('Default Industry ID: $selectedIndustryId');
+              print('Default Stage ID: $selectStageId');
+              print('Default Services ID: $selectservicesId');
             }
           });
         }
+      }).catchError((e) {
+        print('Error fetching data: $e');
       });
     });
   }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   print('Lead ID: ${widget.ID}');
+  //   WidgetsBinding.instance.addPostFrameCallback((_) {
+  //     final leaderBoardProvider =
+  //         Provider.of<LeaderBoardProvider>(context, listen: false);
+  //     leaderBoardProvider.getData(widget.ID).then((_) {
+  //       // Update state with fetched data only if the widget is still mounted
+  //       if (mounted) {
+  //         setState(() {
+  //           if (leaderBoardProvider.leadinfo.isNotEmpty) {
+  //             _nameController.text =
+  //                 leaderBoardProvider.leadinfo[0].name ?? widget.name;
+  //             _remarksController.text =
+  //                 leaderBoardProvider.leadinfo[0].remarks ?? widget.remarks;
+  //             // _selectedIndustryType = leaderBoardProvider.industires.firstWhere(
+  //             //       (item) => item.id == selectedIndustryId,
+  //             //   orElse: () => throw Exception('Industry with id $selectedIndustryId not found'),
+  //             // );
+  //             // // selectedIndustryId = leaderBoardProvider.leadinfo[0].industryType;
+  //             // _selectedStagesType = leaderBoardProvider.stages.firstWhere(
+  //             //       (item) => item.id == selectStageId,
+  //             //   orElse: () => throw Exception('Stage with id $selectStageId not found'),
+  //             // );
+  //             // // selectStageId = leaderBoardProvider.leadinfo[0].stageType;
+  //             // // selectservicesId = leaderBoardProvider.leadinfo[0].serviceType;
+  //             // _selectedServicesType = leaderBoardProvider.services.firstWhere(
+  //             //       (item) => item.id == selectservicesId,
+  //             //   orElse: () => throw Exception('Services with id $selectservicesId not found'),
+  //             // );
+  //             _leadStatus =
+  //                 leaderBoardProvider.leadinfo[0].leadStageId.toString();
+  //             _leadStage = leaderBoardProvider.leadinfo[0].dealStatus;
+  //           }
+  //         });
+  //       }
+  //     });
+  //   });
+  // }
 
   void _validateFields() {
     setState(() {
@@ -272,75 +441,197 @@ class _UpDateLeadScreenState extends State<UpDateLeadScreen> {
                             color: Colors.grey,
                             fontSize: 14)),
                     SizedBox(height: 6),
-                    Container(
-                      height: 50,
-                      padding: EdgeInsets.symmetric(horizontal: 10),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(7),
-                        border: Border.all(width: 1, color: Color(0xffCDE2FB)),
-                      ),
-                      child: SingleChildScrollView(
-                        child: SearchableDropdown<int>.single(
-                          items: leaderBoard.industires
-                              .map((industry) => DropdownMenuItem<int>(
-                                    value: industry.id,
-                                    child: Text(
-                                      industry.type ?? "",
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        letterSpacing: 0,
-                                        height: 25.73 / 14,
-                                        color: Colors.black,
-                                        fontFamily: 'Poppins',
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ))
-                              .toList(),
-                          value: selectedIndustryId,
-                          hint: Text(
-                            "Select Industries",
-                            style: TextStyle(
-                                fontSize: 16, color: Colors.grey.shade600),
-                          ),
-                          searchHint: Text(
-                            "Search and select Industries",
-                            style: TextStyle(
-                                fontSize: 16, color: Colors.grey.shade600),
-                          ),
-                          onChanged: (value) {
-                            setState(() {
-                              selectedIndustryId = value;
-                            });
-                          },
-                          doneButton: "Done",
-                          displayItem: (item, selected) {
-                            return Row(
-                              children: [
-                                Icon(
-                                  selected
-                                      ? Icons.radio_button_checked
-                                      : Icons.radio_button_unchecked,
-                                  color: selected ? primaryColor : Colors.grey,
-                                ),
-                                SizedBox(width: 10),
-                                Expanded(
-                                  child: DefaultTextStyle(
-                                    style: TextStyle(
-                                        fontSize: 16, color: Colors.black),
-                                    child: item,
-                                  ),
-                                ),
-                              ],
-                            );
-                          },
-                          isExpanded: true,
-                          icon: Icon(Icons.arrow_drop_down,
-                              color: Colors.grey.shade700),
+                    DropdownButtonHideUnderline(
+                      child: DropdownButton2<Industires>(
+                        isExpanded: true,
+                        hint: Text(
+                          "Select Industries",
+                          style: TextStyle(
+                              fontSize: 14,
+                              fontFamily: "Poppins",
+                              color: Colors.grey),
                         ),
+                        items: leaderBoard.industires.isNotEmpty
+                            ? leaderBoard.industires.map((item) {
+                                return DropdownMenuItem<Industires>(
+                                  value: item,
+                                  child: Text(
+                                    item.type ?? 'Unknown',
+                                    style: TextStyle(
+                                        fontSize: 14, fontFamily: "Poppins"),
+                                  ),
+                                );
+                              }).toList()
+                            : [
+                                DropdownMenuItem<Industires>(
+                                  enabled: false,
+                                  child: Text(
+                                    'No data found',
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.grey,
+                                        fontFamily: "Poppins"),
+                                  ),
+                                )
+                              ],
+                        value: _selectedIndustryType != null &&
+                                leaderBoard.industires.any((item) =>
+                                    item.id == _selectedIndustryType!.id)
+                            ? leaderBoard.industires.firstWhere(
+                                (item) => item.id == _selectedIndustryType!.id)
+                            : null,
+                        onChanged: (value) {
+                          setState(() {
+                            _selectedIndustryType = value;
+                            selectedIndustryId = value?.id;
+                          });
+                        },
+                        buttonStyleData: ButtonStyleData(
+                          padding: EdgeInsets.symmetric(horizontal: 16),
+                          height: 50,
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                            border: Border.fromBorderSide(
+                              BorderSide(width: 1, color: Color(0xffCDE2FB)),
+                            ),
+                          ),
+                        ),
+                        dropdownStyleData: DropdownStyleData(
+                          maxHeight: 250,
+                          padding: EdgeInsets.zero,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                          ),
+                          scrollbarTheme: ScrollbarThemeData(
+                            thumbVisibility: MaterialStatePropertyAll(false),
+                          ),
+                        ),
+                        menuItemStyleData: MenuItemStyleData(
+                          height: 45,
+                          padding: EdgeInsets.symmetric(horizontal: 16),
+                        ),
+                        dropdownSearchData: DropdownSearchData(
+                          searchController: _industriessearchController,
+                          searchInnerWidgetHeight: 50,
+                          searchInnerWidget: Container(
+                            height: 50,
+                            padding: EdgeInsets.all(5),
+                            child: TextFormField(
+                              controller: _industriessearchController,
+                              focusNode: _industriesfocusNode,
+                              expands: true,
+                              maxLines: null,
+                              decoration: InputDecoration(
+                                isDense: true,
+                                contentPadding: EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 8),
+                                hintText: "Search and select Industries",
+                                hintStyle: TextStyle(
+                                    fontSize: 12, fontFamily: "Poppins"),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: BorderSide(
+                                      width: 1, color: Color(0xffCDE2FB)),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(7),
+                                  borderSide: BorderSide(
+                                      width: 1, color: Color(0xffCDE2FB)),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(7),
+                                  borderSide: BorderSide(
+                                      width: 1, color: Color(0xffCDE2FB)),
+                                ),
+                              ),
+                            ),
+                          ),
+                          searchMatchFn: (item, searchValue) {
+                            return item.value?.type
+                                    ?.toLowerCase()
+                                    .contains(searchValue.toLowerCase()) ??
+                                false;
+                          },
+                        ),
+                        onMenuStateChange: (isOpen) {
+                          if (!isOpen) {
+                            _industriessearchController.clear();
+                          }
+                        },
                       ),
                     ),
+                    // Container(
+                    //   height: 50,
+                    //   padding: EdgeInsets.symmetric(horizontal: 10),
+                    //   decoration: BoxDecoration(
+                    //     color: Colors.white,
+                    //     borderRadius: BorderRadius.circular(7),
+                    //     border: Border.all(width: 1, color: Color(0xffCDE2FB)),
+                    //   ),
+                    //   child: SingleChildScrollView(
+                    //     child: SearchableDropdown<int>.single(
+                    //       items: leaderBoard.industires
+                    //           .map((industry) => DropdownMenuItem<int>(
+                    //                 value: industry.id,
+                    //                 child: Text(
+                    //                   industry.type ?? "",
+                    //                   style: TextStyle(
+                    //                     fontSize: 14,
+                    //                     letterSpacing: 0,
+                    //                     height: 25.73 / 14,
+                    //                     color: Colors.black,
+                    //                     fontFamily: 'Poppins',
+                    //                     fontWeight: FontWeight.w500,
+                    //                   ),
+                    //                 ),
+                    //               ))
+                    //           .toList(),
+                    //       value: selectedIndustryId,
+                    //       hint: Text(
+                    //         "Select Industries",
+                    //         style: TextStyle(
+                    //             fontSize: 16, color: Colors.grey.shade600),
+                    //       ),
+                    //       searchHint: Text(
+                    //         "Search and select Industries",
+                    //         style: TextStyle(
+                    //             fontSize: 16, color: Colors.grey.shade600),
+                    //       ),
+                    //       onChanged: (value) {
+                    //         setState(() {
+                    //           selectedIndustryId = value;
+                    //         });
+                    //       },
+                    //       doneButton: "Done",
+                    //       displayItem: (item, selected) {
+                    //         return Row(
+                    //           children: [
+                    //             Icon(
+                    //               selected
+                    //                   ? Icons.radio_button_checked
+                    //                   : Icons.radio_button_unchecked,
+                    //               color: selected ? primaryColor : Colors.grey,
+                    //             ),
+                    //             SizedBox(width: 10),
+                    //             Expanded(
+                    //               child: DefaultTextStyle(
+                    //                 style: TextStyle(
+                    //                     fontSize: 16, color: Colors.black),
+                    //                 child: item,
+                    //               ),
+                    //             ),
+                    //           ],
+                    //         );
+                    //       },
+                    //       isExpanded: true,
+                    //       icon: Icon(Icons.arrow_drop_down,
+                    //           color: Colors.grey.shade700),
+                    //     ),
+                    //   ),
+                    // ),
                     if (_validateindustires.isNotEmpty) ...[
                       Container(
                         alignment: Alignment.topLeft,
@@ -370,75 +661,197 @@ class _UpDateLeadScreenState extends State<UpDateLeadScreen> {
                             color: Colors.grey,
                             fontSize: 14)),
                     SizedBox(height: 6),
-                    Container(
-                      height: 50,
-                      padding: EdgeInsets.symmetric(horizontal: 10),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(7),
-                        border: Border.all(width: 1, color: Color(0xffCDE2FB)),
-                      ),
-                      child: SingleChildScrollView(
-                        child: SearchableDropdown<int>.single(
-                          items: leaderBoard.services
-                              .map((services) => DropdownMenuItem<int>(
-                                    value: services.id,
-                                    child: Text(
-                                      services.type ?? "",
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        letterSpacing: 0,
-                                        height: 25.73 / 14,
-                                        color: Colors.black,
-                                        fontFamily: 'Poppins',
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ))
-                              .toList(),
-                          value: selectservicesId,
-                          hint: Text(
-                            "Select Services",
-                            style: TextStyle(
-                                fontSize: 16, color: Colors.grey.shade600),
-                          ),
-                          searchHint: Text(
-                            "Search and select Services",
-                            style: TextStyle(
-                                fontSize: 16, color: Colors.grey.shade600),
-                          ),
-                          onChanged: (value) {
-                            setState(() {
-                              selectservicesId = value;
-                            });
-                          },
-                          doneButton: "Done",
-                          displayItem: (item, selected) {
-                            return Row(
-                              children: [
-                                Icon(
-                                  selected
-                                      ? Icons.radio_button_checked
-                                      : Icons.radio_button_unchecked,
-                                  color: selected ? primaryColor : Colors.grey,
-                                ),
-                                SizedBox(width: 10),
-                                Expanded(
-                                  child: DefaultTextStyle(
-                                    style: TextStyle(
-                                        fontSize: 16, color: Colors.black),
-                                    child: item,
-                                  ),
-                                ),
-                              ],
-                            );
-                          },
-                          isExpanded: true,
-                          icon: Icon(Icons.arrow_drop_down,
-                              color: Colors.grey.shade700),
+                    DropdownButtonHideUnderline(
+                      child: DropdownButton2<Services>(
+                        isExpanded: true,
+                        hint: Text(
+                          "Select Services",
+                          style: TextStyle(
+                              fontSize: 14,
+                              fontFamily: "Poppins",
+                              color: Colors.grey),
                         ),
+                        items: leaderBoard.services.isNotEmpty
+                            ? leaderBoard.services.map((item) {
+                                return DropdownMenuItem<Services>(
+                                  value: item,
+                                  child: Text(
+                                    item.type ?? 'Unknown',
+                                    style: TextStyle(
+                                        fontSize: 14, fontFamily: "Poppins"),
+                                  ),
+                                );
+                              }).toList()
+                            : [
+                                DropdownMenuItem<Services>(
+                                  enabled: false,
+                                  child: Text(
+                                    'No data found',
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.grey,
+                                        fontFamily: "Poppins"),
+                                  ),
+                                )
+                              ],
+                        value: _selectedServicesType != null &&
+                                leaderBoard.services.any((item) =>
+                                    item.id == _selectedServicesType!.id)
+                            ? leaderBoard.services.firstWhere(
+                                (item) => item.id == _selectedServicesType!.id)
+                            : null,
+                        onChanged: (value) {
+                          setState(() {
+                            _selectedServicesType = value;
+                            selectservicesId = value?.id;
+                          });
+                        },
+                        buttonStyleData: ButtonStyleData(
+                          padding: EdgeInsets.symmetric(horizontal: 16),
+                          height: 50,
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                            border: Border.fromBorderSide(
+                              BorderSide(width: 1, color: Color(0xffCDE2FB)),
+                            ),
+                          ),
+                        ),
+                        dropdownStyleData: DropdownStyleData(
+                          maxHeight: 250,
+                          padding: EdgeInsets.zero,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                          ),
+                          scrollbarTheme: ScrollbarThemeData(
+                            thumbVisibility: MaterialStatePropertyAll(false),
+                          ),
+                        ),
+                        menuItemStyleData: MenuItemStyleData(
+                          height: 45,
+                          padding: EdgeInsets.symmetric(horizontal: 16),
+                        ),
+                        dropdownSearchData: DropdownSearchData(
+                          searchController: _servicesSearchController,
+                          searchInnerWidgetHeight: 50,
+                          searchInnerWidget: Container(
+                            height: 50,
+                            padding: EdgeInsets.all(5),
+                            child: TextFormField(
+                              controller: _servicesSearchController,
+                              focusNode: _servicesfocusNode,
+                              expands: true,
+                              maxLines: null,
+                              decoration: InputDecoration(
+                                isDense: true,
+                                contentPadding: EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 8),
+                                hintText: "Search and select Services",
+                                hintStyle: TextStyle(
+                                    fontSize: 12, fontFamily: "Poppins"),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: BorderSide(
+                                      width: 1, color: Color(0xffCDE2FB)),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(7),
+                                  borderSide: BorderSide(
+                                      width: 1, color: Color(0xffCDE2FB)),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(7),
+                                  borderSide: BorderSide(
+                                      width: 1, color: Color(0xffCDE2FB)),
+                                ),
+                              ),
+                            ),
+                          ),
+                          searchMatchFn: (item, searchValue) {
+                            return item.value?.type
+                                    ?.toLowerCase()
+                                    .contains(searchValue.toLowerCase()) ??
+                                false;
+                          },
+                        ),
+                        onMenuStateChange: (isOpen) {
+                          if (!isOpen) {
+                            _servicesSearchController.clear();
+                          }
+                        },
                       ),
                     ),
+                    // Container(
+                    //   height: 50,
+                    //   padding: EdgeInsets.symmetric(horizontal: 10),
+                    //   decoration: BoxDecoration(
+                    //     color: Colors.white,
+                    //     borderRadius: BorderRadius.circular(7),
+                    //     border: Border.all(width: 1, color: Color(0xffCDE2FB)),
+                    //   ),
+                    //   child: SingleChildScrollView(
+                    //     child: SearchableDropdown<int>.single(
+                    //       items: leaderBoard.services
+                    //           .map((services) => DropdownMenuItem<int>(
+                    //                 value: services.id,
+                    //                 child: Text(
+                    //                   services.type ?? "",
+                    //                   style: TextStyle(
+                    //                     fontSize: 14,
+                    //                     letterSpacing: 0,
+                    //                     height: 25.73 / 14,
+                    //                     color: Colors.black,
+                    //                     fontFamily: 'Poppins',
+                    //                     fontWeight: FontWeight.w500,
+                    //                   ),
+                    //                 ),
+                    //               ))
+                    //           .toList(),
+                    //       value: selectservicesId,
+                    //       hint: Text(
+                    //         "Select Services",
+                    //         style: TextStyle(
+                    //             fontSize: 16, color: Colors.grey.shade600),
+                    //       ),
+                    //       searchHint: Text(
+                    //         "Search and select Services",
+                    //         style: TextStyle(
+                    //             fontSize: 16, color: Colors.grey.shade600),
+                    //       ),
+                    //       onChanged: (value) {
+                    //         setState(() {
+                    //           selectservicesId = value;
+                    //         });
+                    //       },
+                    //       doneButton: "Done",
+                    //       displayItem: (item, selected) {
+                    //         return Row(
+                    //           children: [
+                    //             Icon(
+                    //               selected
+                    //                   ? Icons.radio_button_checked
+                    //                   : Icons.radio_button_unchecked,
+                    //               color: selected ? primaryColor : Colors.grey,
+                    //             ),
+                    //             SizedBox(width: 10),
+                    //             Expanded(
+                    //               child: DefaultTextStyle(
+                    //                 style: TextStyle(
+                    //                     fontSize: 16, color: Colors.black),
+                    //                 child: item,
+                    //               ),
+                    //             ),
+                    //           ],
+                    //         );
+                    //       },
+                    //       isExpanded: true,
+                    //       icon: Icon(Icons.arrow_drop_down,
+                    //           color: Colors.grey.shade700),
+                    //     ),
+                    //   ),
+                    // ),
                     if (_validateservices.isNotEmpty) ...[
                       Container(
                         alignment: Alignment.topLeft,
@@ -468,75 +881,197 @@ class _UpDateLeadScreenState extends State<UpDateLeadScreen> {
                             color: Colors.grey,
                             fontSize: 14)),
                     SizedBox(height: 6),
-                    Container(
-                      height: 50,
-                      padding: EdgeInsets.symmetric(horizontal: 10),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(7),
-                        border: Border.all(width: 1, color: Color(0xffCDE2FB)),
-                      ),
-                      child: SingleChildScrollView(
-                        child: SearchableDropdown<int>.single(
-                          items: leaderBoard.stages
-                              .map((stages) => DropdownMenuItem<int>(
-                                    value: stages.id,
-                                    child: Text(
-                                      stages.type ?? "",
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        letterSpacing: 0,
-                                        height: 25.73 / 14,
-                                        color: Colors.black,
-                                        fontFamily: 'Poppins',
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ))
-                              .toList(),
-                          value: selectStageId,
-                          hint: Text(
-                            "Select Stages",
-                            style: TextStyle(
-                                fontSize: 16, color: Colors.grey.shade600),
-                          ),
-                          searchHint: Text(
-                            "Search and select Stages",
-                            style: TextStyle(
-                                fontSize: 16, color: Colors.grey.shade600),
-                          ),
-                          onChanged: (value) {
-                            setState(() {
-                              selectStageId = value;
-                            });
-                          },
-                          doneButton: "Done",
-                          displayItem: (item, selected) {
-                            return Row(
-                              children: [
-                                Icon(
-                                  selected
-                                      ? Icons.radio_button_checked
-                                      : Icons.radio_button_unchecked,
-                                  color: selected ? primaryColor : Colors.grey,
-                                ),
-                                SizedBox(width: 10),
-                                Expanded(
-                                  child: DefaultTextStyle(
-                                    style: TextStyle(
-                                        fontSize: 16, color: Colors.black),
-                                    child: item,
-                                  ),
-                                ),
-                              ],
-                            );
-                          },
-                          isExpanded: true,
-                          icon: Icon(Icons.arrow_drop_down,
-                              color: Colors.grey.shade700),
+                    DropdownButtonHideUnderline(
+                      child: DropdownButton2<Stages>(
+                        isExpanded: true,
+                        hint: Text(
+                          "Select Stages",
+                          style: TextStyle(
+                              fontSize: 14,
+                              fontFamily: "Poppins",
+                              color: Colors.grey),
                         ),
+                        items: leaderBoard.stages.isNotEmpty
+                            ? leaderBoard.stages.map((item) {
+                                return DropdownMenuItem<Stages>(
+                                  value: item,
+                                  child: Text(
+                                    item.type ?? 'Unknown',
+                                    style: TextStyle(
+                                        fontSize: 14, fontFamily: "Poppins"),
+                                  ),
+                                );
+                              }).toList()
+                            : [
+                                DropdownMenuItem<Stages>(
+                                  enabled: false,
+                                  child: Text(
+                                    'No data found',
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.grey,
+                                        fontFamily: "Poppins"),
+                                  ),
+                                )
+                              ],
+                        value: _selectedStagesType != null &&
+                                leaderBoard.stages.any((item) =>
+                                    item.id == _selectedStagesType!.id)
+                            ? leaderBoard.stages.firstWhere(
+                                (item) => item.id == _selectedStagesType!.id)
+                            : null,
+                        onChanged: (value) {
+                          setState(() {
+                            _selectedStagesType = value;
+                            selectStageId = value?.id;
+                          });
+                        },
+                        buttonStyleData: ButtonStyleData(
+                          padding: EdgeInsets.symmetric(horizontal: 16),
+                          height: 50,
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                            border: Border.fromBorderSide(
+                              BorderSide(width: 1, color: Color(0xffCDE2FB)),
+                            ),
+                          ),
+                        ),
+                        dropdownStyleData: DropdownStyleData(
+                          maxHeight: 250,
+                          padding: EdgeInsets.zero,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                          ),
+                          scrollbarTheme: ScrollbarThemeData(
+                            thumbVisibility: MaterialStatePropertyAll(false),
+                          ),
+                        ),
+                        menuItemStyleData: MenuItemStyleData(
+                          height: 45,
+                          padding: EdgeInsets.symmetric(horizontal: 16),
+                        ),
+                        dropdownSearchData: DropdownSearchData(
+                          searchController: _stagesSearchController,
+                          searchInnerWidgetHeight: 50,
+                          searchInnerWidget: Container(
+                            height: 50,
+                            padding: EdgeInsets.all(5),
+                            child: TextFormField(
+                              controller: _stagesSearchController,
+                              focusNode: _stagesfocusNode,
+                              expands: true,
+                              maxLines: null,
+                              decoration: InputDecoration(
+                                isDense: true,
+                                contentPadding: EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 8),
+                                hintText:  "Search and select Stages",
+                                hintStyle: TextStyle(
+                                    fontSize: 12, fontFamily: "Poppins"),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: BorderSide(
+                                      width: 1, color: Color(0xffCDE2FB)),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(7),
+                                  borderSide: BorderSide(
+                                      width: 1, color: Color(0xffCDE2FB)),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(7),
+                                  borderSide: BorderSide(
+                                      width: 1, color: Color(0xffCDE2FB)),
+                                ),
+                              ),
+                            ),
+                          ),
+                          searchMatchFn: (item, searchValue) {
+                            return item.value?.type
+                                    ?.toLowerCase()
+                                    .contains(searchValue.toLowerCase()) ??
+                                false;
+                          },
+                        ),
+                        onMenuStateChange: (isOpen) {
+                          if (!isOpen) {
+                            _stagesSearchController.clear();
+                          }
+                        },
                       ),
                     ),
+                    // Container(
+                    //   height: 50,
+                    //   padding: EdgeInsets.symmetric(horizontal: 10),
+                    //   decoration: BoxDecoration(
+                    //     color: Colors.white,
+                    //     borderRadius: BorderRadius.circular(7),
+                    //     border: Border.all(width: 1, color: Color(0xffCDE2FB)),
+                    //   ),
+                    //   child: SingleChildScrollView(
+                    //     child: SearchableDropdown<int>.single(
+                    //       items: leaderBoard.stages
+                    //           .map((stages) => DropdownMenuItem<int>(
+                    //                 value: stages.id,
+                    //                 child: Text(
+                    //                   stages.type ?? "",
+                    //                   style: TextStyle(
+                    //                     fontSize: 14,
+                    //                     letterSpacing: 0,
+                    //                     height: 25.73 / 14,
+                    //                     color: Colors.black,
+                    //                     fontFamily: 'Poppins',
+                    //                     fontWeight: FontWeight.w500,
+                    //                   ),
+                    //                 ),
+                    //               ))
+                    //           .toList(),
+                    //       value: selectStageId,
+                    //       hint: Text(
+                    //         "Select Stages",
+                    //         style: TextStyle(
+                    //             fontSize: 16, color: Colors.grey.shade600),
+                    //       ),
+                    //       searchHint: Text(
+                    //         "Search and select Stages",
+                    //         style: TextStyle(
+                    //             fontSize: 16, color: Colors.grey.shade600),
+                    //       ),
+                    //       onChanged: (value) {
+                    //         setState(() {
+                    //           selectStageId = value;
+                    //         });
+                    //       },
+                    //       doneButton: "Done",
+                    //       displayItem: (item, selected) {
+                    //         return Row(
+                    //           children: [
+                    //             Icon(
+                    //               selected
+                    //                   ? Icons.radio_button_checked
+                    //                   : Icons.radio_button_unchecked,
+                    //               color: selected ? primaryColor : Colors.grey,
+                    //             ),
+                    //             SizedBox(width: 10),
+                    //             Expanded(
+                    //               child: DefaultTextStyle(
+                    //                 style: TextStyle(
+                    //                     fontSize: 16, color: Colors.black),
+                    //                 child: item,
+                    //               ),
+                    //             ),
+                    //           ],
+                    //         );
+                    //       },
+                    //       isExpanded: true,
+                    //       icon: Icon(Icons.arrow_drop_down,
+                    //           color: Colors.grey.shade700),
+                    //     ),
+                    //   ),
+                    // ),
                     if (_validatestages.isNotEmpty) ...[
                       Container(
                         alignment: Alignment.topLeft,

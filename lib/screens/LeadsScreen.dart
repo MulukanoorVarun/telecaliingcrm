@@ -328,7 +328,7 @@ class _LeadsScreenState extends State<LeadScreen>{
                                             mainAxisAlignment:
                                                 MainAxisAlignment.start,
                                             children: [
-                                              text(
+                                              text(textAlign: TextAlign.start,maxLines: 2,overflow: TextOverflow.ellipsis,
                                                 context,
                                                 leads.name.isEmpty ?? true
                                                     ? "unknown"
@@ -403,7 +403,7 @@ class _LeadsScreenState extends State<LeadScreen>{
                                                   ),
                                                   InkWell(
                                                     onTap: () {
-                                                      context.pushReplacement(
+                                                      context.push(
                                                           "/lead_information?ID=${leads.id}");
                                                     },
                                                     child: Padding(

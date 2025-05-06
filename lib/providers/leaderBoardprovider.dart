@@ -39,7 +39,7 @@ class LeaderBoardProvider extends ChangeNotifier {
     _currentPage = 1;
     notifyListeners();
     try {
-      var res = await Userapi.getLeaderboard(_currentPage,filter);
+      var res = await Userapi.getLeaderboard(_currentPage, filter);
       if (res != null) {
         leaderboardData = res.leaderboardData ?? [];
         _hasNext = res.nextPageUrl != null;
@@ -67,7 +67,8 @@ class LeaderBoardProvider extends ChangeNotifier {
 
     try {
       debugPrint("Fetching leaderboard bloc for page $_currentPage...");
-      var res = await Userapi.getLeaderboard(_currentPage + 1,filter); // Increment the page for the API call
+      var res = await Userapi.getLeaderboard(
+          _currentPage + 1, filter); // Increment the page for the API call
       if (res != null) {
         _currentPage++; // Increment the page count on success
 
@@ -100,7 +101,6 @@ class LeaderBoardProvider extends ChangeNotifier {
         fetchServices(),
         fetchIndustires(),
         fetchStages(),
-        getLeadsInformationApi(id),
       ]);
     } catch (e) {
     } finally {
@@ -108,6 +108,7 @@ class LeaderBoardProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
+
   Future<void> getLeadsInformationApi(String id) async {
     _isLoading = true;
     notifyListeners();
