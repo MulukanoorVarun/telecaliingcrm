@@ -393,7 +393,7 @@ class _LeadsScreenState extends State<LeadScreen>{
                                                   ),
                                                   InkResponse(
                                                     onTap: () {
-                                                      context.push(
+                                                      context.pushReplacement(
                                                           "/update_followup?followupId=${""}&staffId=${leads.staffId}&leadId=${leads.id}");
                                                     },
                                                     child: text(

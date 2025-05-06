@@ -1,9 +1,11 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../model/FollowUpTypesModel.dart';
+import '../providers/DashBoardProvider.dart';
 import '../providers/FollowupProvider.dart';
 import '../utils/ColorConstants.dart';
 import '../utils/ShakeWidget.dart';
@@ -105,8 +107,6 @@ class _UpdateFollowupScreenState extends State<UpdateFollowupScreen> {
             CustomSnackBar.show(context, "Failed to load follow-up details!");
           }
         });
-      } else {
-        CustomSnackBar.show(context, "Invalid follow-up ID!");
       }
     });
 
@@ -132,8 +132,7 @@ class _UpdateFollowupScreenState extends State<UpdateFollowupScreen> {
     setState(() {
       _loading = true;
       // Validate Full Name
-      _validateFullName =
-          !_nameController.text.contains(RegExp(r"^[a-zA-Z\s]+$"))
+      _validateFullName = _nameController.text.isEmpty
               ? "Please enter a valid name"
               : "";
       // Validate Remarks
@@ -193,7 +192,10 @@ class _UpdateFollowupScreenState extends State<UpdateFollowupScreen> {
               widget.followupId.isEmpty
                   ? "Followup Added Successfully!"
                   : "Followup Updated Successfully!");
-          Navigator.pop(context, true); // Navigate back after success
+          if(widget.followupId.isEmpty){
+            Provider.of<DashboardProvider>(context, listen: false).fetchDashBoardDetails("Pending");
+          }
+            context.pushReplacement("/followups");
         } else {
           _loading = false;
           CustomSnackBar.show(

@@ -194,7 +194,7 @@ class _FollowupsScreenState extends State<FollowupsScreen> {
                                                       '${followup_List.name}', 18),
                                                   InkWell(
                                                     onTap: () {
-                                                      context.push(
+                                                      context.pushReplacement(
                                                           "/followup_information?leadId=${followup_List.leadId}&followupId=${followup_List.id}");
                                                     },
                                                     child: Padding(
@@ -398,8 +398,14 @@ class _FollowupsScreenState extends State<FollowupsScreen> {
                     value: 'open',
                     groupValue: _selectedFilter,
                     onChanged: (value) {
-                      setState(() {
+                      setState(() async {
                         _selectedFilter = value ?? "";
+                        var res = await Provider.of<FollowupProvider>(context,
+                            listen: false)
+                            .getFollowUpApi(_selectedFilter ?? "");
+                        if (res == true) {
+                          context.pop();
+                        }
                       });
                     },
                   ),

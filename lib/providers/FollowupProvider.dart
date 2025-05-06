@@ -177,6 +177,8 @@ class FollowupProvider extends ChangeNotifier {
   }
 
   Future<bool> getFollowUpByID(String id) async {
+    _isLoading = true;
+    notifyListeners();
     try {
       var result = await Userapi.getFollowupByID(id);
       if (result != null) {
@@ -193,6 +195,7 @@ class FollowupProvider extends ChangeNotifier {
       debugPrint("Error fetching getFollowUpByID: $error");
       return false;
     } finally {
+      _isLoading = false;
       notifyListeners();
     }
   }
