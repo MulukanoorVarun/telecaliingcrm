@@ -16,7 +16,7 @@ class LeadScreen extends StatefulWidget {
   State<LeadScreen> createState() => _LeadsScreenState();
 }
 
-class _LeadsScreenState extends State<LeadScreen>{
+class _LeadsScreenState extends State<LeadScreen> {
   String stage_name = "";
   @override
   void initState() {
@@ -81,7 +81,7 @@ class _LeadsScreenState extends State<LeadScreen>{
           actions: [
             InkResponse(
               onTap: () {
-                context.pushReplacement("/add_lead");
+                context.push("/add_lead");
               },
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
@@ -328,7 +328,10 @@ class _LeadsScreenState extends State<LeadScreen>{
                                             mainAxisAlignment:
                                                 MainAxisAlignment.start,
                                             children: [
-                                              text(textAlign: TextAlign.start,maxLines: 2,overflow: TextOverflow.ellipsis,
+                                              text(
+                                                textAlign: TextAlign.start,
+                                                maxLines: 2,
+                                                overflow: TextOverflow.ellipsis,
                                                 context,
                                                 leads.name.isEmpty ?? true
                                                     ? "unknown"
@@ -381,14 +384,16 @@ class _LeadsScreenState extends State<LeadScreen>{
                                                         bottom: 10, left: 0),
                                                     child: text(
                                                       context,
-                                                      leads.stageName.stageName ?? "",
+                                                      leads.stageName
+                                                              .stageName ??
+                                                          "",
                                                       14,
                                                       color: color11,
                                                     ),
                                                   ),
                                                   InkResponse(
                                                     onTap: () {
-                                                      context.pushReplacement(
+                                                      context.push(
                                                           "/update_followup?followupId=${""}&staffId=${leads.staffId}&leadId=${leads.id}");
                                                     },
                                                     child: text(
