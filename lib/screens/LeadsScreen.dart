@@ -21,9 +21,7 @@ class LeadScreen extends StatefulWidget {
   State<LeadScreen> createState() => _LeadsScreenState();
 }
 
-class _LeadsScreenState extends State<LeadScreen>
-    with SingleTickerProviderStateMixin {
-  late TabController _tabController;
+class _LeadsScreenState extends State<LeadScreen>{
   String stage_name = "";
   @override
   void initState() {
@@ -31,19 +29,12 @@ class _LeadsScreenState extends State<LeadScreen>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _fetchLeads();
     });
-    _tabController = TabController(length: 4, vsync: this);
     super.initState();
   }
 
   Future<void> _fetchLeads() async {
     final leadsProvider = Provider.of<LeadsProvider>(context, listen: false);
     leadsProvider.fetchLeadsList(stage_name);
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
   }
 
   void _launchWhatsApp(number) async {

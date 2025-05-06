@@ -12,49 +12,50 @@ class GetFollowupByIDModel {
   String? createdAt;
   String? updatedAt;
 
-  GetFollowupByIDModel(
-      {this.id,
-        this.staffId,
-        this.leadId,
-        this.name,
-        this.phone,
-        this.date,
-        this.time,
-        this.typeOfFollowUp,
-        this.status,
-        this.remarks,
-        this.createdAt,
-        this.updatedAt});
+  GetFollowupByIDModel({
+    this.id,
+    this.staffId,
+    this.leadId,
+    this.name,
+    this.phone,
+    this.date,
+    this.time,
+    this.typeOfFollowUp,
+    this.status,
+    this.remarks,
+    this.createdAt,
+    this.updatedAt,
+  });
 
   GetFollowupByIDModel.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    staffId = json['staff_id'];
-    leadId = json['lead_id'];
-    name = json['name'];
-    phone = json['phone'];
-    date = json['date'];
-    time = json['time'];
-    typeOfFollowUp = json['type_of_follow_up'];
-    status = json['status'];
-    remarks = json['remarks'];
-    createdAt = json['created_at'];
-    updatedAt = json['updated_at'];
+    id = json['id'] as int?;
+    staffId = json['staff_id'] as int?;
+    leadId = json['lead_id'] as int?;
+    name = json['name'] as String?;
+    phone = json['phone'] as String?;
+    date = json['date'] as String?;
+    time = json['time'] as String?;
+    typeOfFollowUp = json['type_of_follow_up'] as int?;
+    status = json['status'] as String?;
+    remarks = json['remarks'] as String?;
+    createdAt = json['created_at'] as String?;
+    updatedAt = json['updated_at'] as String?;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['staff_id'] = this.staffId;
-    data['lead_id'] = this.leadId;
-    data['name'] = this.name;
-    data['phone'] = this.phone;
-    data['date'] = this.date;
-    data['time'] = this.time;
-    data['type_of_follow_up'] = this.typeOfFollowUp;
-    data['status'] = this.status;
-    data['remarks'] = this.remarks;
-    data['created_at'] = this.createdAt;
-    data['updated_at'] = this.updatedAt;
+    final Map<String, dynamic> data = {};
+    data['id'] = id;
+    data['staff_id'] = staffId;
+    data['lead_id'] = leadId;
+    data['name'] = name;
+    data['phone'] = phone;
+    data['date'] = date;
+    data['time'] = time;
+    data['type_of_follow_up'] = typeOfFollowUp;
+    data['status'] = status;
+    data['remarks'] = remarks;
+    data['created_at'] = createdAt;
+    data['updated_at'] = updatedAt;
     return data;
   }
 }

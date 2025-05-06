@@ -116,9 +116,9 @@ class FollowupProvider extends ChangeNotifier {
     return false;
   }
 
-  Future<bool?> updateFollowUp(Map<String,dynamic> data) async {
+  Future<bool?> updateFollowUp(Map<String,dynamic> data,id) async {
     try {
-      final res = await Userapi.updateFollowUp(data);
+      final res = await Userapi.updateFollowUp(data,id);
       if (res != null) {
         if (res["status"] == true) {
           getFollowUpApi("Open");

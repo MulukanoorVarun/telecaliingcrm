@@ -52,13 +52,61 @@ class _UpdateFollowupScreenState extends State<UpdateFollowupScreen> {
       provider.getFollowUpTypes();
       // Fetch follow-up details if editing (followupId is provided)
       if (widget.followupId.isNotEmpty) {
+        debugPrint("Fetching follow-up with ID: ${widget.followupId}");
         provider.getFollowUpByID(widget.followupId).then((success) {
           if (success) {
-            // Data is populated via Consumer, no need to set state here
+            setState(() {
+              if (widget.followupId.isNotEmpty &&
+                  provider.selectedFollowUp != null) {
+                final followUp = provider.selectedFollowUp!;
+                _nameController.text = followUp.name ?? '';
+                _remarksController.text = followUp.remarks ?? '';
+                _mobileController.text = followUp.phone ?? "";
+                formattedDate = followUp.date ?? '';
+                formattedTime = followUp.time ?? '';
+                _followupStatus = followUp.status?.toLowerCase();
+
+                // Set the follow-up type
+                if (followUp.typeOfFollowUp != null) {
+                  try {
+                    // Find the matching FollowUpTypes object in the current provider.followupTypes
+                    final matchingType = provider.followupTypes.firstWhere(
+                          (type) => type.id == followUp.typeOfFollowUp,
+                      orElse: () => FollowUpTypes(id: null, type: null),
+                    );
+                    if (matchingType.id != null) {
+                      // Ensure we use the exact object from provider.followupTypes
+                      _selectedFollowUpType = provider.followupTypes.firstWhere(
+                            (type) => type == matchingType,
+                        orElse: () => FollowUpTypes(id: null, type: null),
+                      );
+                      _selectedFollowUpTypeId = _selectedFollowUpType?.id;
+                      _selectedFollowUpTypeName = _selectedFollowUpType?.type;
+                      debugPrint(
+                          "Initialized Follow-Up Type: $_selectedFollowUpTypeName (ID: $_selectedFollowUpTypeId)");
+                      // Verify containment
+                      if (!provider.followupTypes.contains(_selectedFollowUpType)) {
+                        debugPrint(
+                            "Warning: _selectedFollowUpType not in provider.followupTypes");
+                      }
+                    } else {
+                      debugPrint(
+                          "No matching FollowUpType found for ID: ${followUp
+                              .typeOfFollowUp}");
+                    }
+                  } catch (e) {
+                    debugPrint("Error setting FollowUpType: $e");
+                  }
+                }
+              }
+            });
+
           } else {
             CustomSnackBar.show(context, "Failed to load follow-up details!");
           }
         });
+      } else {
+        CustomSnackBar.show(context, "Invalid follow-up ID!");
       }
     });
 
@@ -66,7 +114,7 @@ class _UpdateFollowupScreenState extends State<UpdateFollowupScreen> {
       if (!_focusNode.hasFocus && _selectedFollowUpType == null) {
         _searchController.clear();
       } else if (!_focusNode.hasFocus && _selectedFollowUpType != null) {
-        _searchController.text = _selectedFollowUpType!.type ?? 'Unknown';
+        // _searchController.text = _selectedFollowUpType!.type ?? 'Unknown';
       }
     });
   }
@@ -128,15 +176,13 @@ class _UpdateFollowupScreenState extends State<UpdateFollowupScreen> {
         "remarks": _remarksController.text,
         "status": _followupStatus,
         "lead_id": widget.leadId,
-        if (widget.followupId.isNotEmpty)
-          "id": widget.followupId, // Include ID for update
       };
 
       bool? res;
       if (widget.followupId.isEmpty) {
         res = await followupsProvider.AddFollowUp(data);
       } else {
-        res = await followupsProvider.updateFollowUp(data);
+        res = await followupsProvider.updateFollowUp(data,widget.followupId);
       }
 
       setState(() {
@@ -190,28 +236,6 @@ class _UpdateFollowupScreenState extends State<UpdateFollowupScreen> {
       ),
       body: Consumer<FollowupProvider>(
         builder: (context, provider, child) {
-          // Populate fields when selectedFollowUp is available (for editing)
-          if (widget.followupId.isNotEmpty &&
-              provider.selectedFollowUp != null &&
-              _nameController.text.isEmpty) {
-            final followUp = provider.selectedFollowUp!;
-            _nameController.text = followUp.name ?? '';
-            _remarksController.text = followUp.remarks ?? '';
-            formattedDate = followUp.date ?? '';
-            formattedTime = followUp.time ?? '';
-            _followupStatus = followUp.status?.toLowerCase();
-            // Set the follow-up type
-            if (followUp.typeOfFollowUp != null) {
-              _selectedFollowUpType = provider.followupTypes.firstWhere(
-                (type) => type.id == followUp.typeOfFollowUp,
-                orElse: () => FollowUpTypes(id: null, type: null),
-              );
-              _selectedFollowUpTypeId = _selectedFollowUpType?.id;
-              _selectedFollowUpTypeName = _selectedFollowUpType?.type;
-              _searchController.text = _selectedFollowUpTypeName ?? '';
-            }
-          }
-
           return container(
             context,
             w: w,
@@ -273,7 +297,6 @@ class _UpdateFollowupScreenState extends State<UpdateFollowupScreen> {
                   ] else ...[
                     SizedBox(height: 16),
                   ],
-
                   // Name Field
                   TextFormField(
                     controller: _mobileController,
@@ -336,42 +359,40 @@ class _UpdateFollowupScreenState extends State<UpdateFollowupScreen> {
                       isExpanded: true,
                       hint: Text(
                         'Select Follow-Up Type',
-                        style: TextStyle(
-                            fontSize: 14,
-                            fontFamily: "Poppins",
-                            color: Colors.grey),
+                        style: TextStyle(fontSize: 14, fontFamily: "Poppins", color: Colors.grey),
                       ),
                       items: provider.followupTypes.isNotEmpty
                           ? provider.followupTypes.map((item) {
-                              return DropdownMenuItem<FollowUpTypes>(
-                                value: item,
-                                child: Text(
-                                  item.type ?? 'Unknown',
-                                  style: TextStyle(
-                                      fontSize: 14, fontFamily: "Poppins"),
-                                ),
-                              );
-                            }).toList()
+                        return DropdownMenuItem<FollowUpTypes>(
+                          value: item,
+                          child: Text(
+                            item.type ?? 'Unknown',
+                            style: TextStyle(fontSize: 14, fontFamily: "Poppins"),
+                          ),
+                        );
+                      }).toList()
                           : [
-                              DropdownMenuItem<FollowUpTypes>(
-                                enabled: false,
-                                child: Text(
-                                  'No data found',
-                                  style: TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.grey,
-                                      fontFamily: "Poppins"),
-                                ),
-                              )
-                            ],
-                      value: _selectedFollowUpType,
+                        DropdownMenuItem<FollowUpTypes>(
+                          enabled: false,
+                          child: Text(
+                            'No data found',
+                            style: TextStyle(
+                                fontSize: 14, color: Colors.grey, fontFamily: "Poppins"),
+                          ),
+                        )
+                      ],
+                      value: _selectedFollowUpType != null &&
+                          provider.followupTypes.any(
+                                  (item) => item.id == _selectedFollowUpType!.id)
+                          ? provider.followupTypes.firstWhere(
+                              (item) => item.id == _selectedFollowUpType!.id)
+                          : null,
                       onChanged: (value) {
                         setState(() {
                           _selectedFollowUpType = value;
-                          _selectedFollowUpTypeName = value?.type ?? '';
                           _selectedFollowUpTypeId = value?.id;
-                          _searchController.text =
-                              _selectedFollowUpTypeName ?? '';
+                          _selectedFollowUpTypeName = value?.type ?? '';
+                          debugPrint("Selected Follow-Up Type: $_selectedFollowUpTypeName (ID: $_selectedFollowUpTypeId)");
                         });
                       },
                       buttonStyleData: ButtonStyleData(

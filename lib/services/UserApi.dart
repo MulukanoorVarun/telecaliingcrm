@@ -181,11 +181,11 @@ class Userapi {
     }
   }
 
-  static Future<DashBoardModel?> dashboardApi() async {
+  static Future<DashBoardModel?> dashboardApi(filter) async {
     try {
       final token = await AuthService.getAccessToken();
       logger.d("[dashboardApi] Using token: $token");
-      final response = await get("/api/dashboard");
+      final response = await get("/api/dashboard?call_status=${filter}");
       if (response.statusCode == 200 && response.data != null) {
         logger.d("dashboardApi response: ${response.data}");
         return DashBoardModel.fromJson(response.data);
@@ -362,10 +362,10 @@ class Userapi {
     }
   }
 
-  static Future<Map<String, dynamic>?> updateFollowUp(Map<String,dynamic> data) async {
+  static Future<Map<String, dynamic>?> updateFollowUp(Map<String,dynamic> data,id) async {
     try {
       debugPrint("postAddFollowUp??$data");
-      final response = await _dio.put("/api/edit-follow-ups", data: data);
+      final response = await _dio.put("/api/edit-follow-ups/${id}", data: data);
 
       if (response.data == null || response.data.isEmpty) {
         debugPrint("Empty response body.");
@@ -473,15 +473,28 @@ class Userapi {
   static Future<GetFollowupByIDModel?> getFollowupByID(String id) async {
     try {
       final response = await get("/api/get-follow-up-by-id/${id}");
+      debugPrint("getFollowupByID URL: /api/get-follow-up-by-id/$id");
+      debugPrint("getFollowupByID statusCode: ${response.statusCode}");
+      debugPrint("getFollowupByID response: ${response.data}");
 
       if (response.statusCode == 200) {
-        debugPrint("getFollowupByID response: ${response.data}");
-        return GetFollowupByIDModel.fromJson(response.data);
+        // Check if response.data is a List and has at least one item
+        if (response.data is List && response.data.isNotEmpty) {
+          return GetFollowupByIDModel.fromJson(response.data[0]);
+        } else if (response.data is Map<String, dynamic>) {
+          // Handle case where response is already a single object
+          return GetFollowupByIDModel.fromJson(response.data);
+        } else {
+          debugPrint("Invalid response format: Expected a List or Map");
+          return null;
+        }
+      } else {
+        debugPrint("Request failed with status: ${response.statusCode}");
+        return null;
       }
-      debugPrint("Request failed with status: ${response.statusCode}");
-      return null;
-    } catch (e) {
+    } catch (e, stackTrace) {
       debugPrint("Error occurred in getFollowupByID: $e");
+      debugPrint("Stack trace: $stackTrace");
       return null;
     }
   }

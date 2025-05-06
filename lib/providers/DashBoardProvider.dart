@@ -22,7 +22,7 @@ class DashboardProvider with ChangeNotifier {
       _isLoading = true;
       notifyListeners();
       // Fetching user details from the API
-      var response = await Userapi.dashboardApi();
+      var response = await Userapi.dashboardApi(filter);
       if (response?.status==true) {
         todayCalls = response?.todayCalls?.toString(); // Convert to String
         pendingCalls = response?.pendingCalls?.toString(); // Convert to String
