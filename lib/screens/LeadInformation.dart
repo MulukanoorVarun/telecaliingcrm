@@ -49,6 +49,7 @@ class _LeadInformationState extends State<LeadInformation> {
       leadsProvider.getFollowUpByLeadID(widget.ID),
     ]);
   }
+
   void _launchWhatsApp(number) async {
     final url = 'https://wa.me/$number';
     if (await canLaunch(url)) {
@@ -57,11 +58,19 @@ class _LeadInformationState extends State<LeadInformation> {
       throw 'Could not open WhatsApp.';
     }
   }
-  String formatDate(String dateTime) {
-    // Parse the string into a DateTime object
-    final DateTime parsedDate = DateTime.parse(dateTime);
-    // Format the DateTime to Indian date format (DD-MM-YYYY)
-    return "${parsedDate.day.toString().padLeft(2, '0')}-${parsedDate.month.toString().padLeft(2, '0')}-${parsedDate.year}";
+
+  String formatDate(String? dateTime) {
+    if (dateTime == null || dateTime.isEmpty) {
+      return "N/A";
+    }
+    try {
+      final DateTime parsedDate = DateTime.parse(dateTime);
+      final DateFormat formatter = DateFormat('dd-MM-yyyy');
+      return formatter.format(parsedDate);
+    } catch (e) {
+      debugPrint("Error parsing date: $e");
+      return "N/A";
+    }
   }
 
   // Function to send SMS
@@ -397,18 +406,18 @@ class _LeadInformationState extends State<LeadInformation> {
                         SliverList(
                           delegate: SliverChildBuilderDelegate(
                                 (context, index) {
-                                  String formatDate(String? dateTime) {
-                                    if (dateTime == null || dateTime.isEmpty) {
-                                      return "N/A";
-                                    }
-                                    try {
-                                      final DateTime parsedDate = DateTime.parse(dateTime);
-                                      return "${parsedDate.day.toString().padLeft(2, '0')}-${parsedDate.month.toString().padLeft(2, '0')}-${parsedDate.year}";
-                                    } catch (e) {
-                                      debugPrint("Error parsing date: $e");
-                                      return "N/A";
-                                    }
-                                  }
+                                  // String formatDate(String? dateTime) {
+                                  //   if (dateTime == null || dateTime.isEmpty) {
+                                  //     return "N/A";
+                                  //   }
+                                  //   try {
+                                  //     final DateTime parsedDate = DateTime.parse(dateTime);
+                                  //     return "${parsedDate.day.toString().padLeft(2, '0')}-${parsedDate.month.toString().padLeft(2, '0')}-${parsedDate.year}";
+                                  //   } catch (e) {
+                                  //     debugPrint("Error parsing date: $e");
+                                  //     return "N/A";
+                                  //   }
+                                  // }
                                   final followup_List = leadsInfo.selectedFollowUpByLead[index];
                                   return container(
                                     context,
