@@ -56,6 +56,7 @@ class _LeadInformationState extends State<LeadInformation> {
       await launch(url);
     } else {
       throw 'Could not open WhatsApp.';
+
     }
   }
 
