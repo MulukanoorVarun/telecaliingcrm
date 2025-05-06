@@ -293,7 +293,7 @@ class Userapi {
     }
   }
 
-  static Future<LeaderBoardModel?> getLeaderboard(int currentPage) async {
+  static Future<LeaderBoardModel?> getLeaderboard(int currentPage,filter) async {
     try {
       final token = await AuthService.getAccessToken();
       if (token == null) {
@@ -302,7 +302,7 @@ class Userapi {
       }
 
       final response = await get(
-        "/api/get_leader_board?page=${currentPage}",
+        "/api/get_leader_board?page=${currentPage}&filter=${filter}",
         options: Options(
           headers: {'Authorization': 'Bearer $token'},
         ),

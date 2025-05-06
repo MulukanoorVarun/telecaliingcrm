@@ -34,27 +34,29 @@ class LeaderBoardProvider extends ChangeNotifier {
   // String _profile_image = "";
   // String get profile_image=>_profile_image;
 
-  Future<void> fetchLeaderboardData() async {
+  Future<bool?> fetchLeaderboardData(String filter) async {
     _isLoading = true;
     _currentPage = 1;
     notifyListeners();
     try {
-      var res = await Userapi.getLeaderboard(_currentPage);
+      var res = await Userapi.getLeaderboard(_currentPage,filter);
       if (res != null) {
         leaderboardData = res.leaderboardData ?? [];
-        // Update `_hasNext` based on the API response
         _hasNext = res.nextPageUrl != null;
+        return true;
       } else {
         debugPrint("No leaderboard bloc found.");
+        return false;
       }
     } catch (e) {
     } finally {
       _isLoading = false;
       notifyListeners();
     }
+    return false;
   }
 
-  Future<void> fetchMoreLeaderboardData() async {
+  Future<void> fetchMoreLeaderboardData(filter) async {
     // Prevent redundant calls if no more pages or a fetch is already in progress
     if (!_hasNext || _pageLoading) {
       debugPrint("No more pages to fetch or another fetch is in progress.");
@@ -65,8 +67,7 @@ class LeaderBoardProvider extends ChangeNotifier {
 
     try {
       debugPrint("Fetching leaderboard bloc for page $_currentPage...");
-      var res = await Userapi.getLeaderboard(
-          _currentPage + 1); // Increment the page for the API call
+      var res = await Userapi.getLeaderboard(_currentPage + 1,filter); // Increment the page for the API call
       if (res != null) {
         _currentPage++; // Increment the page count on success
 

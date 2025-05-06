@@ -220,6 +220,22 @@ class _FollowupInformationState extends State<FollowupInformation> {
                               height: 5,
                             ),
                             Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                text(context, "FollowUp Type : ", 15,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.black),
+                                text(
+                                    context,
+                                    "${provider.selectedFollowUp?.typeOfFollowUp}",
+                                    16,
+                                    fontWeight: FontWeight.w400,
+                                    color: Color(0xff949494),
+                                    textAlign: TextAlign.start),
+                              ],
+                            ),
+                            Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 text(context, "Remarks", 16,

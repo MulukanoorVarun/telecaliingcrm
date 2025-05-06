@@ -3,16 +3,11 @@ import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
-import 'package:telecaliingcrm/screens/AddFollowUp.dart';
-import 'package:telecaliingcrm/screens/AddLeadsScreen.dart';
-import 'package:telecaliingcrm/screens/LeadInformation.dart';
 import 'package:telecaliingcrm/utils/ColorConstants.dart';
 import 'package:telecaliingcrm/utils/constants.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../providers/ConnectivityProviders.dart';
 import '../providers/LeadsProvider.dart';
 import '../services/Shimmers.dart';
-import '../services/otherservices.dart';
 
 class LeadScreen extends StatefulWidget {
   const LeadScreen({super.key});

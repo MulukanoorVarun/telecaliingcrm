@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:telecaliingcrm/Services/UserApi.dart';
 import 'package:telecaliingcrm/providers/leaderBoardprovider.dart';
@@ -17,7 +18,7 @@ class LeaderboardScreen extends StatefulWidget {
 
 class _LeaderboardScreenState extends State<LeaderboardScreen> {
   bool isloading = true;
-  String? _selectedFilter;
+  String _selectedFilter = "month";
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -29,7 +30,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
   Future<void> fetchLeaderboardData() async {
     final leaderBoard =
         Provider.of<LeaderBoardProvider>(context, listen: false);
-    leaderBoard.fetchLeaderboardData();
+    leaderBoard.fetchLeaderboardData(_selectedFilter);
   }
 
   String capitalizeFirstLetter(String text) {
@@ -81,7 +82,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                                 scrollInfo.metrics.pixels ==
                                     scrollInfo.metrics.maxScrollExtent) {
                               if (leaderBoardProvider.hasNext) {
-                                leaderBoardProvider.fetchMoreLeaderboardData();
+                                leaderBoardProvider.fetchMoreLeaderboardData(_selectedFilter);
                               }
                               return true;
                             }
@@ -221,8 +222,6 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
   }
 
   void _showFilterBottomSheet(BuildContext context) {
-    String? tempFilter = _selectedFilter;
-
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -265,31 +264,43 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                   SizedBox(height: 15),
                   _buildRadioTile(
                     title: 'Monthly',
-                    value: 'Monthly',
-                    groupValue: tempFilter,
+                    value: 'month',
+                    groupValue: _selectedFilter,
                     onChanged: (value) {
-                      setState(() {
-                        tempFilter = value;
+                      setState(()  async {
+                        _selectedFilter = value??"month";
+                        var res = await Provider.of<LeaderBoardProvider>(context, listen: false).fetchLeaderboardData(_selectedFilter??"");
+                        if(res==true){
+                          context.pop();
+                        }
                       });
                     },
                   ),
                   _buildRadioTile(
                     title: 'Weekly',
-                    value: 'Weekly',
-                    groupValue: tempFilter,
+                    value: 'week',
+                    groupValue: _selectedFilter,
                     onChanged: (value) {
-                      setState(() {
-                        tempFilter = value;
+                      setState(()  async {
+                        _selectedFilter = value??"month";
+                         var res = await Provider.of<LeaderBoardProvider>(context, listen: false).fetchLeaderboardData(_selectedFilter??"");
+                         if(res==true){
+                           context.pop();
+                         }
                       });
                     },
                   ),
                   _buildRadioTile(
                     title: 'Today',
-                    value: 'Today',
-                    groupValue: tempFilter,
+                    value: 'today',
+                    groupValue: _selectedFilter,
                     onChanged: (value) {
-                      setState(() {
-                        tempFilter = value;
+                      setState(()  async {
+                        _selectedFilter = value??"month";
+                        var res = await Provider.of<LeaderBoardProvider>(context, listen: false).fetchLeaderboardData(_selectedFilter??"");
+                        if(res==true){
+                          context.pop();
+                        }
                       });
                     },
                   ),

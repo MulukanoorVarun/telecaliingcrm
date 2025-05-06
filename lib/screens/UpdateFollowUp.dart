@@ -73,7 +73,7 @@ class _UpdateFollowupScreenState extends State<UpdateFollowupScreen> {
                   try {
                     // Find the matching FollowUpTypes object in the current provider.followupTypes
                     final matchingType = provider.followupTypes.firstWhere(
-                          (type) => type.id == followUp.typeOfFollowUp,
+                          (type) => type.type == followUp.typeOfFollowUp,
                       orElse: () => FollowUpTypes(id: null, type: null),
                     );
                     if (matchingType.id != null) {
@@ -183,7 +183,6 @@ class _UpdateFollowupScreenState extends State<UpdateFollowupScreen> {
       } else {
         res = await followupsProvider.updateFollowUp(data,widget.followupId);
       }
-
       setState(() {
         if (res == true) {
           _loading = false;

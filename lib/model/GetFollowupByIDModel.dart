@@ -6,7 +6,7 @@ class GetFollowupByIDModel {
   String? phone;
   String? date;
   String? time;
-  int? typeOfFollowUp;
+  String? typeOfFollowUp;
   String? status;
   String? remarks;
   String? createdAt;
@@ -35,7 +35,7 @@ class GetFollowupByIDModel {
     phone = json['phone'] as String?;
     date = json['date'] as String?;
     time = json['time'] as String?;
-    typeOfFollowUp = json['type_of_follow_up'] as int?;
+    typeOfFollowUp = json['type_of_follow_up'] as String?;
     status = json['status'] as String?;
     remarks = json['remarks'] as String?;
     createdAt = json['created_at'] as String?;

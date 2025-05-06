@@ -158,6 +158,8 @@ class _FollowupsScreenState extends State<FollowupsScreen> {
                                             mainAxisAlignment:
                                                 MainAxisAlignment.start,
                                             children: [
+                                              text(context,
+                                                  '${followup_List.name}', 18),
                                               Row(
                                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                 children: [
@@ -190,8 +192,28 @@ class _FollowupsScreenState extends State<FollowupsScreen> {
                                                   //             "",
                                                   //         14,
                                                   //         color: color11)),
-                                                  text(context,
-                                                      '${followup_List.name}', 18),
+                                                  Text.rich(
+                                                    TextSpan(
+                                                      children: [
+                                                        TextSpan(
+                                                            text: 'Status : ',
+                                                            style: TextStyle(
+                                                                fontWeight:
+                                                                FontWeight.bold,
+                                                                fontFamily:
+                                                                "Poppins")),
+                                                        TextSpan(
+                                                            text: '${followup_List.status}',
+                                                            style: TextStyle(
+                                                                fontWeight:
+                                                                FontWeight.normal,fontFamily: "Poppins")),
+                                                      ],
+                                                    ),
+                                                    maxLines: 3,
+                                                    textAlign: TextAlign.start,
+                                                    overflow: TextOverflow
+                                                        .ellipsis, // Optional, to handle text overflow
+                                                  ),
                                                   InkWell(
                                                     onTap: () {
                                                       context.pushReplacement(
