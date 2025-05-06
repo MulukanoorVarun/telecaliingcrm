@@ -62,18 +62,17 @@ class _UpDateLeadScreenState extends State<UpDateLeadScreen> {
     super.initState();
     print('Lead ID: ${widget.ID}');
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final leaderBoardProvider =
-      Provider.of<LeaderBoardProvider>(context, listen: false);
+      final leadsProvider = Provider.of<LeadsProvider>(context, listen: false);
       print('Fetching data for Lead ID: ${widget.ID}');
-      leaderBoardProvider.getData(widget.ID).then((_) {
+      leadsProvider.getData(widget.ID).then((_) {
         if (mounted) {
-          print('Data fetched. LeadInfo: ${leaderBoardProvider.leadinfo.length} items');
-          print('Industries: ${leaderBoardProvider.industires.map((i) => i.id).toList()}');
-          print('Stages: ${leaderBoardProvider.stages.map((s) => s.id).toList()}');
-          print('Services: ${leaderBoardProvider.services.map((s) => s.id).toList()}');
-          if (leaderBoardProvider.leadinfo.isNotEmpty) {
-            // Manually log ViewInfo fields since toString() is not overridden
-            final viewInfo = leaderBoardProvider.leadinfo[0];
+          print('Data fetched. LeadInfo: ${leadsProvider.leadinfo.length} items');
+          print('Industries: ${leadsProvider.industires.map((i) => i.id).toList()}');
+          print('Stages: ${leadsProvider.stages.map((s) => s.id).toList()}');
+          print('Services: ${leadsProvider.services.map((s) => s.id).toList()}');
+
+          if (leadsProvider.leadinfo.isNotEmpty) {
+            final viewInfo = leadsProvider.leadinfo[0];
             print('ViewInfo Fields: {'
                 'name: ${viewInfo.name}, '
                 'remarks: ${viewInfo.remarks}, '
@@ -81,126 +80,92 @@ class _UpDateLeadScreenState extends State<UpDateLeadScreen> {
                 'dealStatus: ${viewInfo.dealStatus}, '
                 'industryType: ${viewInfo.industryType}, '
                 'stageType: ${viewInfo.stageType}, '
-                'serviceType: ${viewInfo.serviceType}, '
-                'industryId: ${viewInfo.industryType}, '
-                'stageId: ${viewInfo.staffId}, '
-                'serviceId: ${viewInfo.serviceType}}');
-          }
-          setState(() {
-            if (leaderBoardProvider.leadinfo.isNotEmpty) {
-              final viewInfo = leaderBoardProvider.leadinfo[0];
+                'serviceType: ${viewInfo.serviceType}}');
+
+            setState(() {
               // Set text controllers
-              _nameController.text = viewInfo.name ?? widget.name;
-              _remarksController.text = viewInfo.remarks ?? widget.remarks;
+              _nameController.text = viewInfo.name ?? widget.name ?? '';
+              _remarksController.text = viewInfo.remarks ?? widget.remarks ?? '';
               _leadStatus = viewInfo.leadStageId?.toString() ?? '';
               _leadStage = viewInfo.dealStatus ?? '';
 
-              // Industries
-              // Try industryId or industryType
-              final industryId = viewInfo.industryType ?? viewInfo.industryType;
-              print('Industry ID: $industryId');
-              if (leaderBoardProvider.industires.isNotEmpty && industryId != null) {
+              // Set Industry
+              final industryId = viewInfo.industryType;
+              if (leadsProvider.industires.isNotEmpty && industryId != null) {
                 try {
-                  _selectedIndustryType = leaderBoardProvider.industires.firstWhere(
+                  _selectedIndustryType = leadsProvider.industires.firstWhere(
                         (item) => item.id == industryId,
-                    orElse: () {
-                      print('No matching industry found for ID: $industryId');
-                      return leaderBoardProvider.industires.first; // Default to first
-                    },
+                    orElse: () => leadsProvider.industires.first,
                   );
                   selectedIndustryId = _selectedIndustryType?.id;
-                  print('Selected Industry ID: $selectedIndustryId');
+                  print('Selected Industry: ID: $selectedIndustryId, Name: ${_selectedIndustryType?.type}');
                 } catch (e) {
                   print('Error setting industry: $e');
-                  _selectedIndustryType = leaderBoardProvider.industires.first;
+                  _selectedIndustryType = leadsProvider.industires.first;
                   selectedIndustryId = _selectedIndustryType?.id;
                 }
               } else {
-                print('Industries empty or industryId null');
-                _selectedIndustryType = leaderBoardProvider.industires.isNotEmpty
-                    ? leaderBoardProvider.industires.first
-                    : null;
+                _selectedIndustryType = leadsProvider.industires.isNotEmpty ? leadsProvider.industires.first : null;
                 selectedIndustryId = _selectedIndustryType?.id;
-                print('Default/Fallback Industry ID: $selectedIndustryId');
+                print('Default Industry ID: $selectedIndustryId');
               }
 
-              // Stages
-              // Try stageId or stageType
-              final stageId = viewInfo.stageType ?? viewInfo.stageType;
-              print('Stage ID: $stageId');
-              if (leaderBoardProvider.stages.isNotEmpty && stageId != null) {
+              // Set Stage
+              final stageId = viewInfo.stageType;
+              if (leadsProvider.stages.isNotEmpty && stageId != null) {
                 try {
-                  _selectedStagesType = leaderBoardProvider.stages.firstWhere(
+                  _selectedStagesType = leadsProvider.stages.firstWhere(
                         (item) => item.id == stageId,
-                    orElse: () {
-                      print('No matching stage found for ID: $stageId');
-                      return leaderBoardProvider.stages.first; // Default to first
-                    },
+                    orElse: () => leadsProvider.stages.first,
                   );
                   selectStageId = _selectedStagesType?.id;
-                  print('Selected Stage ID: $selectStageId');
+                  print('Selected Stage: ID: $selectStageId, Name: ${_selectedStagesType?.type}');
                 } catch (e) {
                   print('Error setting stage: $e');
-                  _selectedStagesType = leaderBoardProvider.stages.first;
+                  _selectedStagesType = leadsProvider.stages.first;
                   selectStageId = _selectedStagesType?.id;
                 }
               } else {
-                print('Stages empty or stageId null');
-                _selectedStagesType = leaderBoardProvider.stages.isNotEmpty
-                    ? leaderBoardProvider.stages.first
-                    : null;
+                _selectedStagesType = leadsProvider.stages.isNotEmpty ? leadsProvider.stages.first : null;
                 selectStageId = _selectedStagesType?.id;
-                print('Default/Fallback Stage ID: $selectStageId');
+                print('Default Stage ID: $selectStageId');
               }
 
-              // Services
-              // Try serviceId or serviceType
-              final serviceId = viewInfo.serviceType ?? viewInfo.serviceType;
-              print('Service ID: $serviceId');
-              if (leaderBoardProvider.services.isNotEmpty && serviceId != null) {
+              // Set Service
+              final serviceId = viewInfo.serviceType;
+              if (leadsProvider.services.isNotEmpty && serviceId != null) {
                 try {
-                  _selectedServicesType = leaderBoardProvider.services.firstWhere(
+                  _selectedServicesType = leadsProvider.services.firstWhere(
                         (item) => item.id == serviceId,
-                    orElse: () {
-                      print('No matching service found for ID: $serviceId');
-                      return leaderBoardProvider.services.first; // Default to first
-                    },
+                    orElse: () => leadsProvider.services.first,
                   );
                   selectservicesId = _selectedServicesType?.id;
-                  print('Selected Services ID: $selectservicesId');
+                  print('Selected Service: ID: $selectservicesId, Name: ${_selectedServicesType?.type}');
                 } catch (e) {
                   print('Error setting service: $e');
-                  _selectedServicesType = leaderBoardProvider.services.first;
+                  _selectedServicesType = leadsProvider.services.first;
                   selectservicesId = _selectedServicesType?.id;
                 }
               } else {
-                print('Services empty or serviceId null');
-                _selectedServicesType = leaderBoardProvider.services.isNotEmpty
-                    ? leaderBoardProvider.services.first
-                    : null;
+                _selectedServicesType = leadsProvider.services.isNotEmpty ? leadsProvider.services.first : null;
                 selectservicesId = _selectedServicesType?.id;
-                print('Default/Fallback Services ID: $selectservicesId');
+                print('Default Service ID: $selectservicesId');
               }
-            } else {
-              print('LeadInfo is empty');
-              // Set defaults if leadinfo is empty
-              _selectedIndustryType = leaderBoardProvider.industires.isNotEmpty
-                  ? leaderBoardProvider.industires.first
-                  : null;
-              _selectedStagesType = leaderBoardProvider.stages.isNotEmpty
-                  ? leaderBoardProvider.stages.first
-                  : null;
-              _selectedServicesType = leaderBoardProvider.services.isNotEmpty
-                  ? leaderBoardProvider.services.first
-                  : null;
+            });
+          } else {
+            print('LeadInfo is empty, setting defaults');
+            setState(() {
+              _selectedIndustryType = leadsProvider.industires.isNotEmpty ? leadsProvider.industires.first : null;
+              _selectedStagesType = leadsProvider.stages.isNotEmpty ? leadsProvider.stages.first : null;
+              _selectedServicesType = leadsProvider.services.isNotEmpty ? leadsProvider.services.first : null;
               selectedIndustryId = _selectedIndustryType?.id;
               selectStageId = _selectedStagesType?.id;
               selectservicesId = _selectedServicesType?.id;
               print('Default Industry ID: $selectedIndustryId');
               print('Default Stage ID: $selectStageId');
-              print('Default Services ID: $selectservicesId');
-            }
-          });
+              print('Default Service ID: $selectservicesId');
+            });
+          }
         }
       }).catchError((e) {
         print('Error fetching data: $e');
@@ -299,6 +264,7 @@ class _UpDateLeadScreenState extends State<UpDateLeadScreen> {
         "lead_stage_id": _leadStatus,
         "deal_stage": _leadStage,
         "stage_type": selectStageId,
+        "active_status": "1",
         "service_type": selectservicesId,
         "industry_type": selectedIndustryId,
       };
@@ -353,7 +319,7 @@ class _UpDateLeadScreenState extends State<UpDateLeadScreen> {
           },
         ),
       ),
-      body: Consumer<LeaderBoardProvider>(
+      body: Consumer<LeadsProvider>(
         builder: (context, leaderBoard, child) {
           if (leaderBoard.isLoading) {
             return Center(
@@ -361,16 +327,6 @@ class _UpDateLeadScreenState extends State<UpDateLeadScreen> {
               color: Colors.blue,
             ));
           }
-          // if (leaderBoard.leadinfo.isNotEmpty) {
-          //   _nameController.text = leaderBoard.leadinfo[0].name ?? "";
-          //   selectedIndustryId= leaderBoard.leadinfo[0].industryType ?? 0;
-          //   selectStageId= leaderBoard.leadinfo[0].stageType ?? 0;
-          //   selectservicesId= leaderBoard.leadinfo[0].serviceType ?? 0;
-          //   _remarksController.text= leaderBoard.leadinfo[0].remarks ?? "";
-          //   _leadStatus= leaderBoard.leadinfo[0].leadStageId.toString()??"";
-          //   _leadStage= leaderBoard.leadinfo[0].dealStatus??"";
-          // }
-
           return container(context,
               w: w,
               margin: EdgeInsets.symmetric(vertical: 16, horizontal: 16),

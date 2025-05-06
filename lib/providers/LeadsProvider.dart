@@ -3,6 +3,9 @@ import 'package:flutter/foundation.dart'; // For ChangeNotifier
 import '../Services/UserApi.dart';
 import '../model/GetFollowupByIDModel.dart';
 import '../model/GetFollowupByLeadIDModel.dart';
+import '../model/GetIndustriesModel.dart';
+import '../model/GetServicesModel.dart';
+import '../model/GetStagesModel.dart';
 import '../model/LeadsModel.dart';
 import '../model/ViewInfoModel.dart';
 import '../screens/SubscriptionExpiredScreen.dart';
@@ -13,7 +16,7 @@ class LeadsProvider with ChangeNotifier {
   bool _isLoading = true;
   bool _hasNextPage = true;
   List<Lead>? get leadsList => leadslist;
-  List<Data> _selectedFollowUpByLead=[];
+  List<Data> _selectedFollowUpByLead = [];
   List<ViewInfo> _leadinfo = [];
   bool get isLoading => _isLoading;
   bool get hasNextPage => _hasNextPage;
@@ -22,7 +25,17 @@ class LeadsProvider with ChangeNotifier {
   int get currentPage => _currentPage;
   bool _pageLoading = false;
   bool get pageLoading => _pageLoading;
-  List<Data> get selectedFollowUpByLead =>_selectedFollowUpByLead ;
+  List<Data> get selectedFollowUpByLead => _selectedFollowUpByLead;
+
+  List<Services> _services = [];
+  List<Stages> _stages = [];
+  List<Industires> _industires = [];
+
+
+  List<Services> get services => _services;
+  List<Stages> get stages => _stages;
+  List<Industires> get industires => _industires;
+
   Future<void> fetchLeadsList(type) async {
     _isLoading = true;
     _currentPage = 1;
@@ -102,7 +115,7 @@ class LeadsProvider with ChangeNotifier {
     return null;
   }
 
-  Future<bool?> UpdateleadsApi(Map<String,dynamic> data) async {
+  Future<bool?> UpdateleadsApi(Map<String, dynamic> data) async {
     try {
       var response = await Userapi.postUpdateLeads(data);
       if (response != null) {
@@ -138,13 +151,14 @@ class LeadsProvider with ChangeNotifier {
       notifyListeners();
     }
   }
+
   Future<bool> getFollowUpByLeadID(String id) async {
     _isLoading = true;
     notifyListeners();
     try {
       var result = await Userapi.getFollowupByLeadID(id);
       if (result != null) {
-        _selectedFollowUpByLead = result.data??[];
+        _selectedFollowUpByLead = result.data ?? [];
         notifyListeners();
         return true;
       } else {
@@ -156,6 +170,77 @@ class LeadsProvider with ChangeNotifier {
       _selectedFollowUpByLead = [];
       debugPrint("Error fetching getFollowUpByID: $error");
       return false;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> getData(String id) async {
+    _isLoading = true;
+    notifyListeners();
+    try {
+      await Future.wait([
+        fetchServices(),
+        fetchIndustires(),
+        fetchStages(),
+        getLeadsInformationApi(id), // Fetch lead-specific information
+      ]);
+      debugPrint('Fetched Data: Services: ${_services.length}, Industries: ${_industires.length}, Stages: ${_stages.length}, LeadInfo: ${_leadinfo.length}');
+    } catch (e) {
+      debugPrint('Error in getData: $e');
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+
+  Future<void> fetchServices() async {
+    _isLoading = true;
+    notifyListeners();
+    try {
+      var res = await Userapi.getServices();
+      if (res != null) {
+        _services = res.services ?? [];
+      } else {
+        debugPrint("No leaderboard bloc found.");
+      }
+    } catch (e) {
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> fetchIndustires() async {
+    _isLoading = true;
+    notifyListeners();
+    try {
+      var res = await Userapi.getIndustires();
+      if (res != null) {
+        _industires = res.industires ?? [];
+      } else {
+        debugPrint("No leaderboard bloc found.");
+      }
+    } catch (e) {
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> fetchStages() async {
+    _isLoading = true;
+    notifyListeners();
+    try {
+      var res = await Userapi.getStages();
+      if (res != null) {
+        _stages = res.stages ?? [];
+      } else {
+        debugPrint("No leaderboard bloc found.");
+      }
+    } catch (e) {
     } finally {
       _isLoading = false;
       notifyListeners();
