@@ -95,7 +95,7 @@ class _LeadsScreenState extends State<LeadScreen>
           actions: [
             InkResponse(
               onTap: () {
-                context.push("/add_lead");
+                context.pushReplacement("/add_lead");
               },
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
@@ -417,7 +417,7 @@ class _LeadsScreenState extends State<LeadScreen>
                                                   ),
                                                   InkWell(
                                                     onTap: () {
-                                                      context.push(
+                                                      context.pushReplacement(
                                                           "/lead_information?ID=${leads.id}");
                                                     },
                                                     child: Padding(

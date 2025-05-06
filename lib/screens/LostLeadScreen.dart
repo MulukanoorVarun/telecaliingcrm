@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
+import '../providers/DashBoardProvider.dart';
 import '../providers/LeadsProvider.dart';
 import '../utils/ColorConstants.dart';
 import '../utils/ShakeWidget.dart';
@@ -82,21 +84,17 @@ class _LostLeadScreenState extends State<LostLeadScreen> {
         "name": _nameController.text,
         "lead_id": widget.ID,
         "remarks": _remarksController.text,
-        "lead_stage_id": widget.leadsStage,
-        "deal_stage": widget.dealStage,
         "active_status": "0",
-        "stage_type": widget.stage_type,
-        "service_type": widget.service_type,
-        "industry_type": widget.industry_type,
-      };
 
+      };
       final response = await leadsProvider.UpdateleadsApi(data);
       setState(() {
         _loading = false;
       });
       if (response == true) {
+        Provider.of<DashboardProvider>(context, listen: false).fetchDashBoardDetails("Pending");
         CustomSnackBar.show(context, "Lead Updated Successfully!");
-        Navigator.pop(context, true);
+        context.pop();
       } else {
         final errorMessage = "Failed to update lead.";
         CustomSnackBar.show(context, errorMessage);
