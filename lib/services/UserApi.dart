@@ -27,8 +27,8 @@ class Userapi {
   static final Logger logger = Logger();
   static final Dio _dio = Dio(
     BaseOptions(
-      baseUrl: "http://192.168.80.77:8000",
-      // baseUrl: "https://api.telecallingcrm.com",
+      // baseUrl: "http://192.168.80.77:8000",
+      baseUrl: "https://api.telecallingcrm.com",
       connectTimeout: const Duration(seconds: 60),
       receiveTimeout: const Duration(seconds: 60),
       headers: {"Content-Type": "application/json"},
@@ -42,8 +42,7 @@ class Userapi {
       logger.d(
           "[UserApi] Existing interceptors: ${_dio.interceptors.map((i) => i.runtimeType).toList()}");
       _dio.interceptors.clear();
-      logger.d(
-          "[UserApi] Cleared interceptors. Count: ${_dio.interceptors.length}");
+      logger.d("[UserApi] Cleared interceptors. Count: ${_dio.interceptors.length}");
       _dio.interceptors.add(LogInterceptor(
         request: kDebugMode,
         requestHeader: kDebugMode,
@@ -221,11 +220,11 @@ class Userapi {
   static Future<Map<String, dynamic>?> updateCallStatusApi(
       String id, String callStatus, String callDuration) async {
     try {
-      final data = {
+      final data = FormData.fromMap({
         "id": id,
         "call_status": callStatus,
         "call_duration": callDuration,
-      };
+      });
       debugPrint("updateCallStatusApi bloc: $data");
       final response = await post("/api/update_call_status_api", data: data);
 
