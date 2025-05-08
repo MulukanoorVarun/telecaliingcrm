@@ -508,7 +508,7 @@ class _HomescreenState extends State<Homescreen> {
                     width: 10,
                   ),
                   SizedBox(
-                    width: w * 0.52,
+                    width: w * 0.5,
                     child: Text(
                       overflow: TextOverflow.ellipsis,
                       userDetailsProvider.userDetails?.name?.isNotEmpty ?? false
@@ -535,7 +535,6 @@ class _HomescreenState extends State<Homescreen> {
                       color: color11,
                     ),
                   ),
-                  SizedBox(width: 18),
                   IconButton(
                     visualDensity: VisualDensity.compact,
                     padding: EdgeInsets.all(0),
@@ -543,8 +542,7 @@ class _HomescreenState extends State<Homescreen> {
                       _showFilterBottomSheet(context);
                     },
                     icon: Icon(
-                      Icons.filter_alt_sharp,
-                      color: primaryColor,
+                      Icons.filter_alt_outlined,
                     ),
                   ),
                   // Menu icon
@@ -686,10 +684,8 @@ class _HomescreenState extends State<Homescreen> {
                       if (phoneNumbers?.length != 0) ...[
                         SizedBox(height: w * 0.07),
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Expanded(
-                                child: SizedBox()), // Equal space on the left
                             containertext(
                               context,
                               onTap: () {
@@ -705,22 +701,6 @@ class _HomescreenState extends State<Homescreen> {
                                   ? (isPaused ? 'RESUME' : 'PAUSE')
                                   : 'START NOW',
                             ),
-                            // Expanded(
-                            //   child: Align(
-                            //     alignment: Alignment.centerRight,
-                            //     child: IconButton(
-                            //       visualDensity: VisualDensity.compact,
-                            //       padding: EdgeInsets.all(0),
-                            //       onPressed: () {
-                            //         _showFilterBottomSheet(context);
-                            //       },
-                            //       icon: Icon(
-                            //         Icons.filter_alt_sharp,
-                            //         color: primaryColor,
-                            //       ),
-                            //     ),
-                            //   ),
-                            // ), // Equal space on the right, with IconButton aligned to the end
                           ],
                         ),
                         SizedBox(height: w * 0.05),

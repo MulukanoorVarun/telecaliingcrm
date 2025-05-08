@@ -50,7 +50,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               ? "Please enter a valid email address (e.g. user@domain.com)"
               : "";
 
-      if (_validateName.isEmpty && _validateEmail.isEmpty){
+      if (_validateName.isEmpty && _validateEmail.isEmpty) {
         _updateProfile();
       } else {
         isLoading = false;
@@ -59,7 +59,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   String profile_image = "";
-  String UserID="";
+  String UserID = "";
 
   Future<void> _pickImage() async {
     final XFile? pickedFile = await _picker.pickImage(
@@ -100,8 +100,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     // String pwd = pwdController.text;
     final profile_provider =
         Provider.of<UserDetailsProvider>(context, listen: false);
-    var response =
-        await profile_provider.updateUserDetails(UserID,fullname, email, _image);
+    var response = await profile_provider.updateUserDetails(
+        UserID, fullname, email, _image);
     setState(() {
       if (response != null) {
         isLoading = false;
@@ -113,7 +113,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       }
     });
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -136,132 +135,130 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             color: Colors.white,
           ),
           onPressed: () {
-            Navigator.pop(context,true);
+            Navigator.pop(context, true);
           },
         ),
       ),
-            body: Padding(
-              padding: EdgeInsets.all(16.0),
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+      body: Padding(
+        padding: EdgeInsets.all(16.0),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Stack(
                   children: [
-                    Center(
-                      child: Stack(
-                        children: [
-                          CircleAvatar(
-                            radius: 50,
-                            backgroundColor: Colors.grey,
-                            backgroundImage: _image != null
-                                ? FileImage(_image!)
-                                : (profile_image != null && profile_image.isNotEmpty)
-                                ? CachedNetworkImageProvider(profile_image)
-                                : const AssetImage('assets/person.png') as ImageProvider<Object>,
-                            child: (profile_image != null && profile_image.isNotEmpty)
-                                ? null
-                                : Icon(Icons.person, size: 50, color: Colors.white),
-                          ),
-                          Positioned(
-                            bottom: 0,
-                            right: 0,
-                            child: InkWell(
-                              onTap: _pickImage,
-                              child: CircleAvatar(
-                                radius: 15,
-                                backgroundColor: Colors.white,
-                                child: Icon(
-                                  Icons.camera_alt,
-                                  color: color28,
-                                  size: 20, // Size of the camera icon
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+                    CircleAvatar(
+                      radius: 50,
+                      backgroundColor: Colors.grey,
+                      backgroundImage: _image != null
+                          ? FileImage(_image!)
+                          : (profile_image != null && profile_image.isNotEmpty)
+                              ? CachedNetworkImageProvider(profile_image)
+                              : const AssetImage('assets/person.png')
+                                  as ImageProvider<Object>,
                     ),
-                    SizedBox(height: 16),
-                    Label(text: 'Full Name'),
-                    SizedBox(height: 4),
-                    _buildTextField(
-                      controller: fullnameController,
-                      hint: "Enter Name",
-                      focusNode: _focusNodeFullName,
-                    ),
-                    if (_validateName.isNotEmpty)
-                      Container(
-                        alignment: Alignment.topLeft,
-                        margin: EdgeInsets.only(left: 8, bottom: 10, top: 5),
-                        width: w * w,
-                        child: ShakeWidget(
-                          key: Key("value"),
-                          duration: Duration(milliseconds: 700),
-                          child: Text(
-                            _validateName,
-                            style: TextStyle(
-                              fontFamily: "Poppins",
-                              fontSize: 12,
-                              color: Colors.red,
-                              fontWeight: FontWeight.w500,
-                            ),
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: InkWell(
+                        onTap: _pickImage,
+                        child: CircleAvatar(
+                          radius: 15,
+                          backgroundColor: Colors.white,
+                          child: Icon(
+                            Icons.camera_alt,
+                            color: color28,
+                            size: 20, // Size of the camera icon
                           ),
                         ),
                       ),
-                    SizedBox(height: 16),
-                    Label(text: 'Email'),
-                    SizedBox(height: 4),
-                    _buildTextField(
-                      readonly: true,
-                      controller: emailController,
-                      hint: "Enter Email Address",
-                      focusNode: _focusNodeEmail,
-                      inputFormatters: [
-                        FilteringTextInputFormatter.allow(
-                            RegExp(r"[a-zA-Z0-9@._-]")),
-                      ],
                     ),
-                    // if (_validateEmail.isNotEmpty)
-                    //   Container(
-                    //     alignment: Alignment.topLeft,
-                    //     margin: EdgeInsets.only(left: 8, bottom: 10, top: 5),
-                    //     width: w * w,
-                    //     child: ShakeWidget(
-                    //       key: Key("value"),
-                    //       duration: Duration(milliseconds: 700),
-                    //       child: Text(
-                    //         _validateEmail,
-                    //         style: TextStyle(
-                    //           fontFamily: "Poppins",
-                    //           fontSize: 12,
-                    //           color: Colors.red,
-                    //           fontWeight: FontWeight.w500,
-                    //
-                    //         ),
-                    //       ),
-                    //     ),
-                    //   ),
-                    // SizedBox(height: 16),
-                    // Label(text: 'PassWord'),
-                    SizedBox(height: 100),
-                    InkResponse(
-                      onTap: () {
-                        if (isLoading) {
-                        } else {
-                          _validateFields();
-                        }
-                      },
-                      child: Container(
-                        width: w,
-                        height: MediaQuery.of(context).size.height * 0.060,
-                        decoration: BoxDecoration(
-                          color: primaryColor,
-                          borderRadius: BorderRadius.circular(7),
-                        ),
-                        child: Center(
-                          child:
-                          isLoading
-                       ? CircularProgressIndicator(color: Colors.white,):
-                          Text(
+                  ],
+                ),
+              ),
+              SizedBox(height: 16),
+              Label(text: 'Full Name'),
+              SizedBox(height: 4),
+              _buildTextField(
+                controller: fullnameController,
+                hint: "Enter Name",
+                focusNode: _focusNodeFullName,
+              ),
+              if (_validateName.isNotEmpty)
+                Container(
+                  alignment: Alignment.topLeft,
+                  margin: EdgeInsets.only(left: 8, bottom: 10, top: 5),
+                  width: w * w,
+                  child: ShakeWidget(
+                    key: Key("value"),
+                    duration: Duration(milliseconds: 700),
+                    child: Text(
+                      _validateName,
+                      style: TextStyle(
+                        fontFamily: "Poppins",
+                        fontSize: 12,
+                        color: Colors.red,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ),
+              SizedBox(height: 16),
+              Label(text: 'Email'),
+              SizedBox(height: 4),
+              _buildTextField(
+                readonly: true,
+                controller: emailController,
+                hint: "Enter Email Address",
+                focusNode: _focusNodeEmail,
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z0-9@._-]")),
+                ],
+              ),
+              // if (_validateEmail.isNotEmpty)
+              //   Container(
+              //     alignment: Alignment.topLeft,
+              //     margin: EdgeInsets.only(left: 8, bottom: 10, top: 5),
+              //     width: w * w,
+              //     child: ShakeWidget(
+              //       key: Key("value"),
+              //       duration: Duration(milliseconds: 700),
+              //       child: Text(
+              //         _validateEmail,
+              //         style: TextStyle(
+              //           fontFamily: "Poppins",
+              //           fontSize: 12,
+              //           color: Colors.red,
+              //           fontWeight: FontWeight.w500,
+              //
+              //         ),
+              //       ),
+              //     ),
+              //   ),
+              // SizedBox(height: 16),
+              // Label(text: 'PassWord'),
+              SizedBox(height: 100),
+              InkResponse(
+                onTap: () {
+                  if (isLoading) {
+                  } else {
+                    _validateFields();
+                  }
+                },
+                child: Container(
+                  width: w,
+                  height: MediaQuery.of(context).size.height * 0.060,
+                  decoration: BoxDecoration(
+                    color: primaryColor,
+                    borderRadius: BorderRadius.circular(7),
+                  ),
+                  child: Center(
+                    child: isLoading
+                        ? CircularProgressIndicator(
+                            color: Colors.white,
+                          )
+                        : Text(
                             "SAVE",
                             style: TextStyle(
                               color: color4,
@@ -271,21 +268,21 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               height: 21 / 16,
                             ),
                           ),
-                        ),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
               ),
-            ),
-          );
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   Widget _buildTextField({
     required TextEditingController controller,
     required String hint,
     required FocusNode focusNode,
-    bool readonly= false,
+    bool readonly = false,
     List<TextInputFormatter>? inputFormatters,
   }) {
     return Container(
