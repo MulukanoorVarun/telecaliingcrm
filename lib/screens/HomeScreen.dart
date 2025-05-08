@@ -399,13 +399,11 @@ class _HomescreenState extends State<Homescreen> {
                   if (selectedStatus != null) {
                     debugPrint(
                         "Selected Status: $selectedStatus, Remarks: $remarks");
-                    // Pass remarks to updateCallStatus (null if not applicable)
                     updateCallStatus(
                       id.toString(),
                       selectedStatus!,
                       callDuration.toString(),
                     );
-                    Navigator.pop(context); // Close the dialog
                   } else {
                     debugPrint("No status selected");
                   }
@@ -427,23 +425,26 @@ class _HomescreenState extends State<Homescreen> {
     );
   }
 
-  void updateCallStatus(id, callStatus, String callDuration) async {
+  void updateCallStatus(String id, String callStatus, String callDuration) async {
     try {
       var result = await Userapi.updateCallStatusApi(id, callStatus, callDuration);
       if (result != null) {
         debugPrint("Response: $result");
-        final dashboardProvider =
-            Provider.of<DashboardProvider>(context, listen: false);
-        dashboardProvider.fetchDashBoardDetails(_selectedFilter??"");
+        final dashboardProvider = Provider.of<DashboardProvider>(context, listen: false);
+        dashboardProvider.fetchDashBoardDetails(_selectedFilter ?? "");
         CustomSnackBar.show(context, "Call Status Updated Successfully!");
+        // Pop the dialog only on successful API response
+        Navigator.of(context).pop();
         Future.delayed(Duration(seconds: 3), () {
-          _scheduleNextCall(); // Start the next call if available
+          _scheduleNextCall();
         });
       } else {
         debugPrint("Failed to update the call status.");
+        CustomSnackBar.show(context, "Failed to update call status.");
       }
     } catch (e) {
       debugPrint("Error occurred: $e");
+      CustomSnackBar.show(context, "An error occurred while updating call status.");
     }
   }
 
