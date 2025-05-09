@@ -15,62 +15,62 @@ class CallHistoryProvider extends ChangeNotifier {
   bool _pageLoading = false;
   bool get pageLoading => _pageLoading;
 
-  Future<void> getCallHistoryApi(date) async {
+  Future<bool?> getCallHistoryApi(date,String call_status) async {
     _loading = true;
     _currentPage = 1;
     notifyListeners();
     try {
-      var res = await Userapi.getCallHistory(date,_currentPage);
-      if (res?.status==true) {
-        call_history = res?.data?.callHistory??[];
-        _hasNext = res?.data?.nextPageUrl != null;
+      var res = await Userapi.getCallHistory(date,call_status, _currentPage);
+      if (res != null) {
+        call_history = res.data ?? [];
+        _hasNext = res.nextPageUrl != null;
+        return true;
       } else {
         debugPrint("No bloc received");
         _hasNext = false;
+        return false;
       }
     } catch (e) {
       debugPrint("Error in GetCallHistoryApi: $e");
     } finally {
       _loading = false;
       notifyListeners();
+      return false;
     }
   }
 
-  Future<void> getMoreCallHistoryApi(date) async {
+  Future<bool?> getMoreCallHistoryApi(date,String call_status) async {
     // Prevent redundant calls if no more pages or a fetch is already in progress
     if (!_hasNext || _pageLoading) {
       debugPrint("No more pages to fetch or another fetch is in progress.");
-      return;
+      return null; // <-- FIXED
     }
-
     _pageLoading = true; // Mark as loading
     notifyListeners();
 
     try {
       debugPrint("Fetching page $_currentPage...");
-      var res = await Userapi.getCallHistory(date,_currentPage + 1); // Increment the page for API call
-
-      if (res?.status == true) {
-        _currentPage++; // Increment page count after successful fetch
-
-        call_history.addAll(res?.data?.callHistory ?? []); // Append new call history
-
-        // Update `_hasNext` based on the API response
-        _hasNext = res?.data?.nextPageUrl != null;
-
+      var res = await Userapi.getCallHistory(
+          date,call_status, _currentPage + 1); // Increment the page for API call
+      if (res != null) {
+        _currentPage++;
+        call_history.addAll(res.data ?? []);
+        _hasNext = res.nextPageUrl != null;
         debugPrint(_hasNext
             ? "Next page available, more bloc to fetch."
             : "No more pages to fetch.");
+        return true;
       } else {
         debugPrint("API returned failure status. No bloc received.");
+        return true;
       }
     } catch (e) {
       // Log errors
       debugPrint("Error in GetCallHistoryApi: $e");
     } finally {
       _pageLoading = false; // Reset loading state
-      notifyListeners();    // Notify listeners of the state change
+      notifyListeners(); // Notify listeners of the state change
+      return true;
     }
   }
-
 }

@@ -262,7 +262,7 @@ class Userapi {
     }
   }
 
-  static Future<CallHistoryModel?> getCallHistory(String date, int page) async {
+  static Future<CallHistoryModel?> getCallHistory(String date,String call_status, int page) async {
     try {
       final token = await AuthService.getAccessToken();
       if (token == null) {
@@ -273,7 +273,8 @@ class Userapi {
       final response = await get(
         "/api/today-called-history",
         queryParameters: {
-          "latest_update": date,
+          "date_added": date,
+          "call_status": call_status,
           "page": page.toString(),
         },
         options: Options(

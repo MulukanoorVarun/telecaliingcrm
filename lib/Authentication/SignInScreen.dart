@@ -53,13 +53,11 @@ class _SignInScreenState extends State<SignInScreen> {
     setState(() {
       _loading = true;
     });
-
     await Userapi.postSignIn(_emailController.text, _pwdController.text)
         .then((data) {
       setState(() {
         _loading = false;
       });
-
       if (data != null) {
         if (data['access_token'] != null) {
           // Get the current timestamp in seconds
