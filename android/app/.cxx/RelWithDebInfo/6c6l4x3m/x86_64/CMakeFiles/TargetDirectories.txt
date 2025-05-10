@@ -1,0 +1,2 @@
+C:/Users/user/AndroidStudioProjects/telecaliingcrm/android/app/.cxx/RelWithDebInfo/6c6l4x3m/x86_64/CMakeFiles/edit_cache.dir
+C:/Users/user/AndroidStudioProjects/telecaliingcrm/android/app/.cxx/RelWithDebInfo/6c6l4x3m/x86_64/CMakeFiles/rebuild_cache.dir

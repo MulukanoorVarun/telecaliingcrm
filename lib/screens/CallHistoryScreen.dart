@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:telecaliingcrm/Services/UserApi.dart';
@@ -10,9 +11,7 @@ import '../utils/ColorConstants.dart';
 import '../providers/CallHistoryProvider.dart';
 
 class Callhistoryscreen extends StatefulWidget {
-  String date;
-  String type;
-  Callhistoryscreen({super.key, required this.date, required this.type});
+  Callhistoryscreen({super.key});
 
   @override
   State<Callhistoryscreen> createState() => _CallhistoryscreenState();
@@ -20,6 +19,7 @@ class Callhistoryscreen extends StatefulWidget {
 
 class _CallhistoryscreenState extends State<Callhistoryscreen> {
   String? _selectedFilter;
+  String formattedDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -31,7 +31,7 @@ class _CallhistoryscreenState extends State<Callhistoryscreen> {
   Future<void> getCallHistoryApi() async {
     final callhistory =
         Provider.of<CallHistoryProvider>(context, listen: false);
-    callhistory.getCallHistoryApi(widget.date,_selectedFilter??"");
+    callhistory.getCallHistoryApi(_selectedFilter??"");
   }
 
   @override
@@ -49,8 +49,7 @@ class _CallhistoryscreenState extends State<Callhistoryscreen> {
               color: Colors.white),
         ),
         backgroundColor: primaryColor,
-        leading: widget.type != ""
-            ? IconButton(
+        leading: IconButton(
                 icon: Icon(
                   Icons.arrow_back,
                   color: Colors.white,
@@ -58,9 +57,7 @@ class _CallhistoryscreenState extends State<Callhistoryscreen> {
                 onPressed: () {
                   Navigator.pop(context, true);
                 },
-              )
-            : Container(),
-        leadingWidth: widget.type != '' ? 56 : 20,
+              ),
         actions: [
           IconButton(
             icon: Icon(

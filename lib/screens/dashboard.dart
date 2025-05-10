@@ -43,10 +43,7 @@ class _DashboardState extends State<Dashboard> {
               controller: _pageController,
               children: [
                 Homescreen(),
-                Callhistoryscreen(
-                  type: '',
-                  date: '',
-                ),
+                Callhistoryscreen(type: '',),
                 LeaderboardScreen(),
               ],
             ),
